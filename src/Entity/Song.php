@@ -21,7 +21,7 @@ class Song
     #[ORM\Column]
     private ?int $track = null;
 
-    #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'tracklists')]
+    #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'tracklists', cascade: ['persist'])]
     private Collection $albums;
 
     #[ORM\ManyToMany(targetEntity: Artist::class, inversedBy: 'songs')]
@@ -111,5 +111,10 @@ class Song
         $this->artist->removeElement($artist);
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->track . ' - ' . $this->name;
     }
 }

@@ -18,7 +18,7 @@ class Style
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'styles')]
+    #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'styles', cascade: ['persist'])]
     private Collection $albums;
 
     public function __construct()
@@ -68,5 +68,10 @@ class Style
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }

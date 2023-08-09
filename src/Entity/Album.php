@@ -31,13 +31,13 @@ class Album
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $date_release = null;
 
-    #[ORM\ManyToMany(targetEntity: Label::class, inversedBy: 'albums')]
+    #[ORM\ManyToMany(targetEntity: Label::class, inversedBy: 'albums', cascade: ['persist'])]
     private Collection $labels;
 
-    #[ORM\ManyToMany(targetEntity: Song::class, inversedBy: 'albums')]
+    #[ORM\ManyToMany(targetEntity: Song::class, inversedBy: 'albums', cascade: ['persist'])]
     private Collection $tracklists;
 
-    #[ORM\ManyToMany(targetEntity: Style::class, inversedBy: 'albums')]
+    #[ORM\ManyToMany(targetEntity: Style::class, inversedBy: 'albums',cascade: ['persist'])]
     private Collection $styles;
 
     #[ORM\ManyToOne(inversedBy: 'albums')]
