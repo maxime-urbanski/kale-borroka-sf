@@ -37,18 +37,22 @@ class Album
     #[ORM\ManyToMany(targetEntity: Song::class, inversedBy: 'albums', cascade: ['persist'])]
     private Collection $tracklists;
 
-    #[ORM\ManyToMany(targetEntity: Style::class, inversedBy: 'albums',cascade: ['persist'])]
+    #[ORM\ManyToMany(targetEntity: Style::class, inversedBy: 'albums', cascade: ['persist'])]
     private Collection $styles;
 
     #[ORM\ManyToOne(inversedBy: 'albums')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Artist $artist = null;
 
+    #[ORM\OneToMany(mappedBy: 'album', targetEntity: Article::class, orphanRemoval: true)]
+    private Collection $articles;
+
     public function __construct()
     {
         $this->labels = new ArrayCollection();
         $this->tracklists = new ArrayCollection();
         $this->styles = new ArrayCollection();
+        $this->articles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -198,5 +202,45 @@ class Album
         $this->artist = $artist;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Article>
+     */
+    public function getArticles(): Collection
+    {
+        return $this->articles;
+    }
+
+    public function addArticle(Article $article): static
+    {
+        if (!$this->articles->contains($article)) {
+            $this->articles->add($article);
+            $article->setAlbum($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticle(Article $article): static
+    {
+        if ($this->articles->removeElement($article)) {
+            // set the owning side to null (unless already changed)
+            if ($article->getAlbum() === $this) {
+                $article->setAlbum(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function fullName(): string
+    {
+        return $this->artist . ' - ' . $this->name;
+    }
+
+    public function __toString(): string
+    {
+        return $this->fullName();
     }
 }
