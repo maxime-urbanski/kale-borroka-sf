@@ -29,6 +29,6 @@ class LabelCrudController extends AbstractCrudController
     {
         yield TextField::new('name')->setLabel('Nom du label');
         yield BooleanField::new('isFriend')->setLabel('Ami');
-        yield AssociationField::new('albums')->setLabel('Albums');
+        yield AssociationField::new('albums')->setLabel('Albums')->hideOnForm();
     }
 }
