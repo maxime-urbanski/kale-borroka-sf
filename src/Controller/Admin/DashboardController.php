@@ -3,9 +3,11 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Album;
+use App\Entity\Article;
 use App\Entity\Artist;
 use App\Entity\Label;
 use App\Entity\Style;
+use App\Entity\Support;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -39,6 +41,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Label', 'fas fa-list', Label::class);
 
         yield MenuItem::section('Catalogue');
+        yield MenuItem::linkToCrud('Support', 'fas fa-list', Support::class);
+        yield MenuItem::linkToCrud('Article', 'fas fa-list', Article::class);
 
     }
 }

@@ -25,6 +25,14 @@ class Article
     #[ORM\Column]
     private ?int $price = null;
 
+    #[ORM\ManyToOne(inversedBy: 'articles')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Support $support = null;
+
+    #[ORM\ManyToOne(inversedBy: 'articles')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Album $album = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +82,30 @@ class Article
     public function setPrice(int $price): static
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getSupport(): ?Support
+    {
+        return $this->support;
+    }
+
+    public function setSupport(?Support $support): static
+    {
+        $this->support = $support;
+
+        return $this;
+    }
+
+    public function getAlbum(): ?Album
+    {
+        return $this->album;
+    }
+
+    public function setAlbum(?Album $album): static
+    {
+        $this->album = $album;
 
         return $this;
     }
