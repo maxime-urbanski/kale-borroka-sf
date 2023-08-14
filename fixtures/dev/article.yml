@@ -1,0 +1,16 @@
+App\Entity\Article:
+    article_template (template): 
+        name: '<name()>'
+        quantity: '<numberBetween(1,50)>'
+        price: '<numberBetween(700,2500)>'
+        support: '@support_*'
+        album: '@album_*'
+    
+    article_QuartierMaudit (extends article_template):
+        name: 'Brixton Cats - Quartier Maudit'
+        quantity: 2
+        price: 1000
+        support: '@support_LP'
+        album: '@Quartier_Maudit'
+        
+    article_{1..50} (extends article_template):

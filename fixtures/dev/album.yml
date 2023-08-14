@@ -1,0 +1,18 @@
+App\Entity\Album:
+    album_template (template):
+        artist: '@artist_*'
+        name: '<name()>'
+        note: '<paragraph(150)>'
+        kbr_production: '<boolean()>'
+        date_release: '<datetimeBetween("-20 days", "now")>'
+        styles: ['@style_*']
+        labels: ['@label_*']
+    
+    Quartier_Maudit (extends album_template):
+        artist: '@Brixton_Cats'
+        name: 'Quartier Maudit'
+        kbr_production: false
+        styles: ['@Punk', '@Streetpunk']
+        labels: ['@FireAndFlames', '@RudysBack']
+
+    album_{1..50} (extends album_template): 
