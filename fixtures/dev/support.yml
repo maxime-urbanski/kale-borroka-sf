@@ -1,0 +1,14 @@
+App\Entity\Support:
+    support (template): 
+    
+    support_LP (extends support):
+        name: 'lp'
+    
+    support_EP (extends support):
+        name: 'ep'
+    
+    support_CD (extends support):
+        name: 'cd'
+    
+    support_FANZINE (extends support):
+        name: 'fanzine'
