@@ -9,4 +9,4 @@
 import './styles/app.scss';
 import './styles/global.scss';
 
-import Boostrap from 'bootstrap'
+import 'bootstrap';
