@@ -16,7 +16,7 @@ final class CatalogController extends AbstractController
         $supports = $supportRepository->findAll();
 
         return $this->render('catalog/index.html.twig', [
-            'supports' => $supports
+            'supports' => $supports,
         ]);
     }
 
@@ -24,35 +24,31 @@ final class CatalogController extends AbstractController
     public function catalogBySupport(
         ArticleRepository $articleRepository,
         SupportRepository $supportRepository,
-        string            $support
-    ): Response
-    {
-
+        string $support
+    ): Response {
         $getSupport = $supportRepository->findOneBy(['name' => $support]);
         $articles = $articleRepository->findBy(['support' => $getSupport]);
 
         return $this->render('catalog/articles.html.twig', [
-            'articles' => $articles
+            'articles' => $articles,
         ]);
-
     }
 
     #[Route('/catalog/{support}/{slug}', 'app_catalog_article')]
     public function pageArticle(
         ArticleRepository $articleRepository,
         SupportRepository $supportRepository,
-        string            $support,
-        string            $slug
-    ): Response
-    {
+        string $support,
+        string $slug
+    ): Response {
         $getSupport = $supportRepository->findOneBy(['name' => $support]);
         $article = $articleRepository->findOneBy([
             'support' => $getSupport,
-            'slug' => $slug
+            'slug' => $slug,
         ]);
 
         return $this->render('catalog/article.html.twig', [
-            'article' => $article
+            'article' => $article,
         ]);
     }
 }

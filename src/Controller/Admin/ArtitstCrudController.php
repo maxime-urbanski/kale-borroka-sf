@@ -8,7 +8,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class ArtitstCrudController extends AbstractCrudController
 {
-
     public static function getEntityFqcn(): string
     {
         return Artist::class;

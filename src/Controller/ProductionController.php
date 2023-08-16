@@ -15,7 +15,7 @@ class ProductionController extends AbstractController
         $productions = $articleRepository->getOwnProduction();
 
         return $this->render('production/index.html.twig', [
-            'productions' => $productions->getResult()
+            'productions' => $productions->getResult(),
         ]);
     }
 }

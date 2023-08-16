@@ -14,7 +14,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class AlbumCrudController extends AbstractCrudController
 {
-
     public static function getEntityFqcn(): string
     {
         return Album::class;
