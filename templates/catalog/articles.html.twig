@@ -5,13 +5,16 @@
         <div class="row row-cols-3 gap-3">
             {% for article in articles %}
                 <div class="col">
-                    <a href="{{ path('app_catalog_article', {support: article.support, slug: article.slug}) }}">
-                        <div class="card">
+                    <div class="card">
+                        <a href="{{ path('app_catalog_article', {support: article.support, slug: article.slug}) }}">
                             {{ article.name }}
                             {{ article.quantity }}
                             {{ article.price }}
-                        </div>
-                    </a>
+                        </a>
+                        <a href="{{ path('app_cart_add', {id: article.id}) }}" class="btn btn-primary">
+                            Ajouter au panier
+                        </a>
+                    </div>
                 </div>
             {% endfor %}
         </div>
