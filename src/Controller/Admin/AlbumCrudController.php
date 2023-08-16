@@ -9,8 +9,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Form\Type\FileUploadType;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class AlbumCrudController extends AbstractCrudController
 {
@@ -39,7 +43,9 @@ class AlbumCrudController extends AbstractCrudController
         yield TextareaField::new('note')
             ->setLabel('Information')
             ->hideOnIndex();
-        // yield ImageField::new('folder')->setLabel('Pochette')->setUploadDir(__DIR__ . '/public/images/album')->hideOnIndex();
+        yield Field::new('images', 'Mettre en ligne')
+            ->setFormType(VichImageType::class)
+            ->onlyOnForms();
         yield DateField::new('date_release')->setLabel('Date de sortie');
         yield AssociationField::new('labels')
             ->setLabel('Produit par')

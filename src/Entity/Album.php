@@ -7,8 +7,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: AlbumRepository::class)]
+#[Vich\Uploadable]
 class Album
 {
     #[ORM\Id]
@@ -46,6 +48,9 @@ class Album
 
     #[ORM\OneToMany(mappedBy: 'album', targetEntity: Article::class, orphanRemoval: true)]
     private Collection $articles;
+
+    #[ORM\ManyToOne(targetEntity: Images::class, cascade: ['persist'], inversedBy: 'album')]
+    private ?Images $images = null;
 
     public function __construct()
     {
@@ -242,5 +247,17 @@ class Album
     public function __toString(): string
     {
         return $this->fullName();
+    }
+
+    public function getImages(): ?Images
+    {
+        return $this->images;
+    }
+
+    public function setImages(?Images $images): static
+    {
+        $this->images = $images;
+
+        return $this;
     }
 }
