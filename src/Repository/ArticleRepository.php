@@ -38,4 +38,15 @@ class ArticleRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function getOwnProduction()
+    {
+        $query = $this->createQueryBuilder('article')
+            ->select()
+            ->leftJoin('article.album', 'album')
+            ->where('album.kbrProduction = true')
+        ;
+
+        return $query->getQuery();
+    }
 }

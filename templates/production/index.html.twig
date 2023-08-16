@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block body%}
+    <div class="container">
+        <div class="row row-cols-3">
+            {% for production in productions %}
+                <div class="col">
+                    <div class="card">
+                        <a href="{{ path('app_catalog_article', {support: production.support, slug: production.slug}) }}">
+                            {{ production.name }}
+                            {{ production.quantity }}
+                            {{ production.price }}
+                            KBR: {{ production.album.kbrProduction ? 'yes' : 'no'}}
+                        </a>
+                        <a href="{{ path('app_cart_add', {id: production.id}) }}" class="btn btn-primary">
+                            Ajouter au panier
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
