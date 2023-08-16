@@ -115,6 +115,6 @@ class Song
 
     public function __toString(): string
     {
-        return $this->track . ' - ' . $this->name;
+        return $this->track.' - '.$this->name;
     }
 }

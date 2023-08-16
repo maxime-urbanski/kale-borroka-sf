@@ -9,7 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class SongCrudController extends AbstractCrudController
 {
-
     public static function getEntityFqcn(): string
     {
         return Song::class;
@@ -20,13 +19,12 @@ class SongCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInPlural('Tracklists')
             ->setEntityLabelInSingular('Tracklist')
-            ;
+        ;
     }
 
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new('name')->setLabel('Titre de la chanson');
         yield TextField::new('track')->setLabel('track');
-
     }
 }

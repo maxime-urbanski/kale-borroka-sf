@@ -7,7 +7,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class SupportCrudController extends AbstractCrudController
 {
-
     public static function getEntityFqcn(): string
     {
         return Support::class;

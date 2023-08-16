@@ -9,7 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class StyleCrudController extends AbstractCrudController
 {
-
     public static function getEntityFqcn(): string
     {
         return Style::class;

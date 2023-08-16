@@ -11,7 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class LabelCrudController extends AbstractCrudController
 {
-
     public static function getEntityFqcn(): string
     {
         return Label::class;
@@ -22,7 +21,7 @@ class LabelCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Label')
             ->setEntityLabelInPlural('Labels')
-            ;
+        ;
     }
 
     public function configureFields(string $pageName): iterable

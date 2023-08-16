@@ -14,18 +14,18 @@ class CartController extends AbstractController
     {
         $cart = $cartService->getFullCart();
         $total = $cartService->getTotal();
+
         return $this->render('cart/index.html.twig', [
             'cart' => $cart,
-            'total' => $total
+            'total' => $total,
         ]);
     }
 
     #[Route('/cart/add/{id}', 'app_cart_add')]
     public function addToCart(
         CartService $cartService,
-        int         $id
-    ): Response
-    {
+        int $id
+    ): Response {
         $cartService->addToCart($id);
 
         return $this->redirectToRoute('app_cart_index');
@@ -34,9 +34,8 @@ class CartController extends AbstractController
     #[Route('/cart/remove/{id}', 'app_cart_remove')]
     public function removeToCart(
         CartService $cartService,
-        int         $id
-    ): Response
-    {
+        int $id
+    ): Response {
         $cartService->removeToCart($id);
 
         return $this->redirectToRoute('app_cart_index');

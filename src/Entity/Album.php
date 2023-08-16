@@ -236,7 +236,7 @@ class Album
 
     public function fullName(): string
     {
-        return $this->artist . ' - ' . $this->name;
+        return $this->artist.' - '.$this->name;
     }
 
     public function __toString(): string

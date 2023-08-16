@@ -9,19 +9,17 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class CartService
 {
     public function __construct(
-        private readonly RequestStack      $requestStack,
+        private readonly RequestStack $requestStack,
         private readonly ArticleRepository $articleRepository
-    )
-    {
+    ) {
     }
-
 
     public function addToCart(int $id): void
     {
         $cart = $this->getSession()->get('cart', []);
 
         if (!empty($cart[$id])) {
-            $cart[$id]++;
+            ++$cart[$id];
         } else {
             $cart[$id] = 1;
         }
@@ -48,7 +46,7 @@ class CartService
         foreach ($cart as $id => $quantity) {
             $cartWithData[] = [
                 'product' => $this->articleRepository->find($id),
-                'quantity' => $quantity
+                'quantity' => $quantity,
             ];
         }
 
