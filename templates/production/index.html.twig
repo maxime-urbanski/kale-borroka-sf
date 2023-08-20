@@ -1,16 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block body%}
+{% block body %}
     <div class="container">
         <div class="row row-cols-3">
-            {% for production in productions %}
+            {% for production in productions.items %}
                 <div class="col">
                     <div class="card">
                         <a href="{{ path('app_catalog_article', {support: production.support, slug: production.slug}) }}">
                             {{ production.name }}
                             {{ production.quantity }}
                             {{ production.price }}
-                            KBR: {{ production.album.kbrProduction ? 'yes' : 'no'}}
+                            KBR: {{ production.album.kbrProduction ? 'yes' : 'no' }}
                         </a>
                         <a href="{{ path('app_cart_add', {id: production.id}) }}" class="btn btn-primary">
                             Ajouter au panier
@@ -18,6 +18,9 @@
                     </div>
                 </div>
             {% endfor %}
+        </div>
+        <div class="navigation mt-5">
+            {{ knp_pagination_render(productions, 'partials/_pagination.html.twig') }}
         </div>
     </div>
 {% endblock %}

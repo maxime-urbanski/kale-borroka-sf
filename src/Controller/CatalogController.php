@@ -4,7 +4,10 @@ namespace App\Controller;
 
 use App\Repository\ArticleRepository;
 use App\Repository\SupportRepository;
+use App\Service\PaginationService;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -20,17 +23,21 @@ final class CatalogController extends AbstractController
         ]);
     }
 
-    #[Route('/catalog/{support}', 'app_catalog_support')]
+    #[Route('/catalog/{support}/{page}', 'app_catalog_support', requirements: ['page' => '^(page-)\d+'])]
     public function catalogBySupport(
         ArticleRepository $articleRepository,
         SupportRepository $supportRepository,
-        string $support
-    ): Response {
+        PaginationService $paginationService,
+        string            $support,
+        string            $page = 'page-1',
+    ): Response
+    {
         $getSupport = $supportRepository->findOneBy(['name' => $support]);
-        $articles = $articleRepository->findBy(['support' => $getSupport]);
+        $articles = $articleRepository->pagination($getSupport);
+        $pagination = $paginationService->pagination($articles, $page);
 
         return $this->render('catalog/articles.html.twig', [
-            'articles' => $articles,
+            'articles' => $pagination
         ]);
     }
 
@@ -38,9 +45,10 @@ final class CatalogController extends AbstractController
     public function pageArticle(
         ArticleRepository $articleRepository,
         SupportRepository $supportRepository,
-        string $support,
-        string $slug
-    ): Response {
+        string            $support,
+        string            $slug
+    ): Response
+    {
         $getSupport = $supportRepository->findOneBy(['name' => $support]);
         $article = $articleRepository->findOneBy([
             'support' => $getSupport,

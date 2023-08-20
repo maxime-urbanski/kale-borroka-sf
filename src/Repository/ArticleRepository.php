@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Article;
+use App\Entity\Support;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,7 +41,7 @@ class ArticleRepository extends ServiceEntityRepository
         }
     }
 
-    public function getOwnProduction()
+    public function getOwnProduction(): Query
     {
         $query = $this->createQueryBuilder('article')
             ->select()
@@ -47,6 +49,15 @@ class ArticleRepository extends ServiceEntityRepository
             ->where('album.kbrProduction = true')
         ;
 
+        return $query->getQuery();
+    }
+
+    public function pagination(?Support $support): Query
+    {
+        $query = $this->createQueryBuilder('article')
+            ->where('article.support = :support')
+            ->setParameter('support', $support)
+            ;
         return $query->getQuery();
     }
 }
