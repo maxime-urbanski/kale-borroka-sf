@@ -1,0 +1,19 @@
+{% set route = app.request.get('_route') %}
+
+<div class="row mb-3">
+    <div class="col">
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                {% for link in breadcrumb %}
+                    {% if link.path == route %}
+                        <li class="breadcrumb-item active" aria-current="page">{{ link.name|capitalize }}</li>
+                    {% else %}
+                        <li class="breadcrumb-item">
+                            <a href="{{ path(link.path, link.params|default([])) }}">{{ link.name|capitalize }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+        </nav>
+    </div>
+</div>
