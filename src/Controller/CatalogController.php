@@ -16,8 +16,20 @@ final class CatalogController extends AbstractController
     {
         $supports = $supportRepository->findAll();
 
+        $breadcrumb = [
+            [
+                'name' => 'Accueil',
+                'path' => 'app_homepage'
+            ],
+            [
+                'name' => 'Catalogue',
+                'path' => 'app_catalog'
+            ],
+        ];
+
         return $this->render('catalog/index.html.twig', [
             'supports' => $supports,
+            'breadcrumb' => $breadcrumb
         ]);
     }
 
@@ -34,8 +46,27 @@ final class CatalogController extends AbstractController
         $articles = $articleRepository->pagination($getSupport);
         $pagination = $paginationService->pagination($articles, $page);
 
+        $breadcrumb = [
+            [
+                'name' => 'Accueil',
+                'path' => 'app_homepage'
+            ],
+            [
+                'name' => 'Catalogue',
+                'path' => 'app_catalog'
+            ],
+            [
+                'name' => $support,
+                'path' => 'app_catalog_support',
+                'params' => [
+                    'support' => $support
+                ]
+            ]
+        ];
+
         return $this->render('catalog/articles.html.twig', [
-            'articles' => $pagination
+            'articles' => $pagination,
+            'breadcrumb' => $breadcrumb
         ]);
     }
 
@@ -53,8 +84,35 @@ final class CatalogController extends AbstractController
             'slug' => $slug,
         ]);
 
+        $breadcrumb = [
+            [
+                'name' => 'Accueil',
+                'path' => 'app_homepage'
+            ],
+            [
+                'name' => 'Catalogue',
+                'path' => 'app_catalog'
+            ],
+            [
+                'name' => $support,
+                'path' => 'app_catalog_support',
+                'params' => [
+                    'support' => $support
+                ]
+            ],
+            [
+                'name' => $article->getName(),
+                'path' => 'app_catalog_article',
+                'params' => [
+                    'support' => $support,
+                    'slug' => $slug
+                ]
+            ]
+        ];
+
         return $this->render('catalog/article.html.twig', [
             'article' => $article,
+            'breadcrumb' => $breadcrumb
         ]);
     }
 }

@@ -20,8 +20,20 @@ class ProductionController extends AbstractController
         $productions = $articleRepository->getOwnProduction();
         $pagination = $paginationService->pagination($productions, $page);
 
-        return $this->render('production/index.html.twig', [
-            'productions' => $pagination,
+        $breadcrumb = [
+            [
+                'name' => 'Accueil',
+                'path' => 'app_homepage'
+            ],
+            [
+                'name' => 'Nos Productions',
+                'path' => 'app_production',
+            ]
+        ];
+
+        return $this->render('catalog/articles.html.twig', [
+            'articles' => $pagination,
+            'breadcrumb' => $breadcrumb
         ]);
     }
 }
