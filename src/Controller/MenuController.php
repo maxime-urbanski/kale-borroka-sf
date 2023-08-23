@@ -14,15 +14,20 @@ class MenuController extends AbstractController
 
     public function navbar(): Response
     {
-        $supports = $this->supportRepository->findAll();
-        $production = [
-            'link' => 'app_production',
-            'name' => 'Production'
+        $links = [
+            'production' => [
+                'link' => 'app_production',
+                'name' => 'Nos productions'
+            ],
+            'catalog' => [
+                'link' => 'app_catalog',
+                'name' => 'Catalogue',
+                'child' => $this->supportRepository->findAll()
+            ]
         ];
 
         return $this->render('layout/_navbar.html.twig', [
-            'supports' =>$supports,
-            'production' => $production
+            'links' => $links
         ]);
     }
 }

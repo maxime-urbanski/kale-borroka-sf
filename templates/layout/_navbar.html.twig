@@ -7,28 +7,33 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path(production['link']) }}">{{ production['name'] }}</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                       aria-expanded="false">
-                        Catalogue
-                    </a>
-                    <ul class="dropdown-menu">
-                        {% for page in supports %}
-                            <li><a class="dropdown-item"
-                                   href="{{ path('app_catalog_support', {support: page.getName()}) }}">{{ page.getName() | upper }}</a>
-                            </li>
-                        {% endfor %}
-
-                    </ul>
-                </li>
+                {% for link in links %}
+                    {% if link.child is defined %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                Le Shop
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{{ path(link.link) }}">{{ link.name }}</a>
+                                    <ul>
+                                        {% for child in link.child %}
+                                            <li><a class="dropdown-item"
+                                                   href="{{ path('app_catalog_support', { support: child.name}) }}">{{ child.name|upper }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class=" nav-item">
+                            <a class="nav-link" href="{{ path(link.link) }}">{{ link.name }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
             </ul>
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
         </div>
     </div>
 </nav>
