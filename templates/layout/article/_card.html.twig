@@ -5,7 +5,7 @@
            class="card-title text-center w-100">
             {{ article.name }}
             {{ article.quantity }}
-            {{ article.price }}
+            {{ (article.price/100) |format_currency('EUR') }}
         </a>
         <div class="d-grid col-1 mx-auto">
             <a href="{{ path('app_cart_add', {id: article.id}) }}" class="btn btn-success btn-sm">

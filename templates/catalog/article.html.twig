@@ -8,7 +8,7 @@
                 <div class="d-flex flex-column align-items-center justify-content-center">
                     <p>{{ article.name }}</p>
                     <p>Quantité: {{ article.quantity }}</p>
-                    <p>Prix: {{( article.price)/100 | form_encode_currency('EUR') }}</p>
+                    <p>Prix: {{( article.price/100) |format_currency('EUR') }}</p>
                     <p>{{ article.album.kbrProduction }}</p>
                     {% for tracklist in article.album.tracklists %}
                         <p>{{ tracklist.track }} - {{ tracklist.name }}</p>
