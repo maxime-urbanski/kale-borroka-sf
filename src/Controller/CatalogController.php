@@ -2,10 +2,16 @@
 
 namespace App\Controller;
 
+use App\Data\ArticleFilterData;
+use App\Form\ArticleFilterFormType;
 use App\Repository\ArticleRepository;
+use App\Repository\ArtistRepository;
+use App\Repository\LabelRepository;
+use App\Repository\StyleRepository;
 use App\Repository\SupportRepository;
 use App\Service\PaginationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -38,6 +44,10 @@ final class CatalogController extends AbstractController
         ArticleRepository $articleRepository,
         SupportRepository $supportRepository,
         PaginationService $paginationService,
+        StyleRepository $styleRepository,
+        LabelRepository $labelRepository,
+        ArtistRepository $artistRepository,
+        Request $request,
         string            $support,
         string            $page = 'page-1',
     ): Response
@@ -63,10 +73,14 @@ final class CatalogController extends AbstractController
                 ]
             ]
         ];
+        $data = new ArticleFilterData();
+        $form = $this->createForm(ArticleFilterFormType::class, $data);
+        $form->handleRequest($request);
 
         return $this->render('catalog/articles.html.twig', [
             'articles' => $pagination,
-            'breadcrumb' => $breadcrumb
+            'breadcrumb' => $breadcrumb,
+            'form' => $form->createView()
         ]);
     }
 

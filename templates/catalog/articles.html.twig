@@ -3,7 +3,14 @@
 {% block body %}
     <div class="container pt-5">
         {% include 'layout/_breadcrumb.html.twig' with {breadcrumb} %}
-        {% include 'layout/article/_article-grid.html.twig' with {articles: articles.items} %}
+        <div class="row">
+            <div class="col-md-4">
+                {{ form(form) }}
+            </div>
+            <div class="col-md-8">
+                {% include 'layout/article/_article-grid.html.twig' with {articles: articles.items} %}
+            </div>
+        </div>
         {{ knp_pagination_render(articles, 'partials/_pagination.html.twig') }}
     </div>
 {% endblock %}
