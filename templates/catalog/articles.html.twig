@@ -1,26 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container py-5">
-        <div class="row row-cols-3">
-            {% for article in articles.items %}
-                <div class="col">
-                    <div class="card">
-                        <a href="{{ path('app_catalog_article', {support: article.support, slug: article.slug}) }}">
-                            {{ article.name }}
-                            {{ article.quantity }}
-                            {{ article.price }}
-                        </a>
-                        <a href="{{ path('app_cart_add', {id: article.id}) }}" class="btn btn-primary">
-                            Ajouter au panier
-                        </a>
-                    </div>
-                </div>
-            {% endfor %}
-
-        </div>
-        <div class="d-grid col-12 mx-auto">
-            {{ knp_pagination_render(articles, 'partials/_pagination.html.twig') }}
-        </div>
+    <div class="container pt-5">
+        {% include 'layout/article/_article-grid.html.twig' with {articles: articles.items} %}
+        {{ knp_pagination_render(articles, 'partials/_pagination.html.twig') }}
     </div>
 {% endblock %}

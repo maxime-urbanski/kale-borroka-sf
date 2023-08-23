@@ -25,4 +25,4 @@ App\Entity\Style:
         name: 'Hardcore'
 
 
-    style_{1..20} (extends style_template):
+    style_{1..10} (extends style_template):

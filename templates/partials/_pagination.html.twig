@@ -1,8 +1,8 @@
 {% if pageCount > 1 %}
-    <nav class="py-3" id="nav-pagination">
+    <nav class="py-5" id="nav-pagination">
         {% set classAlign = (align is not defined) ? '' : align=='center' ? ' justify-content-center' : (align=='right' ? ' justify-content-end' : '') %}
         {% set classSize = (size is not defined) ? '' : size=='large' ? ' pagination-lg' : (size=='small' ? ' pagination-sm' : '') %}
-        <ul class="pagination{{ classAlign }}{{ classSize }}">
+        <ul class="pagination justify-content-center">
             {% if previous is defined %}
                 <li class="page-item">
                     <a class="page-link" rel="prev"

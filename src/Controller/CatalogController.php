@@ -5,9 +5,7 @@ namespace App\Controller;
 use App\Repository\ArticleRepository;
 use App\Repository\SupportRepository;
 use App\Service\PaginationService;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 

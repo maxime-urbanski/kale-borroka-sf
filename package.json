@@ -4,6 +4,7 @@
         "@babel/preset-env": "^7.16.0",
         "@popperjs/core": "^2.11.8",
         "@symfony/webpack-encore": "^4.0.0",
+        "bootstrap-icons": "^1.10.5",
         "core-js": "^3.23.0",
         "node-sass": "^9.0.0",
         "regenerator-runtime": "^0.13.9",
