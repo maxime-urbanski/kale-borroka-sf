@@ -4,10 +4,16 @@
     <div class="container pt-5">
         {% include 'layout/_breadcrumb.html.twig' with {breadcrumb} %}
         <div class="row">
-            <div class="col-md-4">
-                {{ form(form) }}
+            <div class="col-md-3">
+                {{ form_start(form) }}
+                {% for formChild in form %}
+                    <div class="p-3 mt-3 filter-block">
+                        {{ form_widget(formChild) }}
+                    </div>
+                {% endfor %}
+                {{ form_end(form) }}
             </div>
-            <div class="col-md-8">
+            <div class="col-md-9">
                 {% include 'layout/article/_article-grid.html.twig' with {articles: articles.items} %}
             </div>
         </div>

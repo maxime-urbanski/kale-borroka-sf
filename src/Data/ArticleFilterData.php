@@ -23,4 +23,15 @@ class ArticleFilterData
      * @var Style[]
      */
     public array $styles = [];
+
+
+    /**
+     * @var Support[]
+     */
+    public array $supports = [];
+
+    /*
+     * @var Album
+     */
+    public bool $kbrProduction = false;
 }

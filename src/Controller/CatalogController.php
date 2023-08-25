@@ -5,9 +5,6 @@ namespace App\Controller;
 use App\Data\ArticleFilterData;
 use App\Form\ArticleFilterFormType;
 use App\Repository\ArticleRepository;
-use App\Repository\ArtistRepository;
-use App\Repository\LabelRepository;
-use App\Repository\StyleRepository;
 use App\Repository\SupportRepository;
 use App\Service\PaginationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -44,18 +41,11 @@ final class CatalogController extends AbstractController
         ArticleRepository $articleRepository,
         SupportRepository $supportRepository,
         PaginationService $paginationService,
-        StyleRepository $styleRepository,
-        LabelRepository $labelRepository,
-        ArtistRepository $artistRepository,
-        Request $request,
+        Request           $request,
         string            $support,
         string            $page = 'page-1',
     ): Response
     {
-        $getSupport = $supportRepository->findOneBy(['name' => $support]);
-        $articles = $articleRepository->pagination($getSupport);
-        $pagination = $paginationService->pagination($articles, $page);
-
         $breadcrumb = [
             [
                 'name' => 'Accueil',
@@ -73,9 +63,15 @@ final class CatalogController extends AbstractController
                 ]
             ]
         ];
+
+
+        $getSupport = $supportRepository->findOneBy(['name' => $support]);
         $data = new ArticleFilterData();
         $form = $this->createForm(ArticleFilterFormType::class, $data);
         $form->handleRequest($request);
+
+        $articles = $articleRepository->filterArticleQuery($getSupport, $data);
+        $pagination = $paginationService->pagination($articles, $page);
 
         return $this->render('catalog/articles.html.twig', [
             'articles' => $pagination,

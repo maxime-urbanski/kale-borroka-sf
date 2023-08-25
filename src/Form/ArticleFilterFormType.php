@@ -6,8 +6,10 @@ use App\Data\ArticleFilterData;
 use App\Entity\Artist;
 use App\Entity\Label;
 use App\Entity\Style;
+use App\Entity\Support;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,26 +19,43 @@ class ArticleFilterFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('artists',EntityType::class, [
+            ->add('artists', EntityType::class, [
                 'label' => 'Artistes',
                 'class' => Artist::class,
                 'required' => false,
-                'multiple' => true
+                'multiple' => true,
+                'expanded' => true
             ])
-            ->add('labels',EntityType::class, [
-                'label' => 'Artistes',
+            ->add('labels', EntityType::class, [
+                'label' => 'Label',
                 'class' => Label::class,
                 'required' => false,
-                'multiple' => true
+                'multiple' => true,
+                'expanded' => true
             ])
-            ->add('styles',EntityType::class, [
-                'label' => 'Artistes',
+            ->add('supports', EntityType::class, [
+                'label' => 'Support',
+                'class' => Support::class,
+                'required' => false,
+                'multiple' => true,
+                'expanded' => true
+            ])
+            ->add('styles', EntityType::class, [
+                'label' => 'Styles',
                 'class' => Style::class,
                 'required' => false,
-                'multiple' => true
+                'multiple' => true,
+                'expanded' => true
             ])
-            ->add('submit', SubmitType::class)
-        ;
+            ->add('kbrProduction', CheckboxType::class, [
+                'label' => 'Nos productions',
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'checkbox-switch',
+                ],
+
+            ])
+            ->add('submit', SubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -46,5 +65,10 @@ class ArticleFilterFormType extends AbstractType
             'method' => 'GET',
             'csrf_protection' => false,
         ]);
+    }
+
+    public function getBlockPrefix(): string
+    {
+        return '';
     }
 }
