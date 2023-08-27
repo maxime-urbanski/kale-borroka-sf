@@ -7,9 +7,21 @@
             <div class="col-md-3">
                 {{ form_start(form) }}
                 {% for formChild in form %}
-                    <div class="p-3 mt-3 filter-block">
-                        {{ form_widget(formChild) }}
-                    </div>
+                    {% if formChild.vars.name == 'submit' or formChild.vars.name == 'kbrProduction' %}
+                        {{ form_row(formChild) }}
+                    {% else %}
+                        <div class="filter-accordion mb-4"
+                             data-controller="filter-accordion">
+                            <div class="filter-label bg-light   rounded-2">
+                                {{ form_label(formChild) }}
+                                <i class="bi bi-chevron-compact-down"
+                                   data-action="click->filter-accordion#open"></i>
+                            </div>
+                            <div class="filter-body">
+                                {{ form_widget(formChild) }}
+                            </div>
+                        </div>
+                    {% endif %}
                 {% endfor %}
                 {{ form_end(form) }}
             </div>
