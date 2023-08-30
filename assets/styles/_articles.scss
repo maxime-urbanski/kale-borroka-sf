@@ -1,0 +1,28 @@
+.filter-accordion {
+    > .filter-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+
+        >.bi-chevron-compact-down {
+            transition: transform .3s ease-in;
+        }
+        >.bi-chevron-compact-down.rotate-180 {
+            transition: transform .3s ease-in;
+            transform: rotate(180deg);
+        }
+    }
+    > .filter-body {
+        max-height: 0;
+        overflow-y: auto;
+        transition: max-height .3s ease-in-out, padding .3s ease-in-out;
+        padding: 0 20px;
+    }
+
+    > .filter-body.opened {
+        max-height: 200px;
+        transition: max-height .3s ease-in-out, padding .3s ease-in-out;
+        padding: 10px 20px;
+    }
+}
