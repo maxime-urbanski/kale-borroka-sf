@@ -11,6 +11,9 @@
                     <p>Quantité: {{ article.quantity }}</p>
                     <p>Prix: {{( article.price/100) |format_currency('EUR') }}</p>
                     <p>{{ article.album.kbrProduction }}</p>
+                    <a href="{{ path('app_cart_add', {id: article.id}) }}" class="btn btn-success">
+                        <i class="bi bi-minecart"></i>
+                    </a>
                     {% for tracklist in article.album.tracklists %}
                         <p>{{ tracklist.track }} - {{ tracklist.name }}</p>
                     {% endfor %}
