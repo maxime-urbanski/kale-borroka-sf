@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Data\ArticleFilterData;
+use App\Data\ProductionFilterData;
 use App\Entity\Artist;
 use App\Entity\Label;
 use App\Entity\Style;
@@ -14,7 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ArticleFilterFormType extends AbstractType
+class ProductionFilterFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -29,6 +29,13 @@ class ArticleFilterFormType extends AbstractType
             ->add('labels', EntityType::class, [
                 'label' => 'Label',
                 'class' => Label::class,
+                'required' => false,
+                'multiple' => true,
+                'expanded' => true
+            ])
+            ->add('supports', EntityType::class, [
+                'label' => 'Support',
+                'class' => Support::class,
                 'required' => false,
                 'multiple' => true,
                 'expanded' => true
@@ -54,7 +61,7 @@ class ArticleFilterFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ArticleFilterData::class,
+            'data_class' => ProductionFilterData::class,
             'method' => 'GET',
             'csrf_protection' => false,
         ]);

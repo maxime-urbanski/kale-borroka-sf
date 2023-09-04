@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Data\ArticleFilterData;
+use App\Data\ProductionFilterData;
 use App\Entity\Article;
 use App\Entity\Support;
 use App\Form\ArticleFilterFormType;
@@ -53,13 +54,11 @@ class ArticleRepository extends ServiceEntityRepository
         return $query->getQuery();
     }
 
-    public function filterArticleQuery(?Support $support, ArticleFilterData $filterData): Query
+    public function filterArticleQuery(ProductionFilterData|ArticleFilterData $filterData): Query
     {
         $query = $this->createQueryBuilder('article')
             ->leftJoin('article.album', 'album')
-            ->where('article.support = :support')
-            ->orderBy('article.name','ASC')
-            ->setParameter('support', $support);
+            ->orderBy('article.name', 'ASC');
 
         if (!empty($filterData->artists)) {
             $query
@@ -85,6 +84,12 @@ class ArticleRepository extends ServiceEntityRepository
             $query
                 ->andWhere('album.kbrProduction = :kbrProduction')
                 ->setParameter('kbrProduction', $filterData->kbrProduction);
+        }
+
+        if (!empty($filterData->supports)) {
+            $query
+                ->andWhere('article.support = :support')
+                ->setParameter('support', $filterData->supports);
         }
 
         return $query->getQuery();

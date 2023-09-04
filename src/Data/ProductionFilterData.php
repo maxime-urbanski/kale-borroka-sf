@@ -7,7 +7,8 @@ use App\Entity\Label;
 use App\Entity\Style;
 use App\Entity\Support;
 
-class ArticleFilterData
+
+class ProductionFilterData
 {
     /**
      * @var Artist[]
@@ -24,8 +25,10 @@ class ArticleFilterData
      */
     public array $styles = [];
 
-    /*
-     * @var Album
+    /**
+     * @var Support[]
      */
+    public array $supports = [];
+
     public bool $kbrProduction = false;
 }

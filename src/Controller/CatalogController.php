@@ -67,10 +67,12 @@ final class CatalogController extends AbstractController
 
         $getSupport = $supportRepository->findOneBy(['name' => $support]);
         $data = new ArticleFilterData();
+        $data->supports = $getSupport;
+
         $form = $this->createForm(ArticleFilterFormType::class, $data);
         $form->handleRequest($request);
 
-        $articles = $articleRepository->filterArticleQuery($getSupport, $data);
+        $articles = $articleRepository->filterArticleQuery($data);
         $pagination = $paginationService->pagination($articles, $page);
 
         return $this->render('catalog/articles.html.twig', [
