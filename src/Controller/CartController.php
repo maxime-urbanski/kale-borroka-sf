@@ -36,11 +36,17 @@ class CartController extends AbstractController
         $refererPathInfo = Request::create($routeReferer)->getPathInfo();
         $routeInfos = $router->match($refererPathInfo);
 
-        if(!$routeInfos) return null;
+        if (!$routeInfos) return null;
 
         unset($routeControllerName, $routeInfos['_controller']);
 
-        $cartService->addToCart($id);
+        try {
+            $cartService->addToCart($id);
+            $this->addFlash('success', 'article ajouté au panier');
+        } catch (\Exception $e) {
+            throw new \Exception($e);
+        }
+
 
         return $this->redirectToRoute($routeInfos['_route'], $routeInfos);
     }

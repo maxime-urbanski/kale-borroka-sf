@@ -68,6 +68,7 @@ final class CatalogController extends AbstractController
         $getSupport = $supportRepository->findOneBy(['name' => $support]);
         $data = new ArticleFilterData();
         $data->supports = $getSupport;
+
         $form = $this->createForm(ArticleFilterFormType::class, $data);
         $form->handleRequest($request);
 

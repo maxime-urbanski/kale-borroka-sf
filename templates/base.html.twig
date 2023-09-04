@@ -18,6 +18,18 @@
     {{ render(controller('App\\Controller\\MenuController::navbar')) }}
 </header>
 {% block body %}
+    <div class="row">
+        <div class="col">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show mt-5" role="alert">
+                        {{ message|trans }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
     <div class="container">
         <h1>Kale Borroka Home</h1>
     </div>
