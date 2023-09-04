@@ -14,7 +14,7 @@
                              data-controller="filter-accordion">
                             <div class="filter-label bg-light   rounded-2">
                                 {{ form_label(formChild) }}
-                                <i class="bi bi-chevron-compact-down"
+                                <i class="bi bi-chevron-compact-down cursor-pointer"
                                    data-action="click->filter-accordion#open"></i>
                             </div>
                             <div class="filter-body">
@@ -26,6 +26,7 @@
                 {{ form_end(form) }}
             </div>
             <div class="col-md-9">
+                <p>{{ articles.totalItemCount }} élément trouvés.</p>
                 {% include 'layout/article/_article-grid.html.twig' with {articles: articles.items} %}
             </div>
         </div>
