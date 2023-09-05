@@ -62,21 +62,21 @@ class ArticleRepository extends ServiceEntityRepository
 
         if (!empty($filterData->artists)) {
             $query
-                ->andWhere('album.artist = :artist')
+                ->andWhere('album.artist IN (:artist)')
                 ->setParameter('artist', $filterData->artists);
         }
 
         if (!empty($filterData->labels)) {
             $query
                 ->leftJoin('album.labels', 'labels')
-                ->andWhere("labels = :labels")
+                ->andWhere("labels IN (:labels)")
                 ->setParameter('labels', $filterData->labels);
         }
 
         if (!empty($filterData->styles)) {
             $query
                 ->leftJoin('album.styles', 'styles')
-                ->andWhere('styles = :styles')
+                ->andWhere('styles IN (:styles)')
                 ->setParameter('styles', $filterData->styles);
         }
 
@@ -88,7 +88,7 @@ class ArticleRepository extends ServiceEntityRepository
 
         if (!empty($filterData->supports)) {
             $query
-                ->andWhere('article.support = :support')
+                ->andWhere('article.support IN (:support)')
                 ->setParameter('support', $filterData->supports);
         }
 
