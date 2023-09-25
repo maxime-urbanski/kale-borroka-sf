@@ -1,9 +1,33 @@
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-icons';
 
-
 @import "articles";
 
 .cursor-pointer {
     cursor: pointer;
+}
+
+.badge-toast {
+    width: 10px;
+    height: 10px;
+}
+
+.badge-toast.toast-success {
+    background-color: $success;
+}
+
+.badge-toast.toast-danger {
+    background-color: $danger;
+}
+
+.badge-toast.toast-warning {
+    background-color: $warning;
+}
+
+.w-content {
+    width: fit-content;
+}
+
+.ratio-1 {
+    aspect-ratio: 1 /1;
 }

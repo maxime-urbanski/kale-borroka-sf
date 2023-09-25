@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Album;
 use App\Entity\Article;
 use App\Entity\Artist;
+use App\Entity\Image;
 use App\Entity\Label;
 use App\Entity\Style;
 use App\Entity\Support;
@@ -40,6 +41,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Album', 'fas fa-list', Album::class);
         yield MenuItem::linkToCrud('Style', 'fas fa-list', Style::class);
         yield MenuItem::linkToCrud('Label', 'fas fa-list', Label::class);
+        yield MenuItem::linkToCrud('Image', 'fas fa-list', Image::class);
 
         yield MenuItem::section('Catalogue');
         yield MenuItem::linkToCrud('Support', 'fas fa-list', Support::class);

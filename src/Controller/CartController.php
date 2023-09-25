@@ -24,6 +24,9 @@ class CartController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws \Exception
+     */
     #[Route('/cart/add/{id}', 'app_cart_add')]
     public function addToCart(
         CartService     $cartService,

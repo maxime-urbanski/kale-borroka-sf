@@ -11,3 +11,9 @@ import './styles/app.scss';
 import './styles/global.scss';
 
 import 'bootstrap';
+
+const toastLiveExample = document.getElementById('test')
+
+if (toastLiveExample) {
+  toastLiveExample.classList.add('show');
+}

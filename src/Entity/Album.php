@@ -47,12 +47,16 @@ class Album
     #[ORM\OneToMany(mappedBy: 'album', targetEntity: Article::class, orphanRemoval: true)]
     private Collection $articles;
 
+    #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'album')]
+    private Collection $images;
+
     public function __construct()
     {
         $this->labels = new ArrayCollection();
         $this->tracklists = new ArrayCollection();
         $this->styles = new ArrayCollection();
         $this->articles = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -242,5 +246,32 @@ class Album
     public function __toString(): string
     {
         return $this->fullName();
+    }
+
+    /**
+     * @return Collection<int, Image>
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(Image $image): static
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->addAlbum($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): static
+    {
+        if ($this->images->removeElement($image)) {
+            $image->removeAlbum($this);
+        }
+
+        return $this;
     }
 }
