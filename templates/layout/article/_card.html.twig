@@ -1,5 +1,10 @@
 <div class="card h-100">
-    <img src="{{ asset('images/product_placeholder.png') }}" class="card-img-top"/>
+    {% if article.album.images[0] is defined %}
+        <img src="{{ asset('upload/albums/' ~ article.album.images[0].imageName) }}" alt="{{ article.name }}"
+             class="card-img-top">
+    {% else %}
+        <img src="{{ asset('/images/product_placeholder.png') }}" alt="{{ article.name }}" class="card-img-top">
+    {% endif %}
     <div class="card-body d-flex flex-column justify-content-between">
         <a href="{{ path('app_catalog_article', {support: article.support, slug: article.slug}) }}"
            class="card-title text-center w-100">

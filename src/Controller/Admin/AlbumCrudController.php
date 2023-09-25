@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -29,6 +30,10 @@ class AlbumCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        yield ImageField::new('folder')
+            ->setBasePath('/upload/albums')
+            ->setUploadDir('/upload/albums')
+            ->onlyOnIndex();
         yield AssociationField::new('artist')
             ->autocomplete()
             ->setLabel('Artiste');

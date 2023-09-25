@@ -4,20 +4,38 @@
     <div class="container py-5">
         {% include 'layout/_breadcrumb.html.twig' with {breadcrumb} %}
         <div class="row">
-            <div class="col-md-6"></div>
-            <div class="col-md-6">
-                <div class="d-flex flex-column align-items-center justify-content-center">
-                    <p>{{ article.name }}</p>
+            <div class="col">
+                <h1 class="text-center">{{ article.name }}</h1>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-md-5">
+                {% if article.album.images[0] is defined %}
+                    <img src="{{ asset('upload/albums/' ~ article.album.images[0].imageName) }}"
+                         alt="{{ article.name }}" >
+                {% else %}
+                    <img src="{{ asset('/images/product_placeholder.png') }}" alt="{{ article.name }}">
+                {% endif %}
+            </div>
+            <div class="d-sm-none d-md-block col-md-2"></div>
+            <div class="col-md-5">
+                <div class="d-flex flex-column justify-content-center">
                     <p>Quantité: {{ article.quantity }}</p>
-                    <p>Prix: {{( article.price/100) |format_currency('EUR') }}</p>
-                    <p>{{ article.album.kbrProduction }}</p>
-                    <a href="{{ path('app_cart_add', {id: article.id}) }}" class="btn btn-success">
+                    <p>Prix: {{ ( article.price/100) |format_currency('EUR') }}</p>
+                    <a href="{{ path('app_cart_add', {id: article.id}) }}" class="btn btn-success w-content">
                         <i class="bi bi-minecart"></i>
                     </a>
-                    {% for tracklist in article.album.tracklists %}
-                        <p>{{ tracklist.track }} - {{ tracklist.name }}</p>
-                    {% endfor %}
+                    <p>
+                        {% for tracklist in article.album.tracklists %}
+                            {{ tracklist.track }} - {{ tracklist.name }} <br>
+                        {% endfor %}
+                    </p>
                 </div>
+            </div>
+        </div>
+        <div class="card mt-5">
+            <div class="card-body">
+                <p>{{ article.album.note }}</p>
             </div>
         </div>
     </div>
