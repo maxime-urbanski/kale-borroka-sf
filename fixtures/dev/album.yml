@@ -12,7 +12,7 @@ App\Entity\Album:
         artist: '@Brixton_Cats'
         name: 'Quartier Maudit'
         kbr_production: false
-        styles: ['@Punk', '@Streetpunk']
+        styles: ['@style_punk', '@style_streetpunk']
         labels: ['@FireAndFlames', '@RudysBack']
 
     album_{1..50} (extends album_template): 
