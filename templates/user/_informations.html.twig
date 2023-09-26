@@ -1,0 +1,28 @@
+{% extends 'user/user-dashboard.html.twig' %}
+
+{% block content %}
+    <div class="card px-5 py-3">
+        <div class="d-flex card-title m-0">
+            <p class="m-0">Mes coordonnées</p>
+            <a href="{{ path('app_user_informations') }}" class="ms-auto">Modifier</a>
+        </div>
+        <div class="card-body p-0">
+            <span>{{ user.fullName |upper }}</span>
+            <div class="row row-cols-sm-1 row-cols-lg-3 justify-content-center mt-3">
+                <div class="col d-flex flex-column border-end px-4">
+                    <span>email:</span>
+                    <p>{{ user.email }}</p>
+                </div>
+                <div class="col d-flex flex-column border-end px-4"></div>
+                <div class="col d-flex flex-column px-4">
+                    <span>Adresse:</span>
+                    <p>
+                        {{ user.address }} <br>
+                        {{ user.zipcode }} - {{ user.city }} <br>
+                        {{ user.country }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

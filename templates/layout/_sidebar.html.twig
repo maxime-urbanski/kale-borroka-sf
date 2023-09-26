@@ -1,0 +1,20 @@
+{# @var user \App\Entity\User #}
+
+{% set routes = [
+    {
+        name: 'Mes informations',
+        link: 'app_user_informations',
+        icon: ''
+    },
+    {
+        name: 'Modifier informations',
+        link: 'app_user_informations_edit',
+        icon: ''
+    }
+] %}
+
+
+<div class="d-flex flex-column border border-danger flex-shrink-0 h-100">
+    <a href="{{ path('app_user_informations') }}">Mon compte</a>
+
+</div>
