@@ -1,0 +1,26 @@
+parameters:
+    pw_admin: $2y$13$LhfacaWvO8Ah.UnWAWAoceWaVyC1XIMdz0AlCjnng6tIg/Qyty/Q6
+    pw_user: $2y$13$1HnHf2YaceDZAYsjfoSIaeemZeYQ5Ov2Oehd177a0L1EnJ5jiqV2u
+
+App\Entity\User:
+    user_admin:
+        email: maxiloud@gmail.com
+        password: <{pw_admin}>
+        roles: [ 'ROLE_ADMIN' ]
+        lastname: Loud
+        firstname: Maxi
+        address: 10 rue Afa
+        zipcode: 64161
+        city: Baiona
+        country: France
+    
+    user:
+        email: test@test.fr
+        password: <{pw_user}>
+        roles: [ 'ROLE_USER' ]
+        lastname: Test
+        firstname: Test
+        address: 10 rue Afa
+        zipcode: 64161
+        city: Baiona
+        country: France
