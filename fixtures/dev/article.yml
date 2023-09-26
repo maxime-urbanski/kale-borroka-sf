@@ -5,6 +5,8 @@ App\Entity\Article:
         price: '<numberBetween(700,2500)>'
         support: '@support_*'
         album: '@album_*'
+        created_at: <(new DateTimeImmutable('now'))>
+        updated_at: <(new DateTimeImmutable('now'))>
     
     article_QuartierMaudit (extends article_template):
         name: 'Brixton Cats - Quartier Maudit'
@@ -12,5 +14,6 @@ App\Entity\Article:
         price: 1000
         support: '@support_LP'
         album: '@Quartier_Maudit'
-        
+
+
     article_{1..50} (extends article_template):

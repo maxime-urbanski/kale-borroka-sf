@@ -43,11 +43,11 @@
             </div>
         </div>
         {% if articleByArtist |length > 1 %}
-            {% include 'layout/article/_section.html.twig' with {articles: articleByArtist, type: 'Artiste'} %}
+            {% include 'layout/article/_section.html.twig' with {articles: articleByArtist, title: 'Artiste'} %}
         {% endif %}
 
         {% if articleSameStyle|length > 1 %}
-            {% include 'layout/article/_section.html.twig' with {articles: articleSameStyle, type: 'Style'} %}
+            {% include 'layout/article/_section.html.twig' with {articles: articleSameStyle, title: 'Style'} %}
         {% endif %}
     </div>
 {% endblock %}
