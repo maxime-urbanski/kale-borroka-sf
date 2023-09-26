@@ -122,9 +122,19 @@ final class CatalogController extends AbstractController
             ]
         ];
 
+        $artistArticle = $articleRepository->getArticleWithSameArtist($article->getAlbum()->getArtist()->getId());
+
+        foreach ($article->getAlbum()->getStyles() as $style) {
+            $array[] = $style->getId();
+        }
+
+        $articleWithSameStyle = $articleRepository->getArticleWithSameStyle($array);
+
         return $this->render('catalog/article.html.twig', [
             'article' => $article,
-            'breadcrumb' => $breadcrumb
+            'breadcrumb' => $breadcrumb,
+            'articleByArtist' => $artistArticle->getResult(),
+            'articleSameStyle' => $articleWithSameStyle->getResult()
         ]);
     }
 }

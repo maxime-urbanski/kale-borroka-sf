@@ -12,7 +12,7 @@
             <div class="col-md-5">
                 {% if article.album.images[0] is defined %}
                     <img src="{{ asset('upload/albums/' ~ article.album.images[0].imageName) }}"
-                         alt="{{ article.name }}" >
+                         alt="{{ article.name }}">
                 {% else %}
                     <img src="{{ asset('/images/product_placeholder.png') }}" alt="{{ article.name }}">
                 {% endif %}
@@ -33,10 +33,21 @@
                 </div>
             </div>
         </div>
-        <div class="card mt-5">
-            <div class="card-body">
-                <p>{{ article.album.note }}</p>
+        <div class="row">
+            <div class="col">
+                <div class="card mt-5">
+                    <div class="card-body">
+                        <p>{{ article.album.note }}</p>
+                    </div>
+                </div>
             </div>
         </div>
+        {% if articleByArtist |length > 1 %}
+            {% include 'layout/article/_section.html.twig' with {articles: articleByArtist, type: 'Artiste'} %}
+        {% endif %}
+
+        {% if articleSameStyle|length > 1 %}
+            {% include 'layout/article/_section.html.twig' with {articles: articleSameStyle, type: 'Style'} %}
+        {% endif %}
     </div>
 {% endblock %}
