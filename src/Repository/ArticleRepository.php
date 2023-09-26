@@ -5,9 +5,12 @@ namespace App\Repository;
 use App\Data\ArticleFilterData;
 use App\Data\ProductionFilterData;
 use App\Entity\Article;
+use App\Entity\Artist;
+use App\Entity\Style;
 use App\Entity\Support;
 use App\Form\ArticleFilterFormType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -93,5 +96,35 @@ class ArticleRepository extends ServiceEntityRepository
         }
 
         return $query->getQuery();
+    }
+
+    public function getArticleWithSameArtist($artist): Query
+    {
+        return $this->createQueryBuilder('article')
+            ->leftJoin('article.album', 'album')
+            ->where('album.artist = :artist')
+            ->orderBy('article.name', 'ASC')
+            ->setMaxResults(4)
+            ->setParameter('artist', $artist)
+            ->getQuery();
+    }
+
+    public function getArticleWithSameStyle(array $styles): Query{
+        return $this->createQueryBuilder('article')
+            ->leftJoin('article.album', 'album')
+            ->leftJoin('album.styles', 'styles')
+            ->where('styles IN (:styles)')
+            ->orderBy('article.name', 'ASC')
+            ->setMaxResults(4)
+            ->setParameter('styles', $styles)
+            ->getQuery();
+    }
+
+    public function getLastArticle(): Query
+    {
+        return $this->createQueryBuilder('article')
+            ->setMaxResults(12)
+            ->orderBy('')
+            ->getQuery();
     }
 }
