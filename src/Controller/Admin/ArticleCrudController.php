@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Article;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -21,6 +22,7 @@ class ArticleCrudController extends AbstractCrudController
         yield TextField::new('name');
         yield SlugField::new('slug')->setTargetFieldName('name');
         yield AssociationField::new('album');
+        yield DateField::new('created_at');
         yield NumberField::new('quantity');
         yield NumberField::new('price');
         yield AssociationField::new('support');

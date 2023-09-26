@@ -5,6 +5,7 @@
         {% include 'layout/_breadcrumb.html.twig' with {breadcrumb} %}
         <div class="row">
             <div class="col-md-3">
+                <p class="badge text-bg-dark">{{ articles.totalItemCount }} éléments trouvés.</p>
                 {{ form_start(form) }}
                 {% for formChild in form %}
                     {% if formChild.vars.name == 'submit' or formChild.vars.name == 'kbrProduction' %}
@@ -26,7 +27,6 @@
                 {{ form_end(form) }}
             </div>
             <div class="col-md-9">
-                <p>{{ articles.totalItemCount }} éléments trouvés.</p>
                 {% include 'layout/article/_article-grid.html.twig' with {articles: articles.items} %}
             </div>
         </div>

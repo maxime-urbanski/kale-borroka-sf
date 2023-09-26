@@ -42,12 +42,17 @@ class ArticleRepository extends ServiceEntityRepository
         }
     }
 
-    public function getOwnProduction(): Query
+    public function getOwnProduction(bool $forHome = false): Query
     {
         $query = $this->createQueryBuilder('article')
             ->select()
             ->leftJoin('article.album', 'album')
             ->where('album.kbrProduction = true');
+
+        if ($forHome) $query
+            ->orderBy('article.name', 'ASC')
+            ->orderBy('article.createdAt', 'DESC')
+            ->setMaxResults(8);
 
         return $query->getQuery();
     }
@@ -119,8 +124,9 @@ class ArticleRepository extends ServiceEntityRepository
     public function getLastArticle(): Query
     {
         return $this->createQueryBuilder('article')
-            ->setMaxResults(12)
-            ->orderBy('')
+            ->setMaxResults(8)
+            ->orderBy('article.createdAt', 'DESC')
+            ->orderBy('article.name', 'ASC')
             ->getQuery();
     }
 }
