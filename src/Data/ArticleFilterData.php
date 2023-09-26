@@ -5,7 +5,6 @@ namespace App\Data;
 use App\Entity\Artist;
 use App\Entity\Label;
 use App\Entity\Style;
-use App\Entity\Support;
 
 class ArticleFilterData
 {

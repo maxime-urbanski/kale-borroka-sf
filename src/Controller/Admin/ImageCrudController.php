@@ -11,7 +11,6 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class ImageCrudController extends AbstractCrudController
 {
-
     public static function getEntityFqcn(): string
     {
         return Image::class;

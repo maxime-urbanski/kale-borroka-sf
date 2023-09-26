@@ -17,17 +17,17 @@ class MenuController extends AbstractController
         $links = [
             'production' => [
                 'link' => 'app_production',
-                'name' => 'Nos productions'
+                'name' => 'Nos productions',
             ],
             'catalog' => [
                 'link' => 'app_catalog',
                 'name' => 'Catalogue',
-                'child' => $this->supportRepository->findAll()
-            ]
+                'child' => $this->supportRepository->findAll(),
+            ],
         ];
 
         return $this->render('layout/_navbar.html.twig', [
-            'links' => $links
+            'links' => $links,
         ]);
     }
 }

@@ -7,7 +7,6 @@ use App\Entity\Label;
 use App\Entity\Style;
 use App\Entity\Support;
 
-
 class ProductionFilterData
 {
     /**

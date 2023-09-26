@@ -24,28 +24,28 @@ class ProductionFilterFormType extends AbstractType
                 'class' => Artist::class,
                 'required' => false,
                 'multiple' => true,
-                'expanded' => true
+                'expanded' => true,
             ])
             ->add('labels', EntityType::class, [
                 'label' => 'Label',
                 'class' => Label::class,
                 'required' => false,
                 'multiple' => true,
-                'expanded' => true
+                'expanded' => true,
             ])
             ->add('supports', EntityType::class, [
                 'label' => 'Support',
                 'class' => Support::class,
                 'required' => false,
                 'multiple' => true,
-                'expanded' => true
+                'expanded' => true,
             ])
             ->add('styles', EntityType::class, [
                 'label' => 'Styles',
                 'class' => Style::class,
                 'required' => false,
                 'multiple' => true,
-                'expanded' => true
+                'expanded' => true,
             ])
             ->add('kbrProduction', CheckboxType::class, [
                 'label' => 'Nos productions',
@@ -53,7 +53,6 @@ class ProductionFilterFormType extends AbstractType
                 'label_attr' => [
                     'class' => 'checkbox-switch',
                 ],
-
             ])
             ->add('submit', SubmitType::class);
     }

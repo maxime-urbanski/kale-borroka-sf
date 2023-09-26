@@ -22,17 +22,17 @@ final class CatalogController extends AbstractController
         $breadcrumb = [
             [
                 'name' => 'Accueil',
-                'path' => 'app_homepage'
+                'path' => 'app_homepage',
             ],
             [
                 'name' => 'Catalogue',
-                'path' => 'app_catalog'
+                'path' => 'app_catalog',
             ],
         ];
 
         return $this->render('catalog/index.html.twig', [
             'supports' => $supports,
-            'breadcrumb' => $breadcrumb
+            'breadcrumb' => $breadcrumb,
         ]);
     }
 
@@ -41,29 +41,27 @@ final class CatalogController extends AbstractController
         ArticleRepository $articleRepository,
         SupportRepository $supportRepository,
         PaginationService $paginationService,
-        Request           $request,
-        string            $support,
-        string            $page = 'page-1',
-    ): Response
-    {
+        Request $request,
+        string $support,
+        string $page = 'page-1',
+    ): Response {
         $breadcrumb = [
             [
                 'name' => 'Accueil',
-                'path' => 'app_homepage'
+                'path' => 'app_homepage',
             ],
             [
                 'name' => 'Catalogue',
-                'path' => 'app_catalog'
+                'path' => 'app_catalog',
             ],
             [
                 'name' => $support,
                 'path' => 'app_catalog_support',
                 'params' => [
-                    'support' => $support
-                ]
-            ]
+                    'support' => $support,
+                ],
+            ],
         ];
-
 
         $getSupport = $supportRepository->findOneBy(['name' => $support]);
         $data = new ArticleFilterData();
@@ -78,7 +76,7 @@ final class CatalogController extends AbstractController
         return $this->render('catalog/articles.html.twig', [
             'articles' => $pagination,
             'breadcrumb' => $breadcrumb,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 
@@ -86,10 +84,9 @@ final class CatalogController extends AbstractController
     public function pageArticle(
         ArticleRepository $articleRepository,
         SupportRepository $supportRepository,
-        string            $support,
-        string            $slug
-    ): Response
-    {
+        string $support,
+        string $slug
+    ): Response {
         $getSupport = $supportRepository->findOneBy(['name' => $support]);
         $article = $articleRepository->findOneBy([
             'support' => $getSupport,
@@ -99,27 +96,27 @@ final class CatalogController extends AbstractController
         $breadcrumb = [
             [
                 'name' => 'Accueil',
-                'path' => 'app_homepage'
+                'path' => 'app_homepage',
             ],
             [
                 'name' => 'Catalogue',
-                'path' => 'app_catalog'
+                'path' => 'app_catalog',
             ],
             [
                 'name' => $support,
                 'path' => 'app_catalog_support',
                 'params' => [
-                    'support' => $support
-                ]
+                    'support' => $support,
+                ],
             ],
             [
                 'name' => $article->getName(),
                 'path' => 'app_catalog_article',
                 'params' => [
                     'support' => $support,
-                    'slug' => $slug
-                ]
-            ]
+                    'slug' => $slug,
+                ],
+            ],
         ];
 
         $artistArticle = $articleRepository->getArticleWithSameArtist($article->getAlbum()->getArtist()->getId());
@@ -134,7 +131,7 @@ final class CatalogController extends AbstractController
             'article' => $article,
             'breadcrumb' => $breadcrumb,
             'articleByArtist' => $artistArticle->getResult(),
-            'articleSameStyle' => $articleWithSameStyle->getResult()
+            'articleSameStyle' => $articleWithSameStyle->getResult(),
         ]);
     }
 }

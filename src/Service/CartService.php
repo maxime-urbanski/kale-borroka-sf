@@ -9,10 +9,9 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class CartService
 {
     public function __construct(
-        private readonly RequestStack      $requestStack,
+        private readonly RequestStack $requestStack,
         private readonly ArticleRepository $articleRepository
-    )
-    {
+    ) {
     }
 
     public function addToCart(int $id): void
@@ -50,7 +49,7 @@ class CartService
             $cartWithData[] = [
                 'product' => $article,
                 'quantity' => $quantity,
-                'quantityMaxAvailable' => $article->getQuantity()
+                'quantityMaxAvailable' => $article->getQuantity(),
             ];
         }
 

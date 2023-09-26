@@ -5,12 +5,7 @@ namespace App\Repository;
 use App\Data\ArticleFilterData;
 use App\Data\ProductionFilterData;
 use App\Entity\Article;
-use App\Entity\Artist;
-use App\Entity\Style;
-use App\Entity\Support;
-use App\Form\ArticleFilterFormType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -72,7 +67,7 @@ class ArticleRepository extends ServiceEntityRepository
         if (!empty($filterData->labels)) {
             $query
                 ->leftJoin('album.labels', 'labels')
-                ->andWhere("labels IN (:labels)")
+                ->andWhere('labels IN (:labels)')
                 ->setParameter('labels', $filterData->labels);
         }
 
@@ -109,7 +104,8 @@ class ArticleRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
-    public function getArticleWithSameStyle(array $styles): Query{
+    public function getArticleWithSameStyle(array $styles): Query
+    {
         return $this->createQueryBuilder('article')
             ->leftJoin('article.album', 'album')
             ->leftJoin('album.styles', 'styles')

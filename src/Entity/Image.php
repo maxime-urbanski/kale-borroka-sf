@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-
 #[ORM\Entity(repositoryClass: ImageRepository::class)]
 #[Vich\Uploadable]
 class Image
@@ -86,10 +85,8 @@ class Image
      * bundle's configuration parameter 'inject_on_load' is set to 'true' this setter
      * must be able to accept an instance of 'File' as the bundle will inject one here
      * during Doctrine hydration.
-     *
-     * @param File|null $imageFile
      */
-    public function setImageFile(?File $imageFile = null): void
+    public function setImageFile(File $imageFile = null): void
     {
         $this->imageFile = $imageFile;
 

@@ -6,7 +6,6 @@ use App\Data\ArticleFilterData;
 use App\Entity\Artist;
 use App\Entity\Label;
 use App\Entity\Style;
-use App\Entity\Support;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -24,21 +23,21 @@ class ArticleFilterFormType extends AbstractType
                 'class' => Artist::class,
                 'required' => false,
                 'multiple' => true,
-                'expanded' => true
+                'expanded' => true,
             ])
             ->add('labels', EntityType::class, [
                 'label' => 'Label',
                 'class' => Label::class,
                 'required' => false,
                 'multiple' => true,
-                'expanded' => true
+                'expanded' => true,
             ])
             ->add('styles', EntityType::class, [
                 'label' => 'Styles',
                 'class' => Style::class,
                 'required' => false,
                 'multiple' => true,
-                'expanded' => true
+                'expanded' => true,
             ])
             ->add('kbrProduction', CheckboxType::class, [
                 'label' => 'Nos productions',
@@ -46,7 +45,6 @@ class ArticleFilterFormType extends AbstractType
                 'label_attr' => [
                     'class' => 'checkbox-switch',
                 ],
-
             ])
             ->add('submit', SubmitType::class);
     }

@@ -19,19 +19,18 @@ class ProductionController extends AbstractController
         ArticleRepository $articleRepository,
         PaginationService $paginationService,
         SupportRepository $support,
-        Request           $request,
-        string            $page = 'page-1'
-    ): Response
-    {
+        Request $request,
+        string $page = 'page-1'
+    ): Response {
         $breadcrumb = [
             [
                 'name' => 'Accueil',
-                'path' => 'app_homepage'
+                'path' => 'app_homepage',
             ],
             [
                 'name' => 'Nos Productions',
                 'path' => 'app_production',
-            ]
+            ],
         ];
 
         $data = new ProductionFilterData();
@@ -46,7 +45,7 @@ class ProductionController extends AbstractController
         return $this->render('catalog/articles.html.twig', [
             'articles' => $pagination,
             'breadcrumb' => $breadcrumb,
-            'form' => $productionForm->createView()
+            'form' => $productionForm->createView(),
         ]);
     }
 }

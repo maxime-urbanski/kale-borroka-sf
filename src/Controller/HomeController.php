@@ -12,9 +12,8 @@ final class HomeController extends AbstractController
     #[Route('/', 'app_homepage')]
     public function index(SupportRepository $supportRepository): Response
     {
-
         return $this->render('base.html.twig', [
-            'support' => $supportRepository->findAll()
+            'support' => $supportRepository->findAll(),
         ]);
     }
 }
