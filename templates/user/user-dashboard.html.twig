@@ -1,8 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container bg-light">
-        <div class="row">
+    <div class="container">
+        <div class="d-grid col-4 ms-auto my-5">
+            <a href="{{ path('app_logout') }}" class="btn btn-outline-danger">Se déconnecter</a>
+        </div>
+        <div class="row bg-light mb-5">
             <div class="col-4">
                 {% include 'layout/_sidebar.html.twig' %}
             </div>

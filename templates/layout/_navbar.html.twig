@@ -35,7 +35,16 @@
                 {% endfor %}
             </ul>
         </div>
-        <a href="{{ path('app_cart_index') }}" class="btn btn-success btn-sm">
+        {% if app.user %}
+            <a href="{{ path('app_user_informations') }}" class="btn btn-outline-danger fs-3 me-4">
+                <i class="bi-person-check"></i>
+            </a>
+        {% else %}
+            <a href="{{ path('app_login') }}" class="btn btn-outline-danger fs-3 me-4">
+                <i class="bi-person"></i>
+            </a>
+        {% endif %}
+        <a href="{{ path('app_cart_index') }}" class="btn btn-outline-success fs-3 me-4">
             <i class="bi bi-cart"></i>
         </a>
     </div>

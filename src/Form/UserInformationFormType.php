@@ -16,31 +16,31 @@ class UserInformationFormType extends AbstractType
     {
         $builder
             ->add('lastname', TextType::class, [
-                'label' => 'Nom'
+                'label' => 'Nom',
             ])
             ->add('firstname', TextType::class, [
-                'label' => 'Prenom'
+                'label' => 'Prenom',
             ])
             ->add('email', EmailType::class, [
-                'label' => 'Adress email'
+                'label' => 'Adress email',
             ])
             ->add('address', TextType::class, [
-                'label' => 'Adresse'
+                'label' => 'Adresse',
             ])
             ->add('zipcode', TextType::class, [
-                'label' => 'Code postale'
+                'label' => 'Code postale',
             ])
             ->add('city', TextType::class, [
-                'label' => 'Ville'
+                'label' => 'Ville',
             ])
             ->add('country', TextType::class, [
-                'label' => 'Pays'
+                'label' => 'Pays',
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Valider mes modifications',
                 'attr' => [
-                    'class' => 'btn-outline-primary'
-                ]
+                    'class' => 'btn-outline-primary',
+                ],
             ]);
     }
 

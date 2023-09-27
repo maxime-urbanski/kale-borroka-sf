@@ -1,9 +1,6 @@
 {% extends 'user/user-dashboard.html.twig' %}
 
 {% block content %}
-    <div class="d-grid col-4 ms-auto mt-5">
-        <a href="{{ path('app_logout') }}" class="btn btn-outline-danger">Se déconnecter</a>
-    </div>
     <div class="row mt-5">
         <div class="col">
             <div class="card px-5 py-3 mb-5">
@@ -32,4 +29,14 @@
             </div>
         </div>
     </div>
+
+    <div class="d-grid col-md-6 ms-auto">
+        <div class="card px-5 py-3 mb-5">
+            <div class="cart-title">
+                <span class="m-O">Mon mot de passe</span>
+                <a href="{{ path('app_user_password_edit') }}" class="float-end">Modifier</a>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
