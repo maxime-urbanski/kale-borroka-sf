@@ -14,15 +14,14 @@ final class HomeController extends AbstractController
     public function index(
         SupportRepository $supportRepository,
         ArticleRepository $articleRepository
-    ): Response
-    {
+    ): Response {
         $lastArticle = $articleRepository->getLastArticle();
         $lasProduction = $articleRepository->getOwnProduction(true);
 
         return $this->render('home/index.html.twig', [
             'support' => $supportRepository->findAll(),
             'lastArticle' => $lastArticle->getResult(),
-            'lastProduction' => $lasProduction->getResult()
+            'lastProduction' => $lasProduction->getResult(),
         ]);
     }
 }

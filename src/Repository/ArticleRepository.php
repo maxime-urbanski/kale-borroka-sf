@@ -49,10 +49,12 @@ class ArticleRepository extends ServiceEntityRepository
             ->leftJoin('article.album', 'album')
             ->where('album.kbrProduction = true');
 
-        if ($forHome) $query
-            ->orderBy('article.name', 'ASC')
-            ->orderBy('article.createdAt', 'DESC')
-            ->setMaxResults(8);
+        if ($forHome) {
+            $query
+                ->orderBy('article.name', 'ASC')
+                ->orderBy('article.createdAt', 'DESC')
+                ->setMaxResults(8);
+        }
 
         return $query->getQuery();
     }

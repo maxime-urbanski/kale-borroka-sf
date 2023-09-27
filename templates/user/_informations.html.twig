@@ -1,0 +1,42 @@
+{% extends 'user/user-dashboard.html.twig' %}
+
+{% block content %}
+    <div class="row mt-5">
+        <div class="col">
+            <div class="card px-5 py-3 mb-5">
+                <div class="card-title">
+                    <span class="m-0">Mes coordonnées</span>
+                    <a href="{{ path('app_user_informations_edit') }}" class="float-end">Modifier</a>
+                </div>
+                <div class="card-body p-0">
+                    <span class="fw-bold">{{ user.fullName |upper }}</span>
+                    <div class="row row-cols-sm-1 row-cols-lg-3 justify-content-center mt-3">
+                        <div class="col d-flex flex-column border-end">
+                            <span class="fw-bold">email:</span>
+                            <p>{{ user.email }}</p>
+                        </div>
+                        <div class="col d-flex flex-column border-end"></div>
+                        <div class="col d-flex flex-column">
+                            <span class="fw-bold">Adresse:</span>
+                            <p>
+                                {{ user.address }} <br>
+                                {{ user.zipcode }} - {{ user.city }} <br>
+                                {{ user.country }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-grid col-md-6 ms-auto">
+        <div class="card px-5 py-3 mb-5">
+            <div class="cart-title">
+                <span class="m-O">Mon mot de passe</span>
+                <a href="{{ path('app_user_password_edit') }}" class="float-end">Modifier</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
