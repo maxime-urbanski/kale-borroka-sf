@@ -9,6 +9,7 @@ use App\Entity\Image;
 use App\Entity\Label;
 use App\Entity\Style;
 use App\Entity\Support;
+use App\Entity\Transporter;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -46,5 +47,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Catalogue');
         yield MenuItem::linkToCrud('Support', 'fas fa-list', Support::class);
         yield MenuItem::linkToCrud('Article', 'fas fa-list', Article::class);
+
+        yield MenuItem::section('Commande');
+        yield MenuItem::linkToCrud('Transporteur', 'fas fa-list', Transporter::class);
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -16,6 +18,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->created_at = new \DateTimeImmutable();
+        $this->createdAt = new ArrayCollection();
     }
 
     #[ORM\Id]
@@ -55,6 +58,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(options: ['default' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeImmutable $created_at = null;
+
+    #[ORM\OneToMany(mappedBy: 'customer', targetEntity: Order::class)]
+    private Collection $orders;
 
     public function getId(): ?int
     {
@@ -213,5 +219,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function fullName(): string
     {
         return $this->firstname.' - '.$this->lastname;
+    }
+
+    public function addCreatedAt(Order $createdAt): static
+    {
+        if (!$this->createdAt->contains($createdAt)) {
+            $this->createdAt->add($createdAt);
+            $createdAt->setCustomer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCreatedAt(Order $createdAt): static
+    {
+        if ($this->createdAt->removeElement($createdAt)) {
+            // set the owning side to null (unless already changed)
+            if ($createdAt->getCustomer() === $this) {
+                $createdAt->setCustomer(null);
+            }
+        }
+
+        return $this;
     }
 }

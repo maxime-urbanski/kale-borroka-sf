@@ -30,6 +30,6 @@
                 {% include 'layout/article/_article-grid.html.twig' with {articles: articles.items} %}
             </div>
         </div>
-        {{ knp_pagination_render(articles, 'partials/_pagination.html.twig') }}
+        {{ knp_pagination_render(articles, 'layout/_pagination.html.twig') }}
     </div>
 {% endblock %}
