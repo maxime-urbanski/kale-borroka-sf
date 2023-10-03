@@ -2,7 +2,6 @@
 
 {% block body %}
     <div class="container">
-        {{ dump(app.session.get('cart')) }}
         <div class="d-flex justify-content-between align-items-center my-5">
             <h2>Mon panier <span class="fw-lighter">({{ cart |length }} éléments)</span></h2>
             <div>
@@ -15,11 +14,10 @@
             <div class="col">
                 {% include 'cart/_table.html.twig' with {cart} %}
             </div>
-        </div>
+        </div>  
 
         <div class="d-grid col-4 ms-auto my-5">
-            <a href="" class="btn btn-success">Valider le panier</a>
-            {{ dump(cart) }}
+            <a href="{{ path('app_order_create') }}" class="btn btn-success">Valider le panier</a>
         </div>
 
     </div>

@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% set user = app.user %}
+{% block body %}
+    <div class="container my-5">
+        <h2>Création de ma commande</h2>
+
+        <div class="row my-5">
+            <div class="col-md-4">
+                <h3>Mon addresse:</h3>
+                <div class="card px-5 py-3 mb-5">
+                    <div class="card-title">
+                        <span class="m-0">Mes coordonnées</span>
+                        <a href="{{ path('app_user_informations_edit') }}" class="float-end">Modifier</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <span class="fw-bold">{{ user.fullName |upper }}</span>
+                        <div class="row row-cols-sm-1 row-cols-lg-2 justify-content-center mt-3">
+                            <div class="col d-flex flex-column border-end">
+                                <span class="fw-bold">email:</span>
+                                <p>{{ user.email }}</p>
+                            </div>
+                            <div class="col d-flex flex-column">
+                                <span class="fw-bold">Adresse:</span>
+                                <p>
+                                    {{ user.address }} <br>
+                                    {{ user.zipcode }} - {{ user.city }} <br>
+                                    {{ user.country }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                {% include 'cart/_table.html.twig' with {cart} %}
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
