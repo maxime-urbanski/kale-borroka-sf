@@ -9,9 +9,10 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class CartService
 {
     public function __construct(
-        private readonly RequestStack $requestStack,
+        private readonly RequestStack      $requestStack,
         private readonly ArticleRepository $articleRepository
-    ) {
+    )
+    {
     }
 
     public function addToCart(int $id): void
@@ -29,6 +30,21 @@ class CartService
         $this->getSession()->set('cart', $cart);
     }
 
+    public function addQuantity(int $id): void
+    {
+        $this->addToCart($id);
+    }
+
+    public function removeQuantity(int $id): void
+    {
+        $cart = $this->getSession()->get('cart', []);
+        --$cart[$id];
+
+        if($cart[$id] === 0) unset($cart[$id]);
+
+        $this->getSession()->set('cart', $cart);
+    }
+
     public function removeToCart(int $id): void
     {
         $cart = $this->getSession()->get('cart', []);
@@ -38,6 +54,11 @@ class CartService
         }
 
         $this->getSession()->set('cart', $cart);
+    }
+
+    public function removeAll(): null
+    {
+        return $this->getSession()->set('cart', []);
     }
 
     public function getFullCart(): array

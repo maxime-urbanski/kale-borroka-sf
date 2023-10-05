@@ -1,0 +1,20 @@
+App\Entity\Address:
+    
+    home:
+        name: Ma maison
+        address: 10 rue AFA
+        complement_address: ETG 3
+        city: Baiona
+        zipcode: 64161
+        country: Euskal Herria
+        is_main_address: true
+        users: '@user_admin'
+    
+    work:
+        name: Coworking
+        address: 100 rue Floride
+        city: Baiona
+        zipcode: 64161
+        country: Euskal Herria
+        is_main_address: false
+        users: '@user_admin'

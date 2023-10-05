@@ -1,0 +1,11 @@
+App\Entity\Transporter:
+    
+    mondial_relay:
+        name: Mondial Relay
+        description: Livraison 2-3jours rapide
+        price: 1000
+        
+    colissimo:
+        name: Colissimo
+        description: Livraison à domicile 2-3 jours
+        price: 1200

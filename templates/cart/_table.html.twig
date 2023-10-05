@@ -1,0 +1,75 @@
+    <div class="table-responsive">
+        {% if cart | length > 0 %}
+            <table class="table align-middle">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th class="text-center text-danger">{{ 'Produit'|upper }}</th>
+                    <th class="text-center text-danger">{{ 'Prix'|upper }}</th>
+                    <th class="text-center text-danger">{{ 'Quantité'|upper }}</th>
+                    <th class="text-center text-danger">{{ 'Sous-Total'|upper }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for article in cart %}
+                    <tr>
+                        <th>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <a href="{{ path('app_cart_remove', {id: article.product.id}) }}"
+                                   class="btn btn-outline-danger btn-sm rounded-circle">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </th>
+                        <th>
+                            <a href="{{ path('app_catalog_article', { support: article.product.support, slug: article.product.slug}) }}">
+                                {% if article.product.album.images[0] is defined %}
+                                    <img
+                                        src="{{ asset('upload/albums/' ~ article.product.album.images[0].imageName) }}"
+                                        alt="{{ article.product.name }}"
+                                        class="img-thumbnail"
+                                        width="80" height="80">
+                                {% else %}
+                                    <img src="{{ asset('/images/product_placeholder.png') }}"
+                                         alt="{{ article.product.name }}"
+                                         class="img-thumbnail"
+                                         width="80"
+                                         height="80">
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th class="text-center fw-light">{{ article.product.name }}
+                            - {{ article.product.support | upper }}</th>
+                        <th class="text-center  fw-light">{{ (article.product.price / 100) |format_currency('EUR') }}</th>
+                        <th class="text-center fw-light">
+                            <div class="input-group justify-content-center">
+                                <a href="{{ path('app_cart_remove_quantity', { id: article.product.id}) }}"
+                                   class="btn btn-outline-danger">
+                                    <i class="bi bi-dash-lg"></i>
+                                </a>
+                                <input type="text" class="form-control flex-grow-0" value="{{ article.quantity }}"
+                                       style="width: 50px">
+                                <a href="{{ path('app_cart_add_quantity', { id: article.product.id}) }}"
+                                   class="btn btn-outline-success">
+                                    <i class="bi bi-plus-lg"></i>
+                                </a>
+                            </div>
+                        </th>
+                        <th class="text-center fw-light">{{ (article.product.price * article.quantity/100) |format_currency('EUR') }}</th>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th colspan="4"></th>
+                    <th class="text-center" class="text-right">Total:</th>
+                    <th class="text-center">{{ (total / 100)  |format_currency('EUR') }}</th>
+                </tr>
+                </tfoot>
+            </table>
+        {% else %}
+            Pas d'article dans le panier
+        {% endif %}
+    </div>

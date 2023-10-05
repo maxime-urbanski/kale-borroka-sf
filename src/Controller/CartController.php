@@ -9,9 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
+#[Route('/cart', name: 'app_cart_')]
 class CartController extends AbstractController
 {
-    #[Route('/cart', 'app_cart_index')]
+    #[Route('/', 'index')]
     public function index(CartService $cartService): Response
     {
         $cart = $cartService->getFullCart();
@@ -26,14 +27,15 @@ class CartController extends AbstractController
     /**
      * @throws \Exception
      */
-    #[Route('/cart/add/{id}', 'app_cart_add')]
+    #[Route('/add/{id}', 'add')]
     public function addToCart(
-        CartService $cartService,
-        Request $request,
+        CartService     $cartService,
+        Request         $request,
         RouterInterface $router,
-        int $id
-    ): ?Response {
-        $routeReferer = (string) $request->headers->get('referer');
+        int             $id
+    ): ?Response
+    {
+        $routeReferer = (string)$request->headers->get('referer');
         $refererPathInfo = Request::create($routeReferer)->getPathInfo();
         $routeInfos = $router->match($refererPathInfo);
 
@@ -53,12 +55,45 @@ class CartController extends AbstractController
         return $this->redirectToRoute($routeInfos['_route'], $routeInfos);
     }
 
-    #[Route('/cart/remove/{id}', 'app_cart_remove')]
+    #[Route('/remove/{id}', 'remove')]
     public function removeToCart(
         CartService $cartService,
-        int $id
-    ): Response {
+        int         $id
+    ): Response
+    {
         $cartService->removeToCart($id);
+
+        return $this->redirectToRoute('app_cart_index');
+    }
+
+    #[Route('/empty_cart', 'empty')]
+    public function emptyCart(
+        CartService $cartService
+    ): Response
+    {
+        $cartService->removeAll();
+
+        return $this->redirectToRoute('app_cart_index');
+    }
+
+    #[Route('/add_quantity/{id}', 'add_quantity')]
+    public function addQuantity(
+        CartService $cartService,
+        int         $id
+    ): Response
+    {
+        $cartService->addQuantity($id);
+
+        return $this->redirectToRoute('app_cart_index');
+    }
+
+    #[Route('/remove_quantity/{id}', 'remove_quantity')]
+    public function removeQuantity(
+        CartService $cartService,
+        int         $id
+    ): Response
+    {
+        $cartService->removeQuantity($id);
 
         return $this->redirectToRoute('app_cart_index');
     }
