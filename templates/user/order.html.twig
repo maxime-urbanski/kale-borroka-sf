@@ -1,0 +1,9 @@
+{% extends 'user/user-dashboard.html.twig' %}
+
+{% block content %}
+    {% for order in orders %}
+        {{ dump(order) }}
+    {% endfor %}
+{% endblock %}
+
+

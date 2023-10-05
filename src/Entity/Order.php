@@ -34,11 +34,14 @@ class Order
     #[ORM\Column]
     private ?int $totalPrice = null;
 
-    #[ORM\OneToMany(mappedBy: 'orders', targetEntity: OrderDetails::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'orders', targetEntity: OrderDetails::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $orderDetails;
 
     #[ORM\ManyToOne]
     private ?Transporter $delivery = null;
+
+    #[ORM\ManyToOne(inversedBy: 'orders')]
+    private ?Payment $payment = null;
 
     public function __construct()
     {
@@ -160,6 +163,18 @@ class Order
     public function setDelivery(?Transporter $delivery): static
     {
         $this->delivery = $delivery;
+
+        return $this;
+    }
+
+    public function getPayment(): ?Payment
+    {
+        return $this->payment;
+    }
+
+    public function setPayment(?Payment $payment): static
+    {
+        $this->payment = $payment;
 
         return $this;
     }
