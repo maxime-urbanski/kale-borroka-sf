@@ -2,50 +2,24 @@
 
 {% block body %}
     <div class="container">
-        <div class="alert alert-dark mt-5" role="alert">
-            Mon panier
+        <div class="d-flex justify-content-between align-items-center my-5">
+            <h2>Mon panier <span class="fw-lighter">({{ cart |length }} éléments)</span></h2>
+            <div>
+                <a href="{{ path('app_cart_empty') }}" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-trash"></i>
+                    Vider le panier</a>
+            </div>
         </div>
         <div class="row">
             <div class="col">
-                {% if cart | length > 0 %}
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Produit</th>
-                            <th>Prix</th>
-                            <th>Quantité</th>
-                            <th>Sous-Total</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for article in cart %}
-                            <tr>
-                                <th>{{ article.product.name }}</th>
-                                <th>{{ article.product.price }}</th>
-                                <th>{{ article.quantity }}</th>
-                                <th>{{ article.product.price * article.quantity }}</th>
-                                <th>
-                                    <a href="{{ path('app_cart_remove', {id: article.product.id}) }}" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </th>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                        <tfoot>
-                        <tr>
-                            <th colspan="3" class="text-right">Total: </th>
-                            <th>{{ total }}</th>
-                            <th></th>
-                        </tr>
-                        </tfoot>
-                    </table>
-                {% else %}
-                    Pas d'article dans le panier
-                {% endif %}
+                {% include 'cart/_table.html.twig' with {cart} %}
             </div>
         </div>
+
+        <div class="d-grid col-4 ms-auto my-5">
+            <a href="{{ path('app_order_delivery') }}" class="btn btn-success">Valider le panier</a>
+        </div>
+
     </div>
 {% endblock %}
 

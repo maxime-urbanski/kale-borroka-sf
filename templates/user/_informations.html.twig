@@ -1,21 +1,22 @@
 {% extends 'user/user-dashboard.html.twig' %}
 
 {% block content %}
-    <div class="row mt-5">
+    <div class="row my-5">
         <div class="col">
-            <div class="card px-5 py-3 mb-5">
-                <div class="card-title">
-                    <span class="m-0">Mes coordonnées</span>
-                    <a href="{{ path('app_user_informations_edit') }}" class="float-end">Modifier</a>
-                </div>
-                <div class="card-body p-0">
-                    <span class="fw-bold">{{ user.fullName |upper }}</span>
-                    <div class="row row-cols-sm-1 row-cols-lg-3 justify-content-center mt-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="fw-bold card-title text-danger">Mes coordonnées</h5>
+                        <a href="{{ path('app_user_informations_edit') }}" class="float-end">
+                            <span class="badge border border-success text-success">Modifier</span>
+                        </a>
+                    </div>
+                    <p class="fw-bold">{{ user.fullName |upper }}</p>
+                    <div class="row row-cols-sm-1 row-cols-lg-2 justify-content-center mt-3">
                         <div class="col d-flex flex-column border-end">
                             <span class="fw-bold">email:</span>
                             <p>{{ user.email }}</p>
                         </div>
-                        <div class="col d-flex flex-column border-end"></div>
                         <div class="col d-flex flex-column">
                             <span class="fw-bold">Adresse:</span>
                             <p>
@@ -30,11 +31,43 @@
         </div>
     </div>
 
-    <div class="d-grid col-md-6 ms-auto">
-        <div class="card px-5 py-3 mb-5">
-            <div class="cart-title">
-                <span class="m-O">Mon mot de passe</span>
-                <a href="{{ path('app_user_password_edit') }}" class="float-end">Modifier</a>
+    <div class="d-grid col-md-6 mx-auto mb-5">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="fw-bold card-title text-danger mb-0">Mon mot de passe</h5>
+                    <a href="{{ path('app_user_password_edit') }}" class="float-end">
+                        <span class="badge border border-success text-success">Modifier</span>
+                    </a>
+                </div>
+                <span class="fs-6 fw-light">Mot de passe actuel:
+                    <br>
+                    <span class="fw-medium">********</span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="d-grid col-md-6 me-auto mb-5">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="fw-bold card-title text-danger mb-2">Ma dernière commande</h5>
+                {% set last_order = user.orders |first %}
+                <p class="fw-bolder">
+                    Commande passé le :
+                    <span class="fw-light">{{ last_order.createdAt |date("m/d/Y", "Europe/Paris") }}</span>
+                </p>
+                <p class="fw-bolder">
+                    Reférence:
+                    <span class="fw-light">{{ last_order.reference }}</span>
+                </p>
+                <p class="fw-bolder">
+                    Prix total:
+                    <span class="fw-light">{{ (last_order.totalPrice / 100) | format_currency('EUR') }}</span>
+                </p>
+                <p class="fw-bolder">
+                    Status:
+                    <span class="badge border border-primary text-primary">{{ last_order.status }}</span>
+                </p>
             </div>
         </div>
     </div>

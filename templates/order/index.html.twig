@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        {% block order_title %}{% endblock %}
+        <div class="row">
+            <div class="col">
+                {% block left %}{% endblock %}
+            </div>
+            <div class="col">
+                {% block rigth %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

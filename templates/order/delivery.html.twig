@@ -1,0 +1,38 @@
+{% extends 'order/index.html.twig' %}
+
+
+{% block order_title %}
+    <h3 class="my-5 text-center">Mon adresse et ma livraison</h3>
+{% endblock %}
+{% block left %}
+    {{ form(form) }}
+{% endblock %}
+{% block rigth %}
+    <h4>Récapitulatif de ma commande</h4>
+        <div class="d-flex flex-column justify-content-between border border-secondary rounded">
+    {% for article in cart %}
+            <a href="{{ path('app_catalog_article', { support: article.product.support, slug: article.product.slug}) }}">
+                {% if article.product.album.images[0] is defined %}
+                    <img
+                        src="{{ asset('upload/albums/' ~ article.product.album.images[0].imageName) }}"
+                        alt="{{ article.product.name }}"
+                        class="img-thumbnail"
+                        width="80" height="80">
+                {% else %}
+                    <img src="{{ asset('/images/product_placeholder.png') }}"
+                         alt="{{ article.product.name }}"
+                         class="img-thumbnail"
+                         width="80"
+                         height="80">
+                {% endif %}
+            </a>
+            <div class="d-flex flex-column">
+                <p class="fw-bolder">{{ article.product.getName }}</p>
+                <div class="d-flex justify-content-between">
+                    <p>Quantité: {{ article.quantity }}</p>
+                    <p>Prix: {{ article.product.price }}</p>
+                </div>
+            </div>
+    {% endfor %}
+        </div>
+{% endblock %}

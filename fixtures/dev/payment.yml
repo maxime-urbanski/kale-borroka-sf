@@ -1,0 +1,6 @@
+App\Entity\Payment:
+    paypal:
+        name: Paypal
+        
+    stripe:
+        name: Stripe
