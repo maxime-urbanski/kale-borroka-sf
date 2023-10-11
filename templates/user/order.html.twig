@@ -2,7 +2,47 @@
 
 {% block content %}
     {% for order in orders %}
-        {{ dump(order) }}
+        <div class="row my-5 mx-3 bg-white rounded">
+            <div class="col border-bottom">
+                <h5 class="text-center fw-bolder mt-3">
+                    Commande du {{ order.createdAt|date("m/d/Y", "Europe/Paris") }}
+                </h5>
+                <div class="d-flex justify-content-between align-items-center py-3">
+                    <p class="fw-bolder mb-0">Ref: <span class="fw-light">{{ order.reference }}</span></p>
+                    <span class="badge border border-primary text-primary">{{ order.status }}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 py-4 px-3">
+                    {% for detail in order.orderDetails %}
+                        <p>
+                            <a href="{{ path('app_catalog_article', {
+                                support: detail.product.support,
+                                slug: detail.product.slug
+                            }) }}">
+                                {{ detail.product.name }}
+                            </a>
+                            <br>
+                            Quantité: {{ detail.quantity }}
+                        </p>
+                    {% endfor %}
+                </div>
+                <div class="col-6 my-auto">
+                    <h5 class="text-center">
+                        Prix:
+                        <span class="fw-light">
+                            {{ (order.totalPrice / 100) |format_currency('EUR') }}
+                        </span>
+                    </h5>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row justify-content-center align-items-center h-100">
+            <div class="col">
+                <p class="fw-light fst-italic text-center">Pas de commande effectuée.</p>
+            </div>
+        </div>
     {% endfor %}
 {% endblock %}
 
