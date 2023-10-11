@@ -15,20 +15,18 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class OrderAddressDeliveryController extends AbstractController
 {
-
     #[Route('/order/delivery', name: 'app_order_delivery')]
     public function selectAddressAndDelivery(
-        Request                $request,
-        Security               $security,
-        CartService            $cartService,
+        Request $request,
+        Security $security,
+        CartService $cartService,
         EntityManagerInterface $entityManager
-    ): Response
-    {
+    ): Response {
         $user = $security->getUser();
         $cart = $cartService->getFullCart();
 
         $form = $this->createForm(OrderAddressDeliveryPaymentFormType::class, null, [
-            'user' => $user
+            'user' => $user,
         ]);
         $form->handleRequest($request);
 
@@ -73,15 +71,14 @@ class OrderAddressDeliveryController extends AbstractController
 
             $cartService->removeAll();
 
-
-            return $this->redirectToRoute('app_order_overview',[
-                'orderReference' => $order->getReference()
+            return $this->redirectToRoute('app_order_overview', [
+                'orderReference' => $order->getReference(),
             ]);
         }
 
         return $this->render('order/delivery.html.twig', [
             'cart' => $cartService->getFullCart(),
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

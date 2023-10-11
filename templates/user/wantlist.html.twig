@@ -1,0 +1,51 @@
+{% extends 'user/user-dashboard.html.twig' %}
+
+{% block content %}
+    <table class="table align-middle">
+        <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th class="text-center text-danger">{{ 'Produit'|upper }}</th>
+            <th class="text-center text-danger">{{ 'Prix'|upper }}</th>
+            <th class="text-center text-danger">{{ 'Quantité Disponible'|upper }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for article in wantlist %}
+            <tr>
+                <th>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <a href="{{ path('app_cart_add', {id: article.id}) }}"
+                           class="btn btn-outline-success btn-sm rounded-circle">
+                            <i class="bi bi-cart"></i>
+                        </a>
+                    </div>
+                </th>
+                <th>
+                    <a href="{{ path('app_catalog_article', { support: article.support, slug: article.slug}) }}">
+                        {% if article.album.images[0] is defined %}
+                            <img
+                                src="{{ asset('upload/albums/' ~ article.album.images[0].imageName) }}"
+                                alt="{{ article.name }}"
+                                class="img-thumbnail"
+                                width="80" height="80">
+                        {% else %}
+                            <img src="{{ asset('/images/product_placeholder.png') }}"
+                                 alt="{{ article.name }}"
+                                 class="img-thumbnail"
+                                 width="80"
+                                 height="80">
+                        {% endif %}
+                    </a>
+                </th>
+                <th class="text-center fw-light">{{ article.name }}
+                    - {{ article.support | upper }}</th>
+                <th class="text-center  fw-light">{{ (article.price / 100) |format_currency('EUR') }}</th>
+                <th class="text-center fw-light">{{ article.quantity }}</div>
+                </th>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
