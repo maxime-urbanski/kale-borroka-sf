@@ -10,10 +10,7 @@ class OrderPaymentController extends AbstractController
 {
     #[Route('/order/{orderReference}/payment/choice', name: 'app_order_payment_choice')]
     public function paymentPreparation(): Response
-
     {
-
         return $this->render('');
-
     }
 }

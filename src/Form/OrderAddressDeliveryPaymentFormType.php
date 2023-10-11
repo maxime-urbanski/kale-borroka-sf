@@ -23,33 +23,33 @@ class OrderAddressDeliveryPaymentFormType extends AbstractType
                 'choices' => $user->getAddresses(),
                 'multiple' => false,
                 'expanded' => true,
-                'required' => true
+                'required' => true,
             ])
             ->add('transport', EntityType::class, [
                 'label' => 'Adresse de livraison',
                 'class' => Transporter::class,
                 'multiple' => false,
                 'expanded' => true,
-                'required' => true
+                'required' => true,
             ])
             ->add('payment', EntityType::class, [
                 'label' => 'Methode de paiement',
                 'class' => Payment::class,
                 'multiple' => false,
                 'expanded' => true,
-                'required' => true
+                'required' => true,
             ])
             ->add('submit', SubmitType::class, [
                 'attr' => [
-                    'class' => 'btn-outline-primary'
-                ]
+                    'class' => 'btn-outline-primary',
+                ],
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'user' => null
+            'user' => null,
         ]);
     }
 }

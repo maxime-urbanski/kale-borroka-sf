@@ -66,6 +66,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'users', targetEntity: Address::class)]
     private Collection $addresses;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Wantlist $wantlist = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -281,6 +284,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $address->setUsers(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getWantlist(): ?Wantlist
+    {
+        return $this->wantlist;
+    }
+
+    public function setWantlist(?Wantlist $wantlist): static
+    {
+        $this->wantlist = $wantlist;
 
         return $this;
     }

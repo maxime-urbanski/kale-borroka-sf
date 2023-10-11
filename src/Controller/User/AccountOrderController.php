@@ -16,16 +16,15 @@ class AccountOrderController extends AbstractController
     public function index(
         Security $security,
         OrderRepository $orderRepository
-    ): Response
-    {
+    ): Response {
         $user = $security->getUser();
 
         $userOrders = $orderRepository->findBy([
-            'buyer' => $user
+            'buyer' => $user,
         ]);
 
         return $this->render('user/order.html.twig', [
-            'orders' => $userOrders
+            'orders' => $userOrders,
         ]);
     }
 }

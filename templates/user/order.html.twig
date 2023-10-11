@@ -17,10 +17,10 @@
                     {% for detail in order.orderDetails %}
                         <p>
                             <a href="{{ path('app_catalog_article', {
-                                support: detail.product.support,
-                                slug: detail.product.slug
+                                support: detail.support,
+                                slug: detail.slug
                             }) }}">
-                                {{ detail.product.name }}
+                                {{ detail.name }}
                             </a>
                             <br>
                             Quantité: {{ detail.quantity }}
