@@ -16,10 +16,11 @@
             <tr>
                 <th>
                     <div class="d-flex justify-content-center align-items-center">
-                        <a href="{{ path('app_cart_add', {id: article.id}) }}"
-                           class="btn btn-outline-success btn-sm rounded-circle">
-                            <i class="bi bi-cart"></i>
-                        </a>
+                        {% include 'partials/_obfuscation_link.html.twig' with {
+                            url: path('app_cart_add', {id: article.id}),
+                            class: "btn btn-outline-success btn-sm rounded-circle",
+                            icon: "bi-cart"
+                        } %}
                     </div>
                 </th>
                 <th>

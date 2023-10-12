@@ -1,0 +1,17 @@
+<div data-controller="obfuscation"
+     data-action="click->obfuscation#obfuscation"
+     data-obfuscation-url-value="{{ url }}"
+     class="{{ class }}">
+    {% if icon is defined %}
+        <i class="bi {{ icon }}"></i>
+    {% endif %}
+    {% if span is defined %}
+        <span class="btn badge border {{ span_class |default('border-success text-success') }}">
+            {{ text }}
+        </span>
+    {% endif %}
+    {% if text_btn is defined %}
+        {{ text_btn }}
+    {% endif %}
+</div>
+

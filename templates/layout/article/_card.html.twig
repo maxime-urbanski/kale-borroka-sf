@@ -8,22 +8,19 @@
         {% endif %}
         {% if app.user %}
             {% set wantlist = app.user.wantlist.product %}
+            {% set class = "position-absolute top-0 end-0 me-2 text-danger fs-4 cursor-pointer" %}
             {% if article in wantlist %}
-                <div class="position-absolute top-0 end-0 me-2 text-danger fs-4 cursor-pointer"
-                     data-controller="obfuscation"
-                     data-action="click->obfuscation#obfuscation"
-                     data-obfuscation-url-value="/wantlist/remove/{{ article.id }}"
-                >
-                    <i class="bi bi-eye-slash-fill"></i>
-                </div>
+                {% include 'partials/_obfuscation_link.html.twig' with {
+                    url: path('app_wantlist_remove', {productId: article.id}),
+                    class,
+                    icon: "bi-eye-slash-fill"
+                } %}
             {% else %}
-                <div class="position-absolute top-0 end-0 me-2 text-danger fs-4 cursor-pointer"
-                     data-controller="obfuscation"
-                     data-action="click->obfuscation#obfuscation"
-                     data-obfuscation-url-value="/wantlist/add/{{ article.id }}"
-                >
-                    <i class="bi bi-eye-fill"></i>
-                </div>
+                {% include 'partials/_obfuscation_link.html.twig' with {
+                    url: path('app_wantlist_add', {productId: article.id}),
+                    class,
+                    icon: "bi-eye-fill"
+                } %}
             {% endif %}
         {% endif %}
     </div>
@@ -34,9 +31,11 @@
         </a>
         <div class="d-flex justify-content-between align-items-center mt-3">
             <p class="m-0">Prix: {{ (article.price/100) |format_currency('EUR') }}</p>
-            <a href="{{ path('app_cart_add', {id: article.id}) }}" class="btn btn-success">
-                <i class="bi bi-minecart"></i>
-            </a>
+            {% include 'partials/_obfuscation_link.html.twig' with {
+                url: path('app_cart_add', {id: article.id}),
+                class: "btn btn-success",
+                icon: "bi-minecart"
+            } %}
         </div>
     </div>
 </div>
