@@ -4,20 +4,26 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-center my-5">
             <h2>Mon panier <span class="fw-lighter">({{ cart |length }} éléments)</span></h2>
-            <div>
-                <a href="{{ path('app_cart_empty') }}" class="btn btn-outline-danger btn-sm">
-                    <i class="bi bi-trash"></i>
-                    Vider le panier</a>
-            </div>
+            {% include 'partials/_obfuscation_link.html.twig' with {
+                url: path('app_cart_empty'),
+                class: 'btn btn-outline-danger btn-sm',
+                icon: 'bi-trash',
+                text_btn: 'Vider le panier'
+            } %}
+
         </div>
         <div class="row">
             <div class="col">
                 {% include 'cart/_table.html.twig' with {cart} %}
             </div>
         </div>
-
         <div class="d-grid col-4 ms-auto my-5">
-            <a href="{{ path('app_order_delivery') }}" class="btn btn-success">Valider le panier</a>
+            {% include 'partials/_obfuscation_link.html.twig' with {
+                url: path('app_order_delivery'),
+                class: 'btn btn-success',
+                icon: 'bi-hand-thumbs-up',
+                text_btn: 'Valider le panier'
+            } %}
         </div>
 
     </div>

@@ -22,9 +22,11 @@
                 <div class="d-flex flex-column justify-content-center">
                     <p>Quantité: {{ article.quantity }}</p>
                     <p>Prix: {{ ( article.price/100) |format_currency('EUR') }}</p>
-                    <a href="{{ path('app_cart_add', {id: article.id}) }}" class="btn btn-success w-content">
-                        <i class="bi bi-minecart"></i>
-                    </a>
+                    {% include 'partials/_obfuscation_link.html.twig' with {
+                        url: path('app_cart_add', {id: article.id}),
+                        class: "btn btn-success w-content",
+                        icon: "bi-minecart"
+                    } %}
                     <p>
                         {% for tracklist in article.album.tracklists %}
                             {{ tracklist.track }} - {{ tracklist.name }} <br>

@@ -7,9 +7,12 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h5 class="fw-bold card-title text-danger">Mes coordonnées</h5>
-                        <a href="{{ path('app_user_informations_edit') }}" class="float-end">
-                            <span class="badge border border-success text-success">Modifier</span>
-                        </a>
+                        {% include 'partials/_obfuscation_link.html.twig' with {
+                            url: path('app_user_informations_edit'),
+                            class: "float-end",
+                            span: true,
+                            text: 'Modifier'
+                        } %}
                     </div>
                     <p class="fw-bold">{{ user.fullName |upper }}</p>
                     <div class="row row-cols-sm-1 row-cols-lg-2 justify-content-center mt-3">
@@ -36,9 +39,12 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h5 class="fw-bold card-title text-danger mb-0">Mon mot de passe</h5>
-                    <a href="{{ path('app_user_password_edit') }}" class="float-end">
-                        <span class="badge border border-success text-success">Modifier</span>
-                    </a>
+                    {% include 'partials/_obfuscation_link.html.twig' with {
+                        url: path('app_user_password_edit'),
+                        class: "float-end",
+                        span: true,
+                        text: 'Modifier'
+                    } %}
                 </div>
                 <span class="fs-6 fw-light">Mot de passe actuel:
                     <br>
@@ -47,7 +53,7 @@
             </div>
         </div>
     </div>
-    {#<div class="d-grid col-md-6 me-auto mb-5">
+    {# <div class="d-grid col-md-6 me-auto mb-5">
         <div class="card">
             <div class="card-body">
                 <h5 class="fw-bold card-title text-danger mb-2">Ma dernière commande</h5>
@@ -70,6 +76,6 @@
                 </p>
             </div>
         </div>
-    </div>#}
+    </div> #}
 
 {% endblock %}
