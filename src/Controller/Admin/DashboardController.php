@@ -54,6 +54,5 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Mode de paiement', 'fas fa-list', Payment::class);
         yield MenuItem::linkToCrud('Mode de livraison', 'fas fa-list', Transporter::class);
         yield MenuItem::linkToCrud('Commande', 'fas fa-list', Order::class);
-
     }
 }

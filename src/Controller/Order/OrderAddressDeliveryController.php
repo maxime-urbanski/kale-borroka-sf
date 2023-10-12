@@ -32,7 +32,7 @@ class OrderAddressDeliveryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $order = new Order();
-            $reference = 'kbr-' . uniqid('', true);
+            $reference = 'kbr-'.uniqid('', true);
             $totalPrice = 0;
 
             $addressSelected = $form->getData()['address'];
