@@ -69,6 +69,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Wantlist $wantlist = null;
 
+    #[ORM\OneToOne(mappedBy: 'collector', cascade: ['persist', 'remove'])]
+    private ?UserCollection $collection = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -296,6 +299,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setWantlist(?Wantlist $wantlist): static
     {
         $this->wantlist = $wantlist;
+
+        return $this;
+    }
+
+    public function getCollection(): ?UserCollection
+    {
+        return $this->collection;
+    }
+
+    public function setCollection(UserCollection $collection): static
+    {
+        // set the owning side of the relation if necessary
+        if ($collection->getCollector() !== $this) {
+            $collection->setCollector($this);
+        }
+
+        $this->collection = $collection;
 
         return $this;
     }

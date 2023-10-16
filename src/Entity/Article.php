@@ -46,9 +46,13 @@ class Article
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: OrderDetails::class)]
     private Collection $orderDetails;
 
+    #[ORM\ManyToMany(targetEntity: UserCollection::class, mappedBy: 'article')]
+    private Collection $userCollections;
+
     public function __construct()
     {
         $this->orderDetails = new ArrayCollection();
+        $this->userCollections = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -177,6 +181,33 @@ class Article
             if ($orderDetail->getProduct() === $this) {
                 $orderDetail->setProduct(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserCollection>
+     */
+    public function getUserCollections(): Collection
+    {
+        return $this->userCollections;
+    }
+
+    public function addUserCollection(UserCollection $userCollection): static
+    {
+        if (!$this->userCollections->contains($userCollection)) {
+            $this->userCollections->add($userCollection);
+            $userCollection->addArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserCollection(UserCollection $userCollection): static
+    {
+        if ($this->userCollections->removeElement($userCollection)) {
+            $userCollection->removeArticle($this);
         }
 
         return $this;

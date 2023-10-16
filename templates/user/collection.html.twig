@@ -1,26 +1,26 @@
 {% extends 'user/user-dashboard.html.twig' %}
 
 {% block content %}
-    {% if wantlist and wantlist.product %}
+    {% if collection %}
         <table class="table align-middle">
             <thead>
             <tr>
                 <th></th>
                 <th></th>
                 <th class="text-center text-danger">{{ 'Produit'|upper }}</th>
-                <th class="text-center text-danger">{{ 'Prix'|upper }}</th>
-                <th class="text-center text-danger">{{ 'Quantité Disponible'|upper }}</th>
+                <th class="text-center text-danger">{{ 'support'|upper }}</th>
+                <th class="text-center text-danger">{{ 'date d\'ajout' |upper }}</th>
             </tr>
             </thead>
             <tbody>
-            {% for article in wantlist.product %}
+            {% for article in collection.article %}
                 <tr>
                     <th>
                         <div class="d-flex justify-content-center align-items-center">
                             {% include 'partials/_obfuscation_link.html.twig' with {
-                                url: path('app_cart_add', {id: article.id}),
-                                class: "btn btn-outline-success btn-sm rounded-circle",
-                                icon: "bi-cart"
+                                url: path('app_collection_remove', {productId: article.id}),
+                                class: "btn btn-outline-danger btn-sm rounded-circle",
+                                icon: "bi-trash"
                             } %}
                         </div>
                     </th>
@@ -41,16 +41,13 @@
                             {% endif %}
                         </a>
                     </th>
-                    <th class="text-center fw-light">{{ article.name }}
-                        - {{ article.support | upper }}</th>
-                    <th class="text-center  fw-light">{{ (article.price / 100) |format_currency('EUR') }}</th>
-                    <th class="text-center fw-light">{{ article.quantity }}</div>
-                    </th>
+                    <th class="text-center fw-light">{{ article.name }}</th>
+                    <th class="text-center  fw-light">{{ article.support |upper }}</th>
+                    <th class="text-center fw-light">{{ collection.since |date() }}</th>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
-        {% else %}
-        rien
     {% endif %}
 {% endblock %}
+
