@@ -4,7 +4,9 @@ namespace App\Controller\Order;
 
 use App\Entity\Order;
 use App\Entity\OrderDetails;
+use App\Entity\UserCollection;
 use App\Form\OrderAddressDeliveryPaymentFormType;
+use App\Repository\UserCollectionRepository;
 use App\Service\CartService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,11 +19,13 @@ class OrderAddressDeliveryController extends AbstractController
 {
     #[Route('/order/delivery', name: 'app_order_delivery')]
     public function selectAddressAndDelivery(
-        Request $request,
-        Security $security,
-        CartService $cartService,
-        EntityManagerInterface $entityManager
-    ): Response {
+        Request                  $request,
+        Security                 $security,
+        CartService              $cartService,
+        EntityManagerInterface   $entityManager,
+        UserCollectionRepository $userCollectionRepository
+    ): Response
+    {
         $user = $security->getUser();
         $cart = $cartService->getFullCart();
 
@@ -32,7 +36,16 @@ class OrderAddressDeliveryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $order = new Order();
-            $reference = 'kbr-'.uniqid('', true);
+
+            if (!$user->getCollection()) {
+                $collection = new UserCollection();
+                $user->setCollection($collection);
+                $entityManager->persist($user);
+            }
+
+            $userCollection = $userCollectionRepository->find($user->getCollection());
+
+            $reference = 'kbr-' . uniqid('', true);
             $totalPrice = 0;
 
             $addressSelected = $form->getData()['address'];
@@ -63,7 +76,13 @@ class OrderAddressDeliveryController extends AbstractController
                 $orderDetails->setOrders($order);
                 $order->setTotalPrice($totalPrice);
 
+                $userCollection->addArticle($product['product']);
+                // TODO: FIX DATE
+                $userCollection->setSince(new \DateTime());
+
+
                 $entityManager->persist($orderDetails);
+                $entityManager->persist($userCollection);
             }
 
             $entityManager->persist($order);

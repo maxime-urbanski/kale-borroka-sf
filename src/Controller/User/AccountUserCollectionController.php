@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class AccountWantlistController extends AbstractController
+class AccountUserCollectionController extends AbstractController
 {
     public function __construct(
         private readonly Security $security
@@ -16,14 +16,15 @@ class AccountWantlistController extends AbstractController
     {
     }
 
-    #[Route('/mon-compte/ma-wantlist', name: 'app_user_wantlist')]
+    #[Route('/mon-compte/ma-collection', name: 'app_user_collection')]
     #[isGranted('IS_AUTHENTICATED_FULLY')]
-    public function wantlist(): Response
-    {
-        $userWantlist = $this->security->getUser()->getWantlist();
+    public function collection(): Response
 
-        return $this->render('user/wantlist.html.twig', [
-            'wantlist' => $userWantlist,
+    {
+        $userCollection = $this->security->getUser()->getCollection();
+
+        return $this->render('user/collection.html.twig', [
+            'collection' => $userCollection
         ]);
     }
 }

@@ -6,12 +6,13 @@ use App\Repository\ArticleRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class CartService
+readonly class CartService
 {
     public function __construct(
-        private readonly RequestStack $requestStack,
-        private readonly ArticleRepository $articleRepository
-    ) {
+        private RequestStack      $requestStack,
+        private ArticleRepository $articleRepository
+    )
+    {
     }
 
     public function addToCart(int $id): void

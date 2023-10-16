@@ -52,28 +52,30 @@
             </div>
         </div>
     </div>
-    <div class="d-grid col-md-6 me-auto mb-5">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="fw-bold card-title text-danger mb-2">Ma dernière commande</h5>
-                {% set last_order = user.orders |first %}
-                <p class="fw-bolder">
-                    Commande passé le :
-                    <span class="fw-light">{{ last_order.createdAt |date("m/d/Y", "Europe/Paris") }}</span>
-                </p>
-                <p class="fw-bolder">
-                    Reférence:
-                    <span class="fw-light">{{ last_order.reference }}</span>
-                </p>
-                <p class="fw-bolder">
-                    Prix total:
-                    <span class="fw-light">{{ (last_order.totalPrice / 100) | format_currency('EUR') }}</span>
-                </p>
-                <p class="fw-bolder">
-                    Status:
-                    <span class="badge border border-primary text-primary">{{ last_order.status }}</span>
-                </p>
+    {% if user.orders |first %}
+        <div class="d-grid col-md-6 me-auto mb-5">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="fw-bold card-title text-danger mb-2">Ma dernière commande</h5>
+                    {% set last_order = user.orders |first %}
+                    <p class="fw-bolder">
+                        Commande passé le :
+                        <span class="fw-light">{{ last_order.createdAt |date("m/d/Y", "Europe/Paris") }}</span>
+                    </p>
+                    <p class="fw-bolder">
+                        Reférence:
+                        <span class="fw-light">{{ last_order.reference }}</span>
+                    </p>
+                    <p class="fw-bolder">
+                        Prix total:
+                        <span class="fw-light">{{ (last_order.totalPrice / 100) | format_currency('EUR') }}</span>
+                    </p>
+                    <p class="fw-bolder">
+                        Status:
+                        <span class="badge border border-primary text-primary">{{ last_order.status }}</span>
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 {% endblock %}

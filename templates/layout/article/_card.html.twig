@@ -7,19 +7,31 @@
             <img src="{{ asset('/images/product_placeholder.png') }}" alt="{{ article.name }}" class="card-img-top">
         {% endif %}
         {% if app.user %}
-            {% set wantlist = app.user.wantlist.product %}
-            {% set class = "position-absolute top-0 end-0 me-2 text-danger fs-4 cursor-pointer" %}
-            {% if article in wantlist %}
+            {% set class = 'position-absolute btn btn-outline-dark rounded-circle me-2 ' %}
+            {% if app.user.wantlist is not null and article in app.user.wantlist.product %}
                 {% include 'partials/_obfuscation_link.html.twig' with {
                     url: path('app_wantlist_remove', {productId: article.id}),
-                    class,
+                    class: class ~ 'top-0 end-0 mt-2',
                     icon: "bi-eye-slash-fill"
                 } %}
             {% else %}
                 {% include 'partials/_obfuscation_link.html.twig' with {
                     url: path('app_wantlist_add', {productId: article.id}),
-                    class,
+                    class: class ~ 'top-0 end-0 mt-2',
                     icon: "bi-eye-fill"
+                } %}
+            {% endif %}
+            {% if app.user.collection is not null and article in app.user.collection.article %}
+                {% include 'partials/_obfuscation_link.html.twig' with {
+                    url: path('app_collection_remove', {productId: article.id}),
+                    class: class ~ 'bottom-0 end-0 mb-2' ,
+                    icon: "bi-database-fill-dash"
+                } %}
+            {% else %}
+                {% include 'partials/_obfuscation_link.html.twig' with {
+                    url: path('app_collection_add', {productId: article.id}),
+                    class: class ~ 'bottom-0 end-0 mb-2',
+                    icon: "bi-database-fill-add"
                 } %}
             {% endif %}
         {% endif %}
