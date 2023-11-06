@@ -1,0 +1,1 @@
+{"version":1,"defects":{"App\\Tests\\Controller\\HomeControllerTest::testSomething":3,"App\\Tests\\unit\\CartServiceTest::testAddToCart":5},"times":{"App\\Tests\\CartServiceTest::testSomething":0.001,"App\\Tests\\Controller\\HomeControllerTest::testSomething":0.323,"App\\Tests\\unit\\CartServiceTest::testAddToCart":0}}

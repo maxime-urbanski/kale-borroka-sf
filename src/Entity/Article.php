@@ -7,46 +7,58 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 class Article
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
+    #[Groups('article:read')]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('article:read')]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, unique: true)]
+    #[Groups('article:read')]
     #[Gedmo\Slug(fields: ['name'])]
     private ?string $slug = null;
 
     #[ORM\Column]
+    #[Groups('article:read')]
     private ?int $quantity = null;
 
     #[ORM\Column]
+    #[Groups('article:read')]
     private ?int $price = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
+    #[Groups('article:read')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Support $support = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
+    #[Groups('article:read')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Album $album = null;
 
     #[ORM\Column]
+    #[Groups('article:read')]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
+    #[Groups('article:read')]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: OrderDetails::class)]
+    #[Groups('article:read')]
     private Collection $orderDetails;
 
     #[ORM\ManyToMany(targetEntity: UserCollection::class, mappedBy: 'article')]
+    #[Groups('article:read')]
     private Collection $userCollections;
 
     public function __construct()

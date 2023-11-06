@@ -1,3 +1,4 @@
+import { registerReactControllerComponents } from '@symfony/ux-react';
 import './bootstrap.js';
 /*
  * Welcome to your app's main JavaScript file!
@@ -17,3 +18,5 @@ const toastLiveExample = document.getElementById('test')
 if (toastLiveExample) {
   toastLiveExample.classList.add('show');
 }
+
+registerReactControllerComponents(require.context('./react/controllers', true, /\.(j|t)sx?$/));

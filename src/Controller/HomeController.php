@@ -18,9 +18,25 @@ final class HomeController extends AbstractController
         $lastArticle = $articleRepository->getLastArticle();
         $lasProduction = $articleRepository->getOwnProduction(true);
 
+        $dataForReactComponent = [];
+
+        foreach ($lastArticle->getResult() as $product) {
+            $dataForReactComponent[] = [
+                'id' => $product->getId(),
+                'name' => $product->getName(),
+                'slug' => $product->getSlug(),
+                'quantity' => $product->getQuantity(),
+                'price' => $product->getPrice(),
+                'support' => $product->getSupport(),
+                'album' => $product->getAlbum(),
+            ];
+        }
+
+
         return $this->render('home/index.html.twig', [
             'support' => $supportRepository->findAll(),
             'lastArticle' => $lastArticle->getResult(),
+            'lastArticleReact' => $dataForReactComponent,
             'lastProduction' => $lasProduction->getResult(),
         ]);
     }
