@@ -117,9 +117,6 @@ ARG TARGETARCH
 
 WORKDIR /srv/app
 
-# Download Caddy compiled with the Mercure and Vulcain modules
-ADD --chmod=500 https://caddyserver.com/api/download?os=linux&arch=$TARGETARCH&p=github.com/dunglas/mercure/caddy&p=github.com/dunglas/vulcain/caddy /usr/bin/caddy
-
 COPY --link docker/caddy/Caddyfile /etc/caddy/Caddyfile
 
 # Prod Caddy image

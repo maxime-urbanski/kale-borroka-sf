@@ -27,8 +27,6 @@ services:
     volumes:
       - ./public:/srv/app/public:ro
       - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-    environment:
-      MERCURE_EXTRA_DIRECTIVES: demo
 
   encore:
     image: node:18-alpine
@@ -38,8 +36,6 @@ services:
       - "8080:8080"
     working_dir: /app
     command: sh -c "yarn && yarn dev-server --host=0.0.0.0"
-  ###> symfony/mercure-bundle ###
-  ###< symfony/mercure-bundle ###
   
   ###> doctrine/doctrine-bundle ###
   database:
