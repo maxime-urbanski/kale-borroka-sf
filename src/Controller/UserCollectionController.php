@@ -48,6 +48,7 @@ class UserCollectionController extends AbstractController
 
         try {
             $currentUserCollection->addArticle($article);
+            $currentUserCollection->setSince(new \DateTime('now'));
             $this->addFlash('success', $article->getName() . ' à bien été ajouté à ta collection');
             $this->entityManager->persist($currentUserCollection);
             $this->entityManager->flush();
