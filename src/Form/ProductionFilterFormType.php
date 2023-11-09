@@ -25,6 +25,9 @@ class ProductionFilterFormType extends AbstractType
                 'required' => false,
                 'multiple' => true,
                 'expanded' => true,
+                'attr' => [
+                    'class' => 'text-uppercase'
+                ]
             ])
             ->add('labels', EntityType::class, [
                 'label' => 'Label',
@@ -32,6 +35,9 @@ class ProductionFilterFormType extends AbstractType
                 'required' => false,
                 'multiple' => true,
                 'expanded' => true,
+                'attr' => [
+                    'class' => 'text-uppercase'
+                ]
             ])
             ->add('supports', EntityType::class, [
                 'label' => 'Support',
@@ -39,6 +45,9 @@ class ProductionFilterFormType extends AbstractType
                 'required' => false,
                 'multiple' => true,
                 'expanded' => true,
+                'attr' => [
+                    'class' => 'text-uppercase'
+                ]
             ])
             ->add('styles', EntityType::class, [
                 'label' => 'Styles',
@@ -46,6 +55,9 @@ class ProductionFilterFormType extends AbstractType
                 'required' => false,
                 'multiple' => true,
                 'expanded' => true,
+                'attr' => [
+                    'class' => 'text-uppercase'
+                ]
             ])
             ->add('kbrProduction', CheckboxType::class, [
                 'label' => 'Nos productions',

@@ -1,9 +1,9 @@
 {% extends 'user/user-dashboard.html.twig' %}
 
 {% block content %}
-    <div class="row my-5">
+    <div class="row mb-5">
         <div class="col">
-            <div class="card">
+            <div class="card border border-secondary rounded-1 ">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h5 class="fw-bold card-title text-danger">Mes coordonnées</h5>
@@ -34,7 +34,7 @@
         </div>
     </div>
     <div class="d-grid col-md-6 mx-auto mb-5">
-        <div class="card">
+        <div class="card border border-secondary rounded-1 ">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h5 class="fw-bold card-title text-danger mb-0">Mon mot de passe</h5>
@@ -54,9 +54,17 @@
     </div>
     {% if user.orders |first %}
         <div class="d-grid col-md-6 me-auto mb-5">
-            <div class="card">
+            <div class="card border border-secondary rounded-1 ">
                 <div class="card-body">
-                    <h5 class="fw-bold card-title text-danger mb-2">Ma dernière commande</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="fw-bold card-title text-danger mb-2">Ma dernière commande</h5>
+                        {% include 'partials/_obfuscation_link.html.twig' with {
+                            url: path('app_user_orders'),
+                            class: "float-end",
+                            span: true,
+                            text: 'Mes commandes'
+                        } %}
+                    </div>
                     {% set last_order = user.orders |first %}
                     <p class="fw-bolder">
                         Commande passé le :

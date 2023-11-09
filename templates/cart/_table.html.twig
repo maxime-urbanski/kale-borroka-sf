@@ -48,8 +48,10 @@
                                 class: "btn btn-outline-danger",
                                 icon: " bi-dash-lg"
                             } %}
-                            <input type="text" class="form-control flex-grow-0" value="{{ article.quantity }}"
-                                   style="width: 50px">
+                            <label>
+                                <input type="text" class="form-control flex-grow-0" value="{{ article.quantity }}"
+                                       style="width: 50px">
+                            </label>
                             {% include 'partials/_obfuscation_link.html.twig' with {
                                 url: path('app_cart_add_quantity', {id: article.product.id}),
                                 class: "btn btn-outline-success",
