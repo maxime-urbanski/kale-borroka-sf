@@ -1,4 +1,5 @@
 {% set route = app.current_route %}
+{% set wantlist_route =  route == 'app_user_wantlist' %}
 
 <table class="table align-middle rounded-1">
     <thead>
@@ -10,25 +11,30 @@
     </thead>
     <tbody>
     {% for article in products %}
+        {% set remove_action = wantlist_route ?
+            path('app_wantlist_remove', {productId: article.id}) :
+            path('app_collection_remove', {productId: article.id}) %}
         <tr>
             <th>
                 <div class="d-flex justify-content-center align-items-center">
                     {% include 'partials/_obfuscation_link.html.twig' with {
-                        url: path('app_wantlist_remove', {productId: article.id}),
+                        url: remove_action,
                         class: "btn btn-outline-danger btn-sm rounded-circle",
                         icon: "bi-trash "
                     } %}
                 </div>
             </th>
-            <th>
-                <div class="d-flex justify-content-center align-items-center">
-                    {% include 'partials/_obfuscation_link.html.twig' with {
-                        url: path('app_cart_add', {id: article.id}),
-                        class: "btn btn-outline-success btn-sm rounded-circle",
-                        icon: "bi-cart"
-                    } %}
-                </div>
-            </th>
+            {% if wantlist_route %}
+                <th>
+                    <div class="d-flex justify-content-center align-items-center">
+                        {% include 'partials/_obfuscation_link.html.twig' with {
+                            url: path('app_cart_add', {id: article.id}),
+                            class: "btn btn-outline-success btn-sm rounded-circle",
+                            icon: "bi-cart"
+                        } %}
+                    </div>
+                </th>
+            {% endif %}
             <th>
                 <a href="{{ path('app_catalog_article', { support: article.support, slug: article.slug}) }}">
                     {% if article.album.images[0] is defined %}
@@ -50,12 +56,12 @@
                 {{ article.name }} - {{ article.support | upper }}
             </th>
             <th class="text-center  fw-light">
-                {{ route == 'app_user_wantlist' ?
+                {{ wantlist_route ?
                 (article.price / 100) |format_currency('EUR') :
                 article.support | upper }}
             </th>
             <th class="text-center fw-light">
-                {{ route == 'app_user_wantlist' ?
+                {{ wantlist_route ?
                 article.quantity :
                 collection.since | date }}
             </th>

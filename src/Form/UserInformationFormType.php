@@ -39,7 +39,7 @@ class UserInformationFormType extends AbstractType
             ->add('submit', SubmitType::class, [
                 'label' => 'Valider mes modifications',
                 'attr' => [
-                    'class' => 'btn-outline-primary',
+                    'class' => 'btn-success',
                 ],
             ]);
     }

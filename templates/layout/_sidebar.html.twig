@@ -35,7 +35,7 @@
 
 <div class="d-flex flex-column border border-secondary rounded-1 flex-shrink-0 px-5 py-3 bg-white">
     {% for route in routes %}
-        <a href="{{ path(route.link) }}" class="my-2 text-decoration-none">
+        <a href="{{ path(route.link) }}" class="d-flex align-items-center my-2 text-decoration-none">
             <i class="bi {{ route.icon }} fs-4 me-3"></i>
             {{ route.name }}
         </a>
