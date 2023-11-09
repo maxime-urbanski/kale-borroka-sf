@@ -2,52 +2,12 @@
 
 {% block content %}
     {% if collection %}
-        <table class="table align-middle">
-            <thead>
-            <tr>
-                <th></th>
-                <th></th>
-                <th class="text-center text-danger">{{ 'Produit'|upper }}</th>
-                <th class="text-center text-danger">{{ 'support'|upper }}</th>
-                <th class="text-center text-danger">{{ 'date d\'ajout' |upper }}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for article in collection.article %}
-                <tr>
-                    <th>
-                        <div class="d-flex justify-content-center align-items-center">
-                            {% include 'partials/_obfuscation_link.html.twig' with {
-                                url: path('app_collection_remove', {productId: article.id}),
-                                class: "btn btn-outline-danger btn-sm rounded-circle",
-                                icon: "bi-trash"
-                            } %}
-                        </div>
-                    </th>
-                    <th>
-                        <a href="{{ path('app_catalog_article', { support: article.support, slug: article.slug}) }}">
-                            {% if article.album.images[0] is defined %}
-                                <img
-                                    src="{{ asset('upload/albums/' ~ article.album.images[0].imageName) }}"
-                                    alt="{{ article.name }}"
-                                    class="img-thumbnail"
-                                    width="80" height="80">
-                            {% else %}
-                                <img src="{{ asset('/images/product_placeholder.png') }}"
-                                     alt="{{ article.name }}"
-                                     class="img-thumbnail"
-                                     width="80"
-                                     height="80">
-                            {% endif %}
-                        </a>
-                    </th>
-                    <th class="text-center fw-light">{{ article.name }}</th>
-                    <th class="text-center  fw-light">{{ article.support |upper }}</th>
-                    <th class="text-center fw-light">{{ collection.since |date() }}</th>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        {% set categories = ['', '', '', 'Produit', 'Support', 'Ajouter le'] %}
+        {% include 'user/_table_product.html.twig' with {
+            categories,
+            products: collection.article,
+            empty_message: 'ta collection est vide'
+        } %}
     {% endif %}
 {% endblock %}
 

@@ -24,6 +24,9 @@ class ArticleFilterFormType extends AbstractType
                 'required' => false,
                 'multiple' => true,
                 'expanded' => true,
+                'attr' => [
+                    'class' => 'text-uppercase'
+                ]
             ])
             ->add('labels', EntityType::class, [
                 'label' => 'Label',
@@ -31,6 +34,9 @@ class ArticleFilterFormType extends AbstractType
                 'required' => false,
                 'multiple' => true,
                 'expanded' => true,
+                'attr' => [
+                    'class' => 'text-uppercase'
+                ]
             ])
             ->add('styles', EntityType::class, [
                 'label' => 'Styles',
@@ -38,6 +44,9 @@ class ArticleFilterFormType extends AbstractType
                 'required' => false,
                 'multiple' => true,
                 'expanded' => true,
+                'attr' => [
+                    'class' => 'text-uppercase'
+                ]
             ])
             ->add('kbrProduction', CheckboxType::class, [
                 'label' => 'Nos productions',

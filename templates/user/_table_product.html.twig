@@ -1,0 +1,71 @@
+{% set route = app.current_route %}
+
+<table class="table align-middle rounded-1">
+    <thead>
+    <tr>
+        {% for category in categories %}
+            <th class="text-center text-danger">{{ category | upper }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for article in products %}
+        <tr>
+            <th>
+                <div class="d-flex justify-content-center align-items-center">
+                    {% include 'partials/_obfuscation_link.html.twig' with {
+                        url: path('app_wantlist_remove', {productId: article.id}),
+                        class: "btn btn-outline-danger btn-sm rounded-circle",
+                        icon: "bi-trash "
+                    } %}
+                </div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center align-items-center">
+                    {% include 'partials/_obfuscation_link.html.twig' with {
+                        url: path('app_cart_add', {id: article.id}),
+                        class: "btn btn-outline-success btn-sm rounded-circle",
+                        icon: "bi-cart"
+                    } %}
+                </div>
+            </th>
+            <th>
+                <a href="{{ path('app_catalog_article', { support: article.support, slug: article.slug}) }}">
+                    {% if article.album.images[0] is defined %}
+                        <img
+                            src="{{ asset('upload/albums/' ~ article.album.images[0].imageName) }}"
+                            alt="{{ article.name }}"
+                            class="img-thumbnail"
+                            width="80" height="80">
+                    {% else %}
+                        <img src="{{ asset('/images/product_placeholder.png') }}"
+                             alt="{{ article.name }}"
+                             class="img-thumbnail"
+                             width="80"
+                             height="80">
+                    {% endif %}
+                </a>
+            </th>
+            <th class="text-center fw-light">
+                {{ article.name }} - {{ article.support | upper }}
+            </th>
+            <th class="text-center  fw-light">
+                {{ route == 'app_user_wantlist' ?
+                (article.price / 100) |format_currency('EUR') :
+                article.support | upper }}
+            </th>
+            <th class="text-center fw-light">
+                {{ route == 'app_user_wantlist' ?
+                article.quantity :
+                collection.since | date }}
+            </th>
+        </tr>
+    {% else %}
+        <tr>
+            <th colspan="{{ categories |length }}">
+                <p class="fw-medium fst-italic text-center my-5">{{ empty_message }}</p>
+            </th>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
