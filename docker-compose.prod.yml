@@ -8,6 +8,9 @@ services:
       target: php_prod
     environment:
       APP_SECRET: ${APP_SECRET}
+    volumes:
+      - ./:/srv/app
+      - ./docker/php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
 
   caddy:
     build:
