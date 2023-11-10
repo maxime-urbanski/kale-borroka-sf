@@ -14,19 +14,15 @@
                             text: 'Modifier'
                         } %}
                     </div>
-                    <p class="fw-bold">{{ user.fullName |upper }}</p>
                     <div class="row row-cols-sm-1 row-cols-lg-2 justify-content-center mt-3">
                         <div class="col d-flex flex-column border-end">
+                            <p class="fw-bold">{{ user.fullName |upper }}</p>
                             <span class="fw-bold">email:</span>
                             <p>{{ user.email }}</p>
                         </div>
                         <div class="col d-flex flex-column">
                             <span class="fw-bold">Adresse:</span>
-                            <p>
-                                {{ user.address }} <br>
-                                {{ user.zipcode }} - {{ user.city }} <br>
-                                {{ user.country }}
-                            </p>
+                            <p>{{ user.defaultAddress | raw }}</p>
                         </div>
                     </div>
                 </div>

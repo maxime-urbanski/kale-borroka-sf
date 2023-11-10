@@ -141,6 +141,6 @@ class Address
 
     public function __toString(): string
     {
-        return $this->name;
+        return $this->name . '<br>' . $this->address . '<br>' . $this->complement_address . '<br>' . $this->zipcode . $this->city . '<br>' . $this->country;
     }
 }

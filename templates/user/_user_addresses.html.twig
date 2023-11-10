@@ -1,0 +1,49 @@
+{% extends 'user/user-dashboard.html.twig' %}
+
+{% block content %}
+    {% set user = app.user %}
+    <div class="row row-cols-sm-1 row-cols-lg-2 g-4 justify-content-center">
+        {% for index, address in userAddresses %}
+            {% set userDefaultAddress = address == user.defaultAddress %}
+            <div class="col mx-auto py-3">
+                <div class="d-flex flex-column h-100">
+                    <div class="card h-100 border border-secondary rounded-1 px-3 py-2 bg-white">
+                        <div class="d-flex justify-content-between align-items-center my-3">
+                            <span class="fw-bolder text-center">{{ user.fullName }}</span>
+                            {% if userDefaultAddress %}
+                                <span class="badge text-bg-primary">Adresse de livraison par default</span>
+                            {% endif %}
+                        </div>
+                        <div class="text-justify fw-medium">{{ address.address }}</div>
+                        <div class="text-justify fw-medium">{{ address.complementAddress }}</div>
+                        <div class="text-justify fw-medium">{{ address.zipcode }} - {{ address.city }}</div>
+                        <div class="text-justify fw-medium">{{ address.city }}</div>
+                    </div>
+                    <div class="mt-2 d-flex justify-content-center align-items-center">
+                        <input class="form-check-input cursor-pointer"
+                               type="radio"
+                               name="radioDefaultAddress"
+                               id="radioDefaultAddress"
+                            {% if userDefaultAddress %} checked {% endif %}
+                            {% if not userDefaultAddress %}
+                                data-controller="address"
+                                data-action="click->address#patch"
+                                data-address-id-value="{{ address.id }}"
+                                data-address-user-value="{{ user.id }}"
+                            {% endif %}
+                        >
+                        <label for="radioDefaultAddress" class="ms-1">
+                            Définir comme adresse de livraison principal
+                        </label>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="col">
+            <div
+                class="d-flex justify-content-center align-items-center card h-100 border border-secondary rounded-1 px-5 py-3 bg-white cursor-pointer">
+                <i class="bi bi-plus-square-dotted fs-1"></i>
+            </div>
+        </div>
+    </div>
+{% endblock %}

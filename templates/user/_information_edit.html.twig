@@ -6,24 +6,24 @@
 
         {{ form_start(form, {
             attr: {
-                class: 'row g-3'
+                class: 'row g-3 mt-2'
             }
         }) }}
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="form-floating mb-3">
                 {{ form_widget(form.lastname) }}
                 {{ form_label(form.lastname) }}
                 {{ form_errors(form.lastname) }}
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="form-floating mb-3">
                 {{ form_widget(form.firstname) }}
                 {{ form_label(form.firstname) }}
                 {{ form_errors(form.firstname) }}
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-8 mx-auto">
             <div class="form-floating mb-3">
                 {{ form_widget(form.email) }}
                 {{ form_label(form.email) }}
@@ -32,36 +32,14 @@
         </div>
         <div class="col-md-12">
             <div class="form-floating mb-3">
-                {{ form_widget(form.address) }}
-                {{ form_label(form.address) }}
-                {{ form_errors(form.address) }}
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-floating mb-3">
-                {{ form_widget(form.zipcode) }}
-                {{ form_label(form.zipcode) }}
-                {{ form_errors(form.zipcode) }}
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-floating mb-3">
-                {{ form_widget(form.city) }}
-                {{ form_label(form.city) }}
-                {{ form_errors(form.city) }}
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-floating mb-3">
-                {{ form_widget(form.country) }}
-                {{ form_label(form.country) }}
-                {{ form_errors(form.country) }}
+                {{ form_widget(form.defaultAddress) }}
+                {{ form_label(form.defaultAddress) }}
+                {{ form_errors(form.defaultAddress) }}
             </div>
         </div>
         <div class="d-grid col-md-8 mx-auto">
             {{ form_widget(form.submit) }}
         </div>
         {{ form_end(form) }}
-
     </div>
 {% endblock %}

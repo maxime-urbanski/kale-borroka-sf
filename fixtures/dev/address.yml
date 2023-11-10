@@ -18,3 +18,12 @@ App\Entity\Address:
         country: Euskal Herria
         is_main_address: false
         users: '@user_admin'
+    
+    work_user:
+        name: Coworking234
+        address: 100 rue Floride
+        city: Baiona
+        zipcode: 64161
+        country: Euskal Herria
+        is_main_address: false
+        users: '@user_user'
