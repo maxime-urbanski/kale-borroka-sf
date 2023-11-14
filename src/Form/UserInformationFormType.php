@@ -22,8 +22,6 @@ class UserInformationFormType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-
-
         $builder
             ->add('lastname', TextType::class, [
                 'label' => 'Nom',
@@ -38,10 +36,11 @@ class UserInformationFormType extends AbstractType
                 'label' => 'Mon adresse principal de livraison',
                 'class' => Address::class,
                 'choice_label' => function (Address $address) {
-                    return $address->getName() . ' '. $address->getAddress() . ' '. $address->getComplementAddress() . ' '. $address->getZipcode() . $address->getCity() . ' '. $address->getCountry();
+                    return $address->getName().' '.$address->getAddress().' '.$address->getComplementAddress().' '.$address->getZipcode().$address->getCity().' '.$address->getCountry();
                 },
-                'query_builder' => function (AddressRepository $addressRepository)  {
+                'query_builder' => function (AddressRepository $addressRepository) {
                     $user = $this->security->getUser();
+
                     return $addressRepository
                         ->createQueryBuilder('address')
                         ->leftJoin('address.users', 'users')

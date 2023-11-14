@@ -6,6 +6,7 @@ use App\Entity\Order;
 use App\Entity\OrderDetails;
 use App\Entity\UserCollection;
 use App\Form\OrderAddressDeliveryPaymentFormType;
+use App\Form\UserAccountAddressFormType;
 use App\Repository\UserCollectionRepository;
 use App\Service\CartService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,15 +20,16 @@ class OrderAddressDeliveryController extends AbstractController
 {
     #[Route('/order/delivery', name: 'app_order_delivery')]
     public function selectAddressAndDelivery(
-        Request                  $request,
-        Security                 $security,
-        CartService              $cartService,
-        EntityManagerInterface   $entityManager,
+        Request $request,
+        Security $security,
+        CartService $cartService,
+        EntityManagerInterface $entityManager,
         UserCollectionRepository $userCollectionRepository
-    ): Response
-    {
+    ): Response {
         $user = $security->getUser();
         $cart = $cartService->getFullCart();
+
+        $formAddAddress = $this->createForm(UserAccountAddressFormType::class);
 
         $form = $this->createForm(OrderAddressDeliveryPaymentFormType::class, null, [
             'user' => $user,
@@ -45,7 +47,7 @@ class OrderAddressDeliveryController extends AbstractController
 
             $userCollection = $userCollectionRepository->find($user->getCollection());
 
-            $reference = 'kbr-' . uniqid('', true);
+            $reference = 'kbr-'.uniqid('', true);
             $totalPrice = 0;
 
             $addressSelected = $form->getData()['address'];
@@ -80,7 +82,6 @@ class OrderAddressDeliveryController extends AbstractController
                 // TODO: FIX DATE
                 $userCollection->setSince(new \DateTime());
 
-
                 $entityManager->persist($orderDetails);
                 $entityManager->persist($userCollection);
             }
@@ -98,6 +99,7 @@ class OrderAddressDeliveryController extends AbstractController
         return $this->render('order/delivery.html.twig', [
             'cart' => $cartService->getFullCart(),
             'form' => $form->createView(),
+            'formAddAddress' => $formAddAddress->createView(),
         ]);
     }
 }

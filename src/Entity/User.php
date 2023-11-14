@@ -162,7 +162,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->address;
     }
 
-    public function setAddress(string $address): static
+    public function setAddress(?Address $address): static
     {
         $this->address = $address;
 

@@ -20,10 +20,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AccountInformationController extends AbstractController
 {
     public function __construct(
-        private readonly Security               $security,
+        private readonly Security $security,
         private readonly EntityManagerInterface $entityManager
-    )
-    {
+    ) {
     }
 
     #[Route('', 'informations')]
@@ -39,8 +38,7 @@ class AccountInformationController extends AbstractController
     #[Route('/editer', 'informations_edit')]
     public function edit(
         Request $request,
-    ): Response
-    {
+    ): Response {
         $user = $this->security->getUser();
 
         $form = $this->createForm(UserInformationFormType::class, $user);
@@ -62,10 +60,9 @@ class AccountInformationController extends AbstractController
 
     #[Route('/editer-mot-de-passe', 'password_edit')]
     public function editPassword(
-        Request                     $request,
+        Request $request,
         UserPasswordHasherInterface $hasher
-    ): Response
-    {
+    ): Response {
         /* @var User $user */
         $user = $this->security->getUser();
 

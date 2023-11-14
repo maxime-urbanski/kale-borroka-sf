@@ -12,8 +12,7 @@ class AccountWantlistController extends AbstractController
 {
     public function __construct(
         private readonly Security $security
-    )
-    {
+    ) {
     }
 
     #[Route('/mon-compte/ma-wantlist', name: 'app_user_wantlist')]

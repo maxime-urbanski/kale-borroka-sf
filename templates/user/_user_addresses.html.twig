@@ -5,27 +5,44 @@
     <div class="row row-cols-sm-1 row-cols-lg-2 g-4 justify-content-center">
         {% for index, address in userAddresses %}
             {% set userDefaultAddress = address == user.defaultAddress %}
-            <div class="col mx-auto py-3">
+            <div class="col">
                 <div class="d-flex flex-column h-100">
-                    <div class="card h-100 border border-secondary rounded-1 px-3 py-2 bg-white">
+                    <div class="card h-100 border border-secondary px-3 py-2 shadow p-3 bg-body-white rounded">
                         <div class="d-flex justify-content-between align-items-center my-3">
-                            <span class="fw-bolder text-center">{{ user.fullName }}</span>
+                            <span class="fw-bolder text-center">{{ address.name }}</span>
                             {% if userDefaultAddress %}
                                 <span class="badge text-bg-primary">Adresse de livraison par default</span>
                             {% endif %}
                         </div>
-                        <div class="text-justify fw-medium">{{ address.address }}</div>
-                        <div class="text-justify fw-medium">{{ address.complementAddress }}</div>
-                        <div class="text-justify fw-medium">{{ address.zipcode }} - {{ address.city }}</div>
-                        <div class="text-justify fw-medium">{{ address.city }}</div>
+                        <p class="text-justify fw-medium">
+                            {{ address.address }} <br>
+                            {% if address.complementAddress %}
+                                {{ address.complementAddress }} <br>
+                            {% endif %}
+                            {{ address.zipcode }} - {{ address.city }} <br>
+                            {{ address.country }}
+                        </p>
+                        <div class="mt-auto">
+                            {% include 'layout/_canvas-form.html.twig' with {
+                                action: 'update',
+                                text_button: 'Modifier',
+                                key: address.id,
+                                title: 'Modifier mon adresse',
+                                form: forms[address.id],
+                                action_form: path('app_user_addresses_update', {id: address.id})
+                            } %}
+                            <a href="{{ path('app_user_addresses_remove', {id: address.id}) }}"
+                               class="btn btn-outline-danger btn-sm">Supprimer</a>
+                        </div>
                     </div>
                     <div class="mt-2 d-flex justify-content-center align-items-center">
                         <input class="form-check-input cursor-pointer"
                                type="radio"
                                name="radioDefaultAddress"
                                id="radioDefaultAddress"
-                            {% if userDefaultAddress %} checked {% endif %}
-                            {% if not userDefaultAddress %}
+                            {% if userDefaultAddress %}
+                                checked
+                            {% else %}
                                 data-controller="address"
                                 data-action="click->address#patch"
                                 data-address-id-value="{{ address.id }}"
@@ -40,9 +57,14 @@
             </div>
         {% endfor %}
         <div class="col">
-            <div
-                class="d-flex justify-content-center align-items-center card h-100 border border-secondary rounded-1 px-5 py-3 bg-white cursor-pointer">
-                <i class="bi bi-plus-square-dotted fs-1"></i>
+            <div class="d-flex flex-column h-100">
+                {% include 'layout/_canvas-form.html.twig' with {
+                    action: 'create',
+                    title: 'Nouvelle adresse',
+                    form: formAdd,
+                    action_form: path('app_user_addresses_add'),
+                } %}
+                <p class="text-center mt-auto mb-0 pt-2">Ajouter une adresse</p>
             </div>
         </div>
     </div>

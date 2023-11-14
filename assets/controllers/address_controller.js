@@ -7,6 +7,6 @@ export default class extends Controller {
   }
 
   async patch(e) {
-    window.location.href = `/mon-compte/mes-adresses/patch/default-address/${this.userValue}/${this.idValue}`
+    window.location.href = `/mon-compte/mes-adresses/update/default-address/${this.userValue}/${this.idValue}`
   }
 }
