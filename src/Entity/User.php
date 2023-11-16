@@ -45,18 +45,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100)]
     private ?string $firstname = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $address = null;
-
-    #[ORM\Column(length: 10)]
-    private ?string $zipcode = null;
-
-    #[ORM\Column(length: 150)]
-    private ?string $city = null;
-
-    #[ORM\Column(length: 100)]
-    private ?string $country = null;
-
     #[ORM\Column(options: ['default' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeImmutable $created_at = null;
 
@@ -71,6 +59,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(mappedBy: 'collector', cascade: ['persist', 'remove'])]
     private ?UserCollection $collection = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Address $defaultAddress = null;
 
     public function getId(): ?int
     {
@@ -171,7 +162,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->address;
     }
 
-    public function setAddress(string $address): static
+    public function setAddress(?Address $address): static
     {
         $this->address = $address;
 
@@ -316,6 +307,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->collection = $collection;
+
+        return $this;
+    }
+
+    public function getDefaultAddress(): ?Address
+    {
+        return $this->defaultAddress;
+    }
+
+    public function setDefaultAddress(?Address $defaultAddress): static
+    {
+        $this->defaultAddress = $defaultAddress;
 
         return $this;
     }

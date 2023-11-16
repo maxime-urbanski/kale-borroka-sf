@@ -26,7 +26,7 @@ class OrderAddressDeliveryPaymentFormType extends AbstractType
                 'required' => true,
             ])
             ->add('transport', EntityType::class, [
-                'label' => 'Adresse de livraison',
+                'label' => 'Choix du transporteur',
                 'class' => Transporter::class,
                 'multiple' => false,
                 'expanded' => true,

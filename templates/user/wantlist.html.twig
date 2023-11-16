@@ -1,12 +1,10 @@
 {% extends 'user/user-dashboard.html.twig' %}
 
 {% block content %}
-    {% if wantlist and wantlist.product %}
-        {% set categories = ['', '', '', 'Produit', 'Prix', 'Quantité disponible'] %}
-        {% include 'user/_table_product.html.twig' with {
-            categories,
-            products: wantlist.product,
-            empty_message: 'Rien dans ta wantlist !'
-        } %}
-    {% endif %}
+    {% set categories = ['', '', '', 'Produit', 'Prix', 'Quantité disponible'] %}
+    {% include 'user/_table_product.html.twig' with {
+        categories,
+        products: wantlist == null ? [] : wantlist.product,
+        empty_message: 'Rien dans ta wantlist !'
+    } %}
 {% endblock %}

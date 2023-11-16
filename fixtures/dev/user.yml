@@ -9,18 +9,11 @@ App\Entity\User:
         roles: [ 'ROLE_ADMIN' ]
         lastname: Loud
         firstname: Maxi
-        address: 10 rue Afa
-        zipcode: 64161
-        city: Baiona
-        country: France
     
-    user:
+    user_user:
         email: test@test.fr
         password: <{pw_user}>
         roles: [ 'ROLE_USER' ]
         lastname: Test
         firstname: Test
-        address: 10 rue Afa
-        zipcode: 64161
-        city: Baiona
-        country: France
+                        

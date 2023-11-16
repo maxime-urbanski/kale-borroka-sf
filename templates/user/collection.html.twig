@@ -1,13 +1,11 @@
 {% extends 'user/user-dashboard.html.twig' %}
 
 {% block content %}
-    {% if collection %}
-        {% set categories = ['', '', 'Produit', 'Support', 'Ajouter le'] %}
-        {% include 'user/_table_product.html.twig' with {
-            categories,
-            products: collection.article,
-            empty_message: 'Ta collection est vide !'
-        } %}
-    {% endif %}
+    {% set categories = ['', '', 'Produit', 'Support', 'Ajouter le'] %}
+    {% include 'user/_table_product.html.twig' with {
+        categories,
+        products: collection == null ? [] : collection.article,
+        empty_message: 'Ta collection est vide !'
+    } %}
 {% endblock %}
 

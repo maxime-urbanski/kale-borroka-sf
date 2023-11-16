@@ -1,0 +1,46 @@
+{% set action_create = action == 'create' %}
+{% set action_update = action == 'update' %}
+
+{% if action_create %}
+    <div
+        class="card justify-content-center align-items-center border border-secondary shadow p-3 bg-body-white rounded px-5 py-3 cursor-pointer h-100"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasRight"
+        aria-controls="offcanvasRight"
+    >
+        <i class="bi bi-plus-square-dotted fs-1"></i>
+    </div>
+{% endif %}
+
+{% if action_update %}
+    <button class="btn btn-sm btn-outline-success"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasRight-{{ address.id }}"
+            aria-controls="offcanvasRight">
+        {{ text_button }}
+    </button>
+{% endif %}
+<div class="offcanvas offcanvas-end"
+     tabindex="-1"
+    {% if key is defined %}
+        id="offcanvasRight-{{ key }}"
+    {% else %}
+        id="offcanvasRight"
+    {% endif %}
+     aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title"
+            id="offcanvasRightLabel">{{ title }}</h5>
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        {{ form_start(form, {
+            action: action_form
+        }) }}
+        {{ form_end(form) }}
+    </div>
+</div>

@@ -4,12 +4,25 @@
     <h3 class="my-5 text-center">Mon adresse et ma livraison</h3>
 {% endblock %}
 {% block left %}
-    {{ form(form) }}
+    {{ form_start(form) }}
+    {{ form_row(form.address) }}
+    <div class="w-25 h-25">
+        {% include 'layout/_canvas-form.html.twig' with {
+            action: 'create',
+            title: 'Nouvelle adresse',
+            form: formAddAddress,
+            action_form: path('app_user_addresses_add'),
+        } %}
+    </div>
+    {{ form_row(form.transport) }}
+    {{ form_row(form.payment) }}
+
+    {{ form_end(form) }}
 {% endblock %}
 {% block rigth %}
     <h4>Récapitulatif de ma commande</h4>
-        <div class="d-flex flex-column justify-content-between border border-secondary rounded">
-    {% for article in cart %}
+    <div class="d-flex flex-column justify-content-between border border-secondary rounded">
+        {% for article in cart %}
             <a href="{{ path('app_catalog_article', { support: article.product.support, slug: article.product.slug}) }}">
                 {% if article.product.album.images[0] is defined %}
                     <img
@@ -32,6 +45,6 @@
                     <p>Prix: {{ article.product.price }}</p>
                 </div>
             </div>
-    {% endfor %}
-        </div>
+        {% endfor %}
+    </div>
 {% endblock %}

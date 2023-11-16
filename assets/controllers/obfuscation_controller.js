@@ -6,7 +6,6 @@ export default class extends Controller {
   }
 
   obfuscation() {
-    console.log(this.urlValue)
     window.location.href = this.urlValue;
   }
 }

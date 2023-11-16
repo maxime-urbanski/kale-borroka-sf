@@ -6,7 +6,6 @@ use App\Entity\UserCollection;
 use App\Repository\ArticleRepository;
 use App\Repository\UserCollectionRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,24 +15,24 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserCollectionController extends AbstractController
 {
     public function __construct(
-        private readonly Security                 $security,
-        private readonly EntityManagerInterface   $entityManager,
+        private readonly Security $security,
+        private readonly EntityManagerInterface $entityManager,
         private readonly UserCollectionRepository $userCollectionRepository,
-        private readonly ArticleRepository        $articleRepository
-    )
-    {
+        private readonly ArticleRepository $articleRepository
+    ) {
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     #[Route('/add/{productId}', name: 'add')]
     public function add(
         string $productId
-    ): Response
-    {
+    ): Response {
         $user = $this->security->getUser();
-        if (!$user) return $this->redirectToRoute('app_login');
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
 
         $article = $this->articleRepository->find($productId);
 
@@ -49,24 +48,23 @@ class UserCollectionController extends AbstractController
         try {
             $currentUserCollection->addArticle($article);
             $currentUserCollection->setSince(new \DateTime('now'));
-            $this->addFlash('success', $article->getName() . ' à bien été ajouté à ta collection');
+            $this->addFlash('success', $article->getName().' à bien été ajouté à ta collection');
             $this->entityManager->persist($currentUserCollection);
             $this->entityManager->flush();
-        } catch (Exception $exception) {
-            throw new Exception($exception);
+        } catch (\Exception $exception) {
+            throw new \Exception($exception);
         }
 
         return $this->redirectToRoute('app_homepage');
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     #[Route('/remove/{productId}', name: 'remove')]
     public function removeToCollection(
         string $productId
-    ): Response
-    {
+    ): Response {
         $article = $this->articleRepository->find($productId);
         $user = $this->security->getUser();
 
@@ -75,11 +73,11 @@ class UserCollectionController extends AbstractController
 
         try {
             $currentUserCollection->removeArticle($article);
-            $this->addFlash('success', $article->getName() . ' à bien été supprimé de ta collection');
+            $this->addFlash('success', $article->getName().' à bien été supprimé de ta collection');
             $this->entityManager->persist($currentUserCollection);
             $this->entityManager->flush();
-        } catch (Exception $exception) {
-            throw new Exception($exception);
+        } catch (\Exception $exception) {
+            throw new \Exception($exception);
         }
 
         return $this->redirectToRoute('app_homepage');

@@ -48,6 +48,8 @@ class AccountInformationController extends AbstractController
             $this->entityManager->persist($user);
             $this->entityManager->flush();
             $this->addFlash('success', 'Informations modifiées');
+
+            return $this->redirectToRoute('app_user_informations');
         }
 
         return $this->render('user/_information_edit.html.twig', [
@@ -72,8 +74,9 @@ class AccountInformationController extends AbstractController
             $user->setPassword($hasher->hashPassword($user, $passwordData->new_password));
             $this->entityManager->persist($user);
             $this->entityManager->flush();
-
             $this->addFlash('success', 'Mot de passe modifié');
+
+            return $this->redirectToRoute('app_user_informations');
         }
 
         return $this->render('user/_password_edit.html.twig', [

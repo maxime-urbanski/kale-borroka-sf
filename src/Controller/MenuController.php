@@ -11,9 +11,8 @@ class MenuController extends AbstractController
 {
     public function __construct(
         private readonly SupportRepository $supportRepository,
-        private readonly CartService       $cartService
-    )
-    {
+        private readonly CartService $cartService
+    ) {
     }
 
     public function navbar(): Response
@@ -39,8 +38,7 @@ class MenuController extends AbstractController
 
         return $this->render('layout/_navbar.html.twig', [
             'links' => $links,
-            'itemsInCart' => $cartQuantity > 9 ? '9+' : $cartQuantity
-
+            'itemsInCart' => $cartQuantity > 9 ? '9+' : $cartQuantity,
         ]);
     }
 }
