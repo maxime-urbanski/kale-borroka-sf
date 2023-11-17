@@ -4,8 +4,6 @@
     <h3 class="my-5 text-center">Mon adresse et ma livraison</h3>
 {% endblock %}
 {% block left %}
-    {{ form_start(form) }}
-    {{ form_row(form.address) }}
     <div class="w-25 h-25">
         {% include 'layout/_canvas-form.html.twig' with {
             action: 'create',
@@ -14,6 +12,8 @@
             action_form: path('app_user_addresses_add'),
         } %}
     </div>
+    {{ form_start(form) }}
+    {{ form_row(form.address) }}
     {{ form_row(form.transport) }}
     {{ form_row(form.payment) }}
 

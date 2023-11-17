@@ -8,6 +8,7 @@ use App\Entity\Address;
 use App\Form\UserAccountAddressFormType;
 use App\Repository\AddressRepository;
 use App\Repository\UserRepository;
+use App\Service\RedirectRefererService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -21,10 +22,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AccountUserAddress extends AbstractController
 {
     public function __construct(
-        private readonly Security $security,
+        private readonly Security               $security,
         private readonly EntityManagerInterface $entityManager,
-        private readonly AddressRepository $addressRepository,
-        private readonly UserRepository $userRepository,
+        private readonly AddressRepository      $addressRepository,
+        private readonly UserRepository         $userRepository,
+        private readonly RedirectRefererService $redirectReferer,
     ) {
     }
 
@@ -78,6 +80,7 @@ class AccountUserAddress extends AbstractController
     public function addAddress(
         Request $request
     ): Response {
+
         $address = new Address();
         $form = $this->createForm(UserAccountAddressFormType::class, $address);
         $form->handleRequest($request);

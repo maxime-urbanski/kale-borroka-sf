@@ -6,7 +6,7 @@ use Doctrine\ORM\Query;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
-class PaginationService
+final class PaginationService
 {
     public const PRODUCT_PER_PAGE = 9;
 
