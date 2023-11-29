@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container-md">
+        {% block connect_error %}{% endblock %}
+        <div class="card my-5 shadow">
+            <div class="row g-0">
+                <div class="col-md-5 d-flex justify-content-center align-items-center bg-dark">
+                    {#                    <img src="{{ asset('images/logo.jpg') }}" class="img-fluid rounded-start h-75" alt="..."> #}
+                </div>
+                <div class="col-md-7 my-4">
+                    <h1 class="h3 mb-3 font-weight-normal text-center">{{ title }}</h1>
+                    <div class="card-body">
+                        {% block form %}{% endblock %}
+                        <div class="d-flex justify-content-around mt-5">
+                            {% block redirection %}{% endblock %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

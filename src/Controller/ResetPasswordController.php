@@ -55,6 +55,7 @@ class ResetPasswordController extends AbstractController
 
         return $this->render('reset_password/request.html.twig', [
             'requestForm' => $form->createView(),
+            'title' => 'Mot de passe oublié',
         ]);
     }
 
@@ -72,6 +73,7 @@ class ResetPasswordController extends AbstractController
 
         return $this->render('reset_password/check_email.html.twig', [
             'resetToken' => $resetToken,
+            'title' => 'Email de réinitialisation du mot de passe envoyé',
         ]);
     }
 
@@ -131,6 +133,7 @@ class ResetPasswordController extends AbstractController
 
         return $this->render('reset_password/reset.html.twig', [
             'resetForm' => $form->createView(),
+            'title' => 'Réinitialiser le mot de passe',
         ]);
     }
 

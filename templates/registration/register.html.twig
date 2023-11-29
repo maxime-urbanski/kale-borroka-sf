@@ -1,22 +1,22 @@
-{% extends 'base.html.twig' %}
+{% extends 'connect.html.twig' %}
 
-{% block title %}Register{% endblock %}
-
-{% block body %}
-
-    <div class="container">
-        <h1>Register</h1>
-
-        {{ form_errors(registrationForm) }}
-
-        {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
-
-        <button type="submit" class="btn">Register</button>
-        {{ form_end(registrationForm) }}
+{% block form %}
+    {{ form_errors(registrationForm) }}
+    {{ form_start(registrationForm) }}
+    {{ form_row(registrationForm.firstname) }}
+    {{ form_row(registrationForm.lastname) }}
+    {{ form_row(registrationForm.email) }}
+    {{ form_row(registrationForm.plainPassword) }}
+    {{ form_row(registrationForm.agreeTerms) }}
+    <div class="d-grid col-8 mx-auto">
+        <button type="submit" class="btn btn-outline-success">Créer un compte</button>
     </div>
+    {{ form_end(registrationForm) }}
+{% endblock %}
+
+{% block redirection %}
+    <a href="{{ path('app_login') }}"
+       class="btn btn-outline-secondary">
+        Déjà inscrit ?
+    </a>
 {% endblock %}
