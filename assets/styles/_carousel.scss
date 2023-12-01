@@ -1,0 +1,15 @@
+.custom-carousel {
+    overflow: hidden;
+    position: relative;
+
+    .custom-carousel-container {
+        white-space: nowrap;
+        transition: transform 1.7s;
+
+        .custom-carousel-item {
+            display: inline-block;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+}

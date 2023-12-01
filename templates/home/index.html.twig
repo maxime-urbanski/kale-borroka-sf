@@ -6,6 +6,13 @@
             articles: lastArticle,
             title: 'Derniers Articles'
         } %}
+
+        <div {{ react_component('Carousel', {
+            products: lastArticleReact,
+            elementVisible: 3,
+            elementToScroll: 3
+        }) }}></div>
+
         {% include 'layout/article/_section.html.twig' with {
             articles: lastProduction,
             title: 'Dernières prod'
