@@ -10,11 +10,11 @@ use App\Form\UpdatePasswordFormType;
 use App\Form\UserInformationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/mon-compte', name: 'app_user_')]
@@ -22,16 +22,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AccountInformationController extends AbstractController
 {
     public function __construct(
-        private readonly Security $security,
         private readonly EntityManagerInterface $entityManager
-    ) {
+    )
+    {
     }
 
     #[Route('', 'informations')]
-    public function userInformation(): Response
+    public function userInformation(#[CurrentUser] User $user): Response
     {
-        $user = $this->security->getUser();
-
         return $this->render('user/_informations.html.twig', [
             'user' => $user,
         ]);
@@ -39,10 +37,10 @@ class AccountInformationController extends AbstractController
 
     #[Route('/editer', 'informations_edit')]
     public function edit(
-        Request $request,
-    ): Response {
-        $user = $this->security->getUser();
-
+        #[CurrentUser] User $user,
+        Request             $request,
+    ): Response
+    {
         $form = $this->createForm(UserInformationFormType::class, $user);
         $form->handleRequest($request);
 
@@ -62,12 +60,11 @@ class AccountInformationController extends AbstractController
 
     #[Route('/editer-mot-de-passe', 'password_edit')]
     public function editPassword(
-        Request $request,
+        #[CurrentUser] User         $user,
+        Request                     $request,
         UserPasswordHasherInterface $hasher
-    ): Response {
-        /* @var User $user */
-        $user = $this->security->getUser();
-
+    ): Response
+    {
         $passwordData = new UpdatePasswordData();
         $form = $this->createForm(UpdatePasswordFormType::class, $passwordData);
         $form->handleRequest($request);

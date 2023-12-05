@@ -43,10 +43,11 @@ final class CatalogController extends AbstractController
         ArticleRepository $articleRepository,
         SupportRepository $supportRepository,
         PaginationService $paginationService,
-        Request $request,
-        string $support,
-        string $page = 'page-1',
-    ): Response {
+        Request           $request,
+        string            $support,
+        string            $page = 'page-1',
+    ): Response
+    {
         $breadcrumb = [
             [
                 'name' => 'Accueil',
@@ -65,9 +66,7 @@ final class CatalogController extends AbstractController
             ],
         ];
 
-        $getSupport = $supportRepository->findOneBy(['name' => $support]);
         $data = new ArticleFilterData();
-        $data->supports = $getSupport;
 
         $form = $this->createForm(ArticleFilterFormType::class, $data);
         $form->handleRequest($request);
@@ -86,9 +85,10 @@ final class CatalogController extends AbstractController
     public function pageArticle(
         ArticleRepository $articleRepository,
         SupportRepository $supportRepository,
-        string $support,
-        string $slug
-    ): Response {
+        string            $support,
+        string            $slug
+    ): Response
+    {
         $getSupport = $supportRepository->findOneBy(['name' => $support]);
         $article = $articleRepository->findOneBy([
             'support' => $getSupport,
@@ -121,13 +121,14 @@ final class CatalogController extends AbstractController
             ],
         ];
 
-        $artistArticle = $articleRepository->getArticleWithSameArtist($article->getAlbum()->getArtist()->getId());
+        $artistArticle = $articleRepository->getArticleWithSameArtist($article->getAlbum()->getArtist());
 
+        $styles = [];
         foreach ($article->getAlbum()->getStyles() as $style) {
-            $array[] = $style->getId();
+            $styles[] = $style;
         }
 
-        $articleWithSameStyle = $articleRepository->getArticleWithSameStyle($array);
+        $articleWithSameStyle = $articleRepository->getArticleWithSameStyle($styles);
 
         return $this->render('catalog/article.html.twig', [
             'article' => $article,

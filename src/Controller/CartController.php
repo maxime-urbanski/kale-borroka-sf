@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Service\CartService;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +28,7 @@ class CartController extends AbstractController
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     #[Route('/add/{id}', 'add')]
     public function addToCart(
@@ -44,13 +45,13 @@ class CartController extends AbstractController
             return null;
         }
 
-        unset($routeControllerName, $routeInfos['_controller']);
+        unset($routeInfos['_controller']);
 
         try {
             $cartService->addToCart($id);
             $this->addFlash('success', 'article ajouté au panier');
-        } catch (\Exception $e) {
-            throw new \RuntimeException($e);
+        } catch (Exception $e) {
+            throw new Exception('error');
         }
 
         return $this->redirectToRoute($routeInfos['_route'], $routeInfos);

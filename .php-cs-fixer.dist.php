@@ -8,6 +8,7 @@ $finder = (new PhpCsFixer\Finder())
 return (new PhpCsFixer\Config())
     ->setRules([
         '@Symfony' => true,
+        'no_multiline_whitespace_around_double_arrow' => true
     ])
     ->setFinder($finder)
 ;

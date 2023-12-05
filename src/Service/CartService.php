@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Article;
 use App\Repository\ArticleRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -11,9 +12,10 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 readonly class CartService
 {
     public function __construct(
-        private RequestStack $requestStack,
+        private RequestStack      $requestStack,
         private ArticleRepository $articleRepository
-    ) {
+    )
+    {
     }
 
     public function addToCart(int $id): void
@@ -59,11 +61,14 @@ readonly class CartService
         $this->getSession()->set('cart', $cart);
     }
 
-    public function removeAll(): null
+    public function removeAll(): void
     {
-        return $this->getSession()->set('cart', []);
+        $this->getSession()->set('cart', []);
     }
 
+    /**
+     * @return array<int, array{product: Article, quantity: int, quantityMaxAvailable: int}>
+     */
     public function getFullCart(): array
     {
         $cart = $this->getSession()->get('cart', []);

@@ -4,6 +4,7 @@ namespace App\Controller\Order;
 
 use App\Entity\Order;
 use App\Entity\OrderDetails;
+use App\Entity\User;
 use App\Entity\UserCollection;
 use App\Form\OrderAddressDeliveryPaymentFormType;
 use App\Form\UserAccountAddressFormType;
@@ -15,18 +16,22 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('IS_AUTHENTICATED_FULLY')]
 class OrderAddressDeliveryController extends AbstractController
 {
     #[Route('/order/delivery', name: 'app_order_delivery')]
     public function selectAddressAndDelivery(
-        Request $request,
-        Security $security,
-        CartService $cartService,
-        EntityManagerInterface $entityManager,
-        UserCollectionRepository $userCollectionRepository
-    ): Response {
-        $user = $security->getUser();
+        #[CurrentUser] User      $user,
+        Request                  $request,
+        Security                 $security,
+        CartService              $cartService,
+        EntityManagerInterface   $entityManager,
+        UserCollectionRepository $userCollectionRepository,
+    ): Response
+    {
         $cart = $cartService->getFullCart();
 
         $formAddAddress = $this->createForm(UserAccountAddressFormType::class);
@@ -38,16 +43,16 @@ class OrderAddressDeliveryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $order = new Order();
+            $inUserCollection = $userCollectionRepository->findOneBy(['collector' => $user]);
 
-            if (!$user->getCollection()) {
-                $collection = new UserCollection();
-                $user->setCollection($collection);
+            if (!$inUserCollection) {
+                $userCollection = new UserCollection();
+                $userCollection->setCollector($user);
                 $entityManager->persist($user);
             }
 
-            $userCollection = $userCollectionRepository->find($user->getCollection());
-
-            $reference = 'kbr-'.uniqid('', true);
+            $getUserCollection = $userCollectionRepository->findOneBy(['collector' => $user]);
+            $reference = 'kbr-' . uniqid('', true);
             $totalPrice = 0;
 
             $addressSelected = $form->getData()['address'];
@@ -78,12 +83,12 @@ class OrderAddressDeliveryController extends AbstractController
                 $orderDetails->setOrders($order);
                 $order->setTotalPrice($totalPrice);
 
-                $userCollection->addArticle($product['product']);
+                $getUserCollection->addArticle($product['product']);
                 // TODO: FIX DATE
-                $userCollection->setSince(new \DateTime());
+                $getUserCollection->setSince(new \DateTime());
 
                 $entityManager->persist($orderDetails);
-                $entityManager->persist($userCollection);
+                $entityManager->persist($getUserCollection);
             }
 
             $entityManager->persist($order);
