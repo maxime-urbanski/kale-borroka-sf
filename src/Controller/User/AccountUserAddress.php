@@ -22,9 +22,8 @@ class AccountUserAddress extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly AddressRepository      $addressRepository,
-    )
-    {
+        private readonly AddressRepository $addressRepository,
+    ) {
     }
 
     #[Route('', '_index')]
@@ -54,10 +53,9 @@ class AccountUserAddress extends AbstractController
     #[Route('/update/default-address/{userId}/{addressId}', name: '_update_default_address')]
     public function patchDefaultAddress(
         #[CurrentUser] User $user,
-        string              $userId,
-        string              $addressId
-    ): Response
-    {
+        string $userId,
+        string $addressId
+    ): Response {
         try {
             $address = $this->addressRepository->find($addressId);
 
@@ -76,9 +74,8 @@ class AccountUserAddress extends AbstractController
     #[Route('/add', name: '_add', methods: ['POST'])]
     public function addAddress(
         #[CurrentUser] User $user,
-        Request             $request
-    ): Response
-    {
+        Request $request
+    ): Response {
         $address = new Address();
         $form = $this->createForm(UserAccountAddressFormType::class, $address);
         $form->handleRequest($request);
@@ -97,7 +94,7 @@ class AccountUserAddress extends AbstractController
             $this->entityManager->persist($newAddress);
             $this->entityManager->flush();
 
-            $this->addFlash('success', "L'adresse " . $form->getData()->getName() . " à bien été ajouté au carnet d'adresse.");
+            $this->addFlash('success', "L'adresse ".$form->getData()->getName()." à bien été ajouté au carnet d'adresse.");
         }
 
         return $this->redirectToRoute('app_user_addresses_index');
@@ -106,9 +103,8 @@ class AccountUserAddress extends AbstractController
     #[Route('/remove/{id}', '_remove')]
     public function deleteAddress(
         #[CurrentUser] User $user,
-        Address             $address
-    ): Response
-    {
+        Address $address
+    ): Response {
         try {
             $userDefaultAddress = $user->getDefaultAddress();
 
@@ -133,8 +129,7 @@ class AccountUserAddress extends AbstractController
     public function update(
         Address $address,
         Request $request
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(UserAccountAddressFormType::class, $address);
         $form->handleRequest($request);
 

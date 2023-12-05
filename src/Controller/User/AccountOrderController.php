@@ -18,9 +18,8 @@ class AccountOrderController extends AbstractController
     #[isGranted('IS_AUTHENTICATED_FULLY')]
     public function index(
         #[CurrentUser] User $user,
-        OrderRepository     $orderRepository
-    ): Response
-    {
+        OrderRepository $orderRepository
+    ): Response {
         $userOrders = $orderRepository->findBy([
             'buyer' => $user,
         ]);

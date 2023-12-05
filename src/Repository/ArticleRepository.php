@@ -118,7 +118,6 @@ class ArticleRepository extends ServiceEntityRepository
 
     /**
      * @param array<Style> $styles
-     * @return Query
      */
     public function getArticleWithSameStyle(array $styles): Query
     {

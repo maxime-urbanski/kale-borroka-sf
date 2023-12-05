@@ -23,8 +23,7 @@ class AccountInformationController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager
-    )
-    {
+    ) {
     }
 
     #[Route('', 'informations')]
@@ -38,9 +37,8 @@ class AccountInformationController extends AbstractController
     #[Route('/editer', 'informations_edit')]
     public function edit(
         #[CurrentUser] User $user,
-        Request             $request,
-    ): Response
-    {
+        Request $request,
+    ): Response {
         $form = $this->createForm(UserInformationFormType::class, $user);
         $form->handleRequest($request);
 
@@ -60,11 +58,10 @@ class AccountInformationController extends AbstractController
 
     #[Route('/editer-mot-de-passe', 'password_edit')]
     public function editPassword(
-        #[CurrentUser] User         $user,
-        Request                     $request,
+        #[CurrentUser] User $user,
+        Request $request,
         UserPasswordHasherInterface $hasher
-    ): Response
-    {
+    ): Response {
         $passwordData = new UpdatePasswordData();
         $form = $this->createForm(UpdatePasswordFormType::class, $passwordData);
         $form->handleRequest($request);

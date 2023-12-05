@@ -24,14 +24,13 @@ class OrderAddressDeliveryController extends AbstractController
 {
     #[Route('/order/delivery', name: 'app_order_delivery')]
     public function selectAddressAndDelivery(
-        #[CurrentUser] User      $user,
-        Request                  $request,
-        Security                 $security,
-        CartService              $cartService,
-        EntityManagerInterface   $entityManager,
+        #[CurrentUser] User $user,
+        Request $request,
+        Security $security,
+        CartService $cartService,
+        EntityManagerInterface $entityManager,
         UserCollectionRepository $userCollectionRepository,
-    ): Response
-    {
+    ): Response {
         $cart = $cartService->getFullCart();
 
         $formAddAddress = $this->createForm(UserAccountAddressFormType::class);
@@ -52,7 +51,7 @@ class OrderAddressDeliveryController extends AbstractController
             }
 
             $getUserCollection = $userCollectionRepository->findOneBy(['collector' => $user]);
-            $reference = 'kbr-' . uniqid('', true);
+            $reference = 'kbr-'.uniqid('', true);
             $totalPrice = 0;
 
             $addressSelected = $form->getData()['address'];

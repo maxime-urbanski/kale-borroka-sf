@@ -70,3 +70,13 @@ jobs:
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
           args: --config=.php-cs-fixer.dist.php --diff --dry-run
+  
+  phpstan:
+    name: Php-stan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: php-actions/composer@v6 # or alternative dependency management
+      - uses: php-actions/phpstan@v3
+        with:
+          path: src/

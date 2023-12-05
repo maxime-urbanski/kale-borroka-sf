@@ -17,10 +17,9 @@ class WantlistController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ArticleRepository      $articleRepository,
-        private readonly WantlistRepository     $wantlistRepository
-    )
-    {
+        private readonly ArticleRepository $articleRepository,
+        private readonly WantlistRepository $wantlistRepository
+    ) {
     }
 
     /**
@@ -29,9 +28,8 @@ class WantlistController extends AbstractController
     #[Route('/add/{productId}', 'add')]
     public function addInWantlist(
         #[CurrentUser] User $user,
-        string              $productId
-    ): Response
-    {
+        string $productId
+    ): Response {
         $articleToWantlist = $this->articleRepository->find($productId);
 
         if (!$user->getWantlist()) {
@@ -45,7 +43,7 @@ class WantlistController extends AbstractController
 
         try {
             $currentUserWantlist->addProduct($articleToWantlist);
-            $this->addFlash('success', $articleToWantlist->getName() . ' à bien été ajouté à la wantlist');
+            $this->addFlash('success', $articleToWantlist->getName().' à bien été ajouté à la wantlist');
             $this->entityManager->persist($currentUserWantlist);
             $this->entityManager->flush();
         } catch (\Exception $exception) {
@@ -61,20 +59,19 @@ class WantlistController extends AbstractController
     #[Route('/remove/{productId}', 'remove')]
     public function removeInWantlist(
         #[CurrentUser] User $user,
-        string              $productId
-    ): Response
-    {
+        string $productId
+    ): Response {
         $articleToWantlist = $this->articleRepository->find($productId);
         $userWantlist = $user->getWantlist();
         $currentUserWantlist = $this->wantlistRepository->find($userWantlist);
 
         try {
             $currentUserWantlist->removeProduct($articleToWantlist);
-            $this->addFlash('success', $articleToWantlist->getName() . ' à bien été supprimé de la wantlist');
+            $this->addFlash('success', $articleToWantlist->getName().' à bien été supprimé de la wantlist');
             $this->entityManager->persist($currentUserWantlist);
             $this->entityManager->flush();
         } catch (\Exception $exception) {
-            throw new \Exception("error");
+            throw new \Exception('error');
         }
 
         return $this->redirectToRoute('app_homepage');

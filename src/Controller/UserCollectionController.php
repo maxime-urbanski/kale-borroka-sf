@@ -18,11 +18,10 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 class UserCollectionController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface   $entityManager,
+        private readonly EntityManagerInterface $entityManager,
         private readonly UserCollectionRepository $userCollectionRepository,
-        private readonly ArticleRepository        $articleRepository
-    )
-    {
+        private readonly ArticleRepository $articleRepository
+    ) {
     }
 
     /**
@@ -32,8 +31,7 @@ class UserCollectionController extends AbstractController
     public function add(
         #[CurrentUser] User $user,
         string $productId
-    ): Response
-    {
+    ): Response {
         $article = $this->articleRepository->find($productId);
 
         if (!$user->getCollection()) {
@@ -48,7 +46,7 @@ class UserCollectionController extends AbstractController
         try {
             $currentUserCollection->addArticle($article);
             $currentUserCollection->setSince(new \DateTime('now'));
-            $this->addFlash('success', $article->getName() . ' à bien été ajouté à ta collection');
+            $this->addFlash('success', $article->getName().' à bien été ajouté à ta collection');
             $this->entityManager->persist($currentUserCollection);
             $this->entityManager->flush();
         } catch (\Exception $exception) {
@@ -65,8 +63,7 @@ class UserCollectionController extends AbstractController
     public function removeToCollection(
         #[CurrentUser] User $user,
         string $productId
-    ): Response
-    {
+    ): Response {
         $article = $this->articleRepository->find($productId);
 
         $userCollection = $user->getCollection();
@@ -74,7 +71,7 @@ class UserCollectionController extends AbstractController
 
         try {
             $currentUserCollection->removeArticle($article);
-            $this->addFlash('success', $article->getName() . ' à bien été supprimé de ta collection');
+            $this->addFlash('success', $article->getName().' à bien été supprimé de ta collection');
             $this->entityManager->persist($currentUserCollection);
             $this->entityManager->flush();
         } catch (\Exception $exception) {

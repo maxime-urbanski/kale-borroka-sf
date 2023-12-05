@@ -43,11 +43,10 @@ final class CatalogController extends AbstractController
         ArticleRepository $articleRepository,
         SupportRepository $supportRepository,
         PaginationService $paginationService,
-        Request           $request,
-        string            $support,
-        string            $page = 'page-1',
-    ): Response
-    {
+        Request $request,
+        string $support,
+        string $page = 'page-1',
+    ): Response {
         $breadcrumb = [
             [
                 'name' => 'Accueil',
@@ -85,10 +84,9 @@ final class CatalogController extends AbstractController
     public function pageArticle(
         ArticleRepository $articleRepository,
         SupportRepository $supportRepository,
-        string            $support,
-        string            $slug
-    ): Response
-    {
+        string $support,
+        string $slug
+    ): Response {
         $getSupport = $supportRepository->findOneBy(['name' => $support]);
         $article = $articleRepository->findOneBy([
             'support' => $getSupport,

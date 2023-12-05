@@ -23,7 +23,7 @@ class PaginationService
      */
     public function pagination(Query $data, string $pageParams = 'page-1', int $productPerPage = self::PRODUCT_PER_PAGE): PaginationInterface
     {
-        $page = (int)explode('-', $pageParams)[1];
+        $page = (int) explode('-', $pageParams)[1];
 
         return $this->paginator->paginate(
             $data,

@@ -67,7 +67,6 @@ class Wantlist
     {
         $this->userWantlist = $userWantlist;
 
-
         return $this;
     }
 }
