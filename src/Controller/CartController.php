@@ -44,13 +44,13 @@ class CartController extends AbstractController
             return null;
         }
 
-        unset($routeControllerName, $routeInfos['_controller']);
+        unset($routeInfos['_controller']);
 
         try {
             $cartService->addToCart($id);
             $this->addFlash('success', 'article ajouté au panier');
         } catch (\Exception $e) {
-            throw new \RuntimeException($e);
+            throw new \Exception('error');
         }
 
         return $this->redirectToRoute($routeInfos['_route'], $routeInfos);

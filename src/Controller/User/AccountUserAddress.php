@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace App\Controller\User;
 
 use App\Entity\Address;
+use App\Entity\User;
 use App\Form\UserAccountAddressFormType;
 use App\Repository\AddressRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('mon-compte/mes-adresses', 'app_user_addresses')]
@@ -21,18 +21,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AccountUserAddress extends AbstractController
 {
     public function __construct(
-        private readonly Security $security,
         private readonly EntityManagerInterface $entityManager,
         private readonly AddressRepository $addressRepository,
-        private readonly UserRepository $userRepository,
     ) {
     }
 
     #[Route('', '_index')]
-    public function index(): Response
+    public function index(#[CurrentUser] User $user): Response
     {
-        $user = $this->security->getUser();
-        $userAddresses = $user->getAddresses();
+        $userAddresses = $this->addressRepository->findBy(['users' => $user]);
 
         $forms = [];
 
@@ -55,27 +52,28 @@ class AccountUserAddress extends AbstractController
      */
     #[Route('/update/default-address/{userId}/{addressId}', name: '_update_default_address')]
     public function patchDefaultAddress(
+        #[CurrentUser] User $user,
         string $userId,
         string $addressId
     ): Response {
         try {
-            $currentUser = $this->userRepository->find($userId);
             $address = $this->addressRepository->find($addressId);
 
-            $currentUser->setDefaultAddress($address);
+            $user->setDefaultAddress($address);
 
-            $this->entityManager->persist($currentUser);
+            $this->entityManager->persist($user);
             $this->entityManager->flush();
             $this->addFlash('success', 'Adresse de livraison mise à jour');
 
             return $this->redirectToRoute('app_user_addresses_index');
         } catch (\Exception $exception) {
-            throw new \Exception($exception);
+            throw new \Exception('error', 500, $exception);
         }
     }
 
     #[Route('/add', name: '_add', methods: ['POST'])]
     public function addAddress(
+        #[CurrentUser] User $user,
         Request $request
     ): Response {
         $address = new Address();
@@ -91,7 +89,7 @@ class AccountUserAddress extends AbstractController
             $newAddress->setZipcode($form->getData()->getZipcode());
             $newAddress->setCountry($form->getData()->getCountry());
             $newAddress->setIsMainAddress(false);
-            $newAddress->setUsers($this->security->getUser());
+            $newAddress->setUsers($user);
 
             $this->entityManager->persist($newAddress);
             $this->entityManager->flush();
@@ -103,10 +101,11 @@ class AccountUserAddress extends AbstractController
     }
 
     #[Route('/remove/{id}', '_remove')]
-    public function deleteAddress(Address $address): Response
-    {
+    public function deleteAddress(
+        #[CurrentUser] User $user,
+        Address $address
+    ): Response {
         try {
-            $user = $this->security->getUser();
             $userDefaultAddress = $user->getDefaultAddress();
 
             $sameAddress = $userDefaultAddress === $address;
@@ -120,7 +119,7 @@ class AccountUserAddress extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Adresse supprimée.');
         } catch (\Doctrine\DBAL\Exception $exception) {
-            throw new \Exception($exception);
+            throw new \Exception('error');
         }
 
         return $this->redirectToRoute('app_user_addresses_index');

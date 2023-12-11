@@ -32,6 +32,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
+    /**
+     * @var array<string> $roles
+     */
     #[ORM\Column]
     private array $roles = [];
 
@@ -56,11 +59,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'users', targetEntity: Address::class)]
     private Collection $addresses;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'userWantlist', cascade: ['persist', 'remove'])]
     private ?Wantlist $wantlist = null;
 
     #[ORM\OneToOne(mappedBy: 'collector', cascade: ['persist', 'remove'])]
-    private ?UserCollection $collection = null;
+    private ?UserCollection $inCollection = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Address $defaultAddress = null;
@@ -104,6 +107,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
+    /**
+     * @param array<string> $roles
+     *
+     * @return $this
+     */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
@@ -155,54 +163,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setFirstname(string $firstname): static
     {
         $this->firstname = $firstname;
-
-        return $this;
-    }
-
-    public function getAddress(): ?string
-    {
-        return $this->address;
-    }
-
-    public function setAddress(?Address $address): static
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
-    public function getZipcode(): ?string
-    {
-        return $this->zipcode;
-    }
-
-    public function setZipcode(string $zipcode): static
-    {
-        $this->zipcode = $zipcode;
-
-        return $this;
-    }
-
-    public function getCity(): ?string
-    {
-        return $this->city;
-    }
-
-    public function setCity(string $city): static
-    {
-        $this->city = $city;
-
-        return $this;
-    }
-
-    public function getCountry(): ?string
-    {
-        return $this->country;
-    }
-
-    public function setCountry(string $country): static
-    {
-        $this->country = $country;
 
         return $this;
     }
@@ -298,17 +258,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getCollection(): ?UserCollection
     {
-        return $this->collection;
+        return $this->inCollection;
     }
 
-    public function setCollection(UserCollection $collection): static
+    public function setCollection(UserCollection $inCollection): static
     {
         // set the owning side of the relation if necessary
-        if ($collection->getCollector() !== $this) {
-            $collection->setCollector($this);
+        if ($inCollection->getCollector() !== $this) {
+            $inCollection->setCollector($this);
         }
 
-        $this->collection = $collection;
+        $this->inCollection = $inCollection;
 
         return $this;
     }

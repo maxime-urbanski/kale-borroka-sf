@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Entity\UserCollection;
 use App\Repository\ArticleRepository;
 use App\Repository\UserCollectionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/collection', name: 'app_collection_')]
 class UserCollectionController extends AbstractController
 {
     public function __construct(
-        private readonly Security $security,
         private readonly EntityManagerInterface $entityManager,
         private readonly UserCollectionRepository $userCollectionRepository,
         private readonly ArticleRepository $articleRepository
@@ -29,13 +29,9 @@ class UserCollectionController extends AbstractController
      */
     #[Route('/add/{productId}', name: 'add')]
     public function add(
+        #[CurrentUser] User $user,
         string $productId
     ): Response {
-        $user = $this->security->getUser();
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
-        }
-
         $article = $this->articleRepository->find($productId);
 
         if (!$user->getCollection()) {
@@ -54,7 +50,7 @@ class UserCollectionController extends AbstractController
             $this->entityManager->persist($currentUserCollection);
             $this->entityManager->flush();
         } catch (\Exception $exception) {
-            throw new \Exception($exception);
+            throw new \Exception('error');
         }
 
         return $this->redirectToRoute('app_homepage');
@@ -65,10 +61,10 @@ class UserCollectionController extends AbstractController
      */
     #[Route('/remove/{productId}', name: 'remove')]
     public function removeToCollection(
+        #[CurrentUser] User $user,
         string $productId
     ): Response {
         $article = $this->articleRepository->find($productId);
-        $user = $this->security->getUser();
 
         $userCollection = $user->getCollection();
         $currentUserCollection = $this->userCollectionRepository->find($userCollection);
@@ -79,7 +75,7 @@ class UserCollectionController extends AbstractController
             $this->entityManager->persist($currentUserCollection);
             $this->entityManager->flush();
         } catch (\Exception $exception) {
-            throw new \Exception($exception);
+            throw new \Exception('error');
         }
 
         return $this->redirectToRoute('app_homepage');

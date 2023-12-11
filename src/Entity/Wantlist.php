@@ -20,6 +20,10 @@ class Wantlist
     #[ORM\ManyToMany(targetEntity: Article::class)]
     private Collection $product;
 
+    #[ORM\OneToOne(inversedBy: 'wantlist', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $userWantlist = null;
+
     public function __construct()
     {
         $this->product = new ArrayCollection();
@@ -50,6 +54,18 @@ class Wantlist
     public function removeProduct(Article $product): static
     {
         $this->product->removeElement($product);
+
+        return $this;
+    }
+
+    public function getUserWantlist(): ?User
+    {
+        return $this->userWantlist;
+    }
+
+    public function setUserWantlist(User $userWantlist): static
+    {
+        $this->userWantlist = $userWantlist;
 
         return $this;
     }
