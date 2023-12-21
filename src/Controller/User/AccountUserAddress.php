@@ -27,10 +27,10 @@ class AccountUserAddress extends AbstractController
     }
 
     #[Route('', '_index')]
-    public function index(#[CurrentUser] User $user): Response
-    {
-        $userAddresses = $this->addressRepository->findBy(['users' => $user]);
-
+    public function index(
+        #[CurrentUser] User $user
+    ): Response {
+        $userAddresses = $user->getAddresses();
         $forms = [];
 
         foreach ($userAddresses as $address) {
@@ -53,14 +53,11 @@ class AccountUserAddress extends AbstractController
     #[Route('/update/default-address/{userId}/{addressId}', name: '_update_default_address')]
     public function patchDefaultAddress(
         #[CurrentUser] User $user,
-        string $userId,
         string $addressId
     ): Response {
         try {
             $address = $this->addressRepository->find($addressId);
-
             $user->setDefaultAddress($address);
-
             $this->entityManager->persist($user);
             $this->entityManager->flush();
             $this->addFlash('success', 'Adresse de livraison mise à jour');

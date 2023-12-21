@@ -15,8 +15,9 @@ class AccountUserCollectionController extends AbstractController
 {
     #[Route('/mon-compte/ma-collection', name: 'app_user_collection')]
     #[isGranted('IS_AUTHENTICATED_FULLY')]
-    public function collection(#[CurrentUser] User $user): Response
-    {
+    public function collection(
+        #[CurrentUser] User $user
+    ): Response {
         $userCollection = $user->getCollection();
 
         return $this->render('user/collection.html.twig', [

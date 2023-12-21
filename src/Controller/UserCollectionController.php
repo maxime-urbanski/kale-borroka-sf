@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Article;
 use App\Entity\User;
 use App\Entity\UserCollection;
-use App\Repository\ArticleRepository;
 use App\Repository\UserCollectionRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,20 +21,14 @@ class UserCollectionController extends AbstractController
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly UserCollectionRepository $userCollectionRepository,
-        private readonly ArticleRepository $articleRepository
     ) {
     }
 
-    /**
-     * @throws \Exception
-     */
     #[Route('/add/{productId}', name: 'add')]
     public function add(
-        #[CurrentUser] User $user,
-        string $productId
+        #[MapEntity(mapping: ['productId' => 'id'])] Article $article,
+        #[CurrentUser] User $user
     ): Response {
-        $article = $this->articleRepository->find($productId);
-
         if (!$user->getCollection()) {
             $collection = new UserCollection();
             $user->setCollection($collection);
@@ -50,22 +45,17 @@ class UserCollectionController extends AbstractController
             $this->entityManager->persist($currentUserCollection);
             $this->entityManager->flush();
         } catch (\Exception $exception) {
-            throw new \Exception('error');
+            throw $this->createNotFoundException('Une erreur survenue lors de la mise en collection');
         }
 
         return $this->redirectToRoute('app_homepage');
     }
 
-    /**
-     * @throws \Exception
-     */
     #[Route('/remove/{productId}', name: 'remove')]
     public function removeToCollection(
-        #[CurrentUser] User $user,
-        string $productId
+        #[MapEntity(mapping: ['productId' => 'id'])] Article $article,
+        #[CurrentUser] User $user
     ): Response {
-        $article = $this->articleRepository->find($productId);
-
         $userCollection = $user->getCollection();
         $currentUserCollection = $this->userCollectionRepository->find($userCollection);
 
@@ -75,7 +65,7 @@ class UserCollectionController extends AbstractController
             $this->entityManager->persist($currentUserCollection);
             $this->entityManager->flush();
         } catch (\Exception $exception) {
-            throw new \Exception('error');
+            throw $this->createNotFoundException('Une erreur est survenue');
         }
 
         return $this->redirectToRoute('app_homepage');
