@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
+use App\Entity\Article;
 use App\Entity\User;
 use App\Entity\Wantlist;
-use App\Repository\ArticleRepository;
 use App\Repository\WantlistRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,7 +20,6 @@ class WantlistController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ArticleRepository $articleRepository,
         private readonly WantlistRepository $wantlistRepository
     ) {
     }
@@ -28,14 +30,13 @@ class WantlistController extends AbstractController
     #[Route('/add/{productId}', 'add')]
     public function addInWantlist(
         #[CurrentUser] User $user,
-        string $productId
+        #[MapEntity(mapping: ['productId' => 'id'])] Article $articleToWantlist
     ): Response {
-        $articleToWantlist = $this->articleRepository->find($productId);
-
         if (!$user->getWantlist()) {
             $wantlist = new Wantlist();
             $wantlist->setUserWantlist($user);
             $this->entityManager->persist($wantlist);
+            $this->entityManager->flush();
         }
 
         $userWantlist = $user->getWantlist();
@@ -47,7 +48,7 @@ class WantlistController extends AbstractController
             $this->entityManager->persist($currentUserWantlist);
             $this->entityManager->flush();
         } catch (\Exception $exception) {
-            throw new \Exception($exception);
+            throw $this->createNotFoundException('Une erreur est survenue');
         }
 
         return $this->redirectToRoute('app_homepage');
@@ -59,9 +60,8 @@ class WantlistController extends AbstractController
     #[Route('/remove/{productId}', 'remove')]
     public function removeInWantlist(
         #[CurrentUser] User $user,
-        string $productId
+        #[MapEntity(mapping: ['productId' => 'id'])] Article $articleToWantlist
     ): Response {
-        $articleToWantlist = $this->articleRepository->find($productId);
         $userWantlist = $user->getWantlist();
         $currentUserWantlist = $this->wantlistRepository->find($userWantlist);
 

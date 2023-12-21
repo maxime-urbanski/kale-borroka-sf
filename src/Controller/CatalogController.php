@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Data\ArticleFilterData;
+use App\Entity\Article;
+use App\Entity\Support;
 use App\Form\ArticleFilterFormType;
 use App\Repository\ArticleRepository;
 use App\Repository\SupportRepository;
 use App\Service\PaginationService;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,11 +43,10 @@ final class CatalogController extends AbstractController
 
     #[Route('/catalog/{support}/{page}', 'app_catalog_support', requirements: ['page' => '^(page-)\d+'])]
     public function catalogBySupport(
-        ArticleRepository $articleRepository,
-        SupportRepository $supportRepository,
-        PaginationService $paginationService,
         Request $request,
-        string $support,
+        ArticleRepository $articleRepository,
+        PaginationService $paginationService,
+        #[MapEntity(mapping: ['support' => 'name'])] Support $support,
         string $page = 'page-1',
     ): Response {
         $breadcrumb = [
@@ -70,7 +72,7 @@ final class CatalogController extends AbstractController
         $form = $this->createForm(ArticleFilterFormType::class, $data);
         $form->handleRequest($request);
 
-        $articles = $articleRepository->filterArticleQuery($data);
+        $articles = $articleRepository->filterArticleQuery($data, $support);
         $pagination = $paginationService->pagination($articles, $page);
 
         return $this->render('catalog/articles.html.twig', [
@@ -82,17 +84,10 @@ final class CatalogController extends AbstractController
 
     #[Route('/catalog/{support}/{slug}', 'app_catalog_article')]
     public function pageArticle(
-        ArticleRepository $articleRepository,
-        SupportRepository $supportRepository,
-        string $support,
-        string $slug
+        #[MapEntity(mapping: ['support' => 'name'])] Support $support,
+        #[MapEntity(mapping: ['support' => ':support', 'slug' => 'slug'])] Article $article,
+        ArticleRepository $articleRepository
     ): Response {
-        $getSupport = $supportRepository->findOneBy(['name' => $support]);
-        $article = $articleRepository->findOneBy([
-            'support' => $getSupport,
-            'slug' => $slug,
-        ]);
-
         $breadcrumb = [
             [
                 'name' => 'Accueil',
@@ -114,19 +109,19 @@ final class CatalogController extends AbstractController
                 'path' => 'app_catalog_article',
                 'params' => [
                     'support' => $support,
-                    'slug' => $slug,
+                    'slug' => $article->getSlug(),
                 ],
             ],
         ];
 
         $artistArticle = $articleRepository->getArticleWithSameArtist($article->getAlbum()->getArtist());
 
-        $styles = [];
+        $currentAlbumStyles = [];
         foreach ($article->getAlbum()->getStyles() as $style) {
-            $styles[] = $style;
+            $currentAlbumStyles[] = $style->getId();
         }
 
-        $articleWithSameStyle = $articleRepository->getArticleWithSameStyle($styles);
+        $articleWithSameStyle = $articleRepository->getArticleWithSameStyle($currentAlbumStyles);
 
         return $this->render('catalog/article.html.twig', [
             'article' => $article,

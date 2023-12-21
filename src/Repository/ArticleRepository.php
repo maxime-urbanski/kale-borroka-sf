@@ -8,7 +8,7 @@ use App\Data\ArticleFilterData;
 use App\Data\ProductionFilterData;
 use App\Entity\Article;
 use App\Entity\Artist;
-use App\Entity\Style;
+use App\Entity\Support;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
@@ -63,7 +63,7 @@ class ArticleRepository extends ServiceEntityRepository
         return $query->getQuery();
     }
 
-    public function filterArticleQuery(ProductionFilterData|ArticleFilterData $filterData): Query
+    public function filterArticleQuery(ProductionFilterData|ArticleFilterData $filterData, Support $support = null): Query
     {
         $query = $this->createQueryBuilder('article')
             ->leftJoin('article.album', 'album')
@@ -95,10 +95,17 @@ class ArticleRepository extends ServiceEntityRepository
                 ->setParameter('kbrProduction', $filterData->kbrProduction);
         }
 
+        if ($support) {
+            $query
+                ->andWhere('article.support = (:support)')
+                ->setParameter('support', $support);
+        }
+
         if (!empty($filterData->supports)) {
             $query
-                ->andWhere('article.support IN (:support)')
-                ->setParameter('support', $filterData->supports);
+                ->leftJoin('album.styles', 'support')
+                ->andWhere('support IN (:supports)')
+                ->setParameter('supports', $filterData->supports);
         }
 
         return $query->getQuery();
@@ -117,7 +124,7 @@ class ArticleRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array<Style> $styles
+     * @param array<int, int> $styles
      */
     public function getArticleWithSameStyle(array $styles): Query
     {

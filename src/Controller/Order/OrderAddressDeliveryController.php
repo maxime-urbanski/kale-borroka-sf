@@ -12,7 +12,6 @@ use App\Repository\UserCollectionRepository;
 use App\Service\CartService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,7 +25,6 @@ class OrderAddressDeliveryController extends AbstractController
     public function selectAddressAndDelivery(
         #[CurrentUser] User $user,
         Request $request,
-        Security $security,
         CartService $cartService,
         EntityManagerInterface $entityManager,
         UserCollectionRepository $userCollectionRepository,

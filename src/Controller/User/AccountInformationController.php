@@ -27,8 +27,9 @@ class AccountInformationController extends AbstractController
     }
 
     #[Route('', 'informations')]
-    public function userInformation(#[CurrentUser] User $user): Response
-    {
+    public function userInformation(
+        #[CurrentUser] User $user
+    ): Response {
         return $this->render('user/_informations.html.twig', [
             'user' => $user,
         ]);
