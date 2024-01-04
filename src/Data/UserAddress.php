@@ -8,9 +8,13 @@ use App\Entity\User;
 
 class UserAddress
 {
-    public string $name;
-    public string $address;
-    public string $city;
-    public string $country;
-    public User $users;
+    public string $name = '';
+
+    public string $address = '';
+
+    public string $city = '';
+
+    public string $country = '';
+
+    public ?User $users = null;
 }

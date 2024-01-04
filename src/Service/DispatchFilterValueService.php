@@ -22,19 +22,15 @@ readonly class DispatchFilterValueService
             }
         }
 
-        if (array_key_exists('$this->styles', $data->globalFilters)) {
-            foreach ($data->globalFilters['$this->styles'] as $style) {
+        if (array_key_exists('styles', $data->globalFilters)) {
+            foreach ($data->globalFilters['styles'] as $style) {
                 $data->styles[] = $style;
             }
         }
 
-        if (array_key_exists('artists', $data->globalFilters)) {
-            foreach ($data->globalFilters['artists'] as $artist) {
-                $data->artists[] = $artist;
-            }
+        if (array_key_exists('kbrProduction', $data->globalFilters)) {
+            $data->kbrProduction = $data->globalFilters['kbrProduction'];
         }
-
-        unset($data->globalFilters);
 
         return $data;
     }

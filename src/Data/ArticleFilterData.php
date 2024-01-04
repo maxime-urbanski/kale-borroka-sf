@@ -12,28 +12,33 @@ use App\Entity\Support;
 class ArticleFilterData
 {
     /**
-     * @var array{'artists': array<Artist>, 'styles': array<Style>, 'label': array<Label>, 'kbrProduction': bool}
+     * @var array{'artists'?: array<Artist>, 'styles'?: array<Style>, 'label'?: array<Label>, 'kbrProduction'?: bool}
      */
-    public array $globalFilters;
+    public array $globalFilters = [
+        'artist' => [],
+        'styles' => [],
+        'label' => [],
+        'kbrProduction' => false,
+    ];
+
+    /**
+     * @var Artist[]
+     */
+    public array $artists = [];
+
+    /**
+     * @var Label[]
+     */
+    public array $labels = [];
+    /**
+     * @var Style[]
+     */
+    public array $styles = [];
 
     /**
      * @var Support[]
      */
     public array $supports = [];
-    /**
-     * @var Label[]
-     */
-    public array $labels;
-
-    /**
-     * @var Style[]
-     */
-    public array $styles;
-
-    /**
-     * @var Artist[]
-     */
-    public array $artists;
 
     public bool $kbrProduction = false;
 }

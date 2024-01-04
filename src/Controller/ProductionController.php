@@ -38,12 +38,10 @@ class ProductionController extends AbstractController
         $data = new ArticleFilterData();
         $data->globalFilters['kbrProduction'] = true;
 
-        $productionForm = $this->createForm(
-            ProductionFilterFormType::class,
-            $data
-        );
+        $productionForm = $this->createForm(ProductionFilterFormType::class, $data);
         $productionForm->handleRequest($request);
 
+        $filterValue = $dispatchFilterValueService->dispatchFilterValue($data);
         $productions = $articleRepository
             ->filterArticleQuery($dispatchFilterValueService->dispatchFilterValue($data));
         $pagination = $paginationService->pagination($productions, $page);
