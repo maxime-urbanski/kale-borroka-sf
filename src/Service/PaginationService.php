@@ -8,11 +8,11 @@ use Doctrine\ORM\Query;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
-class PaginationService
+readonly class PaginationService
 {
     public const PRODUCT_PER_PAGE = 9;
 
-    public function __construct(private readonly PaginatorInterface $paginator)
+    public function __construct(private PaginatorInterface $paginator)
     {
     }
 

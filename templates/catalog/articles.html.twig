@@ -7,23 +7,30 @@
             <div class="col-md-3">
                 <p class="badge text-bg-dark">{{ articles.totalItemCount }} éléments trouvés.</p>
                 {{ form_start(form) }}
-                {% for formChild in form %}
-                    {% if formChild.vars.name == 'submit' or formChild.vars.name == 'kbrProduction' %}
-                        {{ form_row(formChild) }}
-                    {% else %}
-                        <div class="filter-accordion mb-4"
-                             data-controller="filter-accordion">
-                            <div class="filter-label bg-light   rounded-2">
-                                {{ form_label(formChild) }}
-                                <i class="bi bi-chevron-compact-down cursor-pointer"
-                                   data-action="click->filter-accordion#open"></i>
-                            </div>
-                            <div class="filter-body">
+                <div class="d-flex flex-column flex-nowrap">
+                    {% for formChild in form.children.globalFilters.children %}
+                        {% if formChild.vars.name == 'kbrProduction' %}
+                            <div class="order-last">
                                 {{ form_widget(formChild) }}
+                                {{ form_label(formChild) }}
                             </div>
-                        </div>
+                        {% elseif formChild.vars.name == 'submit' %}
+
+                        {% else %}
+                            {% include 'layout/article/_accordion_filter_form.html.twig' with {
+                                form: formChild
+                            } %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if form.supports is defined %}
+                        {% include 'layout/article/_accordion_filter_form.html.twig' with {
+                            form: form.supports
+                        } %}
                     {% endif %}
-                {% endfor %}
+                    <div class="d-grid col-12 mx-auto mt-3 order-last">
+                        {{ form_widget(form.submit) }}
+                    </div>
+                </div>
                 {{ form_end(form) }}
             </div>
             <div class="col-md-9">

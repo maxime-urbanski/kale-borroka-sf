@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Data\ProductionFilterData;
+use App\Data\ArticleFilterData;
 use App\Form\ProductionFilterFormType;
 use App\Repository\ArticleRepository;
+use App\Service\DispatchFilterValueService;
 use App\Service\PaginationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,6 +20,7 @@ class ProductionController extends AbstractController
     public function index(
         ArticleRepository $articleRepository,
         PaginationService $paginationService,
+        DispatchFilterValueService $dispatchFilterValueService,
         Request $request,
         string $page = 'page-1'
     ): Response {
@@ -33,13 +35,17 @@ class ProductionController extends AbstractController
             ],
         ];
 
-        $data = new ProductionFilterData();
-        $data->kbrProduction = true;
+        $data = new ArticleFilterData();
+        $data->globalFilters['kbrProduction'] = true;
 
-        $productionForm = $this->createForm(ProductionFilterFormType::class, $data);
+        $productionForm = $this->createForm(
+            ProductionFilterFormType::class,
+            $data
+        );
         $productionForm->handleRequest($request);
 
-        $productions = $articleRepository->filterArticleQuery($data);
+        $productions = $articleRepository
+            ->filterArticleQuery($dispatchFilterValueService->dispatchFilterValue($data));
         $pagination = $paginationService->pagination($productions, $page);
 
         return $this->render('catalog/articles.html.twig', [
