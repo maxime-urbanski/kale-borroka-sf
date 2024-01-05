@@ -10,6 +10,7 @@ use App\Entity\Support;
 use App\Form\ArticleFilterFormType;
 use App\Repository\ArticleRepository;
 use App\Repository\SupportRepository;
+use App\Service\DispatchFilterValueService;
 use App\Service\PaginationService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -45,6 +46,7 @@ final class CatalogController extends AbstractController
     public function catalogBySupport(
         Request $request,
         ArticleRepository $articleRepository,
+        DispatchFilterValueService $dispatchFilterValueService,
         PaginationService $paginationService,
         #[MapEntity(mapping: ['support' => 'name'])] Support $support,
         string $page = 'page-1',
@@ -68,11 +70,14 @@ final class CatalogController extends AbstractController
         ];
 
         $data = new ArticleFilterData();
+        $data->supports[] = $support;
 
         $form = $this->createForm(ArticleFilterFormType::class, $data);
         $form->handleRequest($request);
 
-        $articles = $articleRepository->filterArticleQuery($data, $support);
+        $articles = $articleRepository->filterArticleQuery(
+            $dispatchFilterValueService->dispatchFilterValue($data)
+        );
         $pagination = $paginationService->pagination($articles, $page);
 
         return $this->render('catalog/articles.html.twig', [

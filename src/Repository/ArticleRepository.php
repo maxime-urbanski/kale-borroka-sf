@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Data\ArticleFilterData;
-use App\Data\ProductionFilterData;
 use App\Entity\Article;
 use App\Entity\Artist;
-use App\Entity\Support;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
@@ -56,23 +54,23 @@ class ArticleRepository extends ServiceEntityRepository
         if ($forHome) {
             $query
                 ->orderBy('article.name', 'ASC')
-                ->orderBy('article.createdAt', 'DESC')
                 ->setMaxResults(8);
         }
 
         return $query->getQuery();
     }
 
-    public function filterArticleQuery(ProductionFilterData|ArticleFilterData $filterData, Support $support = null): Query
-    {
+    public function filterArticleQuery(
+        ArticleFilterData $filterData
+    ): Query {
         $query = $this->createQueryBuilder('article')
             ->leftJoin('article.album', 'album')
             ->orderBy('article.name', 'ASC');
 
         if (!empty($filterData->artists)) {
             $query
-                ->andWhere('album.artist IN (:artist)')
-                ->setParameter('artist', $filterData->artists);
+                ->andWhere('album.artist IN (:artists)')
+                ->setParameter('artists', $filterData->artists);
         }
 
         if (!empty($filterData->labels)) {
@@ -95,16 +93,9 @@ class ArticleRepository extends ServiceEntityRepository
                 ->setParameter('kbrProduction', $filterData->kbrProduction);
         }
 
-        if ($support) {
-            $query
-                ->andWhere('article.support = (:support)')
-                ->setParameter('support', $support);
-        }
-
         if (!empty($filterData->supports)) {
             $query
-                ->leftJoin('album.styles', 'support')
-                ->andWhere('support IN (:supports)')
+                ->andWhere('article.support IN (:supports)')
                 ->setParameter('supports', $filterData->supports);
         }
 
@@ -143,7 +134,6 @@ class ArticleRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('article')
             ->setMaxResults(8)
-            ->orderBy('article.createdAt', 'DESC')
             ->orderBy('article.name', 'ASC')
             ->getQuery();
     }

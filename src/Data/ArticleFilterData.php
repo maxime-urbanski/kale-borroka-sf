@@ -7,26 +7,33 @@ namespace App\Data;
 use App\Entity\Artist;
 use App\Entity\Label;
 use App\Entity\Style;
+use App\Entity\Support;
 
 class ArticleFilterData
 {
     /**
-     * @var Artist[]
+     * @var array{'artists': array<Artist>, 'styles': array<Style>, 'label': array<Label>, 'kbrProduction': bool}
      */
-    public array $artists = [];
+    public array $globalFilters;
 
+    /**
+     * @var Support[]
+     */
+    public array $supports = [];
     /**
      * @var Label[]
      */
-    public array $labels = [];
+    public array $labels;
 
     /**
      * @var Style[]
      */
-    public array $styles = [];
+    public array $styles;
 
-    /*
-     * @var Album
+    /**
+     * @var Artist[]
      */
+    public array $artists;
+
     public bool $kbrProduction = false;
 }

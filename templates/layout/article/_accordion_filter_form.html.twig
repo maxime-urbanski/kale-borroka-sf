@@ -1,0 +1,11 @@
+<div class="filter-accordion mb-4"
+     data-controller="filter-accordion">
+    <div class="filter-label bg-black text-white fw-bolder rounded-2">
+        {{ form_label(form) }}
+        <i class="bi bi-chevron-compact-down cursor-pointer"
+           data-action="click->filter-accordion#open"></i>
+    </div>
+    <div class="filter-body">
+        {{ form_widget(form) }}
+    </div>
+</div>
