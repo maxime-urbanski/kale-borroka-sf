@@ -69,21 +69,24 @@ final class CatalogController extends AbstractController
             ],
         ];
 
-        $data = new ArticleFilterData();
-        $data->supports[] = $support;
+        $filters = new ArticleFilterData();
+        $filters->supports[] = $support;
 
-        $form = $this->createForm(ArticleFilterFormType::class, $data);
+        $form = $this->createForm(ArticleFilterFormType::class, $filters);
         $form->handleRequest($request);
 
         $articles = $articleRepository->filterArticleQuery(
-            $dispatchFilterValueService->dispatchFilterValue($data)
+            $dispatchFilterValueService->dispatchFilterValue($filters)
         );
         $pagination = $paginationService->pagination($articles, $page);
+
+        unset($filters->globalFilters);
 
         return $this->render('catalog/articles.html.twig', [
             'articles' => $pagination,
             'breadcrumb' => $breadcrumb,
             'form' => $form->createView(),
+            'filters' => $filters,
         ]);
     }
 
