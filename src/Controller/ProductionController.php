@@ -35,21 +35,21 @@ class ProductionController extends AbstractController
             ],
         ];
 
-        $data = new ArticleFilterData();
-        $data->globalFilters['kbrProduction'] = true;
+        $filters = new ArticleFilterData();
+        $filters->globalFilters['kbrProduction'] = true;
 
-        $productionForm = $this->createForm(ProductionFilterFormType::class, $data);
+        $productionForm = $this->createForm(ProductionFilterFormType::class, $filters);
         $productionForm->handleRequest($request);
 
-        $filterValue = $dispatchFilterValueService->dispatchFilterValue($data);
         $productions = $articleRepository
-            ->filterArticleQuery($dispatchFilterValueService->dispatchFilterValue($data));
+            ->filterArticleQuery($dispatchFilterValueService->dispatchFilterValue($filters));
         $pagination = $paginationService->pagination($productions, $page);
 
         return $this->render('catalog/articles.html.twig', [
             'articles' => $pagination,
             'breadcrumb' => $breadcrumb,
-            'form' => $productionForm->createView(),
+            'form' => $productionForm,
+            'filters' => $filters,
         ]);
     }
 }
