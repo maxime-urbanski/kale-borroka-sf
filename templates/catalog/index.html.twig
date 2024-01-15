@@ -3,14 +3,12 @@
 {% block body %}
 <div class="container py-5">
     {% include 'layout/_breadcrumb.html.twig' with {breadcrumb} %}
-    <div class="row">
+    <div class="row justify-content-center gap-4">
         {% for support in supports %}
-            <div class="col-md-6 col-lg-3">
-                <a href="{{ path('app_catalog_list', {support: support.name}) }}" class="text-decoration-none">
+            <div class="col-md-6 col-lg-3 list-group-item text-center list-support">
+                <a href="{{ path('app_catalog_list', {support: support.name}) }}" class="text-decoration-none catalog-{{ support }}">
                     <h1>{{ support.name | upper }}</h1>
                 </a>
-                <h1>
-                </h1>
             </div>
         {% endfor %}
     </div>

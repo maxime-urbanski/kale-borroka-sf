@@ -12,3 +12,6 @@ App\Entity\Support:
     
     support_FANZINE (extends support):
         name: 'fanzine'
+    
+    support_TAPE (extends support):
+            name: 'tape'

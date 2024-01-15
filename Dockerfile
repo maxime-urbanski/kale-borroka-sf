@@ -73,6 +73,8 @@ COPY --from=composer_upstream --link /composer /usr/bin/composer
 # Dev PHP image
 FROM php_base AS php_dev
 
+USER root:root
+
 ENV APP_ENV=dev XDEBUG_MODE=off
 VOLUME /srv/app/var/
 
