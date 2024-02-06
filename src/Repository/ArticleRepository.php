@@ -8,6 +8,8 @@ use App\Data\ArticleFilterData;
 use App\Entity\Article;
 use App\Entity\Artist;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -62,7 +64,8 @@ class ArticleRepository extends ServiceEntityRepository
 
     public function filterArticleQuery(
         ArticleFilterData $filterData
-    ): Query {
+    ): Query
+    {
         $query = $this->createQueryBuilder('article')
             ->leftJoin('article.album', 'album')
             ->orderBy('article.name', 'ASC');
@@ -136,5 +139,20 @@ class ArticleRepository extends ServiceEntityRepository
             ->setMaxResults(8)
             ->orderBy('article.name', 'ASC')
             ->getQuery();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findOneBySupportAndSlug(string $support, string $slug): Article
+    {
+        $query = $this->createQueryBuilder('article')
+            ->leftJoin('article.support', 'support')
+            ->where('support.name = :support')
+            ->andWhere('article.slug = :slug')
+            ->setParameter('support', $support)
+            ->setParameter('slug', $slug);
+
+        return $query->getQuery()->getOneOrNullResult(AbstractQuery::HYDRATE_OBJECT);
     }
 }

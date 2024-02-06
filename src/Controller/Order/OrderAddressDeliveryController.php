@@ -80,12 +80,12 @@ class OrderAddressDeliveryController extends AbstractController
                 $orderDetails->setOrders($order);
                 $order->setTotalPrice($totalPrice);
 
-                $getUserCollection->addArticle($product['product']);
+                // $getUserCollection->addArticle($product['product']);
                 // TODO: FIX DATE
-                $getUserCollection->setSince(new \DateTime());
+                // $getUserCollection->setSince(new \DateTime());
 
                 $entityManager->persist($orderDetails);
-                $entityManager->persist($getUserCollection);
+                // $entityManager->persist($getUserCollection);
             }
 
             $entityManager->persist($order);
@@ -93,8 +93,8 @@ class OrderAddressDeliveryController extends AbstractController
 
             $cartService->removeAll();
 
-            return $this->redirectToRoute('app_order_overview', [
-                'orderReference' => $order->getReference(),
+            return $this->forward('App\\Controller\\Order\\OrderOverview::overview', [
+                'orderReference' => $order->getReference()
             ]);
         }
 

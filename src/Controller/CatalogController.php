@@ -17,10 +17,24 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
+#[Route(
+    path: '/catalog',
+    name: 'app_catalog',
+    methods: [Request::METHOD_GET]
+)]
 final class CatalogController extends AbstractController
 {
-    #[Route('/catalog', 'app_catalog')]
+
+    public function __construct(private readonly ArticleRepository $articleRepository)
+    {
+    }
+
+    #[Route(
+        path: '',
+        name: ''
+    )]
     public function index(SupportRepository $supportRepository): Response
     {
         $supports = $supportRepository->findAll();
@@ -42,15 +56,23 @@ final class CatalogController extends AbstractController
         ]);
     }
 
-    #[Route('/catalog/{support}/{page}', 'app_catalog_support', requirements: ['page' => '^(page-)\d+'])]
-    public function catalogBySupport(
-        Request $request,
-        ArticleRepository $articleRepository,
-        DispatchFilterValueService $dispatchFilterValueService,
-        PaginationService $paginationService,
+    #[Route(
+        path: '/{support}/{page}',
+        name: '_list',
+        requirements: [
+            'support' => 'lp|ep|tape|fanzine|cd',
+            'page' => '^(page-)' . Requirement::DIGITS
+        ],
+        defaults: ['page' => 'page-1']
+    )]
+    public function list(
+        Request                                              $request,
+        DispatchFilterValueService                           $dispatchFilterValueService,
+        PaginationService                                    $paginationService,
         #[MapEntity(mapping: ['support' => 'name'])] Support $support,
-        string $page = 'page-1',
-    ): Response {
+        string                                               $page,
+    ): Response
+    {
         $breadcrumb = [
             [
                 'name' => 'Accueil',
@@ -62,7 +84,7 @@ final class CatalogController extends AbstractController
             ],
             [
                 'name' => $support,
-                'path' => 'app_catalog_support',
+                'path' => 'app_catalog_list',
                 'params' => [
                     'support' => $support,
                 ],
@@ -75,7 +97,7 @@ final class CatalogController extends AbstractController
         $form = $this->createForm(ArticleFilterFormType::class, $filters);
         $form->handleRequest($request);
 
-        $articles = $articleRepository->filterArticleQuery(
+        $articles = $this->articleRepository->filterArticleQuery(
             $dispatchFilterValueService->dispatchFilterValue($filters)
         );
         $pagination = $paginationService->pagination($articles, $page);
@@ -85,17 +107,23 @@ final class CatalogController extends AbstractController
         return $this->render('catalog/articles.html.twig', [
             'articles' => $pagination,
             'breadcrumb' => $breadcrumb,
-            'form' => $form->createView(),
+            'form' => $form,
             'filters' => $filters,
+
         ]);
     }
 
-    #[Route('/catalog/{support}/{slug}', 'app_catalog_article')]
-    public function pageArticle(
-        #[MapEntity(mapping: ['support' => 'name'])] Support $support,
-        #[MapEntity(mapping: ['support' => ':support', 'slug' => 'slug'])] Article $article,
-        ArticleRepository $articleRepository
-    ): Response {
+    #[Route(
+        path: '/{support}/{slug}',
+        name: '_show',
+        requirements: ['support' => 'lp|ep|tape|fanzine|cd']
+    )]
+    public function show(
+        string            $support,
+        #[MapEntity(expr: 'repository.findOneBySupportAndSlug(support, slug)')]
+        Article           $article,
+    ): Response
+    {
         $breadcrumb = [
             [
                 'name' => 'Accueil',
@@ -107,14 +135,14 @@ final class CatalogController extends AbstractController
             ],
             [
                 'name' => $support,
-                'path' => 'app_catalog_support',
+                'path' => 'app_catalog_list',
                 'params' => [
                     'support' => $support,
                 ],
             ],
             [
                 'name' => $article->getName(),
-                'path' => 'app_catalog_article',
+                'path' => 'app_catalog_show',
                 'params' => [
                     'support' => $support,
                     'slug' => $article->getSlug(),
@@ -122,14 +150,14 @@ final class CatalogController extends AbstractController
             ],
         ];
 
-        $artistArticle = $articleRepository->getArticleWithSameArtist($article->getAlbum()->getArtist());
+        $artistArticle = $this->articleRepository->getArticleWithSameArtist($article->getAlbum()->getArtist());
 
         $currentAlbumStyles = [];
         foreach ($article->getAlbum()->getStyles() as $style) {
             $currentAlbumStyles[] = $style->getId();
         }
 
-        $articleWithSameStyle = $articleRepository->getArticleWithSameStyle($currentAlbumStyles);
+        $articleWithSameStyle = $this->articleRepository->getArticleWithSameStyle($currentAlbumStyles);
 
         return $this->render('catalog/article.html.twig', [
             'article' => $article,
