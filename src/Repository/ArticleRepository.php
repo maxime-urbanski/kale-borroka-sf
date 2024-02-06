@@ -64,8 +64,7 @@ class ArticleRepository extends ServiceEntityRepository
 
     public function filterArticleQuery(
         ArticleFilterData $filterData
-    ): Query
-    {
+    ): Query {
         $query = $this->createQueryBuilder('article')
             ->leftJoin('article.album', 'album')
             ->orderBy('article.name', 'ASC');

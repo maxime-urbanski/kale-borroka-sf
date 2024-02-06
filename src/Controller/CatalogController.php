@@ -10,6 +10,7 @@ use App\Entity\Support;
 use App\Form\ArticleFilterFormType;
 use App\Repository\ArticleRepository;
 use App\Repository\SupportRepository;
+use App\Service\BreadcrumbInterface;
 use App\Service\DispatchFilterValueService;
 use App\Service\PaginationService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -26,9 +27,10 @@ use Symfony\Component\Routing\Requirement\Requirement;
 )]
 final class CatalogController extends AbstractController
 {
-
-    public function __construct(private readonly ArticleRepository $articleRepository)
-    {
+    public function __construct(
+        private readonly ArticleRepository $articleRepository,
+        private readonly BreadcrumbInterface $breadcrumb
+    ) {
     }
 
     #[Route(
@@ -39,20 +41,9 @@ final class CatalogController extends AbstractController
     {
         $supports = $supportRepository->findAll();
 
-        $breadcrumb = [
-            [
-                'name' => 'Accueil',
-                'path' => 'app_homepage',
-            ],
-            [
-                'name' => 'Catalogue',
-                'path' => 'app_catalog',
-            ],
-        ];
-
         return $this->render('catalog/index.html.twig', [
             'supports' => $supports,
-            'breadcrumb' => $breadcrumb,
+            'breadcrumb' => $this->breadcrumb->breadcrumb(),
         ]);
     }
 
@@ -61,36 +52,17 @@ final class CatalogController extends AbstractController
         name: '_list',
         requirements: [
             'support' => 'lp|ep|tape|fanzine|cd',
-            'page' => '^(page-)' . Requirement::DIGITS
+            'page' => '^(page-)'.Requirement::DIGITS,
         ],
         defaults: ['page' => 'page-1']
     )]
     public function list(
-        Request                                              $request,
-        DispatchFilterValueService                           $dispatchFilterValueService,
-        PaginationService                                    $paginationService,
+        Request $request,
+        DispatchFilterValueService $dispatchFilterValueService,
+        PaginationService $paginationService,
         #[MapEntity(mapping: ['support' => 'name'])] Support $support,
-        string                                               $page,
-    ): Response
-    {
-        $breadcrumb = [
-            [
-                'name' => 'Accueil',
-                'path' => 'app_homepage',
-            ],
-            [
-                'name' => 'Catalogue',
-                'path' => 'app_catalog',
-            ],
-            [
-                'name' => $support,
-                'path' => 'app_catalog_list',
-                'params' => [
-                    'support' => $support,
-                ],
-            ],
-        ];
-
+        string $page,
+    ): Response {
         $filters = new ArticleFilterData();
         $filters->supports[] = $support;
 
@@ -106,10 +78,9 @@ final class CatalogController extends AbstractController
 
         return $this->render('catalog/articles.html.twig', [
             'articles' => $pagination,
-            'breadcrumb' => $breadcrumb,
+            'breadcrumb' => $this->breadcrumb->breadcrumb(),
             'form' => $form,
             'filters' => $filters,
-
         ]);
     }
 
@@ -119,37 +90,9 @@ final class CatalogController extends AbstractController
         requirements: ['support' => 'lp|ep|tape|fanzine|cd']
     )]
     public function show(
-        string            $support,
         #[MapEntity(expr: 'repository.findOneBySupportAndSlug(support, slug)')]
-        Article           $article,
-    ): Response
-    {
-        $breadcrumb = [
-            [
-                'name' => 'Accueil',
-                'path' => 'app_homepage',
-            ],
-            [
-                'name' => 'Catalogue',
-                'path' => 'app_catalog',
-            ],
-            [
-                'name' => $support,
-                'path' => 'app_catalog_list',
-                'params' => [
-                    'support' => $support,
-                ],
-            ],
-            [
-                'name' => $article->getName(),
-                'path' => 'app_catalog_show',
-                'params' => [
-                    'support' => $support,
-                    'slug' => $article->getSlug(),
-                ],
-            ],
-        ];
-
+        Article $article,
+    ): Response {
         $artistArticle = $this->articleRepository->getArticleWithSameArtist($article->getAlbum()->getArtist());
 
         $currentAlbumStyles = [];
@@ -161,7 +104,7 @@ final class CatalogController extends AbstractController
 
         return $this->render('catalog/article.html.twig', [
             'article' => $article,
-            'breadcrumb' => $breadcrumb,
+            'breadcrumb' => $this->breadcrumb->breadcrumb(lastItemName: $article->getName()),
             'articleByArtist' => $artistArticle->getResult(),
             'articleSameStyle' => $articleWithSameStyle->getResult(),
         ]);

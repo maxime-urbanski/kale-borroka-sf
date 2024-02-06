@@ -94,7 +94,7 @@ class OrderAddressDeliveryController extends AbstractController
             $cartService->removeAll();
 
             return $this->forward('App\\Controller\\Order\\OrderOverview::overview', [
-                'orderReference' => $order->getReference()
+                'orderReference' => $order->getReference(),
             ]);
         }
 

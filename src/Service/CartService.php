@@ -12,10 +12,9 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 readonly class CartService implements CartServiceInterface
 {
     public function __construct(
-        private RequestStack      $requestStack,
+        private RequestStack $requestStack,
         private ArticleRepository $articleRepository
-    )
-    {
+    ) {
     }
 
     public function addToCart(int $id): void

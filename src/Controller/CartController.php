@@ -35,12 +35,11 @@ class CartController extends AbstractController
      */
     #[Route('/add/{id}', 'add')]
     public function addToCart(
-        Request         $request,
+        Request $request,
         RouterInterface $router,
-        int             $id
-    ): ?Response
-    {
-        $routeReferer = (string)$request->headers->get('referer');
+        int $id
+    ): ?Response {
+        $routeReferer = (string) $request->headers->get('referer');
         $refererPathInfo = Request::create($routeReferer)->getPathInfo();
         $routeInfos = $router->match($refererPathInfo);
 
