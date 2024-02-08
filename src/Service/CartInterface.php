@@ -4,7 +4,7 @@ namespace App\Service;
 
 use App\Entity\Article;
 
-interface CartServiceInterface
+interface CartInterface
 {
     public function addToCart(int $id): void;
 

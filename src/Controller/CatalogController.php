@@ -11,8 +11,8 @@ use App\Form\ArticleFilterFormType;
 use App\Repository\ArticleRepository;
 use App\Repository\SupportRepository;
 use App\Service\BreadcrumbInterface;
+use App\Service\CustomPaginationInterface;
 use App\Service\DispatchFilterValueInterface;
-use App\Service\PaginationService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -61,7 +61,7 @@ final class CatalogController extends AbstractController
     public function list(
         Request $request,
         DispatchFilterValueInterface $dispatchFilterValue,
-        PaginationService $paginationService,
+        CustomPaginationInterface $customPagination,
         #[MapEntity(mapping: ['support' => 'name'])] Support $support,
         string $page,
     ): Response {
@@ -74,7 +74,7 @@ final class CatalogController extends AbstractController
         $articles = $this->articleRepository->filterArticleQuery(
             $dispatchFilterValue->dispatchFilterValue($filters)
         );
-        $pagination = $paginationService->pagination($articles, $page);
+        $pagination = $customPagination->pagination($articles, $page);
 
         unset($filters->globalFilters);
 

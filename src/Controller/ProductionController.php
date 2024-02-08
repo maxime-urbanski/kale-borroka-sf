@@ -7,8 +7,8 @@ namespace App\Controller;
 use App\Data\ArticleFilterData;
 use App\Form\ProductionFilterFormType;
 use App\Repository\ArticleRepository;
+use App\Service\CustomPaginationService;
 use App\Service\DispatchFilterValueService;
-use App\Service\PaginationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +19,7 @@ class ProductionController extends AbstractController
     #[Route('/production/{page}', 'app_production', requirements: ['page' => '^(page-)\d+'])]
     public function index(
         ArticleRepository $articleRepository,
-        PaginationService $paginationService,
+        CustomPaginationService $paginationService,
         DispatchFilterValueService $dispatchFilterValueService,
         Request $request,
         string $page = 'page-1'

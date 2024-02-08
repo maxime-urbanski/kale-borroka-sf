@@ -9,7 +9,7 @@ use App\Repository\ArticleRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-readonly class CartService implements CartServiceInterface
+readonly class CartService implements CartInterface
 {
     public function __construct(
         private RequestStack $requestStack,
