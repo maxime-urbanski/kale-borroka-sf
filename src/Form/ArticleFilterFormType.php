@@ -15,13 +15,7 @@ class ArticleFilterFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('globalFilters', GlobalArticleFilterType::class)
-            ->add('submit', SubmitType::class, [
-                'attr' => [
-                    'class' => 'btn btn-outline-dark',
-                ],
-                'label' => 'Rechercher',
-            ]);
+            ->add('globalFilters', GlobalArticleFilterType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

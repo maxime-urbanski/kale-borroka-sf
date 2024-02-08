@@ -30,12 +30,6 @@ class ProductionFilterFormType extends AbstractType
                 'attr' => [
                     'class' => 'text-uppercase',
                 ],
-            ])
-            ->add('submit', SubmitType::class, [
-                'attr' => [
-                    'class' => 'btn btn-outline-dark',
-                ],
-                'label' => 'Rechercher',
             ]);
     }
 
