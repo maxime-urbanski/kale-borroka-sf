@@ -6,10 +6,10 @@
             <ol class="breadcrumb">
                 {% for link in breadcrumb %}
                     {% if link.path == route %}
-                        <li class="breadcrumb-item active" aria-current="page">{{ link.name|capitalize }}</li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ link.name|upper }}</li>
                     {% else %}
                         <li class="breadcrumb-item">
-                            <a href="{{ path(link.path, link.params|default([])) }}">{{ link.name|capitalize }}</a>
+                            <a href="{{ path(link.path, link.parameters|default([])) }}">{{ link.name|upper }}</a>
                         </li>
                     {% endif %}
                 {% endfor %}

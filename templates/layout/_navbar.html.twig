@@ -20,7 +20,7 @@
                                     <ul>
                                         {% for child in link.child %}
                                             <li><a class="dropdown-item"
-                                                   href="{{ path('app_catalog_support', { support: child.name}) }}">{{ child.name|upper }}</a>
+                                                   href="{{ path('app_catalog_list', { support: child.name,}) }}">{{ child.name|upper }}</a>
                                             </li>
                                         {% endfor %}
                                     </ul>
@@ -54,9 +54,7 @@
         {% else %}
             <a href="{{ path('app_cart_index') }}" class="btn btn-outline-success fs-5 me-4">
                 <i class="bi bi-cart"></i>
-
             </a>
         {% endif %}
-
     </div>
 </nav>

@@ -1,0 +1,57 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\RouterInterface;
+
+readonly class BreadcrumbService implements BreadcrumbInterface
+{
+    public function __construct(
+        private RequestStack $requestStack,
+        private RouterInterface $router
+    ) {
+    }
+
+    public function breadcrumb(string $lastItemName = null): array
+    {
+        $breadcrumb = [];
+        $url = $this->requestStack->getMainRequest()->getRequestUri();
+        $splitUrl = \explode('/', $url);
+        $uri = '';
+
+        foreach ($splitUrl as $value) {
+            if (!str_starts_with($value, 'page-')) {
+                $uri .= $value.'/';
+                $uriWithoutLastSlash = rtrim($uri, '/');
+
+                if (str_contains($uriWithoutLastSlash, '?')) {
+                    $uri = \explode('?', $uriWithoutLastSlash);
+                    $uriWithoutLastSlash = $uri[0];
+                }
+
+                $match = $this->router->match($uriWithoutLastSlash);
+                unset($match['_controller']);
+
+                if ($match) {
+                    $routeName = $match['_route'];
+                    unset($match['_route']);
+                    $breadcrumb[] = [
+                        'name' => 'breadcrumb'.\str_replace('/', '.', $uriWithoutLastSlash),
+                        'path' => $routeName,
+                        'parameters' => $match,
+                    ];
+                }
+            }
+        }
+
+        if ($lastItemName) {
+            $totalItem = \count($breadcrumb);
+            $breadcrumb[$totalItem - 1]['name'] = $lastItemName;
+        }
+
+        return $breadcrumb;
+    }
+}

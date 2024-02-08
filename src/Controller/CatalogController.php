@@ -10,130 +10,105 @@ use App\Entity\Support;
 use App\Form\ArticleFilterFormType;
 use App\Repository\ArticleRepository;
 use App\Repository\SupportRepository;
-use App\Service\DispatchFilterValueService;
-use App\Service\PaginationService;
+use App\Service\BreadcrumbInterface;
+use App\Service\CustomPaginationInterface;
+use App\Service\DispatchFilterValueInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
+#[Route(
+    path: '/catalog',
+    name: 'app_catalog',
+    methods: [Request::METHOD_GET]
+)]
 final class CatalogController extends AbstractController
 {
-    #[Route('/catalog', 'app_catalog')]
+    public const SUPPORT_REQUIREMENTS = 'lp|ep|tape|fanzine|cd';
+
+    public function __construct(
+        private readonly ArticleRepository $articleRepository,
+        private readonly BreadcrumbInterface $breadcrumb
+    ) {
+    }
+
+    #[Route(
+        path: '',
+        name: ''
+    )]
     public function index(SupportRepository $supportRepository): Response
     {
         $supports = $supportRepository->findAll();
 
-        $breadcrumb = [
-            [
-                'name' => 'Accueil',
-                'path' => 'app_homepage',
-            ],
-            [
-                'name' => 'Catalogue',
-                'path' => 'app_catalog',
-            ],
-        ];
-
         return $this->render('catalog/index.html.twig', [
             'supports' => $supports,
-            'breadcrumb' => $breadcrumb,
+            'breadcrumb' => $this->breadcrumb->breadcrumb(),
         ]);
     }
 
-    #[Route('/catalog/{support}/{page}', 'app_catalog_support', requirements: ['page' => '^(page-)\d+'])]
-    public function catalogBySupport(
+    #[Route(
+        path: '/{support}/{page}',
+        name: '_list',
+        requirements: [
+            'support' => self::SUPPORT_REQUIREMENTS,
+            'page' => '^(page-)'.Requirement::DIGITS,
+        ],
+        defaults: ['page' => 'page-1']
+    )]
+    public function list(
         Request $request,
-        ArticleRepository $articleRepository,
-        DispatchFilterValueService $dispatchFilterValueService,
-        PaginationService $paginationService,
+        DispatchFilterValueInterface $dispatchFilterValue,
+        CustomPaginationInterface $customPagination,
         #[MapEntity(mapping: ['support' => 'name'])] Support $support,
-        string $page = 'page-1',
+        string $page,
     ): Response {
-        $breadcrumb = [
-            [
-                'name' => 'Accueil',
-                'path' => 'app_homepage',
-            ],
-            [
-                'name' => 'Catalogue',
-                'path' => 'app_catalog',
-            ],
-            [
-                'name' => $support,
-                'path' => 'app_catalog_support',
-                'params' => [
-                    'support' => $support,
-                ],
-            ],
-        ];
-
         $filters = new ArticleFilterData();
         $filters->supports[] = $support;
 
         $form = $this->createForm(ArticleFilterFormType::class, $filters);
         $form->handleRequest($request);
 
-        $articles = $articleRepository->filterArticleQuery(
-            $dispatchFilterValueService->dispatchFilterValue($filters)
+        $articles = $this->articleRepository->filterArticleQuery(
+            $dispatchFilterValue->dispatchFilterValue($filters)
         );
-        $pagination = $paginationService->pagination($articles, $page);
+        $pagination = $customPagination->pagination($articles, $page);
 
         unset($filters->globalFilters);
 
+        $this->breadcrumb->breadcrumb();
+
         return $this->render('catalog/articles.html.twig', [
             'articles' => $pagination,
-            'breadcrumb' => $breadcrumb,
+            'breadcrumb' => $this->breadcrumb->breadcrumb(),
             'form' => $form->createView(),
             'filters' => $filters,
         ]);
     }
 
-    #[Route('/catalog/{support}/{slug}', 'app_catalog_article')]
-    public function pageArticle(
-        #[MapEntity(mapping: ['support' => 'name'])] Support $support,
-        #[MapEntity(mapping: ['support' => ':support', 'slug' => 'slug'])] Article $article,
-        ArticleRepository $articleRepository
+    #[Route(
+        path: '/{support}/{slug}',
+        name: '_show',
+        requirements: ['support' => self::SUPPORT_REQUIREMENTS]
+    )]
+    public function show(
+        #[MapEntity(expr: 'repository.findOneBySupportAndSlug(support, slug)')]
+        Article $article,
     ): Response {
-        $breadcrumb = [
-            [
-                'name' => 'Accueil',
-                'path' => 'app_homepage',
-            ],
-            [
-                'name' => 'Catalogue',
-                'path' => 'app_catalog',
-            ],
-            [
-                'name' => $support,
-                'path' => 'app_catalog_support',
-                'params' => [
-                    'support' => $support,
-                ],
-            ],
-            [
-                'name' => $article->getName(),
-                'path' => 'app_catalog_article',
-                'params' => [
-                    'support' => $support,
-                    'slug' => $article->getSlug(),
-                ],
-            ],
-        ];
-
-        $artistArticle = $articleRepository->getArticleWithSameArtist($article->getAlbum()->getArtist());
+        $artistArticle = $this->articleRepository->getArticleWithSameArtist($article->getAlbum()->getArtist());
 
         $currentAlbumStyles = [];
         foreach ($article->getAlbum()->getStyles() as $style) {
             $currentAlbumStyles[] = $style->getId();
         }
 
-        $articleWithSameStyle = $articleRepository->getArticleWithSameStyle($currentAlbumStyles);
+        $articleWithSameStyle = $this->articleRepository->getArticleWithSameStyle($currentAlbumStyles);
 
         return $this->render('catalog/article.html.twig', [
             'article' => $article,
-            'breadcrumb' => $breadcrumb,
+            'breadcrumb' => $this->breadcrumb->breadcrumb(lastItemName: $article->getName()),
             'articleByArtist' => $artistArticle->getResult(),
             'articleSameStyle' => $articleWithSameStyle->getResult(),
         ]);

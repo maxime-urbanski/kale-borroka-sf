@@ -6,7 +6,7 @@ namespace App\Service;
 
 use App\Data\ArticleFilterData;
 
-readonly class DispatchFilterValueService
+readonly class DispatchFilterValueService implements DispatchFilterValueInterface
 {
     public function dispatchFilterValue(ArticleFilterData $data): ArticleFilterData
     {
