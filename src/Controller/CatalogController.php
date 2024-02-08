@@ -11,7 +11,7 @@ use App\Form\ArticleFilterFormType;
 use App\Repository\ArticleRepository;
 use App\Repository\SupportRepository;
 use App\Service\BreadcrumbInterface;
-use App\Service\DispatchFilterValueService;
+use App\Service\DispatchFilterValueInterface;
 use App\Service\PaginationService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,6 +27,8 @@ use Symfony\Component\Routing\Requirement\Requirement;
 )]
 final class CatalogController extends AbstractController
 {
+    public const SUPPORT_REQUIREMENTS = 'lp|ep|tape|fanzine|cd';
+
     public function __construct(
         private readonly ArticleRepository $articleRepository,
         private readonly BreadcrumbInterface $breadcrumb
@@ -51,14 +53,14 @@ final class CatalogController extends AbstractController
         path: '/{support}/{page}',
         name: '_list',
         requirements: [
-            'support' => 'lp|ep|tape|fanzine|cd',
+            'support' => self::SUPPORT_REQUIREMENTS,
             'page' => '^(page-)'.Requirement::DIGITS,
         ],
         defaults: ['page' => 'page-1']
     )]
     public function list(
         Request $request,
-        DispatchFilterValueService $dispatchFilterValueService,
+        DispatchFilterValueInterface $dispatchFilterValue,
         PaginationService $paginationService,
         #[MapEntity(mapping: ['support' => 'name'])] Support $support,
         string $page,
@@ -70,16 +72,18 @@ final class CatalogController extends AbstractController
         $form->handleRequest($request);
 
         $articles = $this->articleRepository->filterArticleQuery(
-            $dispatchFilterValueService->dispatchFilterValue($filters)
+            $dispatchFilterValue->dispatchFilterValue($filters)
         );
         $pagination = $paginationService->pagination($articles, $page);
 
         unset($filters->globalFilters);
 
+        $this->breadcrumb->breadcrumb();
+
         return $this->render('catalog/articles.html.twig', [
             'articles' => $pagination,
             'breadcrumb' => $this->breadcrumb->breadcrumb(),
-            'form' => $form,
+            'form' => $form->createView(),
             'filters' => $filters,
         ]);
     }
@@ -87,7 +91,7 @@ final class CatalogController extends AbstractController
     #[Route(
         path: '/{support}/{slug}',
         name: '_show',
-        requirements: ['support' => 'lp|ep|tape|fanzine|cd']
+        requirements: ['support' => self::SUPPORT_REQUIREMENTS]
     )]
     public function show(
         #[MapEntity(expr: 'repository.findOneBySupportAndSlug(support, slug)')]

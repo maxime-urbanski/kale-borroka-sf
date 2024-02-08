@@ -15,36 +15,35 @@ readonly class BreadcrumbService implements BreadcrumbInterface
     ) {
     }
 
-    public function breadcrumb(?string $lastItemName = null): array
+    public function breadcrumb(string $lastItemName = null): array
     {
-        $breadcrumb = [
-            [
-                'name' => 'Accueil',
-                'path' => 'app_homepage',
-            ],
-        ];
-
+        $breadcrumb = [];
         $url = $this->requestStack->getMainRequest()->getRequestUri();
-
         $splitUrl = \explode('/', $url);
-        array_shift($splitUrl);
+        $uri = '';
 
-        $uri = '/';
         foreach ($splitUrl as $value) {
-            $uri = $uri.$value.'/';
-            $uriWithoutLastSlash = substr($uri, 0, -1);
+            if (!str_starts_with($value, 'page-')) {
+                $uri .= $value.'/';
+                $uriWithoutLastSlash = rtrim($uri, '/');
 
-            $match = $this->router->match($uriWithoutLastSlash);
-            unset($match['_controller']);
+                if (str_contains($uriWithoutLastSlash, '?')) {
+                    $uri = \explode('?', $uriWithoutLastSlash);
+                    $uriWithoutLastSlash = $uri[0];
+                }
 
-            if ($match) {
-                $routeName = $match['_route'];
-                unset($match['_route']);
-                $breadcrumb[] = [
-                    'name' => 'breadcrumb'.\str_replace('/', '.', $uriWithoutLastSlash),
-                    'path' => $routeName,
-                    'parameters' => $match,
-                ];
+                $match = $this->router->match($uriWithoutLastSlash);
+                unset($match['_controller']);
+
+                if ($match) {
+                    $routeName = $match['_route'];
+                    unset($match['_route']);
+                    $breadcrumb[] = [
+                        'name' => 'breadcrumb'.\str_replace('/', '.', $uriWithoutLastSlash),
+                        'path' => $routeName,
+                        'parameters' => $match,
+                    ];
+                }
             }
         }
 
