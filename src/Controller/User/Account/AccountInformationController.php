@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\User;
+namespace App\Controller\User\Account;
 
 use App\Data\UpdatePasswordData;
 use App\Entity\User;
