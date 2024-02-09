@@ -82,7 +82,7 @@ class CreateAdminCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function getValidPassword(SymfonyStyle $io): string
+    private function getValidPassword(SymfonyStyle $io): string|int
     {
         for ($attempt = 1; $attempt <= 2; ++$attempt) {
             $password = $io->ask('Créer un mot de passe.');

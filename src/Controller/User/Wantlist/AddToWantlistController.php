@@ -13,14 +13,14 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
-#[asController]
+#[AsController]
 class AddToWantlistController
 {
     #[Route(
@@ -30,12 +30,14 @@ class AddToWantlistController
         methods: [Request::METHOD_GET]
     )]
     public function __invoke(
-        #[CurrentUser] User $user,
-        #[MapEntity(mapping: ['productId' => 'id'])] Article $article,
+        #[CurrentUser]
+        User $user,
+        #[MapEntity(mapping: ['productId' => 'id'])]
+        Article $article,
         RefererInterface $referer,
         EntityManagerInterface $entityManager,
         WantlistRepository $wantlistRepository,
-        SessionInterface $session
+        Request $request
     ): RedirectResponse {
         if (!$user->getWantlist()) {
             $wantlist = new Wantlist();
@@ -46,6 +48,8 @@ class AddToWantlistController
         $currentUserWantlist = $wantlistRepository->findOneBy(
             ['userWantlist' => $user]
         );
+        /** @var Session $session */
+        $session = $request->getSession();
 
         try {
             $currentUserWantlist->addProduct($article);

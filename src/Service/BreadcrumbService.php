@@ -15,8 +15,12 @@ readonly class BreadcrumbService implements BreadcrumbInterface
     ) {
     }
 
-    public function breadcrumb(string $lastItemName = null): array
+    /**
+     * @return array<int, array{name: string, path: string, paramater: array<mixed>}>
+     */
+    public function breadcrumb(?string $lastItemName = null): array
     {
+        /** @var array<int, array{name: string, path: string, paramater: array<mixed>}> $breadcrumb */
         $breadcrumb = [];
         $url = $this->requestStack->getMainRequest()->getRequestUri();
         $splitUrl = \explode('/', $url);

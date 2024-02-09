@@ -8,13 +8,13 @@ use App\Service\CartInterface;
 use App\Service\RefererInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
-#[asController]
+#[AsController]
 class RemoveQuantityCartController
 {
     #[Route(
@@ -24,11 +24,14 @@ class RemoveQuantityCartController
         methods: [Request::METHOD_GET]
     )]
     public function __invoke(
-        SessionInterface $session,
+        Request $request,
         CartInterface $cart,
         RefererInterface $referer,
         int $id
     ): RedirectResponse {
+        /** @var Session $session */
+        $session = $request->getSession();
+
         try {
             $cart->removeQuantity($id);
             $session->getFlashBag()->add('success', 'Quantité mise à jour');

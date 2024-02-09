@@ -17,7 +17,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-#[asController]
+#[AsController]
 class ArticleDetailsController
 {
     public const SUPPORT_REQUIREMENTS = 'lp|ep|tape|fanzine|cd';

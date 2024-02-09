@@ -15,7 +15,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AccountOrderController extends AbstractController
 {
     #[Route('/mon-compte/mes-commandes', name: 'app_user_orders')]
-    #[isGranted('IS_AUTHENTICATED_FULLY')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function index(
         #[CurrentUser] User $user,
         OrderRepository $orderRepository

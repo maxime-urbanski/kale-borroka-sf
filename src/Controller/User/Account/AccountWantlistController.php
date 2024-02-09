@@ -14,7 +14,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AccountWantlistController extends AbstractController
 {
     #[Route('/mon-compte/ma-wantlist', name: 'app_user_wantlist')]
-    #[isGranted('IS_AUTHENTICATED_FULLY')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function wantlist(
         #[CurrentUser] User $user
     ): Response {

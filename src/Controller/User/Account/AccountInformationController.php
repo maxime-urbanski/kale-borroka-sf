@@ -18,7 +18,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/mon-compte', name: 'app_user_')]
-#[isGranted('IS_AUTHENTICATED_FULLY')]
+#[IsGranted('IS_AUTHENTICATED_FULLY')]
 class AccountInformationController extends AbstractController
 {
     public function __construct(

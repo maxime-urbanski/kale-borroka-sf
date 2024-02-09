@@ -23,7 +23,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-#[asController]
+#[AsController]
 class CatalogBySupportController
 {
     public const SUPPORT_REQUIREMENTS = 'lp|ep|tape|fanzine|cd';

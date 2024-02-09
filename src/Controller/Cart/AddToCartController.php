@@ -8,12 +8,13 @@ use App\Service\CartInterface;
 use App\Service\RefererInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
-#[asController]
+#[AsController]
 class AddToCartController
 {
     #[Route(
@@ -28,6 +29,7 @@ class AddToCartController
         RefererInterface $referer,
         int $id
     ): RedirectResponse {
+        /** @var Session $session */
         $session = $request->getSession();
         try {
             $cart->addToCart($id);

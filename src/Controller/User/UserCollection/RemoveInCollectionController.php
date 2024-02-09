@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,8 +20,8 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[asController]
-#[isGranted('IS_AUTHENTICATED_FULLY')]
+#[AsController]
+#[IsGranted('IS_AUTHENTICATED_FULLY')]
 class RemoveInCollectionController
 {
     #[Route(
@@ -38,11 +38,14 @@ class RemoveInCollectionController
         RefererInterface $referer,
         EntityManagerInterface $entityManager,
         UserCollectionRepository $userCollectionRepository,
-        SessionInterface $session
+        Request $request
     ): RedirectResponse {
         $currentUserCollection = $userCollectionRepository->findOneBy(
             ['collector' => $user]
         );
+
+        /** @var Session $session */
+        $session = $request->getSession();
 
         try {
             $currentUserCollection->removeArticle($article);

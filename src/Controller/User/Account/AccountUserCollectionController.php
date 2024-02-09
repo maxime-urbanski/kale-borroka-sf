@@ -14,7 +14,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AccountUserCollectionController extends AbstractController
 {
     #[Route('/mon-compte/ma-collection', name: 'app_user_collection')]
-    #[isGranted('IS_AUTHENTICATED_FULLY')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function collection(
         #[CurrentUser] User $user
     ): Response {
