@@ -38,23 +38,23 @@ class CatalogBySupportController
         name: 'app_catalog_list',
         requirements: [
             'support' => self::SUPPORT_REQUIREMENTS,
-            'page' => '^(page-)' . Requirement::DIGITS,
+            'page' => '^(page-)'.Requirement::DIGITS,
         ],
-        defaults: ['page' => 'page-1']
+        defaults: ['page' => 'page-1'],
+        methods: Request::METHOD_GET
     )]
     public function __invoke(
-        Request                      $request,
-        Environment                  $twig,
-        FormFactoryInterface         $form,
-        BreadcrumbInterface          $breadcrumb,
+        Request $request,
+        Environment $twig,
+        FormFactoryInterface $form,
+        BreadcrumbInterface $breadcrumb,
         DispatchFilterValueInterface $dispatchFilterValue,
-        CustomPaginationInterface    $customPagination,
-        ArticleRepository            $articleRepository,
+        CustomPaginationInterface $customPagination,
+        ArticleRepository $articleRepository,
         #[MapEntity(mapping: ['support' => 'name'])]
-        Support                      $support,
-        string                       $page,
-    ): Response
-    {
+        Support $support,
+        string $page,
+    ): Response {
         $filters = new ArticleFilterData();
         $filters->supports[] = $support;
 
@@ -66,7 +66,7 @@ class CatalogBySupportController
         );
         $pagination = $customPagination->pagination($articles, $page);
 
-        \unset($filters->globalFilters);
+        unset($filters->globalFilters);
 
         $content = $twig->render('catalog/articles.html.twig', [
             'articles' => $pagination,

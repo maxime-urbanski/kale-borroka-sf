@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Catalog;
+namespace App\Controller\Cart;
 
-use App\Repository\SupportRepository;
-use App\Service\BreadcrumbInterface;
+use App\Service\CartInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -16,27 +15,25 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 #[asController]
-class CatalogController
+class CartController
 {
     /**
-     * @throws RuntimeError
      * @throws SyntaxError
+     * @throws RuntimeError
      * @throws LoaderError
      */
     #[Route(
-        path: '/catalog',
-        name: 'app_catalog',
+        path: '/cart',
+        name: 'app_cart_index',
         methods: [Request::METHOD_GET]
     )]
     public function __invoke(
         Environment $twig,
-        BreadcrumbInterface $breadcrumb,
-        SupportRepository $supportRepository,
+        CartInterface $cartInterface
     ): Response {
-        $supports = $supportRepository->findAll();
-        $content = $twig->render('catalog/index.html.twig', [
-            'supports' => $supports,
-            'breadcrumb' => $breadcrumb->breadcrumb(),
+        $content = $twig->render('cart/index.html.twig', [
+            'cart' => $cartInterface->getFullCart(),
+            'total' => $cartInterface->getTotal(),
         ]);
 
         return new Response($content);

@@ -8,6 +8,7 @@ use App\Entity\Article;
 use App\Repository\ArticleRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 readonly class CartService implements CartInterface
 {
@@ -20,16 +21,21 @@ readonly class CartService implements CartInterface
     public function addToCart(int $id): void
     {
         $cart = $this->getSession()->get('cart', []);
+        $article = $this->articleRepository->find($id);
 
-        if (empty($cart[$id])) {
-            $cart[$id] = 1;
-        } elseif ($this->articleRepository->find($id)->getQuantity() > $cart[$id]) {
-            ++$cart[$id];
+        if ($article) {
+            if (empty($cart[$id])) {
+                $cart[$id] = 1;
+            } elseif ($article->getQuantity() > $cart[$id]) {
+                ++$cart[$id];
+            } else {
+                $cart[$id] = $article->getQuantity();
+            }
+
+            $this->getSession()->set('cart', $cart);
         } else {
-            $cart[$id] = $this->articleRepository->find($id)->getQuantity();
+            throw new NotFoundHttpException('Ooups une erreur est survenue.');
         }
-
-        $this->getSession()->set('cart', $cart);
     }
 
     public function addQuantity(int $id): void
