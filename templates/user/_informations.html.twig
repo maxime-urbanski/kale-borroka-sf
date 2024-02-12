@@ -8,7 +8,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h5 class="fw-bold card-title text-danger">Mes coordonnées</h5>
                         {% include 'partials/_obfuscation_link.html.twig' with {
-                            url: path('app_user_informations_edit'),
+                            url: path('app_user_informations_patch'),
                             class: "float-end",
                             span: true,
                             text: 'Modifier'
@@ -35,7 +35,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h5 class="fw-bold card-title text-danger mb-0">Mon mot de passe</h5>
                     {% include 'partials/_obfuscation_link.html.twig' with {
-                        url: path('app_user_password_edit'),
+                        url: path('app_user_informations_password_put'),
                         class: "float-end",
                         span: true,
                         text: 'Modifier'

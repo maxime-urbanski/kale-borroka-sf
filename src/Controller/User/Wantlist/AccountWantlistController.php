@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\User\Account;
+namespace App\Controller\User\Wantlist;
 
 use App\Entity\User;
-use App\Repository\OrderRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -15,26 +15,22 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
 
 #[AsController]
-#[IsGranted('IS_AUTHENTICATED_FULLY')]
 #[Route(
-    path: '/mon-compte/mes-commandes',
-    name: 'app_user_orders',
+    path: '/mon-compte/ma-wantlist',
+    name: 'app_user_wantlist',
     methods: [Request::METHOD_GET]
 )]
-class AccountOrderController
+#[IsGranted('IS_AUTHENTICATED_FULLY')]
+class AccountWantlistController extends AbstractController
 {
     public function __invoke(
         #[CurrentUser]
         User $user,
-        OrderRepository $orderRepository,
         Environment $twig
     ): Response {
-        $userOrders = $orderRepository->findBy([
-            'buyer' => $user,
-        ]);
-
-        $content = $twig->render('user/order.html.twig', [
-            'orders' => $userOrders,
+        $userWantlist = $user->getWantlist();
+        $content = $twig->render('user/wantlist.html.twig', [
+            'wantlist' => $userWantlist,
         ]);
 
         return new Response($content);

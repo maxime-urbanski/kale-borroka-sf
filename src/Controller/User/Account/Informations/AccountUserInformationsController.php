@@ -2,11 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\User\Account;
+namespace App\Controller\User\Account\Informations;
 
 use App\Entity\User;
-use App\Repository\OrderRepository;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,24 +15,18 @@ use Twig\Environment;
 #[AsController]
 #[IsGranted('IS_AUTHENTICATED_FULLY')]
 #[Route(
-    path: '/mon-compte/mes-commandes',
-    name: 'app_user_orders',
-    methods: [Request::METHOD_GET]
+    path: '/mon-compte',
+    name: 'app_user_informations'
 )]
-class AccountOrderController
+class AccountUserInformationsController
 {
     public function __invoke(
         #[CurrentUser]
         User $user,
-        OrderRepository $orderRepository,
         Environment $twig
     ): Response {
-        $userOrders = $orderRepository->findBy([
-            'buyer' => $user,
-        ]);
-
-        $content = $twig->render('user/order.html.twig', [
-            'orders' => $userOrders,
+        $content = $twig->render('user/_informations.html.twig', [
+            'user' => $user,
         ]);
 
         return new Response($content);

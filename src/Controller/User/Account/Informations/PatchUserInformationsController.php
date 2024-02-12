@@ -2,44 +2,47 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\User\Account\Address;
+namespace App\Controller\User\Account\Informations;
 
-use App\Entity\Address;
-use App\Form\UserAccountAddressFormType;
+use App\Entity\User;
+use App\Form\UserInformationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Twig\Environment;
 
 #[AsController]
 #[IsGranted('IS_AUTHENTICATED_FULLY')]
 #[Route(
-    path: '/mon-compte/mes-adresses/update/{id}',
-    name: 'app_user_addresses_patch_address',
-    requirements: [
-        'id' => Requirement::DIGITS,
-    ],
-    methods: [Request::METHOD_PATCH]
+    path: '/mon-compte/editer',
+    name: 'app_user_informations_patch',
+    methods: [
+        Request::METHOD_GET,
+        Request::METHOD_PATCH,
+    ]
 )]
-class PatchAddressController
+class PatchUserInformationsController
 {
     public function __invoke(
-        Address $address,
+        #[CurrentUser]
+        User $user,
         Request $request,
         EntityManagerInterface $entityManager,
-        RouterInterface $router,
-        FormFactoryInterface $formFactory
-    ): RedirectResponse {
+        FormFactoryInterface $formFactory,
+        Environment $twig,
+        RouterInterface $router
+    ): Response|RedirectResponse {
         /** @var Session $session */
         $session = $request->getSession();
-
-        $form = $formFactory->create(UserAccountAddressFormType::class, $address, [
+        $form = $formFactory->create(UserInformationFormType::class, $user, [
             'method' => 'patch',
         ]);
         $form->handleRequest($request);
@@ -48,10 +51,17 @@ class PatchAddressController
             $entityManager->flush();
             $session->getFlashBag()->add(
                 'success',
-                'Adresse '.$address->getName().' mise à jour.'
+                'Informations modifiées.'
             );
+
+            return new RedirectResponse($router->generate('app_user_informations'));
         }
 
-        return new RedirectResponse($router->generate('app_user_addresses_index'));
+        $content = $twig->render('user/_information_edit.html.twig', [
+            'user' => $user,
+            'form' => $form->createView(),
+        ]);
+
+        return new Response($content);
     }
 }
