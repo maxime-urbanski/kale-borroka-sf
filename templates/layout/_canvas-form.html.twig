@@ -39,8 +39,14 @@
     </div>
     <div class="offcanvas-body">
         {{ form_start(form, {
-            action: action_form
+            action: action_form,
+            method: method ?? 'post'
         }) }}
+        {{ form_rest(form) }}
+
+        <div class="d-grid col-12 mx-auto mt-3 order-last">
+            <button class="btn btn-outline-dark" type="submit">Envoyer</button>
+        </div>
         {{ form_end(form) }}
     </div>
 </div>

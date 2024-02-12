@@ -18,7 +18,7 @@ readonly class BreadcrumbService implements BreadcrumbInterface
     /**
      * @return array<int, array{name: string, path: string, paramater: array<mixed>}>
      */
-    public function breadcrumb(?string $lastItemName = null): array
+    public function breadcrumb(string $lastItemName = null): array
     {
         /** @var array<int, array{name: string, path: string, paramater: array<mixed>}> $breadcrumb */
         $breadcrumb = [];
