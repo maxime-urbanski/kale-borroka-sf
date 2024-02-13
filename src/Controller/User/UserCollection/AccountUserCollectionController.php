@@ -14,14 +14,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
 
 #[AsController]
-#[Route(
-    path: '/mon-compte/ma-collection',
-    name: 'app_user_collection',
-    methods: [Request::METHOD_GET]
-)]
-#[IsGranted('IS_AUTHENTICATED_FULLY')]
 class AccountUserCollectionController
 {
+    #[Route(
+        path: '/mon-compte/ma-collection',
+        name: 'app_user_collection',
+        methods: [Request::METHOD_GET]
+    )]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function __invoke(
         #[CurrentUser]
         User $user,

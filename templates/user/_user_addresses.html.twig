@@ -35,8 +35,8 @@
                             <div class="btn btn-outline-danger btn-sm"
                                  data-controller="address"
                                  data-address-id-value="{{ address.id }}"
-                                 data-adress-method-value="delete"
-                                 data-action="click->address#delete"
+                                 data-address-method-value="DELETE"
+                                 data-action="click->address#action"
                             >
                                 Supprimer
                             </div>
@@ -51,9 +51,10 @@
                                 checked
                             {% else %}
                                 data-controller="address"
-                                data-action="click->address#patch"
                                 data-address-id-value="{{ address.id }}"
                                 data-address-user-value="{{ user.id }}"
+                                data-address-method-value="PATCH"
+                                data-action="click->address#action"
                             {% endif %}
                         >
                         <label for="radioDefaultAddress" class="ms-1">

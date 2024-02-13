@@ -15,14 +15,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
 
 #[AsController]
-#[IsGranted('IS_AUTHENTICATED_FULLY')]
-#[Route(
-    path: '/mon-compte/mes-commandes',
-    name: 'app_user_orders',
-    methods: [Request::METHOD_GET]
-)]
 class AccountOrderController
 {
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[Route(
+        path: '/mon-compte/mes-commandes',
+        name: 'app_user_orders',
+        methods: [Request::METHOD_GET]
+    )]
     public function __invoke(
         #[CurrentUser]
         User $user,

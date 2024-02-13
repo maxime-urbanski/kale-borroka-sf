@@ -13,13 +13,13 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
 
 #[AsController]
-#[IsGranted('IS_AUTHENTICATED_FULLY')]
-#[Route(
-    path: '/mon-compte',
-    name: 'app_user_informations'
-)]
 class AccountUserInformationsController
 {
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[Route(
+        path: '/mon-compte',
+        name: 'app_user_informations'
+    )]
     public function __invoke(
         #[CurrentUser]
         User $user,

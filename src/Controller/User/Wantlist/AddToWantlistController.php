@@ -19,6 +19,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AsController]
 class AddToWantlistController
@@ -29,6 +30,7 @@ class AddToWantlistController
         requirements: ['productId' => Requirement::DIGITS],
         methods: [Request::METHOD_GET]
     )]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function __invoke(
         #[CurrentUser]
         User $user,

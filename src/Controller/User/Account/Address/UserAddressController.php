@@ -19,12 +19,6 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 #[AsController]
-#[IsGranted('IS_AUTHENTICATED_FULLY')]
-#[Route(
-    path: '/mon-compte/mes-adresses',
-    name: 'app_user_addresses_index',
-    methods: [Request::METHOD_GET]
-)]
 class UserAddressController
 {
     /**
@@ -32,6 +26,12 @@ class UserAddressController
      * @throws RuntimeError
      * @throws LoaderError
      */
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[Route(
+        path: '/mon-compte/mes-adresses',
+        name: 'app_user_addresses_index',
+        methods: [Request::METHOD_GET]
+    )]
     public function __invoke(
         #[CurrentUser]
         User $user,

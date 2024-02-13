@@ -22,17 +22,17 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
 
 #[AsController]
-#[IsGranted('IS_AUTHENTICATED_FULLY')]
-#[Route(
-    path: '/mon-compte/editer-mot-de-passe',
-    name: 'app_user_informations_password_put',
-    methods: [
-        Request::METHOD_GET,
-        Request::METHOD_PUT,
-    ]
-)]
 class PutUserPasswordController
 {
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[Route(
+        path: '/mon-compte/editer-mot-de-passe',
+        name: 'app_user_informations_password_put',
+        methods: [
+            Request::METHOD_GET,
+            Request::METHOD_PUT,
+        ]
+    )]
     public function __invoke(
         #[CurrentUser]
         User $user,

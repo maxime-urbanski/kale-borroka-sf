@@ -18,17 +18,17 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AsController]
-#[IsGranted('IS_AUTHENTICATED_FULLY')]
-#[Route(
-    path: '/mon-compte/mes-adresses/update/{id}',
-    name: 'app_user_addresses_patch_address',
-    requirements: [
-        'id' => Requirement::DIGITS,
-    ],
-    methods: [Request::METHOD_PATCH]
-)]
 class PatchAddressController
 {
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[Route(
+        path: '/mon-compte/mes-adresses/update/{id}',
+        name: 'app_user_addresses_patch_address',
+        requirements: [
+            'id' => Requirement::DIGITS,
+        ],
+        methods: [Request::METHOD_PATCH]
+    )]
     public function __invoke(
         Address $address,
         Request $request,

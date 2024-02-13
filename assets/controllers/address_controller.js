@@ -1,4 +1,4 @@
-import {Controller, del} from "@hotwired/stimulus";
+import {Controller} from "@hotwired/stimulus";
 
 export default class extends Controller {
   static values = {
@@ -7,17 +7,20 @@ export default class extends Controller {
     method: String
   }
 
-  async patch(e) {
-    window.location.href =
-      `/mon-compte/mes-adresses/update/default-address/${this.userValue}/${this.idValue}`
-  }
-
-  async delete() {
-    await fetch(`/mon-compte/mes-adresses/remove/${this.idValue}`, {
-      method: "delete",
-      redirect: "follow"
-    })
-
-    window.location.href = '/mon-compte/mes-adresses/'
+  async action() {
+    let url
+    switch (this.methodValue) {
+      case 'PATCH':
+        url = `/mon-compte/mes-adresses/update/default-address/${this.userValue}/${this.idValue}`
+        break;
+      case 'DELETE':
+        url = `/mon-compte/mes-adresses/remove/${this.idValue}`
+        break;
+      default:
+        break;
+    }
+    await fetch(url, {
+      method: this.methodValue
+    }).then(response => window.location.href = response.url)
   }
 }

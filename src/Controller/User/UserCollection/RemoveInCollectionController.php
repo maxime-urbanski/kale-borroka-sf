@@ -21,9 +21,9 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AsController]
-#[IsGranted('IS_AUTHENTICATED_FULLY')]
 class RemoveInCollectionController
 {
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     #[Route(
         path: '/collection/remove/{productId}',
         name: 'app_collection_remove',
