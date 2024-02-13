@@ -20,17 +20,17 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
 
 #[AsController]
-#[IsGranted('IS_AUTHENTICATED_FULLY')]
-#[Route(
-    path: '/mon-compte/editer',
-    name: 'app_user_informations_patch',
-    methods: [
-        Request::METHOD_GET,
-        Request::METHOD_PATCH,
-    ]
-)]
 class PatchUserInformationsController
 {
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[Route(
+        path: '/mon-compte/editer',
+        name: 'app_user_informations_patch',
+        methods: [
+            Request::METHOD_GET,
+            Request::METHOD_PATCH,
+        ]
+    )]
     public function __invoke(
         #[CurrentUser]
         User $user,

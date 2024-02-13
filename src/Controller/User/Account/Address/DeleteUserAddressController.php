@@ -6,7 +6,6 @@ namespace App\Controller\User\Account\Address;
 
 use App\Entity\Address;
 use App\Entity\User;
-use App\Service\RefererInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +13,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -33,7 +33,7 @@ class DeleteUserAddressController
         Address $address,
         EntityManagerInterface $entityManager,
         Request $request,
-        RefererInterface $referer
+        RouterInterface $router
     ): RedirectResponse {
         /** @var Session $session */
         $session = $request->getSession();
@@ -55,6 +55,6 @@ class DeleteUserAddressController
             'Adresse supprimée.'
         );
 
-        return new RedirectResponse($referer->getReferer());
+        return new RedirectResponse($router->generate('app_user_addresses_index'));
     }
 }

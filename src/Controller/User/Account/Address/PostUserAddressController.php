@@ -20,18 +20,18 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AsController]
-#[IsGranted('IS_AUTHENTICATED_FULLY')]
-#[Route(
-    path: '/mon-compte/mes-adresses/add',
-    name: 'app_user_addresses_add',
-    requirements: [
-        'userId' => Requirement::DIGITS,
-        'addressId' => Requirement::DIGITS,
-    ],
-    methods: [Request::METHOD_POST]
-)]
 class PostUserAddressController
 {
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[Route(
+        path: '/mon-compte/mes-adresses/add',
+        name: 'app_user_addresses_add',
+        requirements: [
+            'userId' => Requirement::DIGITS,
+            'addressId' => Requirement::DIGITS,
+        ],
+        methods: [Request::METHOD_POST]
+    )]
     public function __invoke(
         #[CurrentUser]
         User $user,
@@ -65,6 +65,6 @@ class PostUserAddressController
             );
         }
 
-        return new RedirectResponse($router->generate('app_user_informations'));
+        return new RedirectResponse($router->generate('app_user_addresses_index'));
     }
 }
