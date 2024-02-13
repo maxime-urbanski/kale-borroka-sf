@@ -26,7 +26,4 @@
             <directory suffix=".php">src</directory>
         </include>
     </source>
-
-    <extensions>
-    </extensions>
 </phpunit>

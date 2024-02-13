@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Catalog;
 
 use App\Enum\SupportType;
 use App\Repository\SupportRepository;
@@ -45,7 +45,7 @@ class CatalogControllerTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            self::DEFAULT_URI.'/'.SupportType::LP->value
+            self::DEFAULT_URI.'/lp'
         );
         self::assertResponseIsSuccessful();
     }
