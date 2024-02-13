@@ -22,7 +22,7 @@
                         } %}
                     </th>
                     <th>
-                        <a href="{{ path('app_catalog_article', { support: article.product.support, slug: article.product.slug}) }}">
+                        <a href="{{ path('app_catalog_show', { support: article.product.support, slug: article.product.slug}) }}">
                             {% if article.product.album.images[0] is defined %}
                                 <img
                                     src="{{ asset('upload/albums/' ~ article.product.album.images[0].imageName) }}"

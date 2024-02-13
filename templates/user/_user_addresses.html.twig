@@ -29,10 +29,17 @@
                                 key: address.id,
                                 title: 'Modifier mon adresse',
                                 form: forms[address.id],
-                                action_form: path('app_user_addresses_update', {id: address.id})
+                                action_form: path('app_user_addresses_patch_address', {id: address.id}),
+                                method: 'PATCH'
                             } %}
-                            <a href="{{ path('app_user_addresses_remove', {id: address.id}) }}"
-                               class="btn btn-outline-danger btn-sm">Supprimer</a>
+                            <div class="btn btn-outline-danger btn-sm"
+                                 data-controller="address"
+                                 data-address-id-value="{{ address.id }}"
+                                 data-adress-method-value="delete"
+                                 data-action="click->address#delete"
+                            >
+                                Supprimer
+                            </div>
                         </div>
                     </div>
                     <div class="mt-2 d-flex justify-content-center align-items-center">

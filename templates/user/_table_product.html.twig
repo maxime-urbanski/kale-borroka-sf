@@ -36,7 +36,7 @@
                 </th>
             {% endif %}
             <th>
-                <a href="{{ path('app_catalog_article', { support: article.support, slug: article.slug}) }}">
+                <a href="{{ path('app_catalog_show', { support: article.support, slug: article.slug}) }}">
                     {% if article.album.images[0] is defined %}
                         <img
                             src="{{ asset('upload/albums/' ~ article.album.images[0].imageName) }}"

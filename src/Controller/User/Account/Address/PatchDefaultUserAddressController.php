@@ -1,0 +1,65 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\User\Account\Address;
+
+use App\Entity\Address;
+use App\Entity\User;
+use App\Repository\AddressRepository;
+use App\Service\RefererInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+#[AsController]
+#[IsGranted('IS_AUTHENTICATED_FULLY')]
+#[Route(
+    path: '/mon-compte/mes-adresses/update/default-address/{userId}/{addressId}',
+    name: 'app_user_addresses_patch_default_address',
+    requirements: [
+        'userId' => Requirement::DIGITS,
+        'addressId' => Requirement::DIGITS,
+    ],
+    methods: [Request::METHOD_PATCH]
+)]
+class PatchDefaultUserAddressController
+{
+    public function __invoke(
+        #[CurrentUser]
+        User $user,
+        #[MapEntity(mapping: ['addressId' => 'id'])]
+        Address $address,
+        EntityManagerInterface $entityManager,
+        AddressRepository $addressRepository,
+        Request $request,
+        RefererInterface $referer
+    ): RedirectResponse {
+        /** @var Session $session */
+        $session = $request->getSession();
+
+        try {
+            $user->setDefaultAddress($address);
+            $entityManager->flush();
+            $session->getFlashBAg()->add(
+                'success',
+                'Adresse de livraison par défaut mise à jour.'
+            );
+        } catch (NotFoundHttpException $exception) {
+            $session->getFlashBAg()->add(
+                'danger',
+                $exception
+            );
+        }
+
+        return new RedirectResponse($referer->getReferer());
+    }
+}

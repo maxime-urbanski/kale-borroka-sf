@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Catalog;
 
 use App\Data\ArticleFilterData;
 use App\Form\ProductionFilterFormType;
