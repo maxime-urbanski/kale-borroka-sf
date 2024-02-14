@@ -7,6 +7,7 @@ namespace App\Controller\Catalog;
 use App\Data\ArticleFilterData;
 use App\Form\ProductionFilterFormType;
 use App\Repository\ArticleRepository;
+use App\Service\BreadcrumbInterface;
 use App\Service\CustomPaginationService;
 use App\Service\DispatchFilterValueService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,19 +23,9 @@ class ProductionController extends AbstractController
         CustomPaginationService $paginationService,
         DispatchFilterValueService $dispatchFilterValueService,
         Request $request,
+        BreadcrumbInterface $breadcrumb,
         string $page = 'page-1'
     ): Response {
-        $breadcrumb = [
-            [
-                'name' => 'Accueil',
-                'path' => 'app_homepage',
-            ],
-            [
-                'name' => 'Nos Productions',
-                'path' => 'app_production',
-            ],
-        ];
-
         $filters = new ArticleFilterData();
         $filters->globalFilters['kbrProduction'] = true;
 
@@ -47,7 +38,7 @@ class ProductionController extends AbstractController
 
         return $this->render('catalog/articles.html.twig', [
             'articles' => $pagination,
-            'breadcrumb' => $breadcrumb,
+            'breadcrumb' => $breadcrumb->breadcrumb(),
             'form' => $productionForm,
             'filters' => $filters,
         ]);
