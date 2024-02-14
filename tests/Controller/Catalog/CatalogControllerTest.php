@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CatalogControllerTest extends WebTestCase
 {
-    private KernelBrowser $client;
+    private ?KernelBrowser $client = null;
     private const DEFAULT_URI = '/catalog';
     private const ERROR_SUPPORT = '/cdlp';
 

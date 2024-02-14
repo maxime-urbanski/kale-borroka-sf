@@ -60,8 +60,18 @@ Encore
     watchOptions.poll = 250; // check for changes every 250 milliseconds
   })
 
+  .configureDevServerOptions(options => {
+    options.host = '0.0.0.0',
+      options.port = 8080,
+      options.hot = true,
+      options.allowedHosts = 'all',
+      options.server = {
+        type: 'https',
+      }
+  })
   // enables Sass/SCSS support
   .enableSassLoader()
+
 
 // uncomment if you use TypeScript
 //.enableTypeScriptLoader()

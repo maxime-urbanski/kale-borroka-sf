@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Catalog;
 
 use App\Data\ArticleFilterData;
 use App\Repository\ArticleRepository;
@@ -12,8 +12,8 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ProductionControllerTest extends WebTestCase
 {
-    private KernelBrowser $client;
-    private Crawler $crawler;
+    private ?KernelBrowser $client = null;
+    private ?Crawler $crawler = null;
     private const PRODUCTION_URI = '/production';
 
     protected function setUp(): void
@@ -29,7 +29,7 @@ class ProductionControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
     }
 
-    public function testCheckboxProduction()
+    public function testCheckboxProduction(): void
     {
         $checkbox = $this->crawler->filter('input[name="globalFilters[kbrProduction]"]');
         $isOwnProduction = $checkbox->attr('checked');
@@ -37,7 +37,7 @@ class ProductionControllerTest extends WebTestCase
         self::assertTrue((bool) $isOwnProduction, 'la checkbox doit être checké');
     }
 
-    public function testDisplayCorrectNumberProduction()
+    public function testDisplayCorrectNumberProduction(): void
     {
         $badge = $this->crawler->filter('[data-test-badge="count-production"]')->first()->text();
 
