@@ -38,14 +38,14 @@ jobs:
         run: curl -v -o /dev/null http://localhost
       - name: Check HTTPS reachability
         run: curl -vk -o /dev/null https://localhost
+      - name: Test YARN
+        run: yarn &&  yarn dev
       - name: Create test database
         run: docker compose exec -T php bin/console -e test doctrine:database:create
       - name: Run migrations
         run: docker compose exec -T php bin/console -e test doctrine:migrations:migrate --no-interaction
       - name: Load Fixtures
         run: docker compose exec -T php bin/console -e test hautelook:fixtures:load --no-interaction
-      - name: Install dependencies
-        run: yarn && yarn dev-server --host=0.0.0.0
       - name: Run PHPUnit
         run: docker compose exec -T php bin/phpunit
       - name: Doctrine Schema Validator
