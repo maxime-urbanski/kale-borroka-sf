@@ -62,7 +62,7 @@ Encore
 
   .configureDevServerOptions(options => {
     options.host = '0.0.0.0',
-      options.port = 8080,
+      options.port = 8081,
       options.hot = true,
       options.allowedHosts = 'all',
       options.server = {
