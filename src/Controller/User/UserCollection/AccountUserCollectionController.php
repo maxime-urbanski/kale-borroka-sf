@@ -27,7 +27,7 @@ class AccountUserCollectionController
         User $user,
         Environment $twig
     ): Response {
-        $userCollection = $user->getCollection();
+        $userCollection = $user->getUserCollection();
         $content = $twig->render('user/collection.html.twig', [
             'collection' => $userCollection,
         ]);

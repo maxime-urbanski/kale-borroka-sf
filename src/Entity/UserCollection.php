@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Entity;
 
 use App\Repository\UserCollectionRepository;
@@ -14,13 +12,13 @@ use Doctrine\ORM\Mapping as ORM;
 class UserCollection
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'collection', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'user_collection', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $collector = null;
+    private ?User $user_collection = null;
 
     #[ORM\ManyToMany(targetEntity: Article::class, inversedBy: 'userCollections')]
     private Collection $article;
@@ -38,14 +36,14 @@ class UserCollection
         return $this->id;
     }
 
-    public function getCollector(): ?User
+    public function getUserCollection(): ?User
     {
-        return $this->collector;
+        return $this->user_collection;
     }
 
-    public function setCollector(User $collector): static
+    public function setUserCollection(User $user_collection): static
     {
-        $this->collector = $collector;
+        $this->user_collection = $user_collection;
 
         return $this;
     }

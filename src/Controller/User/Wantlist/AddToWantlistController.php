@@ -45,17 +45,18 @@ class AddToWantlistController
             $wantlist = new Wantlist();
             $wantlist->setUserWantlist($user);
             $entityManager->persist($wantlist);
+        } else {
+            $wantlist = $wantlistRepository->findOneBy(
+                ['userWantlist' => $user]
+            );
         }
 
-        $currentUserWantlist = $wantlistRepository->findOneBy(
-            ['userWantlist' => $user]
-        );
         /** @var Session $session */
         $session = $request->getSession();
 
         try {
-            $currentUserWantlist->addProduct($article);
-            $entityManager->persist($currentUserWantlist);
+            $wantlist->addProduct($article);
+            $entityManager->persist($wantlist);
             $entityManager->flush();
             $session->getFlashBag()->add(
                 'success',

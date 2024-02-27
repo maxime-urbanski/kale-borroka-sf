@@ -21,7 +21,7 @@
                     icon: "bi-eye-fill"
                 } %}
             {% endif %}
-            {% if app.user.collection is not null and article in app.user.collection.article %}
+            {% if app.user.userCollection is not null and article in app.user.userCollection.article %}
                 {% include 'partials/_obfuscation_link.html.twig' with {
                     url: path('app_collection_remove', {productId: article.id}),
                     class: class ~ 'bottom-0 end-0 mb-2' ,

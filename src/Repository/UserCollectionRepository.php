@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Repository;
 
 use App\Entity\UserCollection;
@@ -22,4 +20,29 @@ class UserCollectionRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, UserCollection::class);
     }
+
+//    /**
+//     * @return UserCollection[] Returns an array of UserCollection objects
+//     */
+//    public function findByExampleField($value): array
+//    {
+//        return $this->createQueryBuilder('u')
+//            ->andWhere('u.exampleField = :val')
+//            ->setParameter('val', $value)
+//            ->orderBy('u.id', 'ASC')
+//            ->setMaxResults(10)
+//            ->getQuery()
+//            ->getResult()
+//        ;
+//    }
+
+//    public function findOneBySomeField($value): ?UserCollection
+//    {
+//        return $this->createQueryBuilder('u')
+//            ->andWhere('u.exampleField = :val')
+//            ->setParameter('val', $value)
+//            ->getQuery()
+//            ->getOneOrNullResult()
+//        ;
+//    }
 }

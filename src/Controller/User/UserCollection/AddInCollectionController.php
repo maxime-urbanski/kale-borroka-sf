@@ -33,32 +33,31 @@ class AddInCollectionController
     )]
     public function __invoke(
         #[CurrentUser]
-        User $user,
+        User                     $user,
         #[MapEntity(mapping: ['productId' => 'id'])]
-        Article $article,
-        RefererInterface $referer,
-        EntityManagerInterface $entityManager,
+        Article                  $article,
+        RefererInterface         $referer,
+        EntityManagerInterface   $entityManager,
         UserCollectionRepository $userCollectionRepository,
-        Request $request
-    ): RedirectResponse {
-        if (!$user->getCollection()) {
+        Request                  $request
+    ): RedirectResponse
+    {
+        if (!$user->getUserCollection()) {
             $collection = new UserCollection();
-            $collection->setCollector($user);
+            $collection->setUserCollection($user);
             $entityManager->persist($collection);
+        } else {
+            $collection = $userCollectionRepository->findOneBy(['user_collection' => $user]);
         }
-
-        $currentUserCollection = $userCollectionRepository->findOneBy(
-            ['collector' => $user]
-        );
 
         /** @var Session $session */
         $session = $request->getSession();
 
         try {
-            $currentUserCollection->addArticle($article);
-            $currentUserCollection->setSince(new \DateTime('now'));
-            $session->getFlashbag()->add('success', $article->getName().' a bien été ajouté à ta collection');
-            $entityManager->persist($currentUserCollection);
+            $collection->addArticle($article);
+            $collection->setSince(new \DateTime('now'));
+            $session->getFlashbag()->add('success', $article->getName() . ' a bien été ajouté à ta collection');
+            $entityManager->persist($collection);
             $entityManager->flush();
         } catch (NotFoundHttpException $exception) {
             $session->getFlashbag()->add('danger', $exception);

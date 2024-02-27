@@ -41,7 +41,7 @@ class RemoveInCollectionController
         Request $request
     ): RedirectResponse {
         $currentUserCollection = $userCollectionRepository->findOneBy(
-            ['collector' => $user]
+            ['user_collection' => $user]
         );
 
         /** @var Session $session */
