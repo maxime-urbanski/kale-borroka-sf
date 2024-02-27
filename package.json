@@ -18,7 +18,7 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "dev-server": "encore dev-server --public https://localhost:8080",
+    "dev-server": "encore dev-server",
     "dev": "encore dev",
     "watch": "encore dev --watch",
     "build": "encore production --progress"

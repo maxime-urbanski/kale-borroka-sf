@@ -16,7 +16,7 @@
     <h4>Récapitulatif de ma commande</h4>
     <div class="d-flex flex-column justify-content-between border border-secondary rounded">
         {% for article in cart %}
-            <a href="{{ path('app_catalog_article', { support: article.product.support, slug: article.product.slug}) }}">
+            <a href="{{ path('app_catalog_show', { support: article.product.support, slug: article.product.slug}) }}">
                 {% if article.product.album.images[0] is defined %}
                     <img
                         src="{{ asset('upload/albums/' ~ article.product.album.images[0].imageName) }}"

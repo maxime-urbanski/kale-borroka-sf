@@ -29,7 +29,7 @@ readonly class BreadcrumbService implements BreadcrumbInterface
         foreach ($splitUrl as $value) {
             if (!str_starts_with($value, 'page-')) {
                 $uri .= $value.'/';
-                $uriWithoutLastSlash = rtrim($uri, '/');
+                $uriWithoutLastSlash = strlen($uri) > 1 ? rtrim($uri, '/') : $uri;
 
                 if (str_contains($uriWithoutLastSlash, '?')) {
                     $uri = \explode('?', $uriWithoutLastSlash);

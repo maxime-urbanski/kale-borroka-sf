@@ -38,28 +38,28 @@ jobs:
         run: curl -v -o /dev/null http://localhost
       - name: Check HTTPS reachability
         run: curl -vk -o /dev/null https://localhost
+      - name: Test YARN
+        run: yarn &&  yarn dev
       - name: Create test database
-        if: false # Remove this line if Doctrine ORM is installed
         run: docker compose exec -T php bin/console -e test doctrine:database:create
       - name: Run migrations
-        if: false # Remove this line if Doctrine Migrations is installed
         run: docker compose exec -T php bin/console -e test doctrine:migrations:migrate --no-interaction
+      - name: Load Fixtures
+        run: docker compose exec -T php bin/console -e test hautelook:fixtures:load --no-interaction
       - name: Run PHPUnit
-        if: false # Remove this line if PHPUnit is installed
         run: docker compose exec -T php bin/phpunit
       - name: Doctrine Schema Validator
-        if: false # Remove this line if Doctrine ORM is installed
+        if: false
         run: docker compose exec -T php bin/console -e test doctrine:schema:validate
+        
   lint:
     name: Docker Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - name: Lint Dockerfiles
+        uses: actions/checkout@v4
+      - name: Lint Dockerfile
         uses: hadolint/hadolint-action@v3.1.0
-        with:
-          recursive: true
 
   php-cs-fixer:
     name: Php-cs-fixer
