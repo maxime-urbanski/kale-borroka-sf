@@ -27,16 +27,7 @@ services:
     volumes:
       - ./public:/srv/app/public:ro
       - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-
-  encore:
-    image: node:18-alpine
-    volumes:
-      - .:/app
-    ports:
-      - "8080:8080"
-    working_dir: /app
-    command: sh -c "yarn && yarn dev-server --host=0.0.0.0"
-  
+      
   ###> doctrine/doctrine-bundle ###
   database:
     ports:
