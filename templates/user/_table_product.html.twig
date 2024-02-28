@@ -13,7 +13,7 @@
     {% for article in products %}
         {% set remove_action = wantlist_route ?
             path('app_wantlist_remove', {productId: article.id}) :
-            path('app_collection_remove', {productId: article.id}) %}
+            path('app_collection_remove', {productId: article.getUserArticle.id}) %}
         <tr>
             <th>
                 <div class="d-flex justify-content-center align-items-center">
@@ -36,16 +36,16 @@
                 </th>
             {% endif %}
             <th>
-                <a href="{{ path('app_catalog_show', { support: article.support, slug: article.slug}) }}">
-                    {% if article.album.images[0] is defined %}
+                <a href="{{ path('app_catalog_show', { support: article.getUserArticle.support, slug: article.getUserArticle.slug}) }}">
+                    {% if article.getUserArticle.album.images[0] is defined %}
                         <img
-                            src="{{ asset('upload/albums/' ~ article.album.images[0].imageName) }}"
-                            alt="{{ article.name }}"
+                            src="{{ asset('upload/albums/' ~ article.getUserArticle.album.images[0].imageName) }}"
+                            alt="{{ article.getUserArticle.name }}"
                             class="img-thumbnail"
                             width="80" height="80">
                     {% else %}
                         <img src="{{ asset('/images/product_placeholder.png') }}"
-                             alt="{{ article.name }}"
+                             alt="{{ article.getUserArticle.name }}"
                              class="img-thumbnail"
                              width="80"
                              height="80">
@@ -53,17 +53,17 @@
                 </a>
             </th>
             <th class="text-center fw-light">
-                {{ article.name }} - {{ article.support | upper }}
+                {{ article.getUserArticle.name }} - {{ article.getUserArticle.support | upper }}
             </th>
             <th class="text-center  fw-light">
                 {{ wantlist_route ?
                 (article.price / 100) |format_currency('EUR') :
-                article.support | upper }}
+                article.getUserArticle.support | upper }}
             </th>
             <th class="text-center fw-light">
                 {{ wantlist_route ?
                 article.quantity :
-                collection.since | date }}
+                article.since | date }}
             </th>
         </tr>
     {% else %}

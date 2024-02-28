@@ -4,7 +4,7 @@
     {% set categories = ['', '', 'Produit', 'Support', 'Ajouter le'] %}
     {% include 'user/_table_product.html.twig' with {
         categories,
-        products: collection == null ? [] : collection.article,
+        products: collection,
         empty_message: 'Ta collection est vide !'
     } %}
 {% endblock %}

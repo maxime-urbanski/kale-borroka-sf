@@ -62,7 +62,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'userWantlist', cascade: ['persist', 'remove'])]
     private ?Wantlist $wantlist = null;
 
-
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Address $defaultAddress = null;
 
@@ -256,7 +255,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
 
     public function getDefaultAddress(): ?Address
     {

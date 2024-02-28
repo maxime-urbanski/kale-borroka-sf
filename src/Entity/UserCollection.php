@@ -5,14 +5,13 @@ namespace App\Entity;
 use App\Repository\UserCollectionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserCollectionRepository::class)]
 class UserCollection
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]
     private ?int $id = null;
 
@@ -21,10 +20,8 @@ class UserCollection
     private ?User $user_collection = null;
 
     #[ORM\ManyToMany(targetEntity: Article::class, inversedBy: 'userCollections')]
+    #[ORM\JoinTable(name: 'user_collection_article')]
     private Collection $article;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $since = null;
 
     public function __construct()
     {
@@ -68,18 +65,6 @@ class UserCollection
     public function removeArticle(Article $article): static
     {
         $this->article->removeElement($article);
-
-        return $this;
-    }
-
-    public function getSince(): ?\DateTimeInterface
-    {
-        return $this->since;
-    }
-
-    public function setSince(\DateTimeInterface $since): static
-    {
-        $this->since = $since;
 
         return $this;
     }

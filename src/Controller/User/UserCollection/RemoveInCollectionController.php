@@ -6,6 +6,7 @@ namespace App\Controller\User\UserCollection;
 
 use App\Entity\Article;
 use App\Entity\User;
+use App\Repository\UserCollectionArticleRepository;
 use App\Repository\UserCollectionRepository;
 use App\Service\RefererInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,6 +39,7 @@ class RemoveInCollectionController
         RefererInterface $referer,
         EntityManagerInterface $entityManager,
         UserCollectionRepository $userCollectionRepository,
+        UserCollectionArticleRepository $userCollectionArticleRepository,
         Request $request
     ): RedirectResponse {
         $currentUserCollection = $userCollectionRepository->findOneBy(
@@ -51,7 +53,12 @@ class RemoveInCollectionController
             $currentUserCollection->removeArticle($article);
             $entityManager->persist($currentUserCollection);
             $entityManager->flush();
-            $session->getFlashbag()->add('success', $article->getName().' à bien été supprimé de ta collection');
+            $session
+                ->getFlashbag()
+                ->add(
+                    'success',
+                    $article->getName().' à bien été supprimé de ta collection'
+                );
         } catch (NotFoundHttpException $exception) {
             $session->getFlashbag()->add('danger', $exception);
         }

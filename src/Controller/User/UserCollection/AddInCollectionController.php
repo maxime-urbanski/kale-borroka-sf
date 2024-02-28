@@ -7,6 +7,7 @@ namespace App\Controller\User\UserCollection;
 use App\Entity\Article;
 use App\Entity\User;
 use App\Entity\UserCollection;
+use App\Entity\UserCollectionArticle;
 use App\Repository\UserCollectionRepository;
 use App\Service\RefererInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,15 +34,14 @@ class AddInCollectionController
     )]
     public function __invoke(
         #[CurrentUser]
-        User                     $user,
+        User $user,
         #[MapEntity(mapping: ['productId' => 'id'])]
-        Article                  $article,
-        RefererInterface         $referer,
-        EntityManagerInterface   $entityManager,
+        Article $article,
+        RefererInterface $referer,
+        EntityManagerInterface $entityManager,
         UserCollectionRepository $userCollectionRepository,
-        Request                  $request
-    ): RedirectResponse
-    {
+        Request $request
+    ): RedirectResponse {
         if (!$user->getUserCollection()) {
             $collection = new UserCollection();
             $collection->setUserCollection($user);
@@ -54,10 +54,12 @@ class AddInCollectionController
         $session = $request->getSession();
 
         try {
-            $collection->addArticle($article);
-            $collection->setSince(new \DateTime('now'));
-            $session->getFlashbag()->add('success', $article->getName() . ' a bien été ajouté à ta collection');
-            $entityManager->persist($collection);
+            $userCollectionArticle = new UserCollectionArticle();
+            $userCollectionArticle->setUserCollection($collection);
+            $userCollectionArticle->setUserArticle($article);
+            $userCollectionArticle->setSince(new \DateTime('now'));
+            $session->getFlashbag()->add('success', $article->getName().' a bien été ajouté à ta collection');
+            $entityManager->persist($userCollectionArticle);
             $entityManager->flush();
         } catch (NotFoundHttpException $exception) {
             $session->getFlashbag()->add('danger', $exception);

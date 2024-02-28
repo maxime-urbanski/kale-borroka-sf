@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240227101355 extends AbstractMigration
+final class Version20240227163029 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -35,6 +35,7 @@ final class Version20240227101355 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE support_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE transporter_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE "user_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE user_collection_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE wantlist_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE address (id INT NOT NULL, users_id INT NOT NULL, name VARCHAR(100) NOT NULL, address VARCHAR(255) NOT NULL, complement_address VARCHAR(255) DEFAULT NULL, city VARCHAR(100) NOT NULL, zipcode VARCHAR(15) NOT NULL, country VARCHAR(100) NOT NULL, is_main_address BOOLEAN NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_D4E6F8167B3B43D ON address (users_id)');
@@ -87,6 +88,11 @@ final class Version20240227101355 extends AbstractMigration
         $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649E7927C74 ON "user" (email)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649BD94FB16 ON "user" (default_address_id)');
         $this->addSql('COMMENT ON COLUMN "user".created_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE TABLE user_collection (id INT NOT NULL, user_collection_id INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_5B2AA3DEBFC7FBAD ON user_collection (user_collection_id)');
+        $this->addSql('CREATE TABLE user_collection_article (user_collection_id INT NOT NULL, article_id INT NOT NULL, since TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(user_collection_id, article_id))');
+        $this->addSql('CREATE INDEX IDX_FA529A4CBFC7FBAD ON user_collection_article (user_collection_id)');
+        $this->addSql('CREATE INDEX IDX_FA529A4C7294869C ON user_collection_article (article_id)');
         $this->addSql('CREATE TABLE wantlist (id INT NOT NULL, user_wantlist_id INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_B5560F9037D95CEE ON wantlist (user_wantlist_id)');
         $this->addSql('CREATE TABLE wantlist_article (wantlist_id INT NOT NULL, article_id INT NOT NULL, PRIMARY KEY(wantlist_id, article_id))');
@@ -114,6 +120,9 @@ final class Version20240227101355 extends AbstractMigration
         $this->addSql('ALTER TABLE song_artist ADD CONSTRAINT FK_722870DA0BDB2F3 FOREIGN KEY (song_id) REFERENCES song (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE song_artist ADD CONSTRAINT FK_722870DB7970CF8 FOREIGN KEY (artist_id) REFERENCES artist (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE "user" ADD CONSTRAINT FK_8D93D649BD94FB16 FOREIGN KEY (default_address_id) REFERENCES address (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE user_collection ADD CONSTRAINT FK_5B2AA3DEBFC7FBAD FOREIGN KEY (user_collection_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE user_collection_article ADD CONSTRAINT FK_FA529A4CBFC7FBAD FOREIGN KEY (user_collection_id) REFERENCES user_collection (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE user_collection_article ADD CONSTRAINT FK_FA529A4C7294869C FOREIGN KEY (article_id) REFERENCES article (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE wantlist ADD CONSTRAINT FK_B5560F9037D95CEE FOREIGN KEY (user_wantlist_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE wantlist_article ADD CONSTRAINT FK_AD4A478D9EC2957B FOREIGN KEY (wantlist_id) REFERENCES wantlist (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE wantlist_article ADD CONSTRAINT FK_AD4A478D7294869C FOREIGN KEY (article_id) REFERENCES article (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -138,6 +147,7 @@ final class Version20240227101355 extends AbstractMigration
         $this->addSql('DROP SEQUENCE support_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE transporter_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE "user_id_seq" CASCADE');
+        $this->addSql('DROP SEQUENCE user_collection_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE wantlist_id_seq CASCADE');
         $this->addSql('ALTER TABLE address DROP CONSTRAINT FK_D4E6F8167B3B43D');
         $this->addSql('ALTER TABLE album DROP CONSTRAINT FK_39986E43B7970CF8');
@@ -161,6 +171,9 @@ final class Version20240227101355 extends AbstractMigration
         $this->addSql('ALTER TABLE song_artist DROP CONSTRAINT FK_722870DA0BDB2F3');
         $this->addSql('ALTER TABLE song_artist DROP CONSTRAINT FK_722870DB7970CF8');
         $this->addSql('ALTER TABLE "user" DROP CONSTRAINT FK_8D93D649BD94FB16');
+        $this->addSql('ALTER TABLE user_collection DROP CONSTRAINT FK_5B2AA3DEBFC7FBAD');
+        $this->addSql('ALTER TABLE user_collection_article DROP CONSTRAINT FK_FA529A4CBFC7FBAD');
+        $this->addSql('ALTER TABLE user_collection_article DROP CONSTRAINT FK_FA529A4C7294869C');
         $this->addSql('ALTER TABLE wantlist DROP CONSTRAINT FK_B5560F9037D95CEE');
         $this->addSql('ALTER TABLE wantlist_article DROP CONSTRAINT FK_AD4A478D9EC2957B');
         $this->addSql('ALTER TABLE wantlist_article DROP CONSTRAINT FK_AD4A478D7294869C');
@@ -184,6 +197,8 @@ final class Version20240227101355 extends AbstractMigration
         $this->addSql('DROP TABLE support');
         $this->addSql('DROP TABLE transporter');
         $this->addSql('DROP TABLE "user"');
+        $this->addSql('DROP TABLE user_collection');
+        $this->addSql('DROP TABLE user_collection_article');
         $this->addSql('DROP TABLE wantlist');
         $this->addSql('DROP TABLE wantlist_article');
     }
