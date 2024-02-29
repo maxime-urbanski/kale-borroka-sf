@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\User\Wantlist;
 
 use App\Entity\User;
+use App\Repository\WantlistItemsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,9 +27,13 @@ class AccountWantlistController extends AbstractController
     public function __invoke(
         #[CurrentUser]
         User $user,
-        Environment $twig
+        Environment $twig,
+        WantlistItemsRepository $wantlistItemsRepository
     ): Response {
-        $userWantlist = $user->getWantlist();
+        $userWantlist = $user->getWantlist() ?
+            $wantlistItemsRepository->findBy(['wantlist' => $user->getWantlist()]) :
+            [];
+
         $content = $twig->render('user/wantlist.html.twig', [
             'wantlist' => $userWantlist,
         ]);

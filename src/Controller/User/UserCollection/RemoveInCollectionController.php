@@ -41,7 +41,7 @@ class RemoveInCollectionController
         Request $request
     ): RedirectResponse {
         $currentUserCollection = $userCollectionRepository->findOneBy(
-            ['collector' => $user]
+            ['user_collection' => $user]
         );
 
         /** @var Session $session */
@@ -51,7 +51,12 @@ class RemoveInCollectionController
             $currentUserCollection->removeArticle($article);
             $entityManager->persist($currentUserCollection);
             $entityManager->flush();
-            $session->getFlashbag()->add('success', $article->getName().' à bien été supprimé de ta collection');
+            $session
+                ->getFlashbag()
+                ->add(
+                    'success',
+                    $article->getName().' à bien été supprimé de ta collection'
+                );
         } catch (NotFoundHttpException $exception) {
             $session->getFlashbag()->add('danger', $exception);
         }

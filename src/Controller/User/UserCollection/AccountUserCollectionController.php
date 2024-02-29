@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\User\UserCollection;
 
 use App\Entity\User;
+use App\Repository\UserCollectionItemsRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -25,11 +26,16 @@ class AccountUserCollectionController
     public function __invoke(
         #[CurrentUser]
         User $user,
-        Environment $twig
+        Environment $twig,
+        UserCollectionItemsRepository $userCollectionItemsRepository
     ): Response {
-        $userCollection = $user->getCollection();
+        $userCollection = $user->getUserCollection() ?
+            $userCollectionItemsRepository->findBy(['user_collection' => $user->getUserCollection()->getId()]) :
+            [];
+
         $content = $twig->render('user/collection.html.twig', [
             'collection' => $userCollection,
+            'collector' => $user->getUserCollection(),
         ]);
 
         return new Response($content);

@@ -7,6 +7,7 @@ namespace App\Controller\User\UserCollection;
 use App\Entity\Article;
 use App\Entity\User;
 use App\Entity\UserCollection;
+use App\Entity\UserCollectionItems;
 use App\Repository\UserCollectionRepository;
 use App\Service\RefererInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -41,24 +42,24 @@ class AddInCollectionController
         UserCollectionRepository $userCollectionRepository,
         Request $request
     ): RedirectResponse {
-        if (!$user->getCollection()) {
+        if (!$user->getUserCollection()) {
             $collection = new UserCollection();
-            $collection->setCollector($user);
+            $collection->setUserCollection($user);
             $entityManager->persist($collection);
+        } else {
+            $collection = $userCollectionRepository->findOneBy(['user_collection' => $user]);
         }
-
-        $currentUserCollection = $userCollectionRepository->findOneBy(
-            ['collector' => $user]
-        );
 
         /** @var Session $session */
         $session = $request->getSession();
 
         try {
-            $currentUserCollection->addArticle($article);
-            $currentUserCollection->setSince(new \DateTime('now'));
+            $userCollectionItems = new UserCollectionItems();
+            $userCollectionItems->setUserCollection($collection);
+            $userCollectionItems->setArticle($article);
+            $userCollectionItems->setSince(new \DateTime('now'));
             $session->getFlashbag()->add('success', $article->getName().' a bien été ajouté à ta collection');
-            $entityManager->persist($currentUserCollection);
+            $entityManager->persist($userCollectionItems);
             $entityManager->flush();
         } catch (NotFoundHttpException $exception) {
             $session->getFlashbag()->add('danger', $exception);
