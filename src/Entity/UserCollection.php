@@ -20,7 +20,7 @@ class UserCollection
     private ?User $user_collection = null;
 
     #[ORM\ManyToMany(targetEntity: Article::class, inversedBy: 'userCollections')]
-    #[ORM\JoinTable(name: 'user_collection_article')]
+    #[ORM\JoinTable(name: 'user_collection_items')]
     private Collection $article;
 
     public function __construct()

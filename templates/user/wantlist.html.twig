@@ -4,7 +4,7 @@
     {% set categories = ['', '', '', 'Produit', 'Prix', 'Quantité disponible'] %}
     {% include 'user/_table_product.html.twig' with {
         categories,
-        products: wantlist == null ? [] : wantlist.product,
+        products: wantlist,
         empty_message: 'Rien dans ta wantlist !'
     } %}
 {% endblock %}

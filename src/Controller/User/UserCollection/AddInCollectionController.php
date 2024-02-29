@@ -7,7 +7,7 @@ namespace App\Controller\User\UserCollection;
 use App\Entity\Article;
 use App\Entity\User;
 use App\Entity\UserCollection;
-use App\Entity\UserCollectionArticle;
+use App\Entity\UserCollectionItems;
 use App\Repository\UserCollectionRepository;
 use App\Service\RefererInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -54,12 +54,12 @@ class AddInCollectionController
         $session = $request->getSession();
 
         try {
-            $userCollectionArticle = new UserCollectionArticle();
-            $userCollectionArticle->setUserCollection($collection);
-            $userCollectionArticle->setUserArticle($article);
-            $userCollectionArticle->setSince(new \DateTime('now'));
+            $userCollectionItems = new UserCollectionItems();
+            $userCollectionItems->setUserCollection($collection);
+            $userCollectionItems->setArticle($article);
+            $userCollectionItems->setSince(new \DateTime('now'));
             $session->getFlashbag()->add('success', $article->getName().' a bien été ajouté à ta collection');
-            $entityManager->persist($userCollectionArticle);
+            $entityManager->persist($userCollectionItems);
             $entityManager->flush();
         } catch (NotFoundHttpException $exception) {
             $session->getFlashbag()->add('danger', $exception);

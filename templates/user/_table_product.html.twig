@@ -10,10 +10,10 @@
     </tr>
     </thead>
     <tbody>
-    {% for article in products %}
+    {% for item in products %}
         {% set remove_action = wantlist_route ?
-            path('app_wantlist_remove', {productId: article.id}) :
-            path('app_collection_remove', {productId: article.getUserArticle.id}) %}
+            path('app_wantlist_remove', {productId: item.article.id}) :
+            path('app_collection_remove', {productId: item.article.id}) %}
         <tr>
             <th>
                 <div class="d-flex justify-content-center align-items-center">
@@ -28,7 +28,7 @@
                 <th>
                     <div class="d-flex justify-content-center align-items-center">
                         {% include 'partials/_obfuscation_link.html.twig' with {
-                            url: path('app_cart_add', {id: article.id}),
+                            url: path('app_cart_add', {id: item.article.id}),
                             class: "btn btn-outline-success btn-sm rounded-circle",
                             icon: "bi-cart"
                         } %}
@@ -36,16 +36,16 @@
                 </th>
             {% endif %}
             <th>
-                <a href="{{ path('app_catalog_show', { support: article.getUserArticle.support, slug: article.getUserArticle.slug}) }}">
-                    {% if article.getUserArticle.album.images[0] is defined %}
+                <a href="{{ path('app_catalog_show', { support: item.article.support, slug: item.article.slug}) }}">
+                    {% if item.article.album.images[0] is defined %}
                         <img
-                            src="{{ asset('upload/albums/' ~ article.getUserArticle.album.images[0].imageName) }}"
-                            alt="{{ article.getUserArticle.name }}"
+                            src="{{ asset('upload/albums/' ~ item.article.album.images[0].imageName) }}"
+                            alt="{{ item.article.name }}"
                             class="img-thumbnail"
                             width="80" height="80">
                     {% else %}
                         <img src="{{ asset('/images/product_placeholder.png') }}"
-                             alt="{{ article.getUserArticle.name }}"
+                             alt="{{ item.article.name }}"
                              class="img-thumbnail"
                              width="80"
                              height="80">
@@ -53,17 +53,17 @@
                 </a>
             </th>
             <th class="text-center fw-light">
-                {{ article.getUserArticle.name }} - {{ article.getUserArticle.support | upper }}
+                {{ item.article.name }} - {{ item.article.support | upper }}
             </th>
             <th class="text-center  fw-light">
                 {{ wantlist_route ?
-                (article.price / 100) |format_currency('EUR') :
-                article.getUserArticle.support | upper }}
+                (item.article.price / 100) |format_currency('EUR') :
+                item.article.support | upper }}
             </th>
             <th class="text-center fw-light">
                 {{ wantlist_route ?
-                article.quantity :
-                article.since | date }}
+                item.article.quantity :
+                item.since | date }}
             </th>
         </tr>
     {% else %}

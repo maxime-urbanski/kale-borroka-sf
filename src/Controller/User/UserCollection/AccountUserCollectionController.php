@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\User\UserCollection;
 
 use App\Entity\User;
-use App\Repository\UserCollectionArticleRepository;
+use App\Repository\UserCollectionItemsRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -27,11 +27,11 @@ class AccountUserCollectionController
         #[CurrentUser]
         User                            $user,
         Environment                     $twig,
-        UserCollectionArticleRepository $userCollectionArticleRepository
+        UserCollectionItemsRepository $userCollectionItemsRepository
     ): Response
     {
         $userCollection = $user->getUserCollection() ?
-            $userCollectionArticleRepository->findBy(['user_collection' => $user->getUserCollection()->getId()]) :
+            $userCollectionItemsRepository->findBy(['user_collection' => $user->getUserCollection()->getId()]) :
             [];
 
         $content = $twig->render('user/collection.html.twig', [

@@ -6,7 +6,6 @@ namespace App\Controller\User\UserCollection;
 
 use App\Entity\Article;
 use App\Entity\User;
-use App\Repository\UserCollectionArticleRepository;
 use App\Repository\UserCollectionRepository;
 use App\Service\RefererInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,7 +38,6 @@ class RemoveInCollectionController
         RefererInterface $referer,
         EntityManagerInterface $entityManager,
         UserCollectionRepository $userCollectionRepository,
-        UserCollectionArticleRepository $userCollectionArticleRepository,
         Request $request
     ): RedirectResponse {
         $currentUserCollection = $userCollectionRepository->findOneBy(

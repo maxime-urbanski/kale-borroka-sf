@@ -7,6 +7,7 @@ namespace App\Controller\User\Wantlist;
 use App\Entity\Article;
 use App\Entity\User;
 use App\Entity\Wantlist;
+use App\Entity\WantlistItems;
 use App\Repository\WantlistRepository;
 use App\Service\RefererInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -55,8 +56,11 @@ class AddToWantlistController
         $session = $request->getSession();
 
         try {
-            $wantlist->addProduct($article);
-            $entityManager->persist($wantlist);
+            $wantlistItems = new WantlistItems();
+            $wantlistItems->setWantlist($wantlist);
+            $wantlistItems->setArticle($article);
+            $wantlistItems->setSince(new \DateTime('now'));
+            $entityManager->persist($wantlistItems);
             $entityManager->flush();
             $session->getFlashBag()->add(
                 'success',
