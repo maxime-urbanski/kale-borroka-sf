@@ -44,7 +44,7 @@ class OrderAddressDeliveryController extends AbstractController
 
             if (!$inUserCollection) {
                 $userCollection = new UserCollection();
-                $userCollection->setCollector($user);
+                $userCollection->setUserCollection($user);
                 $entityManager->persist($user);
             }
 

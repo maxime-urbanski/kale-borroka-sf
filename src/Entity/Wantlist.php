@@ -25,7 +25,6 @@ class Wantlist
     #[ORM\JoinColumn(nullable: false)]
     private ?User $userWantlist = null;
 
-
     public function __construct()
     {
         $this->product = new ArrayCollection();

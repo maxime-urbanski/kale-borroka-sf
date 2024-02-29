@@ -22,7 +22,6 @@ class UserCollectionItems
     #[ORM\JoinColumn(name: 'article_id', referencedColumnName: 'id')]
     private ?Article $article = null;
 
-
     public function getSince(): ?\DateTimeInterface
     {
         return $this->since;

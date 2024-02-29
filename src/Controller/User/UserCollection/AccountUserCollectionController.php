@@ -25,18 +25,17 @@ class AccountUserCollectionController
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function __invoke(
         #[CurrentUser]
-        User                            $user,
-        Environment                     $twig,
+        User $user,
+        Environment $twig,
         UserCollectionItemsRepository $userCollectionItemsRepository
-    ): Response
-    {
+    ): Response {
         $userCollection = $user->getUserCollection() ?
             $userCollectionItemsRepository->findBy(['user_collection' => $user->getUserCollection()->getId()]) :
             [];
 
         $content = $twig->render('user/collection.html.twig', [
             'collection' => $userCollection,
-            'collector' => $user->getUserCollection()
+            'collector' => $user->getUserCollection(),
         ]);
 
         return new Response($content);
