@@ -24,9 +24,13 @@ class Wantlist
     #[ORM\JoinColumn(nullable: false)]
     private ?User $userWantlist = null;
 
+    #[ORM\OneToMany(mappedBy: 'wantlist', targetEntity: WantlistItems::class)]
+    private Collection $wantlistItems;
+
     public function __construct()
     {
         $this->product = new ArrayCollection();
+        $this->wantlistItems = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -66,6 +70,36 @@ class Wantlist
     public function setUserWantlist(User $userWantlist): static
     {
         $this->userWantlist = $userWantlist;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, WantlistItems>
+     */
+    public function getWantlistItems(): Collection
+    {
+        return $this->wantlistItems;
+    }
+
+    public function addWantlistItem(WantlistItems $wantlistItem): static
+    {
+        if (!$this->wantlistItems->contains($wantlistItem)) {
+            $this->wantlistItems->add($wantlistItem);
+            $wantlistItem->setWantlist($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWantlistItem(WantlistItems $wantlistItem): static
+    {
+        if ($this->wantlistItems->removeElement($wantlistItem)) {
+            // set the owning side to null (unless already changed)
+            if ($wantlistItem->getWantlist() === $this) {
+                $wantlistItem->setWantlist(null);
+            }
+        }
 
         return $this;
     }

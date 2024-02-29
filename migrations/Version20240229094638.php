@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240227163029 extends AbstractMigration
+final class Version20240229094638 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -90,7 +90,7 @@ final class Version20240227163029 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN "user".created_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('CREATE TABLE user_collection (id INT NOT NULL, user_collection_id INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_5B2AA3DEBFC7FBAD ON user_collection (user_collection_id)');
-        $this->addSql('CREATE TABLE user_collection_article (user_collection_id INT NOT NULL, article_id INT NOT NULL, since TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(user_collection_id, article_id))');
+        $this->addSql('CREATE TABLE user_collection_article (user_collection_id INT NOT NULL, article_id INT NOT NULL, PRIMARY KEY(user_collection_id, article_id))');
         $this->addSql('CREATE INDEX IDX_FA529A4CBFC7FBAD ON user_collection_article (user_collection_id)');
         $this->addSql('CREATE INDEX IDX_FA529A4C7294869C ON user_collection_article (article_id)');
         $this->addSql('CREATE TABLE wantlist (id INT NOT NULL, user_wantlist_id INT NOT NULL, PRIMARY KEY(id))');
@@ -121,8 +121,8 @@ final class Version20240227163029 extends AbstractMigration
         $this->addSql('ALTER TABLE song_artist ADD CONSTRAINT FK_722870DB7970CF8 FOREIGN KEY (artist_id) REFERENCES artist (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE "user" ADD CONSTRAINT FK_8D93D649BD94FB16 FOREIGN KEY (default_address_id) REFERENCES address (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE user_collection ADD CONSTRAINT FK_5B2AA3DEBFC7FBAD FOREIGN KEY (user_collection_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE user_collection_article ADD CONSTRAINT FK_FA529A4CBFC7FBAD FOREIGN KEY (user_collection_id) REFERENCES user_collection (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE user_collection_article ADD CONSTRAINT FK_FA529A4C7294869C FOREIGN KEY (article_id) REFERENCES article (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE user_collection_article ADD CONSTRAINT FK_FA529A4CBFC7FBAD FOREIGN KEY (user_collection_id) REFERENCES user_collection (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE user_collection_article ADD CONSTRAINT FK_FA529A4C7294869C FOREIGN KEY (article_id) REFERENCES article (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE wantlist ADD CONSTRAINT FK_B5560F9037D95CEE FOREIGN KEY (user_wantlist_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE wantlist_article ADD CONSTRAINT FK_AD4A478D9EC2957B FOREIGN KEY (wantlist_id) REFERENCES wantlist (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE wantlist_article ADD CONSTRAINT FK_AD4A478D7294869C FOREIGN KEY (article_id) REFERENCES article (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
