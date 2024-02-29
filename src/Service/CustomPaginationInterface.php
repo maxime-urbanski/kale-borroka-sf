@@ -12,5 +12,5 @@ interface CustomPaginationInterface
     /**
      * @phpstan-ignore-next-line
      */
-    public function pagination(Query $data, string $pageParams = 'page-1', int $productPerPage = self::PRODUCT_PER_PAGE): PaginationInterface;
+    public function pagination(Query|array $data, string $pageParams = 'page-1', int $productPerPage = self::PRODUCT_PER_PAGE): PaginationInterface;
 }
