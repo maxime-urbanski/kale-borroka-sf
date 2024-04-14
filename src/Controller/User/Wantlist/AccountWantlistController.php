@@ -16,10 +16,18 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 #[AsController]
 class AccountWantlistController extends AbstractController
 {
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     #[Route(
         path: '/mon-compte/ma-wantlist/{page}',
         name: 'app_user_wantlist',
@@ -28,7 +36,6 @@ class AccountWantlistController extends AbstractController
         ],
         defaults: ['page' => 'page-1'],
         methods: [Request::METHOD_GET]
-
     )]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function __invoke(
@@ -43,7 +50,7 @@ class AccountWantlistController extends AbstractController
             $wantlistItemsRepository->findBy(['wantlist' => $user->getWantlist()]) :
             [];
 
-        $wantlistPaginate = $customPagination->pagination($userWantlist, $page);
+        $wantlistPaginate = $customPagination->pagination($userWantlist, $page, 6);
 
         $content = $twig->render('user/wantlist.html.twig', [
             'wantlist' => $wantlistPaginate,
