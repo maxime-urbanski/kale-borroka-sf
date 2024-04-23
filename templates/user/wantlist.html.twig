@@ -4,7 +4,9 @@
     {% set categories = ['', '', '', 'Produit', 'Prix', 'Quantité disponible'] %}
     {% include 'user/_table_product.html.twig' with {
         categories,
-        products: wantlist,
+        products: wantlist.items,
         empty_message: 'Rien dans ta wantlist !'
     } %}
+    {{ knp_pagination_render(wantlist, 'partials/_pagination.html.twig') }}
+
 {% endblock %}
