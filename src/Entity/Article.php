@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 class Article
@@ -16,27 +17,33 @@ class Article
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]
+    #[Groups('article:slider')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('article:slider')]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, unique: true)]
     #[Gedmo\Slug(fields: ['name'])]
+    #[Groups('article:slider')]
     private ?string $slug = null;
 
     #[ORM\Column]
     private ?int $quantity = null;
 
     #[ORM\Column]
+    #[Groups('article:slider')]
     private ?int $price = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('article:slider')]
     private ?Support $support = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('article:slider')]
     private ?Album $album = null;
 
     #[ORM\Column]

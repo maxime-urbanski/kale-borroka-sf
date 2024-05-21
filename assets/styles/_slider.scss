@@ -1,0 +1,33 @@
+.slider {
+    position: relative;
+    overflow: hidden;
+
+    .slider-container {
+        white-space: nowrap;
+        transition: transform 1.7s;
+
+        .slider-item {
+            display: inline-block;
+            justify-content: center;
+            align-items: center;
+            padding: 0 12px;
+        }
+    }
+    .dot {
+        width: 10px;
+        height: 10px;
+        background-color: lightgray;
+        margin-right: 10px;
+        cursor: pointer;
+        display: inline-block;
+        border-radius: 50%;
+
+        &:last-child {
+            margin-right: 0;
+        }
+
+        &.active {
+            background-color: gray;
+        }
+    }
+}
