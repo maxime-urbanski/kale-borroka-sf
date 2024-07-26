@@ -1,18 +1,68 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container my-5">
-        <div class="row">
-            {% include 'layout/article/_section.html.twig' with {
-                articles: lastArticle,
-                title: 'Derniers Articles'
-            } %}
-        </div>
-        <div class="row">
-            {% include 'layout/article/_section.html.twig' with {
-                articles: lastProduction,
-                title: 'Dernières prod'
-            } %}
-        </div>
+    <div class="container">
+        {% set option_last_article = {
+            infinite: true,
+            auto: false,
+            breakpoint: {
+                mobile: [576],
+                tablet: [577, 992],
+                computer: [993]
+            },
+            responsive: {
+                mobile: {
+                    elementVisible: 1,
+                    elementToScroll: 1
+                },
+                tablet: {
+                    elementVisible: 2,
+                    elementToScroll: 2
+                },
+                computer: {
+                    elementVisible: 4,
+                    elementToScroll: 1
+                }
+            },
+            dot: true,
+            loop: false,
+            arrow: true
+        } %}
+        {% include 'layout/article/_section.html.twig' with {
+            articles: lastArticle,
+            title: 'Derniers Articles',
+            option: option_last_article
+        } %}
+        {% set option_last_production = {
+            infinite: false,
+            auto: false,
+            breakpoint: {
+                mobile: [576],
+                tablet: [577, 992],
+                computer: [993]
+            },
+            responsive: {
+                mobile: {
+                    elementVisible: 1,
+                    elementToScroll: 1
+                },
+                tablet: {
+                    elementVisible: 2,
+                    elementToScroll: 2
+                },
+                computer: {
+                    elementVisible: 4,
+                    elementToScroll: 1
+                }
+            },
+            dot: true,
+            loop: true,
+            arrow: true
+        } %}
+        {% include 'layout/article/_section.html.twig' with {
+            articles: lastProduction,
+            title: 'Dernières prod',
+            option: option_last_production
+        } %}
     </div>
 {% endblock %}

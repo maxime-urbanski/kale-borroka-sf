@@ -19,11 +19,7 @@
 <header>
     {{ render(controller('App\\Controller\\MenuController::navbar')) }}
 </header>
-<div class="row">
-    <div class="col">
-        {% include 'layout/_toast.html.twig' %}
-    </div>
-</div>
+{% include 'layout/_toast.html.twig' %}
 {% block body %}
     <div class="container">
         <h1>Kale Borroka Home</h1>

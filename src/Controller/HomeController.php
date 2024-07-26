@@ -22,6 +22,7 @@ final class HomeController extends AbstractController
     {
 
         $lastArticle = $articleRepository->getLastArticle();
+
         $lastArticleSerialized = $serializer
             ->serialize($lastArticle->getResult(),
                 'json',

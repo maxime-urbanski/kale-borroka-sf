@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import useElementTransition from "./hook/useElementTransition";
 
 
@@ -20,7 +20,7 @@ const ButtonAction = ({position, disabled, action, text}) => {
 const Slider = ({
                     products,
                     option = {
-                        infinite: true,
+                        infinite: false,
                         auto: false,
                         breakpoint: {
                             mobile: [576],
@@ -42,74 +42,63 @@ const Slider = ({
                             }
                         },
                         dot: true,
-                        arrow: true
+                        arrow: true,
+                        loop: false
                     }
                 }) => {
 
-    const parseProducts = JSON.parse(products)
-    const sliderContainerRef = useRef(null)
-    const [elements, setElements] = useState(parseProducts)
-    const [index, setIndex] = useState(0)
-    const indexMemo = useMemo(() => index, [index])
     const {elementVisible, elementToScroll} = useElementTransition(option)
+    const parseProducts = typeof products === "string" ? JSON.parse(products) : products
+    const [elements, setElements] = useState(parseProducts)
+    const [currentIndex, setCurrentIndex] = useState(0)
+    const sliderContainerRef = useRef(null)
+    const ratio = elementVisible / elementToScroll
+    const widthSliderItem = 100 / elementVisible + '%'
+    const translate = (100 / ratio) * currentIndex + '%'
+    const dotArrElement = []
+    const disabled = Math.ceil((elements.length - elementVisible) / elementToScroll);
+
     const prev = () => {
-        setIndex(value => value -= 1)
-    }
-    const next = () => {
-        setIndex(value => value += 1)
+        goToSlide(currentIndex - 1)
     }
 
-    const ratio = elementVisible / elementToScroll
-    const widthSliderItem = 100 / elementVisible
-    const translate = (100 / ratio) * indexMemo + '%'
-    const dotArrElement = []
-    const disabled = Math.ceil((parseProducts.length - elementVisible) / elementToScroll)
-    const disabledMemo = useMemo(() => disabled, [disabled])
+    const next = () => {
+        goToSlide(currentIndex + 1)
+    }
+
+    const goToSlide = (index, animation = true) => {
+        if (index < 0) {
+            index = elements.length - elementVisible
+        } else if (index > disabled) {
+            index = 0
+        }
+        setCurrentIndex(value => value = index)
+    }
 
     if (option.dot) {
-        const changeIndex = (indexDot) => setIndex(indexDot)
-        for (let indexLoop = 0; indexLoop <= disabledMemo; indexLoop++) {
-            const className = index === indexLoop ? 'dot active' : 'dot'
+        for (let indexLoop = 0; indexLoop <= disabled; indexLoop++) {
+            const className = currentIndex === indexLoop ? 'dot active' : 'dot'
             dotArrElement.push(
                 <Dot className={className}
                      key={indexLoop}
-                     changeIndex={() => changeIndex(indexLoop)}
+                     changeIndex={() => goToSlide(indexLoop)}
                 />
             )
         }
     }
 
-    if (option.infinite) {
-        option.dot = false
-        const firstElementVisibleDuplicate = parseProducts.slice(0, elementVisible)
-        const lastElementVisibleDuplicate = parseProducts.slice(-elementVisible)
-        const infiniteArray = [...lastElementVisibleDuplicate, ...elements, ...firstElementVisibleDuplicate]
+    if (option.loop) {
 
-        useEffect(() => {
-            setElements(infiniteArray)
-            setIndex(elementVisible)
-            const handleTransitionEnd = () => {
-                if (index >= elements.length + elementVisible) {
-                    setIndex(elementVisible)
-                    sliderContainerRef.current.style.transition = 'none'
-                } else if (index <= 0 ) {
-                    setIndex(elements.length)
-                }
-
-                sliderContainerRef.current.addEventListener('transitionend', handleTransitionEnd)
-
-                return () => sliderContainerRef.current.removeEventListener('transitionend', handleTransitionEnd)
-            }
-        }, [index, elements.length, elementVisible]);
     }
 
     return (
         <div className="d-flex flex-column">
-            <div className="slider py-5">
+            <div className="slider">
                 {option.arrow &&
                     <ButtonAction position={'top-50 start-0'}
                                   text={<i className="bi bi-chevron-left"></i>}
                                   action={prev}
+                                  disabled={!option.loop && currentIndex === 0}
                     />
                 }
                 <div className="slider-container"
@@ -117,8 +106,8 @@ const Slider = ({
                      style={{transform: `translateX(-${translate})`}}
                 >
                     {elements.map((product, indexMap) => (
-                        <div className="slider-item"
-                             style={{width: widthSliderItem + '%'}} key={indexMap}>
+                        <article className="slider-item"
+                                 style={{'--width': widthSliderItem}} key={indexMap}>
                             <div className="card">
                                 <img src="/images/product_placeholder.png" alt="{product.name}"/>
                                 <div className="card-body">
@@ -131,13 +120,14 @@ const Slider = ({
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </article>
                     ))}
                 </div>
                 {option.arrow &&
                     <ButtonAction position={'top-50 end-0'}
                                   text={<i className="bi bi-chevron-right"></i>}
                                   action={next}
+                                  disabled={!option.loop && currentIndex >= disabled}
                     />
                 }
                 {option.dot &&
