@@ -8,6 +8,8 @@ use App\Repository\SupportRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: SupportRepository::class)]
 class Support
@@ -15,9 +17,11 @@ class Support
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]
+    #[Groups('support:slider')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('support:slider')]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
