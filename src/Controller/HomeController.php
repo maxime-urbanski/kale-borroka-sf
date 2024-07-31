@@ -29,6 +29,7 @@ final class HomeController extends AbstractController
                 ['groups' => ['article:slider', 'support:slider']]
             );
         $lastProduction = $articleRepository->getOwnProduction(true);
+        dump($lastProduction->getResult());
         $lastProductionSerialized = $serializer
             ->serialize($lastProduction->getResult(),
                 'json',

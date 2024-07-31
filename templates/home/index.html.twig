@@ -24,14 +24,14 @@
                     elementToScroll: 1
                 }
             },
-            dot: true,
+            dot: false,
             loop: false,
             arrow: true
         } %}
         {% include 'layout/article/_section.html.twig' with {
             articles: lastArticle,
             title: 'Derniers Articles',
-            option: option_last_article
+            options: option_last_article
         } %}
         {% set option_last_production = {
             infinite: false,
@@ -62,7 +62,7 @@
         {% include 'layout/article/_section.html.twig' with {
             articles: lastProduction,
             title: 'Dernières prod',
-            option: option_last_production
+            options: option_last_production
         } %}
     </div>
 {% endblock %}

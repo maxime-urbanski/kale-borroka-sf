@@ -1,18 +1,19 @@
 import {useEffect, useState} from 'react'
 
-function useWindowWidth() {
+export function useWindowWidth() {
   function getWindowDimensions() {
-    const { innerWidth: width, innerHeight: height } = window;
+    const {innerWidth: width, innerHeight: height} = window;
     return {
       width,
       height
     };
   }
+
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
   useEffect(() => {
     function handleResize() {
-      setWindowDimensions(getWindowDimensions());
+      setWindowDimensions(getWindowDimensions);
     }
 
     window.addEventListener('resize', handleResize);
@@ -22,4 +23,3 @@ function useWindowWidth() {
   return windowDimensions;
 }
 
-export default useWindowWidth

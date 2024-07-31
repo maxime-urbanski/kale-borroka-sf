@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
-import useElementTransition from "./hook/useElementTransition";
+import {useElementTransition} from "./hook/useElementTransition";
+import useInfinite from "./hook/useInfinite";
 
 
 const Dot = ({className, changeIndex}) => {
@@ -19,7 +20,7 @@ const ButtonAction = ({position, disabled, action, text}) => {
 
 const Slider = ({
                     products,
-                    option = {
+                    options = {
                         infinite: false,
                         auto: false,
                         breakpoint: {
@@ -47,10 +48,13 @@ const Slider = ({
                     }
                 }) => {
 
-    const {elementVisible, elementToScroll} = useElementTransition(option)
-    const parseProducts = typeof products === "string" ? JSON.parse(products) : products
-    const [elements, setElements] = useState(parseProducts)
-    const [currentIndex, setCurrentIndex] = useState(0)
+    const [elementVisible, elementToScroll] = useElementTransition(options)
+    const [
+        elements,
+        setElements,
+        currentIndex,
+        setCurrentIndex
+    ] = useInfinite(products, options)
     const sliderContainerRef = useRef(null)
     const ratio = elementVisible / elementToScroll
     const widthSliderItem = 100 / elementVisible + '%'
@@ -75,7 +79,7 @@ const Slider = ({
         setCurrentIndex(value => value = index)
     }
 
-    if (option.dot) {
+    if (options.dot) {
         for (let indexLoop = 0; indexLoop <= disabled; indexLoop++) {
             const className = currentIndex === indexLoop ? 'dot active' : 'dot'
             dotArrElement.push(
@@ -87,18 +91,14 @@ const Slider = ({
         }
     }
 
-    if (option.loop) {
-
-    }
-
     return (
         <div className="d-flex flex-column">
             <div className="slider">
-                {option.arrow &&
+                {options.arrow &&
                     <ButtonAction position={'top-50 start-0'}
                                   text={<i className="bi bi-chevron-left"></i>}
                                   action={prev}
-                                  disabled={!option.loop && currentIndex === 0}
+                                  disabled={!options.loop && currentIndex === 0}
                     />
                 }
                 <div className="slider-container"
@@ -123,14 +123,14 @@ const Slider = ({
                         </article>
                     ))}
                 </div>
-                {option.arrow &&
+                {options.arrow &&
                     <ButtonAction position={'top-50 end-0'}
                                   text={<i className="bi bi-chevron-right"></i>}
                                   action={next}
-                                  disabled={!option.loop && currentIndex >= disabled}
+                                  disabled={!options.loop && currentIndex >= disabled}
                     />
                 }
-                {option.dot &&
+                {options.dot &&
                     <div className="d-flex justify-content-center mt-3">
                         {dotArrElement}
                     </div>
