@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello GroupController!{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row mt-5">
+            <h3>Mes invitations en attentes:</h3>
+        </div>
+        <div class="row">
+            {% for invitation in app.user.invitations %}
+                <div class="col-4">
+                    <div class="card mt-5">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <p>{{ invitation.community.name }}
+                                    {% include 'partials/_status-badge.html.twig' with {
+                                        status: invitation.status
+                                    } %}
+                                </p>
+
+                            </div>
+                            <p>{{ invitation.community.description }}</p>
+                            <a href="{{ path('app_user_group_accept_invitation', {groupId: invitation.community.id}) }}" class="btn btn-outline-success">Accepter</a>
+                            {% if invitation.status != 'Refusée' %}
+                                <a href="{{ path('app_user_group_decline_invitation', {
+                                    invitationId: invitation.id
+                                }) }}" class="btn btn-outline-warning">Refuser</a>
+                            {% endif %}
+                            <a href="{{ path('app_user_group_delete_invitation', {
+                                invitationId: invitation.id
+                            }) }}" class="btn btn-outline-danger">Supprimer</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                Pas d'invitation en cours
+            {% endfor %}
+        </div>
+        <div class="row mt-5">
+            <h3>Mes groupes</h3>
+        </div>
+        <div class="row mt-5">
+            {% for group in userGroups %}
+                <div class="col-4">
+                    <a href="{{ path('app_user_groups_show', {id: group.id }) }}">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <p>{{ group.name }}</p>
+                                </div>
+                                <a class="btn btn-outline-secondary" href="{{ path('app_users_group_invitations', {
+                                    groupId: group.id,
+                                    guestId: 8
+                                }) }}">Inviter</a>
+                                <a class="btn btn-outline-danger"
+                                   href="{{ path('app_user_group_leave', {
+                                       groupId: group.id
+                                   }) }}">Quitter</a>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+            <div class="row mt-5">
+                <h3>Tous les groupes</h3>
+            </div>
+            <div class="row mt-5 row-gap-3">
+                {% for group in groups %}
+                    {% set member = group in app.user.groupsIn %}
+                    <div class="col-4">
+                        <div class="card" style="height: 100%">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <a href="{{ path('app_user_groups_show', {id: group.id }) }}">
+                                        {{ group.name }}
+                                    </a>
+                                    {% if member %}
+                                        <span class="ml-5 badge rounded-pill text-bg-success">
+                                            Membre
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                {% if not member %}
+                                    {% set invitationReceived = false %}
+                                    {% for invit in app.user.invitations %}
+                                        {% if invit in group.invitations %}
+                                            {% set invitationReceived = true %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if not invitationReceived %}
+                                        <a class="btn btn-outline-secondary"
+                                           href="{{ path('app_user_group_accept_invitation', {
+                                               groupId: group.id
+                                           }) }}">Rejoindre</a>
+                                    {% else %}
+                                        <button disabled class="btn btn-outline-dark">
+                                            Invitation envoyée
+                                        </button>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

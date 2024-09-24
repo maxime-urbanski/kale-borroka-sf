@@ -1,0 +1,27 @@
+App\Entity\Group:
+    group_template (template):
+        name: <name()>
+        description: <text()>
+
+    group_1 (extends group_template):
+        name: Baionako igandeko txirrindularia
+        description: >
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean velit erat, 
+            fringilla sit amet dui in, vehicula ultrices dui.
+        members: ['@user_admin', '@user_user']
+        
+    group_2 (extends group_template):
+        name: Groupe 2
+        description: >
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean velit erat, 
+            fringilla sit amet dui in, vehicula ultrices dui.
+        members: ['@user_user']
+
+    group_3 (extends group_template):
+        name: Groupe 3
+        description: >
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean velit erat, 
+            fringilla sit amet dui in, vehicula ultrices dui.
+        members: ['@user_admin']
+
+    group_{1..50} (extends group_template):

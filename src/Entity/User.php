@@ -22,6 +22,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->created_at = new \DateTimeImmutable();
         $this->orders = new ArrayCollection();
         $this->addresses = new ArrayCollection();
+        $this->groups = new ArrayCollection();
+        $this->groupsIn = new ArrayCollection();
+        $this->invitations = new ArrayCollection();
     }
 
     #[ORM\Id]
@@ -67,6 +70,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(mappedBy: 'user_collection', cascade: ['persist', 'remove'])]
     private ?UserCollection $user_collection = null;
+
+    #[ORM\ManyToMany(targetEntity: Group::class, mappedBy: 'members')]
+    private Collection $groups;
+
+    #[ORM\ManyToMany(targetEntity: Group::class, mappedBy: 'members')]
+    private Collection $groupsIn;
+
+    #[ORM\OneToMany(mappedBy: 'guest', targetEntity: Invitation::class)]
+    private Collection $invitations;
 
     public function getId(): ?int
     {
@@ -281,6 +293,90 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->user_collection = $user_collection;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Group>
+     */
+    public function getGroups(): Collection
+    {
+        return $this->groups;
+    }
+
+    public function addGroup(Group $group): static
+    {
+        if (!$this->groups->contains($group)) {
+            $this->groups->add($group);
+            $group->addMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroup(Group $group): static
+    {
+        if ($this->groups->removeElement($group)) {
+            $group->removeMember($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Group>
+     */
+    public function getGroupsIn(): Collection
+    {
+        return $this->groupsIn;
+    }
+
+    public function addGroupsIn(Group $groupsIn): static
+    {
+        if (!$this->groupsIn->contains($groupsIn)) {
+            $this->groupsIn->add($groupsIn);
+            $groupsIn->addMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroupsIn(Group $groupsIn): static
+    {
+        if ($this->groupsIn->removeElement($groupsIn)) {
+            $groupsIn->removeMember($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Invitation>
+     */
+    public function getInvitations(): Collection
+    {
+        return $this->invitations;
+    }
+
+    public function addInvitation(Invitation $invitation): static
+    {
+        if (!$this->invitations->contains($invitation)) {
+            $this->invitations->add($invitation);
+            $invitation->setGuest($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInvitation(Invitation $invitation): static
+    {
+        if ($this->invitations->removeElement($invitation)) {
+            // set the owning side to null (unless already changed)
+            if ($invitation->getGuest() === $this) {
+                $invitation->setGuest(null);
+            }
+        }
 
         return $this;
     }

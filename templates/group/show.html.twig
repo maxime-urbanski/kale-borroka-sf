@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        {% for g in group.getResult() %}
+            <div class="card mt-5">
+                <div class="card-body">
+                    <div class="card-title">
+                        <p>{{ g.name }}</p>
+                    </div>
+                    <p>{{ g.description }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

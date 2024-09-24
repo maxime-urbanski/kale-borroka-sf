@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240229094638 extends AbstractMigration
+final class Version20240923121738 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -24,6 +24,7 @@ final class Version20240229094638 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE album_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE article_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE artist_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE "group_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE image_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE label_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE "order_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
@@ -57,6 +58,10 @@ final class Version20240229094638 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN article.created_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('COMMENT ON COLUMN article.updated_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('CREATE TABLE artist (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE "group" (id INT NOT NULL, name VARCHAR(255) NOT NULL, description TEXT DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE group_user (group_id INT NOT NULL, user_id INT NOT NULL, PRIMARY KEY(group_id, user_id))');
+        $this->addSql('CREATE INDEX IDX_A4C98D39FE54D947 ON group_user (group_id)');
+        $this->addSql('CREATE INDEX IDX_A4C98D39A76ED395 ON group_user (user_id)');
         $this->addSql('CREATE TABLE image (id INT NOT NULL, image_name VARCHAR(255) DEFAULT NULL, image_size INT DEFAULT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('COMMENT ON COLUMN image.updated_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('CREATE TABLE image_album (image_id INT NOT NULL, album_id INT NOT NULL, PRIMARY KEY(image_id, album_id))');
@@ -93,11 +98,17 @@ final class Version20240229094638 extends AbstractMigration
         $this->addSql('CREATE TABLE user_collection_article (user_collection_id INT NOT NULL, article_id INT NOT NULL, PRIMARY KEY(user_collection_id, article_id))');
         $this->addSql('CREATE INDEX IDX_FA529A4CBFC7FBAD ON user_collection_article (user_collection_id)');
         $this->addSql('CREATE INDEX IDX_FA529A4C7294869C ON user_collection_article (article_id)');
+        $this->addSql('CREATE TABLE user_collection_items (user_collection_id INT NOT NULL, article_id INT NOT NULL, since TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(user_collection_id, article_id))');
+        $this->addSql('CREATE INDEX IDX_DBF313C3BFC7FBAD ON user_collection_items (user_collection_id)');
+        $this->addSql('CREATE INDEX IDX_DBF313C37294869C ON user_collection_items (article_id)');
         $this->addSql('CREATE TABLE wantlist (id INT NOT NULL, user_wantlist_id INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_B5560F9037D95CEE ON wantlist (user_wantlist_id)');
         $this->addSql('CREATE TABLE wantlist_article (wantlist_id INT NOT NULL, article_id INT NOT NULL, PRIMARY KEY(wantlist_id, article_id))');
         $this->addSql('CREATE INDEX IDX_AD4A478D9EC2957B ON wantlist_article (wantlist_id)');
         $this->addSql('CREATE INDEX IDX_AD4A478D7294869C ON wantlist_article (article_id)');
+        $this->addSql('CREATE TABLE wantlist_items (wantlist_id INT NOT NULL, article_id INT NOT NULL, since TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(wantlist_id, article_id))');
+        $this->addSql('CREATE INDEX IDX_D9E3E8C69EC2957B ON wantlist_items (wantlist_id)');
+        $this->addSql('CREATE INDEX IDX_D9E3E8C67294869C ON wantlist_items (article_id)');
         $this->addSql('ALTER TABLE address ADD CONSTRAINT FK_D4E6F8167B3B43D FOREIGN KEY (users_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE album ADD CONSTRAINT FK_39986E43B7970CF8 FOREIGN KEY (artist_id) REFERENCES artist (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE album_label ADD CONSTRAINT FK_781F1ACE1137ABCF FOREIGN KEY (album_id) REFERENCES album (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -108,6 +119,8 @@ final class Version20240229094638 extends AbstractMigration
         $this->addSql('ALTER TABLE album_style ADD CONSTRAINT FK_4505F24CBACD6074 FOREIGN KEY (style_id) REFERENCES style (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE article ADD CONSTRAINT FK_23A0E66315B405 FOREIGN KEY (support_id) REFERENCES support (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE article ADD CONSTRAINT FK_23A0E661137ABCF FOREIGN KEY (album_id) REFERENCES album (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE group_user ADD CONSTRAINT FK_A4C98D39FE54D947 FOREIGN KEY (group_id) REFERENCES "group" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE group_user ADD CONSTRAINT FK_A4C98D39A76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE image_album ADD CONSTRAINT FK_2EDDEAEA3DA5256D FOREIGN KEY (image_id) REFERENCES image (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE image_album ADD CONSTRAINT FK_2EDDEAEA1137ABCF FOREIGN KEY (album_id) REFERENCES album (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE "order" ADD CONSTRAINT FK_F52993986C755722 FOREIGN KEY (buyer_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -123,9 +136,13 @@ final class Version20240229094638 extends AbstractMigration
         $this->addSql('ALTER TABLE user_collection ADD CONSTRAINT FK_5B2AA3DEBFC7FBAD FOREIGN KEY (user_collection_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE user_collection_article ADD CONSTRAINT FK_FA529A4CBFC7FBAD FOREIGN KEY (user_collection_id) REFERENCES user_collection (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE user_collection_article ADD CONSTRAINT FK_FA529A4C7294869C FOREIGN KEY (article_id) REFERENCES article (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE user_collection_items ADD CONSTRAINT FK_DBF313C3BFC7FBAD FOREIGN KEY (user_collection_id) REFERENCES user_collection (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE user_collection_items ADD CONSTRAINT FK_DBF313C37294869C FOREIGN KEY (article_id) REFERENCES article (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE wantlist ADD CONSTRAINT FK_B5560F9037D95CEE FOREIGN KEY (user_wantlist_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE wantlist_article ADD CONSTRAINT FK_AD4A478D9EC2957B FOREIGN KEY (wantlist_id) REFERENCES wantlist (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE wantlist_article ADD CONSTRAINT FK_AD4A478D7294869C FOREIGN KEY (article_id) REFERENCES article (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE wantlist_items ADD CONSTRAINT FK_D9E3E8C69EC2957B FOREIGN KEY (wantlist_id) REFERENCES wantlist (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE wantlist_items ADD CONSTRAINT FK_D9E3E8C67294869C FOREIGN KEY (article_id) REFERENCES article (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 
     public function down(Schema $schema): void
@@ -136,6 +153,7 @@ final class Version20240229094638 extends AbstractMigration
         $this->addSql('DROP SEQUENCE album_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE article_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE artist_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE "group_id_seq" CASCADE');
         $this->addSql('DROP SEQUENCE image_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE label_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE "order_id_seq" CASCADE');
@@ -159,6 +177,8 @@ final class Version20240229094638 extends AbstractMigration
         $this->addSql('ALTER TABLE album_style DROP CONSTRAINT FK_4505F24CBACD6074');
         $this->addSql('ALTER TABLE article DROP CONSTRAINT FK_23A0E66315B405');
         $this->addSql('ALTER TABLE article DROP CONSTRAINT FK_23A0E661137ABCF');
+        $this->addSql('ALTER TABLE group_user DROP CONSTRAINT FK_A4C98D39FE54D947');
+        $this->addSql('ALTER TABLE group_user DROP CONSTRAINT FK_A4C98D39A76ED395');
         $this->addSql('ALTER TABLE image_album DROP CONSTRAINT FK_2EDDEAEA3DA5256D');
         $this->addSql('ALTER TABLE image_album DROP CONSTRAINT FK_2EDDEAEA1137ABCF');
         $this->addSql('ALTER TABLE "order" DROP CONSTRAINT FK_F52993986C755722');
@@ -174,9 +194,13 @@ final class Version20240229094638 extends AbstractMigration
         $this->addSql('ALTER TABLE user_collection DROP CONSTRAINT FK_5B2AA3DEBFC7FBAD');
         $this->addSql('ALTER TABLE user_collection_article DROP CONSTRAINT FK_FA529A4CBFC7FBAD');
         $this->addSql('ALTER TABLE user_collection_article DROP CONSTRAINT FK_FA529A4C7294869C');
+        $this->addSql('ALTER TABLE user_collection_items DROP CONSTRAINT FK_DBF313C3BFC7FBAD');
+        $this->addSql('ALTER TABLE user_collection_items DROP CONSTRAINT FK_DBF313C37294869C');
         $this->addSql('ALTER TABLE wantlist DROP CONSTRAINT FK_B5560F9037D95CEE');
         $this->addSql('ALTER TABLE wantlist_article DROP CONSTRAINT FK_AD4A478D9EC2957B');
         $this->addSql('ALTER TABLE wantlist_article DROP CONSTRAINT FK_AD4A478D7294869C');
+        $this->addSql('ALTER TABLE wantlist_items DROP CONSTRAINT FK_D9E3E8C69EC2957B');
+        $this->addSql('ALTER TABLE wantlist_items DROP CONSTRAINT FK_D9E3E8C67294869C');
         $this->addSql('DROP TABLE address');
         $this->addSql('DROP TABLE album');
         $this->addSql('DROP TABLE album_label');
@@ -184,6 +208,8 @@ final class Version20240229094638 extends AbstractMigration
         $this->addSql('DROP TABLE album_style');
         $this->addSql('DROP TABLE article');
         $this->addSql('DROP TABLE artist');
+        $this->addSql('DROP TABLE "group"');
+        $this->addSql('DROP TABLE group_user');
         $this->addSql('DROP TABLE image');
         $this->addSql('DROP TABLE image_album');
         $this->addSql('DROP TABLE label');
@@ -199,7 +225,9 @@ final class Version20240229094638 extends AbstractMigration
         $this->addSql('DROP TABLE "user"');
         $this->addSql('DROP TABLE user_collection');
         $this->addSql('DROP TABLE user_collection_article');
+        $this->addSql('DROP TABLE user_collection_items');
         $this->addSql('DROP TABLE wantlist');
         $this->addSql('DROP TABLE wantlist_article');
+        $this->addSql('DROP TABLE wantlist_items');
     }
 }

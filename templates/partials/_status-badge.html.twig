@@ -1,0 +1,18 @@
+{% if status == 'En attente' %}
+    {% set class = 'badge rounded-pill text-bg-warning' %}
+{% elseif status == 'Acceptée' %}
+    {% set class = 'badge rounded-pill text-bg-success' %}
+{% elseif status == 'Refusée' %}
+    {% set class = 'badge rounded-pill text-bg-danger' %}
+{% elseif status == 'Expirée' %}
+    {% set class = 'badge rounded-pill text-bg-secondary' %}
+{% elseif status == 'Annulée' %}
+    {% set class = 'badge rounded-pill text-bg-warning' %}
+{% elseif status == 'Révoquée' %}
+    {% set class = 'badge rounded-pill text-bg-primary' %}
+{% else %}
+    {% set class = 'badge rounded-pill text-bg-light' %}
+{% endif %}
+
+
+<span class="ml-5 {{ class }}">{{ status }}</span>
