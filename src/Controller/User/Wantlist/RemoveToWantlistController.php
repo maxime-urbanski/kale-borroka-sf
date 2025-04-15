@@ -38,7 +38,7 @@ class RemoveToWantlistController
         RefererInterface $referer,
         EntityManagerInterface $entityManager,
         WantlistRepository $wantlistRepository,
-        Request $request
+        Request $request,
     ): RedirectResponse {
         $currentUserWantlist = $wantlistRepository->findOneBy(
             ['userWantlist' => $user]

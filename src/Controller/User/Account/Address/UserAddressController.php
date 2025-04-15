@@ -36,7 +36,7 @@ class UserAddressController
         #[CurrentUser]
         User $user,
         FormFactoryInterface $form,
-        Environment $twig
+        Environment $twig,
     ): Response {
         $userAddresses = $user->getAddresses();
         $forms = [];

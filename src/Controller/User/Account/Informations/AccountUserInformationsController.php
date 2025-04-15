@@ -23,7 +23,7 @@ class AccountUserInformationsController
     public function __invoke(
         #[CurrentUser]
         User $user,
-        Environment $twig
+        Environment $twig,
     ): Response {
         $content = $twig->render('user/_informations.html.twig', [
             'user' => $user,

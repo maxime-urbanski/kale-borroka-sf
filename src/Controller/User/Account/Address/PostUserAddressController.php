@@ -38,7 +38,7 @@ class PostUserAddressController
         Request $request,
         EntityManagerInterface $entityManager,
         FormFactoryInterface $formFactory,
-        RouterInterface $router
+        RouterInterface $router,
     ): RedirectResponse {
         /** @var Session $session */
         $session = $request->getSession();

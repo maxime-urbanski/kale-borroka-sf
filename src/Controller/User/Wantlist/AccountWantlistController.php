@@ -44,7 +44,7 @@ class AccountWantlistController extends AbstractController
         Environment $twig,
         WantlistItemsRepository $wantlistItemsRepository,
         CustomPaginationInterface $customPagination,
-        string $page
+        string $page,
     ): Response {
         $userWantlist = $user->getWantlist() ?
             $wantlistItemsRepository->findBy(['wantlist' => $user->getWantlist()]) :

@@ -14,7 +14,7 @@ readonly class CartService implements CartInterface
 {
     public function __construct(
         private RequestStack $requestStack,
-        private ArticleRepository $articleRepository
+        private ArticleRepository $articleRepository,
     ) {
     }
 

@@ -13,7 +13,7 @@ class MenuController extends AbstractController
 {
     public function __construct(
         private readonly SupportRepository $supportRepository,
-        private readonly CartService $cartService
+        private readonly CartService $cartService,
     ) {
     }
 

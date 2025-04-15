@@ -40,7 +40,7 @@ class AddInCollectionController
         RefererInterface $referer,
         EntityManagerInterface $entityManager,
         UserCollectionRepository $userCollectionRepository,
-        Request $request
+        Request $request,
     ): RedirectResponse {
         if (!$user->getUserCollection()) {
             $collection = new UserCollection();

@@ -15,7 +15,7 @@ final class HomeController extends AbstractController
     #[Route('/', 'app_homepage')]
     public function index(
         SupportRepository $supportRepository,
-        ArticleRepository $articleRepository
+        ArticleRepository $articleRepository,
     ): Response {
         $lastArticle = $articleRepository->getLastArticle();
         $lasProduction = $articleRepository->getOwnProduction(true);

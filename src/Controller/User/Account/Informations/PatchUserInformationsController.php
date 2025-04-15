@@ -38,7 +38,7 @@ class PatchUserInformationsController
         EntityManagerInterface $entityManager,
         FormFactoryInterface $formFactory,
         Environment $twig,
-        RouterInterface $router
+        RouterInterface $router,
     ): Response|RedirectResponse {
         /** @var Session $session */
         $session = $request->getSession();

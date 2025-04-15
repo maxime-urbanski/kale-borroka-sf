@@ -41,12 +41,12 @@ class CatalogBySupportController
             'page' => '^(page-)'.Requirement::DIGITS,
         ],
         defaults: ['page' => 'page-1'],
-        methods: Request::METHOD_GET
+        methods: Request::METHOD_GET, priority: 2
     )]
     public function __invoke(
         Request $request,
         Environment $twig,
-        FormFactoryInterface $form,
+        FormFactoryInterface $formInterface,
         BreadcrumbInterface $breadcrumb,
         DispatchFilterValueInterface $dispatchFilterValue,
         CustomPaginationInterface $customPagination,
@@ -58,13 +58,13 @@ class CatalogBySupportController
         $filters = new ArticleFilterData();
         $filters->supports[] = $support;
 
-        $form = $form->create(ArticleFilterFormType::class, $filters);
+        $form = $formInterface->create(ArticleFilterFormType::class, $filters);
         $form->handleRequest($request);
 
         $articles = $articleRepository->filterArticleQuery(
             $dispatchFilterValue->dispatchFilterValue($filters)
         );
-        $pagination = $customPagination->pagination($articles, $page);
+        $pagination = $customPagination->pagination($articles, $page, 12);
 
         unset($filters->globalFilters);
 

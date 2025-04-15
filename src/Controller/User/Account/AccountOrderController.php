@@ -27,7 +27,7 @@ class AccountOrderController
         #[CurrentUser]
         User $user,
         OrderRepository $orderRepository,
-        Environment $twig
+        Environment $twig,
     ): Response {
         $userOrders = $orderRepository->findBy([
             'buyer' => $user,

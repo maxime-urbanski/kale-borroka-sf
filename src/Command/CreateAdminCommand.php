@@ -22,7 +22,7 @@ class CreateAdminCommand extends Command
     public function __construct(
         private readonly UserRepository $userRepository,
         private UserPasswordHasherInterface $passwordHasher,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }

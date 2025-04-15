@@ -37,7 +37,7 @@ class AccountUserCollectionController
         Environment $twig,
         UserCollectionItemsRepository $userCollectionItemsRepository,
         CustomPaginationInterface $customPagination,
-        string $page
+        string $page,
     ): Response {
         $userCollection = $user->getUserCollection() ?
             $userCollectionItemsRepository->findBy(['user_collection' => $user->getUserCollection()->getId()]) :

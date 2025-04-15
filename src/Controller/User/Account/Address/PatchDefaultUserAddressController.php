@@ -42,7 +42,7 @@ class PatchDefaultUserAddressController
         EntityManagerInterface $entityManager,
         AddressRepository $addressRepository,
         Request $request,
-        RouterInterface $router
+        RouterInterface $router,
     ): RedirectResponse {
         /** @var Session $session */
         $session = $request->getSession();

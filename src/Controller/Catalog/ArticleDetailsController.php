@@ -38,12 +38,12 @@ class ArticleDetailsController
         BreadcrumbInterface $breadcrumb,
         #[MapEntity(expr: 'repository.findOneBySupportAndSlug(support, slug)')]
         Article $article,
-        ArticleRepository $articleRepository
+        ArticleRepository $articleRepository,
     ): Response {
-        $artistArticle = $articleRepository->getArticleWithSameArtist($article->getAlbum()->getArtist());
+        $artistArticle = $articleRepository->getArticleWithSameArtist($article->getAlbum()?->getArtist());
 
         $currentAlbumStyles = [];
-        foreach ($article->getAlbum()->getStyles() as $style) {
+        foreach ($article->getAlbum()?->getStyles() as $style) {
             $currentAlbumStyles[] = $style->getId();
         }
 

@@ -38,7 +38,7 @@ class RemoveInCollectionController
         RefererInterface $referer,
         EntityManagerInterface $entityManager,
         UserCollectionRepository $userCollectionRepository,
-        Request $request
+        Request $request,
     ): RedirectResponse {
         $currentUserCollection = $userCollectionRepository->findOneBy(
             ['user_collection' => $user]

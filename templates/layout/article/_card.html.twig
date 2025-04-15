@@ -1,53 +1,66 @@
-<div class="card h-100">
-    <div class="position-relative">
+<div class="card border-0 h-100">
+    <div class="ratio ratio-1x1">
         {% if article.album.images[0] is defined %}
-            <img src="{{ asset('upload/albums/' ~ article.album.images[0].imageName) }}" alt="{{ article.name }}"
-                 class="card-img-top">
+            <img src="{{ asset('upload/albums/' ~ article.album.images[0].imageName) }}"
+                 alt="{{ article.name }}"
+            >
         {% else %}
-            <img src="{{ asset('/images/product_placeholder.png') }}" alt="{{ article.name }}" class="card-img-top">
+            <img src="{{ asset('/images/product_placeholder.png') }}"
+                 alt="{{ article.name }}"
+            >
         {% endif %}
-        {% if app.user %}
-            {% set class = 'position-absolute btn btn-outline-dark rounded-circle me-2 ' %}
-            {% if app.user.wantlist is not null and article in app.user.wantlist.product %}
-                {% include 'partials/_obfuscation_link.html.twig' with {
-                    url: path('app_wantlist_remove', {productId: article.id}),
-                    class: class ~ 'top-0 end-0 mt-2',
-                    icon: "bi-eye-slash-fill"
-                } %}
-            {% else %}
-                {% include 'partials/_obfuscation_link.html.twig' with {
-                    url: path('app_wantlist_add', {productId: article.id}),
-                    class: class ~ 'top-0 end-0 mt-2',
-                    icon: "bi-eye-fill"
-                } %}
-            {% endif %}
+    </div>
+    <div class="card-body d-flex flex-column p-2">
+        <p class="fs-6 fw-semibold mb-0">{{ article.name }}</p>
+        <p class=" text-secondary mb-0">{{ article.album.styles[0] }}</p>
+        <div class="d-flex justify-content-between mt-2">
+            <p class="fw-bolder mt-auto" style="font-size: 12px">
+                <span class="text-danger border border-danger px-2 py-1">
+                    {{ article.support | upper }}
+                </span>
+            </p>
+            <p class="fs-6 fw-semibold mt-auto ">
+                <span class="text-bg-dark mb-0 px-2 py-1">
+                    {{ (article.price/100) | format_currency('EUR') }}
+                </span>
+            </p>
+        </div>
+
+        {# <div class="d-flex justify-content-around align-items-center mt-3">
+            {% include 'partials/_obfuscation_link.html.twig' with {
+                url: path('app_cart_add', {id: article.id}),
+                class: "btn btn-outline-danger rounded-1",
+                text_btn: 'Ajouter au panier'
+            } %}
+            {% if app.user %}
+                {% if app.user.wantlist is not null and article in app.user.wantlist.product %}
+                    {% include 'partials/_obfuscation_link.html.twig' with {
+                        url: path('app_wantlist_remove', {productId: article.id}),
+                        class: 'btn btn-outline-dark',
+                        icon: "bi-eye-slash-fill"
+                    } %}
+                {% else %}
+                    {% include 'partials/_obfuscation_link.html.twig' with {
+                        url: path('app_wantlist_add', {productId: article.id}),
+                        class: 'btn btn-outline-dark',
+                        icon: "bi-eye-fill"
+                    } %}
+                {% endif %}            {% endif %}
+
+
             {% if app.user.userCollection is not null and article in app.user.userCollection.article %}
                 {% include 'partials/_obfuscation_link.html.twig' with {
                     url: path('app_collection_remove', {productId: article.id}),
-                    class: class ~ 'bottom-0 end-0 mb-2' ,
+                    class: 'btn btn-outline-dark',
                     icon: "bi-database-fill-dash"
                 } %}
             {% else %}
                 {% include 'partials/_obfuscation_link.html.twig' with {
                     url: path('app_collection_add', {productId: article.id}),
-                    class: class ~ 'bottom-0 end-0 mb-2',
+                    class: 'btn btn-outline-dark',
                     icon: "bi-database-fill-add"
                 } %}
             {% endif %}
-        {% endif %}
-    </div>
-    <div class="card-body d-flex flex-column justify-content-between">
-        <a href="{{ path('app_catalog_show', {support: article.support, slug: article.slug}) }}"
-           class="card-title text-center w-100">
-            <p>{{ article.name }}</p>
-        </a>
-        <div class="d-flex justify-content-between align-items-center mt-3">
-            <p class="m-0">Prix: {{ (article.price/100) |format_currency('EUR') }}</p>
-            {% include 'partials/_obfuscation_link.html.twig' with {
-                url: path('app_cart_add', {id: article.id}),
-                class: "btn btn-success",
-                icon: "bi-minecart"
-            } %}
-        </div>
+        </div> #}
     </div>
 </div>
