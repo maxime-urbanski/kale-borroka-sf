@@ -27,7 +27,7 @@ class RemoveQuantityCartController
         Request $request,
         CartInterface $cart,
         RefererInterface $referer,
-        int $id
+        int $id,
     ): RedirectResponse {
         /** @var Session $session */
         $session = $request->getSession();

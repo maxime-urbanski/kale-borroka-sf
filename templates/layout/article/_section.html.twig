@@ -7,9 +7,12 @@
     <div class="row row-cols-sm-1 row-cols-lg-3 row-cols-xl-4 g-4 justify-content-center mt-3">
         {% for article in articles %}
             {% if article.slug is not same as app.request.get('slug') %}
-                <article class="col">
-                    {% include 'layout/article/_card.html.twig' with {article} %}
-                </article>
+                <a href="{{ path('app_catalog_show', {support: article.support, slug: article.slug}) }}"
+                   class="card-title text-decoration-none mb-0">
+                    <article class="col">
+                        {% include 'layout/article/_card.html.twig' with {article} %}
+                    </article>
+                </a>
             {% endif %}
         {% endfor %}
     </div>

@@ -12,7 +12,7 @@ readonly class RefererService implements RefererInterface
 {
     public function __construct(
         private RequestStack $requestStack,
-        private RouterInterface $router
+        private RouterInterface $router,
     ) {
     }
 

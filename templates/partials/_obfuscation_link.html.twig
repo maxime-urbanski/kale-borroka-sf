@@ -1,8 +1,10 @@
+{% set icon_position = icon_position | default('left') %}
+
 <div data-controller="obfuscation"
      data-action="click->obfuscation#obfuscation"
      data-obfuscation-url-value="{{ url }}"
      class="{{ class }}">
-    {% if icon is defined %}
+    {% if icon is defined and icon_position is same as "left" %}
         <i class="bi {{ icon }}"></i>
     {% endif %}
     {% if span is defined %}
@@ -12,6 +14,9 @@
     {% endif %}
     {% if text_btn is defined %}
         {{ text_btn }}
+    {% endif %}
+    {% if icon is defined and icon_position is same as "right" %}
+        <i class="bi {{ icon }}"></i>
     {% endif %}
 </div>
 

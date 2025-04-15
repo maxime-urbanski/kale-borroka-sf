@@ -24,7 +24,7 @@ class ProductionController extends AbstractController
         DispatchFilterValueService $dispatchFilterValueService,
         Request $request,
         BreadcrumbInterface $breadcrumb,
-        string $page = 'page-1'
+        string $page = 'page-1',
     ): Response {
         $filters = new ArticleFilterData();
         $filters->globalFilters['kbrProduction'] = true;

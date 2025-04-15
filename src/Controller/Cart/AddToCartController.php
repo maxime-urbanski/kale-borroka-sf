@@ -27,7 +27,7 @@ class AddToCartController
         Request $request,
         CartInterface $cart,
         RefererInterface $referer,
-        int $id
+        int $id,
     ): RedirectResponse {
         /** @var Session $session */
         $session = $request->getSession();

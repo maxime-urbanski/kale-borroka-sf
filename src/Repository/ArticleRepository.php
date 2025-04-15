@@ -63,7 +63,7 @@ class ArticleRepository extends ServiceEntityRepository
     }
 
     public function filterArticleQuery(
-        ArticleFilterData $filterData
+        ArticleFilterData $filterData,
     ): Query {
         $query = $this->createQueryBuilder('article')
             ->leftJoin('article.album', 'album')

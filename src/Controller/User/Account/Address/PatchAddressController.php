@@ -34,7 +34,7 @@ class PatchAddressController
         Request $request,
         EntityManagerInterface $entityManager,
         RouterInterface $router,
-        FormFactoryInterface $formFactory
+        FormFactoryInterface $formFactory,
     ): RedirectResponse {
         /** @var Session $session */
         $session = $request->getSession();

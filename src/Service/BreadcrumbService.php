@@ -11,7 +11,7 @@ readonly class BreadcrumbService implements BreadcrumbInterface
 {
     public function __construct(
         private RequestStack $requestStack,
-        private RouterInterface $router
+        private RouterInterface $router,
     ) {
     }
 

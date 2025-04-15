@@ -29,7 +29,7 @@ class CartController
     )]
     public function __invoke(
         Environment $twig,
-        CartInterface $cartInterface
+        CartInterface $cartInterface,
     ): Response {
         $content = $twig->render('cart/index.html.twig', [
             'cart' => $cartInterface->getFullCart(),

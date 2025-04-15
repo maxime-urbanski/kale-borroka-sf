@@ -33,7 +33,7 @@ class DeleteUserAddressController
         Address $address,
         EntityManagerInterface $entityManager,
         Request $request,
-        RouterInterface $router
+        RouterInterface $router,
     ): RedirectResponse {
         /** @var Session $session */
         $session = $request->getSession();

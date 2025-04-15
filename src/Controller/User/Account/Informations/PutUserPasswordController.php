@@ -41,7 +41,7 @@ class PutUserPasswordController
         RouterInterface $router,
         Environment $twig,
         FormFactoryInterface $formFactory,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
     ): RedirectResponse|Response {
         /** @var Session $session */
         $session = $request->getSession();

@@ -21,7 +21,7 @@ class EmptyCartController
     )]
     public function __invoke(
         CartInterface $cart,
-        RouterInterface $router
+        RouterInterface $router,
     ): RedirectResponse {
         $cart->removeAll();
 

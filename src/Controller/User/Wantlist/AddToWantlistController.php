@@ -40,7 +40,7 @@ class AddToWantlistController
         RefererInterface $referer,
         EntityManagerInterface $entityManager,
         WantlistRepository $wantlistRepository,
-        Request $request
+        Request $request,
     ): RedirectResponse {
         if (!$user->getWantlist()) {
             $wantlist = new Wantlist();
