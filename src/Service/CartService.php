@@ -18,18 +18,18 @@ readonly class CartService implements CartInterface
     ) {
     }
 
-    public function addToCart(int $id): void
+    public function addToCart(int $articleId, int $quantity = 1): void
     {
         $cart = $this->getSession()->get('cart', []);
-        $article = $this->articleRepository->find($id);
+        $article = $this->articleRepository->find($articleId);
 
         if ($article) {
-            if (empty($cart[$id])) {
-                $cart[$id] = 1;
-            } elseif ($article->getQuantity() > $cart[$id]) {
-                ++$cart[$id];
+            if (empty($cart[$articleId])) {
+                $cart[$articleId] = $quantity;
+            } elseif ($article->getQuantity() > $cart[$articleId]) {
+                ++$cart[$articleId];
             } else {
-                $cart[$id] = $article->getQuantity();
+                $cart[$articleId] = $article->getQuantity();
             }
 
             $this->getSession()->set('cart', $cart);

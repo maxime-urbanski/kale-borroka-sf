@@ -49,12 +49,17 @@
                 </div>
                 {{ form_end(form) }}
             </div>
-            <div class="col-md-1"></div>
-            <div class="col-md-8">
+            <div class="col-md-9">
                 {% include 'layout/article/_active-filter.html.twig' with {
                     filters
                 } %}
-                {% include 'layout/article/_article-grid.html.twig' with {articles: articles.items} %}
+                {% include 'layout/article/_article-grid.html.twig' with {
+                    articles: articles.items,
+                    col_sm: 2,
+                    col_md: 3,
+                    col_lg: 3,
+                    col_xl: 4
+                } %}
                 {{ knp_pagination_render(articles, 'partials/_pagination.html.twig') }}
             </div>
         </div>

@@ -31,8 +31,12 @@ class AddToCartController
     ): RedirectResponse {
         /** @var Session $session */
         $session = $request->getSession();
+
         try {
-            $cart->addToCart($id);
+            $choosenQuantity = $request->query->get('quantity') ?: 1;
+
+            $cart->addToCart($id, (int) $choosenQuantity);
+
             $session->getFlashBag()->add('success', 'article ajouté au panier.');
         } catch (NotFoundHttpException $exception) {
             $session->getFlashBag()->add('error', $exception);

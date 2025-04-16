@@ -5,7 +5,7 @@
      data-obfuscation-url-value="{{ url }}"
      class="{{ class }}">
     {% if icon is defined and icon_position is same as "left" %}
-        <i class="bi {{ icon }}"></i>
+        <i class="bi {{ icon }} d-none d-lg-inline"></i>
     {% endif %}
     {% if span is defined %}
         <span class="btn badge border {{ span_class |default('border-success text-success') }}">

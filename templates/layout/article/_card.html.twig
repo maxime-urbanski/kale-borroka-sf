@@ -12,16 +12,20 @@
     </div>
     <div class="card-body d-flex flex-column p-2">
         <p class="fs-6 fw-semibold mb-0">{{ article.name }}</p>
-        <p class=" text-secondary mb-0">{{ article.album.styles[0] }}</p>
+        <p class="text-secondary mb-0">
+            {% for style in article.album.styles %}
+                {{ style }}
+            {% endfor %}
+        </p>
         <div class="d-flex justify-content-between mt-2">
-            <p class="fw-bolder mt-auto" style="font-size: 12px">
+            <p class="fw-bolder mt-auto" style="font-size: 11px">
                 <span class="text-danger border border-danger px-2 py-1">
                     {{ article.support | upper }}
                 </span>
             </p>
             <p class="fs-6 fw-semibold mt-auto ">
                 <span class="text-bg-dark mb-0 px-2 py-1">
-                    {{ (article.price/100) | format_currency('EUR') }}
+                    {{ (article.price/100) | format_currency('EUR', [], 'fr') }}
                 </span>
             </p>
         </div>
