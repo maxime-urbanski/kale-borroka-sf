@@ -6,7 +6,6 @@ namespace App\Repository;
 
 use App\Data\ArticleFilterData;
 use App\Entity\Article;
-use App\Entity\Artist;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NonUniqueResultException;
@@ -104,30 +103,35 @@ class ArticleRepository extends ServiceEntityRepository
         return $query->getQuery();
     }
 
-    public function getArticleWithSameArtist(Artist $artist): Query
+    public function getArticleWithSameArtist(Article $article): Query
     {
         $query = $this->createQueryBuilder('article')
             ->leftJoin('article.album', 'album')
             ->where('album.artist = :artist')
+            ->andWhere('article != :article')
             ->orderBy('article.name', 'ASC')
-            ->setMaxResults(4)
-            ->setParameter('artist', $artist);
+            ->setMaxResults(10)
+            ->setParameters([
+                'artist' => $article->getAlbum()->getArtist(),
+                'article' => $article,
+            ]);
 
         return $query->getQuery();
     }
 
-    /**
-     * @param array<int, int> $styles
-     */
-    public function getArticleWithSameStyle(array $styles): Query
+    public function getArticleWithSameStyle(Article $article): Query
     {
         $query = $this->createQueryBuilder('article')
             ->leftJoin('article.album', 'album')
             ->leftJoin('album.styles', 'styles')
             ->where('styles IN (:styles)')
+            ->andWhere('article != :article')
             ->orderBy('article.name', 'ASC')
-            ->setMaxResults(4)
-            ->setParameter('styles', $styles);
+            ->setMaxResults(10)
+            ->setParameters([
+                'styles' => $article->getAlbum()->getStyles(),
+                'article' => $article,
+            ]);
 
         return $query->getQuery();
     }

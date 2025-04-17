@@ -3,53 +3,118 @@
 {% block body %}
     <div class="container py-5">
         {% include 'layout/_breadcrumb.html.twig' with {breadcrumb} %}
-        <div class="row">
-            <div class="col">
-                <h1 class="text-center">{{ article.name }}</h1>
-            </div>
-        </div>
-        <div class="row mt-5">
-            <div class="col-md-5">
+        <div class="row mb-5">
+            <div class="col-sm-12 col-md-5">
                 {% if article.album.images[0] is defined %}
                     <img src="{{ asset('upload/albums/' ~ article.album.images[0].imageName) }}"
-                         alt="{{ article.name }}">
+                         alt="{{ article.name }}"
+                         class="w-100 ratio-1x1">
                 {% else %}
-                    <img src="{{ asset('/images/product_placeholder.png') }}" alt="{{ article.name }}">
+                    <img src="{{ asset('/images/product_placeholder.png') }}" alt="{{ article.name }}"
+                         class="w-100 ratio-1x1">
                 {% endif %}
             </div>
-            <div class="d-sm-none d-md-block col-md-2"></div>
-            <div class="col-md-5">
-                <div class="d-flex flex-column justify-content-center">
-                    <p>Quantité: {{ article.quantity }}</p>
-                    <p>Prix: {{ ( article.price/100) |format_currency('EUR') }}</p>
-                    {% include 'partials/_obfuscation_link.html.twig' with {
-                        url: path('app_cart_add', {id: article.id}),
-                        class: "btn btn-success w-content",
-                        icon: "bi-minecart"
-                    } %}
-                    <p>
-                        {% for tracklist in article.album.tracklists %}
-                            {{ tracklist.track }} - {{ tracklist.name }} <br>
-                        {% endfor %}
-                    </p>
+            <div class="col-sm-12 col-md-7 ps-lg-5">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <h1 class="fs-5 fw-bolder lh-1 mt-4 mt-md-0 mb-0">{{ article.name | upper }}</h1>
+                        <p class="text-secondary mb-3">
+                            {% for style in article.album.styles %}
+                                {{ style }} {% if not loop.last %} | {% endif %}
+                            {% endfor %}
+                        </p>
+                        <div class="d-flex align-items-center">
+                            <p class="fs-5 fw-bolder m-0">
+                                <span class="text-danger border border-danger px-2 py-1">
+                                    {{ article.support | upper }}
+                                </span>
+                            </p>
+                            <p class="fs-5 ms-3 my-auto me-3">
+                                <span class="text-bg-dark mb-0 px-2 py-1">
+                                    <bdi>{{ (article.price/100) | format_currency('EUR', [], 'fr') }}</bdi>
+                                </span>
+                            </p>
+                        </div>
+                        <p class="mt-3 mb-md-0">Release date: {{ article.album.dateRelease|date('Y') }}</p>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <div class="card mt-5">
-                    <div class="card-body">
-                        <p>{{ article.album.note }}</p>
+                <div class="row mb-3">
+                    <div class="col">
+                        {{ form_start(form) }}
+                        <div class="d-flex justify-content-between justify-content-md-start">
+                            <div class="input-group w-content" data-controller='add-to-cart'>
+                                {{ form_widget(form.less) }}
+                                {{ form_widget(form.quantity) }}
+                                {{ form_widget(form.more) }}
+                            </div>
+                            <button class="ms-md-3 btn btn-success rounded-0">
+                                Ajouter au panier
+                                <i class="bi bi-minecart d-none d-md-inline ms-1"></i>
+                            </button>
+                        </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+                {% if app.user %}
+                    <div class="btn-group mb-3 w-100" role="group">
+                        {% if app.user.wantlist is not null and article in app.user.wantlist.product %}
+                            {% include 'partials/_obfuscation_link.html.twig' with {
+                                url: path('app_wantlist_remove', {productId: article.id}),
+                                class: 'btn btn-danger',
+                                text_btn: 'Retirer de la wantlist',
+                                icon: "bi-eye-slash-fill ms-2",
+                                icon_position: 'right'
+                            } %}
+                        {% else %}
+                            {% include 'partials/_obfuscation_link.html.twig' with {
+                                url: path('app_wantlist_add', {productId: article.id}),
+                                class: 'btn btn-outline-dark',
+                                text_btn: 'Ajouter à la wantlist',
+                                icon: "bi-eye-fill me-2",
+                                icon_position: 'left'
+                            } %}
+                        {% endif %}
+                        {% if app.user.userCollection is not null and article in app.user.userCollection.article %}
+                            {% include 'partials/_obfuscation_link.html.twig' with {
+                                url: path('app_collection_remove', {productId: article.id}),
+                                class: 'btn btn-danger',
+                                text_btn: 'Supprimer de la collection',
+                                icon: "bi-database-fill-dash ms-2",
+                                icon_position: 'right'
+                            } %}
+                        {% else %}
+                            {% include 'partials/_obfuscation_link.html.twig' with {
+                                url: path('app_collection_add', {productId: article.id}),
+                                class: 'btn btn-outline-dark',
+                                text_btn: 'Ajouter à la collection',
+                                icon: "bi-database-fill-add me-2",
+                                icon_position: 'left'
+                            } %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+                <hr>
+                <div class="row">
+                    <div class="col">
+                        <p class="m-0 text-center">{{ article.album.note }}</p>
                     </div>
                 </div>
             </div>
         </div>
+        {#{% include 'layout/article/_section.html.twig' with {
+            tracklist: article.album.tracklists,
+            title: 'Tracklist',
+            title_mb: 'mb-4'
+        } %}#}
         {% if articleByArtist |length > 1 %}
-            {% include 'layout/article/_section.html.twig' with {articles: articleByArtist, title: 'Artiste'} %}
+            {% include 'layout/article/_section.html.twig' with {
+                articles: articleByArtist,
+                title: 'Du même artiste',
+                title_mb: 'mb-5'
+            } %}
         {% endif %}
-
         {% if articleSameStyle|length > 1 %}
-            {% include 'layout/article/_section.html.twig' with {articles: articleSameStyle, title: 'Style'} %}
+            {% include 'layout/article/_section.html.twig' with {articles: articleSameStyle, title: 'Dans le même style'} %}
         {% endif %}
     </div>
 {% endblock %}

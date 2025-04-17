@@ -1,19 +1,25 @@
-<section class="mt-5">
-    <div class="row">
-        <div class="col bg-dark text-white p-3 rounded">
-            {{ title| upper }}
+<section class="mb-5">
+    <h2 class="fs-3 text-center text-decoration-underline red w-content mx-auto {{ title_mb | default('mb-5') }}">
+        {{ title | upper }}
+    </h2>
+    {% if articles is defined %}
+        {% include 'layout/article/_article-grid.html.twig' with {
+            articles,
+            col_sm: 2,
+            col_md: 3,
+            col_lg: 4,
+            col_xl: 5,
+        } %}
+    {% endif %}
+    {% if tracklist is defined %}
+        <div class="row">
+            <div class="col">
+                <p class="fs-5 text-start w-content mb-0 mx-auto">
+                    {% for track in tracklist %}
+                        <span class="text-success">{{ track.track }}</span> - {{ track.name }} <br>
+                    {% endfor %}
+                </p>
+            </div>
         </div>
-    </div>
-    <div class="row row-cols-sm-1 row-cols-lg-3 row-cols-xl-4 g-4 justify-content-center mt-3">
-        {% for article in articles %}
-            {% if article.slug is not same as app.request.get('slug') %}
-                <a href="{{ path('app_catalog_show', {support: article.support, slug: article.slug}) }}"
-                   class="card-title text-decoration-none mb-0">
-                    <article class="col">
-                        {% include 'layout/article/_card.html.twig' with {article} %}
-                    </article>
-                </a>
-            {% endif %}
-        {% endfor %}
-    </div>
+    {% endif %}
 </section>

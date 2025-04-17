@@ -6,7 +6,7 @@ use App\Entity\Article;
 
 interface CartInterface
 {
-    public function addToCart(int $id): void;
+    public function addToCart(int $articleId, int $quantity): void;
 
     public function addQuantity(int $id): void;
 

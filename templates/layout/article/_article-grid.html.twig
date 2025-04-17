@@ -1,4 +1,5 @@
-<div class="row row-cols-sm-1 row-cols-lg-3 g-4 justify-content-center">
+<div
+    class="row row-cols-{{ col_sm }} row-cols-md-{{ col_md}} row-cols-lg-{{ col_lg }} {% if col_xl is defined %} row-cols-xl-{{ col_xl }}{% endif %} g-4">
     {% for article in articles %}
         <div class="col">
             <a href="{{ path('app_catalog_show', {support: article.support, slug: article.slug}) }}"
@@ -7,5 +8,4 @@
             </a>
         </div>
     {% endfor %}
-
 </div>
