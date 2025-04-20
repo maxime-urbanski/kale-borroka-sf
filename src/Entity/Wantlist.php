@@ -18,7 +18,6 @@ class Wantlist
     private ?int $id = null;
 
     #[ORM\ManyToMany(targetEntity: Article::class)]
-    #[ORM\JoinTable(name: 'wantlist_items')]
     private Collection $product;
 
     #[ORM\OneToOne(inversedBy: 'wantlist', cascade: ['persist', 'remove'])]
