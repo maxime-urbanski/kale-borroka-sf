@@ -22,7 +22,7 @@ readonly class BreadcrumbService implements BreadcrumbInterface
     {
         /** @var array<int, array{name: string, path: string, paramater: array<mixed>}> $breadcrumb */
         $breadcrumb = [];
-        $url = $this->requestStack->getMainRequest()->getRequestUri();
+        $url = $this->requestStack->getMainRequest()?->getRequestUri();
         $splitUrl = \explode('/', $url);
         $uri = '';
 
@@ -42,8 +42,9 @@ readonly class BreadcrumbService implements BreadcrumbInterface
                 if ($match) {
                     $routeName = $match['_route'];
                     unset($match['_route']);
+                    $uriExplode = \explode('/', $uriWithoutLastSlash);
                     $breadcrumb[] = [
-                        'name' => 'breadcrumb'.\str_replace('/', '.', $uriWithoutLastSlash),
+                        'name' => '' === \end($uriExplode) ? 'Home' : \end($uriExplode),
                         'path' => $routeName,
                         'parameters' => $match,
                     ];
