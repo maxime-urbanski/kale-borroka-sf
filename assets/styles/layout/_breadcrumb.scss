@@ -1,0 +1,10 @@
+nav > .breadcrumb {
+    .breadcrumb-item {
+        font-size: 13px;
+        font-weight: 500;
+
+        > a {
+            text-decoration: none;
+        }
+    }
+}

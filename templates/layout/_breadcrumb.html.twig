@@ -1,15 +1,15 @@
 {% set route = app.request.get('_route') %}
 
-<div class="row mb-3">
-    <div class="col">
-        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+<div class="row my-5 justify-content-md-end">
+    <div class="col align-self-end">
+        <nav class="w-content ms-auto" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb">
                 {% for link in breadcrumb %}
                     {% if link.path == route %}
-                        <li class="breadcrumb-item active" aria-current="page">{{ link.name|upper }}</li>
+                        <li class="breadcrumb-item active text-danger" aria-current="page">{{ link.name|upper }}</li>
                     {% else %}
                         <li class="breadcrumb-item">
-                            <a href="{{ path(link.path, link.parameters|default([])) }}">{{ link.name|upper }}</a>
+                            <a class="text-dark" href="{{ path(link.path, link.parameters|default([])) }}">{{ link.name|upper }}</a>
                         </li>
                     {% endif %}
                 {% endfor %}

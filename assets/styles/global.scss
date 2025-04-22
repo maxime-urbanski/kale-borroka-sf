@@ -3,7 +3,8 @@
 
 @import "articles";
 @import "article";
-@import "footer";
+@import "layout/footer";
+@import "layout/breadcrumb";
 
 .cursor-pointer {
     cursor: pointer;
