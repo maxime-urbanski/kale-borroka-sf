@@ -1,5 +1,43 @@
-<footer class="bg-dark position-absolute bottom-0 start-0 end-0">
-    <div class="container text-white">
-        Hello
+<footer class="bg-dark mt-auto">
+    <div class="container-fluid py-5">
+        <div class="container-md text-white">
+            <div class="row">
+                <div class="col-sm-12 col-md-4">
+                    <h5 class="fs-4 mx-auto">A PROPOS</h5>
+                </div>
+                <div class="col-sm-12 col-md-4 mt-4 mt-md-0">
+                    <h5 class="fs-4 mx-auto">LE SHOP</h5>
+                    <ul class="nav flex-column align-items-center mt-4">
+                        {% for support in supports %}
+                            <li class="nav-item fs-5">
+                                <a href="{{ path('app_catalog_list', {support: support.name}) }}"
+                                   class="text-decoration-none text-white">
+                                    {{ support |upper }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-sm-12 col-md-4 mt-4 mt-md-0">
+                    <h5 class="fs-4 mx-auto">RESEAUX SOCIAUX</h5>
+                            <div class="d-flex justify-content-center align-items-center h-100">
+                        {% for social in socialNetworks %}
+                                <div class="d-flex flex-column align-items-center {% if not loop.first %}ms-3{% endif %}">
+                                    <a href="{{ social.url }}" target="_blank">
+                                        <img src="{{ asset(social.file ) }}" alt="{{ social.name }}" width="40"
+                                             class="rounded-circle social-icon">
+                                    </a>
+                                    <p class="mb-0 fs-6">
+                                        {{ social.name }}
+                                    </p>
+                                </div>
+                        {% endfor %}
+                            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid bg-white py-1 overflow-hidden">
+        <h6 class="text-center m-0">{{ 'now' | date('Y') }} - {{ '&copy;' }}Kale Borroka records - All Rights reserved - Make racists afraid again</h6>
     </div>
 </footer>

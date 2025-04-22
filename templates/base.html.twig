@@ -30,6 +30,6 @@
         <h1>Kale Borroka Home</h1>
     </div>
 {% endblock %}
-{% include 'layout/_footer.html.twig' %}
+{{ render(controller('App\\Controller\\Layout\\FooterController')) }}
 </body>
 </html>

@@ -1,11 +1,11 @@
 <div
     class="row row-cols-{{ col_sm }} row-cols-md-{{ col_md}} row-cols-lg-{{ col_lg }} {% if col_xl is defined %} row-cols-xl-{{ col_xl }}{% endif %} g-4">
     {% for article in articles %}
-        <div class="col">
+        <article class="col">
             <a href="{{ path('app_catalog_show', {support: article.support, slug: article.slug}) }}"
                class="card-title text-decoration-none mb-0">
                 {% include 'layout/article/_card.html.twig' with {article} %}
             </a>
-        </div>
+        </article>
     {% endfor %}
 </div>

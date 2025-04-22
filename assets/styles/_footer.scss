@@ -1,0 +1,30 @@
+footer {
+    h5 {
+        position: relative;
+        width: fit-content;
+
+        &:after {
+            content: '';
+            position: absolute;
+            height: 3px;
+            width: 100%;
+            background-color: $danger;
+            bottom: -10px;
+            left: 0;
+        }
+    }
+
+    .social-icon {
+        width: 40px;
+        filter: grayscale(100%);
+
+        &:hover {
+            transition: filter .3s ease-in;
+            filter: grayscale(0%);
+        }
+
+        @media screen and (max-width: 768px) {
+            filter: grayscale(0%);
+        }
+    }
+}

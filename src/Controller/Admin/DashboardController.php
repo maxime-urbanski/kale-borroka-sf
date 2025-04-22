@@ -11,6 +11,7 @@ use App\Entity\Image;
 use App\Entity\Label;
 use App\Entity\Order;
 use App\Entity\Payment;
+use App\Entity\SocialNetwork;
 use App\Entity\Style;
 use App\Entity\Support;
 use App\Entity\Transporter;
@@ -56,5 +57,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Mode de paiement', 'fas fa-list', Payment::class);
         yield MenuItem::linkToCrud('Mode de livraison', 'fas fa-list', Transporter::class);
         yield MenuItem::linkToCrud('Commande', 'fas fa-list', Order::class);
+
+        yield MenuItem::section('Configuration');
+        yield MenuItem::linkToCrud('Réseaux Sociaux', 'fas fa-list', SocialNetwork::class);
     }
 }
