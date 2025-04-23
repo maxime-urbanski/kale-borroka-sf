@@ -37,6 +37,7 @@ class Album
     private Collection $labels;
 
     #[ORM\ManyToMany(targetEntity: Song::class, inversedBy: 'albums', cascade: ['persist'])]
+    #[ORM\OrderBy(['track' => 'ASC'])]
     private Collection $tracklists;
 
     #[ORM\ManyToMany(targetEntity: Style::class, inversedBy: 'albums', cascade: ['persist'])]
