@@ -38,22 +38,31 @@ class AlbumCrudController extends AbstractCrudController
             ->onlyOnIndex();
         yield AssociationField::new('artist')
             ->autocomplete()
-            ->setLabel('Artiste');
+            ->setLabel('Artiste')
+            ->setColumns(6);
         yield TextField::new('name')
-            ->setLabel("Nom de l'album");
-        yield BooleanField::new('kbrProduction')->setLabel('Prodution K.B.R');
-        yield TextareaField::new('note')
-            ->setLabel('Information')
+            ->setLabel("Nom de l'album")
+            ->setColumns(6);
+        yield AssociationField::new('styles')
+            ->setColumns(6)
             ->hideOnIndex();
-        // yield ImageField::new('folder')->setLabel('Pochette')->setUploadDir(__DIR__ . '/public/images/album')->hideOnIndex();
-        yield DateField::new('date_release')->setLabel('Date de sortie');
         yield AssociationField::new('labels')
             ->setLabel('Produit par')
             ->autocomplete();
+
+        yield TextareaField::new('note')
+            ->setLabel('Information')
+            ->setColumns(6)
+            ->hideOnIndex();
         yield CollectionField::new('tracklists')
             ->useEntryCrudForm(SongCrudController::class)
+            ->setColumns(6)
             ->hideOnIndex();
-        yield AssociationField::new('styles')
-            ->hideOnIndex();
+        yield DateField::new('date_release')
+            ->setLabel('Date de sortie');
+
+        yield BooleanField::new('kbrProduction')
+            ->setLabel('Prodution K.B.R')
+            ->setColumns(3);
     }
 }

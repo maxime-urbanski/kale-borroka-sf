@@ -139,9 +139,9 @@ class Article
         return $this->createdAt;
     }
 
-    public function setCreatedAt(): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->createdAt = new \DateTimeImmutable();
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -151,9 +151,9 @@ class Article
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(): static
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

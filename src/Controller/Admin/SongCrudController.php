@@ -26,7 +26,13 @@ class SongCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('name')->setLabel('Titre de la chanson');
-        yield TextField::new('track')->setLabel('track');
+        yield TextField::new('track')
+            ->setLabel('track')
+            ->setColumns(3)
+        ;
+        yield TextField::new('name')
+            ->setLabel('Titre')
+            ->setColumns(9)
+        ;
     }
 }
