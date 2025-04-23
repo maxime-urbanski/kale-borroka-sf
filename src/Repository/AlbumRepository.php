@@ -6,6 +6,8 @@ namespace App\Repository;
 
 use App\Entity\Album;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,5 +41,18 @@ class AlbumRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function numberOfAlbumsProduced(): int
+    {
+        return $this->createQueryBuilder('a')
+            ->select('COUNT(a.id)')
+            ->where('a.kbrProduction = true')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }
