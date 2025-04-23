@@ -1,5 +1,12 @@
 <div class="card border-0 h-100">
-    <div class="ratio ratio-1x1">
+    <div class="ratio ratio-1x1 position-relative">
+        {% if article.album.kbrProduction %}
+            <div class="overlay">
+                <div class="ribbon">
+                    <span>{{ article.album.kbrProductionId }}</span>
+                </div>
+            </div>
+        {% endif %}
         {% if article.album.images[0] is defined %}
             <img src="{{ asset('upload/albums/' ~ article.album.images[0].imageName) }}"
                  alt="{{ article.name }}"
@@ -29,42 +36,5 @@
                 </span>
             </p>
         </div>
-
-        {# <div class="d-flex justify-content-around align-items-center mt-3">
-            {% include 'partials/_obfuscation_link.html.twig' with {
-                url: path('app_cart_add', {id: article.id}),
-                class: "btn btn-outline-danger rounded-1",
-                text_btn: 'Ajouter au panier'
-            } %}
-            {% if app.user %}
-                {% if app.user.wantlist is not null and article in app.user.wantlist.product %}
-                    {% include 'partials/_obfuscation_link.html.twig' with {
-                        url: path('app_wantlist_remove', {productId: article.id}),
-                        class: 'btn btn-outline-dark',
-                        icon: "bi-eye-slash-fill"
-                    } %}
-                {% else %}
-                    {% include 'partials/_obfuscation_link.html.twig' with {
-                        url: path('app_wantlist_add', {productId: article.id}),
-                        class: 'btn btn-outline-dark',
-                        icon: "bi-eye-fill"
-                    } %}
-                {% endif %}            {% endif %}
-
-
-            {% if app.user.userCollection is not null and article in app.user.userCollection.article %}
-                {% include 'partials/_obfuscation_link.html.twig' with {
-                    url: path('app_collection_remove', {productId: article.id}),
-                    class: 'btn btn-outline-dark',
-                    icon: "bi-database-fill-dash"
-                } %}
-            {% else %}
-                {% include 'partials/_obfuscation_link.html.twig' with {
-                    url: path('app_collection_add', {productId: article.id}),
-                    class: 'btn btn-outline-dark',
-                    icon: "bi-database-fill-add"
-                } %}
-            {% endif %}
-        </div> #}
     </div>
 </div>

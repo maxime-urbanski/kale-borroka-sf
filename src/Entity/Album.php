@@ -52,6 +52,9 @@ class Album
     #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'album')]
     private Collection $images;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $kbrProductionId = null;
+
     public function __construct()
     {
         $this->labels = new ArrayCollection();
@@ -273,6 +276,18 @@ class Album
         if ($this->images->removeElement($image)) {
             $image->removeAlbum($this);
         }
+
+        return $this;
+    }
+
+    public function getKbrProductionId(): ?string
+    {
+        return $this->kbrProductionId;
+    }
+
+    public function setKbrProductionId(?string $kbrProductionId): static
+    {
+        $this->kbrProductionId = $kbrProductionId;
 
         return $this;
     }

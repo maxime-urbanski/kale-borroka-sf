@@ -19,12 +19,21 @@ class ArticleCrudController extends AbstractCrudController
         return Article::class;
     }
 
+    public function createEntity(string $entityFqcn)
+    {
+        $entity = new $entityFqcn();
+        $entity->setCreatedAt();
+        $entity->setUpdatedAt();
+
+        return $entity;
+    }
+
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new('name');
         yield SlugField::new('slug')->setTargetFieldName('name');
         yield AssociationField::new('album');
-        yield DateField::new('created_at');
+        yield DateField::new('created_at')->hideOnForm();
         yield NumberField::new('quantity');
         yield NumberField::new('price');
         yield AssociationField::new('support');
