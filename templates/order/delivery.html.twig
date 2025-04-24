@@ -5,10 +5,10 @@
 {% endblock %}
 {% block left %}
     {{ form_start(form) }}
-    {{ form_row(form.address) }}
+    {{ form_row(form.deliveryAddress) }}
 
-    {{ form_row(form.transport) }}
-    {{ form_row(form.payment) }}
+    {{ form_row(form.transporter) }}
+    {{ form_row(form.paymentMethod) }}
 
     {{ form_end(form) }}
 {% endblock %}

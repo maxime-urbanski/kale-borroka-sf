@@ -27,7 +27,7 @@ class ArticleCrudController extends AbstractCrudController
     /**
      * @throws \Exception
      */
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): mixed
     {
         $entity = new $entityFqcn();
         $entity->setCreatedAt(
@@ -43,6 +43,8 @@ class ArticleCrudController extends AbstractCrudController
 
     /**
      * @throws \Exception
+     *
+     * @phpstan-param mixed $entityInstance
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {

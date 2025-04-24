@@ -4,7 +4,7 @@
     {% set user = app.user %}
     <div class="row row-cols-sm-1 row-cols-lg-2 g-4 justify-content-center">
         {% for index, address in userAddresses %}
-            {% set userDefaultAddress = address == user.defaultAddress %}
+            {% set userDefaultAddress = address.isMainAddress %}
             <div class="col">
                 <div class="d-flex flex-column h-100">
                     <div class="card h-100 border border-secondary px-3 py-2 shadow p-3 bg-body-white rounded">
