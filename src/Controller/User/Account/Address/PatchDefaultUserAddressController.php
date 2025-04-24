@@ -6,8 +6,7 @@ namespace App\Controller\User\Account\Address;
 
 use App\Entity\Address;
 use App\Entity\User;
-use App\Repository\AddressRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\UserDefaultAddressInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +19,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AsController]
-class PatchDefaultUserAddressController
+final readonly class PatchDefaultUserAddressController
 {
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     #[Route(
@@ -39,15 +38,15 @@ class PatchDefaultUserAddressController
         User $user,
         #[MapEntity(mapping: ['addressId' => 'id'])]
         Address $address,
-        EntityManagerInterface $entityManager,
-        AddressRepository $addressRepository,
+        UserDefaultAddressInterface $userDefaultAddress,
         Request $request,
         RouterInterface $router,
     ): RedirectResponse {
         /** @var Session $session */
         $session = $request->getSession();
-        $user->setDefaultAddress($address);
-        $entityManager->flush();
+
+        $userDefaultAddress->defaultAddress($user, $address);
+
         $session->getFlashBAg()->add(
             'success',
             'Adresse de livraison par défaut mise à jour.'

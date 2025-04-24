@@ -39,6 +39,9 @@ class SocialNetworkRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @return array<SocialNetwork>
+     */
     public function getAllSocialNetworkForFooter(): array
     {
         return $this->createQueryBuilder('s')

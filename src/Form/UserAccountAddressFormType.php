@@ -6,6 +6,7 @@ namespace App\Form;
 
 use App\Entity\Address;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -39,6 +40,9 @@ class UserAccountAddressFormType extends AbstractType
             ->add('country', TextType::class, [
                 'label' => 'Pays',
                 'required' => true,
+            ])
+            ->add('isMainAddress', CheckboxType::class, [
+                'label' => 'Adresse de livraison principale',
             ]);
     }
 

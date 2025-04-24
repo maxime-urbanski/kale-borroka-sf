@@ -6,6 +6,7 @@ namespace App\Controller\User\Account\Address;
 
 use App\Entity\User;
 use App\Form\UserAccountAddressFormType;
+use App\Repository\AddressRepository;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,8 +38,9 @@ class UserAddressController
         User $user,
         FormFactoryInterface $form,
         Environment $twig,
+        AddressRepository $addressRepository,
     ): Response {
-        $userAddresses = $user->getAddresses();
+        $userAddresses = $addressRepository->getAllUserAddresses($user);
         $forms = [];
 
         foreach ($userAddresses as $address) {

@@ -7,7 +7,8 @@ namespace App\Controller\User\Account\Address;
 use App\Entity\Address;
 use App\Entity\User;
 use App\Form\UserAccountAddressFormType;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\AddressRepository;
+use App\Service\UserDefaultAddressInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,29 +37,22 @@ class PostUserAddressController
         #[CurrentUser]
         User $user,
         Request $request,
-        EntityManagerInterface $entityManager,
+        AddressRepository $addressRepository,
+        UserDefaultAddressInterface $userDefaultAddress,
         FormFactoryInterface $formFactory,
         RouterInterface $router,
     ): RedirectResponse {
         /** @var Session $session */
         $session = $request->getSession();
         $address = new Address();
+
         $form = $formFactory->create(UserAccountAddressFormType::class, $address);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $address->setName($form->getData()->getName());
-            $address->setAddress($form->getData()->getAddress());
-            $address->setComplementAddress($form->getData()->getComplementAddress());
-            $address->setCity($form->getData()->getCity());
-            $address->setZipcode($form->getData()->getZipcode());
-            $address->setCountry($form->getData()->getCountry());
-            $address->setIsMainAddress(false);
             $address->setUsers($user);
-
-            $entityManager->persist($address);
-            $entityManager->flush();
-
+            $addressRepository->save($address);
+            $userDefaultAddress->defaultAddress($user, $address);
             $session->getFlashBag()->add(
                 'success',
                 'L\'adresse '.$form->getData()->getName().' à bien été ajouté au carnet d\'adresse.'

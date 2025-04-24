@@ -2,12 +2,11 @@
 
 namespace App\Controller\Order;
 
+use App\Data\OrderDeliveryDto;
 use App\Entity\Order;
 use App\Entity\OrderDetails;
 use App\Entity\User;
-use App\Entity\UserCollection;
 use App\Form\OrderAddressDeliveryPaymentFormType;
-use App\Form\UserAccountAddressFormType;
 use App\Repository\UserCollectionRepository;
 use App\Service\CartService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,38 +30,23 @@ class OrderAddressDeliveryController extends AbstractController
     ): Response {
         $cart = $cartService->getFullCart();
 
-        $formAddAddress = $this->createForm(UserAccountAddressFormType::class);
-
-        $form = $this->createForm(OrderAddressDeliveryPaymentFormType::class, null, [
-            'user' => $user,
-        ]);
+        $OrderDeliveryDto = new OrderDeliveryDto();
+        $form = $this->createForm(OrderAddressDeliveryPaymentFormType::class, $OrderDeliveryDto, []);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $order = new Order();
-            $inUserCollection = $userCollectionRepository->findOneBy(['collector' => $user]);
 
-            if (!$inUserCollection) {
-                $userCollection = new UserCollection();
-                $userCollection->setUserCollection($user);
-                $entityManager->persist($user);
-            }
-
-            $getUserCollection = $userCollectionRepository->findOneBy(['collector' => $user]);
             $reference = 'kbr-'.uniqid('', true);
             $totalPrice = 0;
-
-            $addressSelected = $form->getData()['address'];
-            $transporterSelected = $form->getData()['transport'];
-            $paymentSelected = $form->getData()['payment'];
 
             $order->setReference($reference);
             $order->setBuyer($user);
             $order->setCreatedAt(new \DateTimeImmutable('now'));
             $order->setStatus('PROCESS');
-            $order->setAddress($addressSelected);
-            $order->setDelivery($transporterSelected);
-            $order->setPayment($paymentSelected);
+            $order->setAddress($OrderDeliveryDto->deliveryAddress);
+            $order->setDelivery($OrderDeliveryDto->transporter);
+            $order->setPayment($OrderDeliveryDto->paymentMethod);
 
             foreach ($cart as $product) {
                 $orderDetails = new OrderDetails();
@@ -79,10 +63,6 @@ class OrderAddressDeliveryController extends AbstractController
 
                 $orderDetails->setOrders($order);
                 $order->setTotalPrice($totalPrice);
-
-                // $getUserCollection->addArticle($product['product']);
-                // TODO: FIX DATE
-                // $getUserCollection->setSince(new \DateTime());
 
                 $entityManager->persist($orderDetails);
                 // $entityManager->persist($getUserCollection);
@@ -101,7 +81,6 @@ class OrderAddressDeliveryController extends AbstractController
         return $this->render('order/delivery.html.twig', [
             'cart' => $cartService->getFullCart(),
             'form' => $form->createView(),
-            'formAddAddress' => $formAddAddress->createView(),
         ]);
     }
 }

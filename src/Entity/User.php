@@ -57,6 +57,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $orders;
 
     #[ORM\OneToMany(mappedBy: 'users', targetEntity: Address::class)]
+    #[ORM\OrderBy(['isMainAddress' => 'DESC'])]
     private Collection $addresses;
 
     #[ORM\OneToOne(mappedBy: 'userWantlist', cascade: ['persist', 'remove'])]

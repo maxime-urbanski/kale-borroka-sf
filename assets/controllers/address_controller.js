@@ -19,6 +19,7 @@ export default class extends Controller {
       default:
         break;
     }
+
     await fetch(url, {
       method: this.methodValue
     }).then(response => window.location.href = response.url)
