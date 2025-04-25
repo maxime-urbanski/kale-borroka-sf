@@ -25,7 +25,7 @@ class OrderDetails
     #[ORM\JoinColumn(nullable: false)]
     private ?Article $product = null;
 
-    #[ORM\ManyToOne(inversedBy: 'orderDetails')]
+    #[ORM\ManyToOne(cascade: ['persist', 'remove'], inversedBy: 'orderDetails')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Order $orders = null;
 

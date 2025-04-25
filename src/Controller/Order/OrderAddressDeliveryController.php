@@ -3,13 +3,13 @@
 namespace App\Controller\Order;
 
 use App\Data\OrderDeliveryDto;
-use App\Entity\Order;
-use App\Entity\OrderDetails;
 use App\Entity\User;
 use App\Form\OrderAddressDeliveryPaymentFormType;
-use App\Repository\UserCollectionRepository;
+use App\Mapper\OrderDetailsMapper;
+use App\Mapper\OrderMapper;
+use App\Repository\OrderDetailsRepository;
+use App\Repository\OrderRepository;
 use App\Service\CartService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,51 +25,30 @@ class OrderAddressDeliveryController extends AbstractController
         #[CurrentUser] User $user,
         Request $request,
         CartService $cartService,
-        EntityManagerInterface $entityManager,
-        UserCollectionRepository $userCollectionRepository,
+        OrderMapper $orderMapper,
+        OrderRepository $orderRepository,
+        OrderDetailsMapper $orderDetailsMapper,
+        OrderDetailsRepository $orderDetailsRepository,
     ): Response {
         $cart = $cartService->getFullCart();
 
-        $OrderDeliveryDto = new OrderDeliveryDto();
-        $form = $this->createForm(OrderAddressDeliveryPaymentFormType::class, $OrderDeliveryDto, []);
+        $orderDeliveryDto = new OrderDeliveryDto();
+        $form = $this->createForm(OrderAddressDeliveryPaymentFormType::class, $orderDeliveryDto, []);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $order = new Order();
-
-            $reference = 'kbr-'.uniqid('', true);
             $totalPrice = 0;
 
-            $order->setReference($reference);
-            $order->setBuyer($user);
-            $order->setCreatedAt(new \DateTimeImmutable('now'));
-            $order->setStatus('PROCESS');
-            $order->setAddress($OrderDeliveryDto->deliveryAddress);
-            $order->setDelivery($OrderDeliveryDto->transporter);
-            $order->setPayment($OrderDeliveryDto->paymentMethod);
+            $order = $orderMapper->mapDataToOrderResource($user, $orderDeliveryDto);
 
             foreach ($cart as $product) {
-                $orderDetails = new OrderDetails();
-                $orderDetails->setProduct($product['product']);
-
-                if ($product['quantity'] > $product['quantityMaxAvailable']) {
-                    $orderDetails->setQuantity($product['quantityMaxAvailable']);
-                } else {
-                    $orderDetails->setQuantity($product['quantity']);
-                }
-
-                $orderDetails->setPrice($product['product']->getPrice() * $orderDetails->getQuantity());
+                $orderDetails = $orderDetailsMapper->mapDataToOrderDetailsResource($product, $order);
                 $totalPrice += $orderDetails->getPrice();
-
-                $orderDetails->setOrders($order);
-                $order->setTotalPrice($totalPrice);
-
-                $entityManager->persist($orderDetails);
-                // $entityManager->persist($getUserCollection);
+                $orderDetailsRepository->save($orderDetails, true);
             }
 
-            $entityManager->persist($order);
-            $entityManager->flush();
+            $order->setTotalPrice($totalPrice);
+            $orderRepository->save($order, true);
 
             $cartService->removeAll();
 
