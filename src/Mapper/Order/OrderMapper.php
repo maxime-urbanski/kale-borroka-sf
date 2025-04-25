@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Mapper;
+namespace App\Mapper\Order;
 
 use App\Data\OrderDeliveryDto;
 use App\Entity\Order;
