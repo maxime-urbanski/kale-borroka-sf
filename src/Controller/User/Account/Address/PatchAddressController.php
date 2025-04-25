@@ -6,7 +6,7 @@ namespace App\Controller\User\Account\Address;
 
 use App\Entity\Address;
 use App\Form\UserAccountAddressFormType;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\AddressRepository;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +32,7 @@ class PatchAddressController
     public function __invoke(
         Address $address,
         Request $request,
-        EntityManagerInterface $entityManager,
+        AddressRepository $addressRepository,
         RouterInterface $router,
         FormFactoryInterface $formFactory,
     ): RedirectResponse {
@@ -45,7 +45,7 @@ class PatchAddressController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $addressRepository->save($address, true);
             $session->getFlashBag()->add(
                 'success',
                 'Adresse '.$address->getName().' mise à jour.'
