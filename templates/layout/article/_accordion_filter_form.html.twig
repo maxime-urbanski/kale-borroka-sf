@@ -1,11 +1,15 @@
-<div class="filter-accordion mb-4 {{ order is defined ? order : '' }}"
-     data-controller="filter-accordion">
+<div class="filter-accordion cursor-pointer mb-4 {{ order is defined ? order : '' }}"
+     data-controller="filter-accordion"
+     data-action="click->filter-accordion#open"
+>
     <div class="filter-label bg-black text-white fw-bolder rounded-2">
         {{ form_label(form) }}
-        <i class="bi bi-chevron-compact-down cursor-pointer {{ opened is defined ? 'rotate-180' : '' }}"
-           data-action="click->filter-accordion#open"></i>
+        <i class="bi bi-chevron-compact-down {{ opened is defined ? 'rotate-180' : '' }}"
+           data-filter-accordion-target="icon">
+        </i>
     </div>
-    <div class="filter-body {{ opened is defined ? 'opened' : '' }}">
+    <div class="filter-body {{ opened is defined ? 'opened' : '' }} no-scroll-bar"
+         data-filter-accordion-target="body">
         {{ form_widget(form) }}
     </div>
 </div>

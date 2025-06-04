@@ -1,10 +1,9 @@
 import {Controller} from "@hotwired/stimulus";
 
 export default class extends Controller {
+  static targets = ['icon', 'body']
   open(e) {
-    const filterBody = this.element.lastElementChild
-    filterBody.classList.toggle('opened')
-    const chevron = e.currentTarget
-    chevron.classList.toggle('rotate-180')
+    this.bodyTarget.classList.toggle('opened')
+    this.iconTarget.classList.toggle('rotate-180')
   }
 }

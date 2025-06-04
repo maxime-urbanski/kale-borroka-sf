@@ -6,6 +6,7 @@
 @import "layout/footer";
 @import "layout/breadcrumb";
 @import "layout/overlay";
+@import "layout/active-filter";
 
 .cursor-pointer {
     cursor: pointer;
@@ -30,4 +31,18 @@
 
 .w-content {
     width: fit-content;
+}
+
+.no-scroll-bar {
+    overflow: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.no-scroll-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.mb-100 {
+    margin-bottom: 100px;
 }
