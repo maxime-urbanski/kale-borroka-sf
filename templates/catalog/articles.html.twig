@@ -1,58 +1,55 @@
 {% extends 'base.html.twig' %}
+{% set active_filters = filters.artists|default([])
+    |merge(filters.styles|default([]))
+    |merge(filters.labels|default([])) %}
 
 {% block body %}
-    <div class="container mt-5">
+    <div class="container">
         {% include 'layout/_breadcrumb.html.twig' with {breadcrumb} %}
-        <div class="row">
-            <div class="col-md-3">
-                <p class="badge text-bg-dark" data-test-badge="count-production">
-                    {{ articles.totalItemCount }} éléments trouvés.
-                </p>
-                {{ form_start(form) }}
-                <div class="d-flex flex-column flex-nowrap">
-                    {% for formChild in form.children.globalFilters.children %}
-                        {% if formChild.vars.name == 'artists' %}
-                            {% include 'layout/article/_accordion_filter_form.html.twig' with {
-                                form: formChild,
-                                order: 'order-first',
-                                opened: true
-                            } %}
-                        {% endif %}
-                        {% if formChild.vars.name == 'labels' %}
-                            {% include 'layout/article/_accordion_filter_form.html.twig' with {
-                                form: formChild,
-                                order: 'order-2',
-                            } %}
-                        {% endif %}
-                        {% if formChild.vars.name == 'styles' %}
-                            {% include 'layout/article/_accordion_filter_form.html.twig' with {
-                                form: formChild,
-                                order: 'order-3',
-                            } %}
-                        {% endif %}
-                        {% if formChild.vars.name == 'kbrProduction' %}
-                            <div class="order-last">
-                                {{ form_widget(formChild) }}
-                                {{ form_label(formChild) }}
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                    {% if form.supports is defined %}
-                        {% include 'layout/article/_accordion_filter_form.html.twig' with {
-                            form: form.supports,
-                            order: 'order-4',
-                        } %}
-                    {% endif %}
-                    <div class="d-grid col-12 mx-auto mt-3 order-last">
-                        <button class="btn btn-outline-dark" type="submit">Envoyer</button>
-                    </div>
+        <div class="d-none d-md-flex row mb-3">
+            <div class="col-2">
+                <div class="d-flex flex-column h-100">
+                    {% include 'layout/_canvas-form.html.twig' with {
+                        action: 'filter',
+                        title: 'Filtres',
+                        form,
+                        canva_position: 'Left',
+                        method: 'GET'
+                    } %}
                 </div>
-                {{ form_end(form) }}
             </div>
-            <div class="col-md-9">
-                {% include 'layout/article/_active-filter.html.twig' with {
-                    filters
-                } %}
+            <div class="col-9 position-relative"
+                 data-controller="scrollbar">
+                <i class="bi bi-caret-left prev hidden"
+                   data-scrollbar-target="prev"
+                   data-action="click->scrollbar#prevc"
+                ></i>
+                <div id="container-badges-filter"
+                     class="h-100 overflow-x-hidden"
+                     data-scrollbar-target="main"
+                >
+                    {% include 'layout/article/_active-filter.html.twig' with {
+                        filters
+                    } %}
+                </div>
+                <i class="bi bi-caret-right next hidden"
+                   data-scrollbar-target="next"
+                   data-action="click->scrollbar#next"></i>
+            </div>
+            {% if active_filters %}
+                <div class="col-1">
+                    {% include 'partials/_obfuscation_link.html.twig' with {
+                        url: path('app_catalog_list', {
+                            support: app.request.get('support')
+                        }),
+                        class: "btn btn-sm btn-outline-danger float-end",
+                        icon: 'bi-x'
+                    } %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="row">
+            <div class="col">
                 {% include 'layout/article/_article-grid.html.twig' with {
                     articles: articles.items,
                     col_sm: 2,

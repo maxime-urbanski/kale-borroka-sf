@@ -1,5 +1,7 @@
 {% set action_create = action == 'create' %}
 {% set action_update = action == 'update' %}
+{% set action_filter = action == 'filter' %}
+{% set canva_position = canva_position | default('Right') %}
 
 {% if action_create %}
     <div
@@ -21,31 +23,104 @@
         {{ text_button }}
     </button>
 {% endif %}
-<div class="offcanvas offcanvas-end"
+
+{% if action_filter %}
+    <button class="btn btn-sm btn-outline-dark btn-lg h-100"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasLeft"
+            aria-controls="offcanvasLeft">
+        <i class="bi bi-filter-left"></i>
+    </button>
+{% endif %}
+
+<div class="offcanvas offcanvas-{{ canva_position is same as 'Left' ? 'start' : 'end' }}"
      tabindex="-1"
     {% if key is defined %}
-        id="offcanvasRight-{{ key }}"
+        id="offcanvas{{ canva_position }}-{{ key }}"
     {% else %}
-        id="offcanvasRight"
+        id="offcanvas{{ canva_position }}"
     {% endif %}
-     aria-labelledby="offcanvasRightLabel">
+     aria-labelledby="offcanvas{{ canva_position }}Label">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title"
-            id="offcanvasRightLabel">{{ title }}</h5>
+            id="offcanvas{{ canva_position }}Label">{{ title }}</h5>
         <button type="button"
                 class="btn-close"
                 data-bs-dismiss="offcanvas"
                 aria-label="Close"></button>
     </div>
-    <div class="offcanvas-body">
-        {{ form_start(form, {
-            action: action_form,
-            method: method ?? 'post'
-        }) }}
-        {{ form_rest(form) }}
+    <div class="offcanvas-body overflow-y-hidden position-relative">
+        <div class="overflow-y-scroll h-100 no-scroll-bar">
+            {% if action_filter %}
+                <p class="badge text-bg-dark" data-test-badge="count-production">
+                    {{ articles.totalItemCount }} éléments trouvés.
+                </p>
+                {{ form_start(form, {
+                    attr: {
+                        class: 'mb-100'
+                    }
+                }) }}
+                <div class="d-flex flex-column flex-nowrap">
+                    {% for formChild in form.children.globalFilters.children %}
+                        {% if formChild.vars.name == 'artists' %}
+                            {% include 'layout/article/_accordion_filter_form.html.twig' with {
+                                form: formChild,
+                                order: 'order-first',
+                                opened: true
+                            } %}
+                        {% endif %}
+                        {% if formChild.vars.name == 'labels' %}
+                            {% include 'layout/article/_accordion_filter_form.html.twig' with {
+                                form: formChild,
+                                order: 'order-2',
+                            } %}
+                        {% endif %}
+                        {% if formChild.vars.name == 'styles' %}
+                            {% include 'layout/article/_accordion_filter_form.html.twig' with {
+                                form: formChild,
+                                order: 'order-3',
+                            } %}
+                        {% endif %}
+                        {% if formChild.vars.name == 'kbrProduction' %}
+                            <div class="order-last">
+                                {{ form_widget(formChild) }}
+                                {{ form_label(formChild) }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% if form.supports is defined %}
+                        {% include 'layout/article/_accordion_filter_form.html.twig' with {
+                            form: form.supports,
+                            order: 'order-4',
+                        } %}
+                    {% endif %}
 
-        <div class="d-grid col-12 mx-auto mt-3 order-last">
-            <button class="btn btn-outline-dark" type="submit">Envoyer</button>
+                </div>
+            {% else %}
+
+                {{ form_start(form, {
+                    action: action_form,
+                    method: method ?? 'post',
+                }) }}
+                {{ form_rest(form) }}
+            {% endif %}
+        </div>
+        <div class="d-grid col-12 mx-auto mt-3 order-last position-absolute bottom-0 start-0">
+            <div class="bg-white px-2 py-4 border-top">
+                <button class="btn btn-outline-dark w-100" type="submit">Envoyer</button>
+                {% if filters.artists is not empty or
+                    filters.styles is not empty or
+                    filters.labels is not empty %}
+
+                    {% include 'partials/_obfuscation_link.html.twig' with {
+                        url: path('app_catalog_list', {
+                            support: app.request.get('support')
+                        }),
+                        class: "btn btn-danger w-100 mt-3",
+                        text_btn: 'Supprimer les filtres'
+                    } %}
+                {% endif %}
+            </div>
         </div>
         {{ form_end(form) }}
     </div>

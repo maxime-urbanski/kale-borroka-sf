@@ -1,50 +1,52 @@
-<div class="row mb-3">
-    <div class="col">
-        {% if filters.artists %}
-            {% for activeArtistsFitler in filters.artists %}
-                <span class="badge rounded-pill text-bg-primary"
-                      data-controller="remove-filters"
-                      data-remove-filters-category-value="artists"
-                      data-remove-filters-id-value="{{ activeArtistsFitler.id }}">
+<div id="container-filter-active"
+     class="d-flex align-items-center h-100 gap-2 overflow-x-scroll no-scroll-bar"
+     data-scrollbar-target="children"
+>
+    {% if filters.artists %}
+        {% for activeArtistsFitler in filters.artists %}
+            <span class="badge rounded-pill text-bg-primary"
+                  data-controller="remove-filters"
+                  data-remove-filters-category-value="artists"
+                  data-remove-filters-id-value="{{ activeArtistsFitler.id }}">
                     {{ activeArtistsFitler.name |upper }}
                     <i class="bi bi-x-lg ms-1 cursor-pointer"
                        data-action="click->remove-filters#remove"></i>
                 </span>
-            {% endfor %}
-        {% endif %}
-        {% if filters.labels %}
-            {% for activeLabelsFilter in filters.labels %}
-                <span class="badge rounded-pill text-bg-secondary"
-                      data-controller="remove-filters"
-                      data-remove-filters-category-value="labels"
-                      data-remove-filters-id-value="{{ activeLabelsFilter.id }}">
-                    {{ activeLabelsFilter.name | upper }}
-                    <i class="bi bi-x-lg ms-1 cursor-pointer"
-                       data-action="click->remove-filters#remove"></i>
-                </span>
-            {% endfor %}
-        {% endif %}
-        {% if filters.styles %}
-            {% for activeStylesFitler in filters.styles %}
-                <span class="badge rounded-pill text-bg-warning"
-                      data-controller="remove-filters"
-                      data-remove-filters-category-value="styles"
-                      data-remove-filters-id-value="{{ activeStylesFitler.id }}">
-                    {{ activeStylesFitler.name | upper }}
-                    <i class="bi bi-x-lg ms-1 cursor-pointer" data-action="click->remove-filters#remove"></i>
-                </span>
-            {% endfor %}
-        {% endif %}
-        {% if filters.supports |length > 1 %}
-            {% for activeSupportsFitler in filters.supports %}
-                <span class="badge rounded-pill text-bg-danger"
-                      data-controller="remove-filters"
-                      data-remove-filters-category-value="supports"
-                      data-remove-filters-id-value="{{ activeSupportsFitler.id }}">
-                    {{ activeSupportsFitler.name |upper }}
-                    <i class="bi bi-x-lg ms-1 cursor-pointer" data-action="click->remove-filters#remove"></i>
-                </span>
-            {% endfor %}
-        {% endif %}
-    </div>
+        {% endfor %}
+    {% endif %}
+    {% if filters.labels %}
+        {% for activeLabelsFilter in filters.labels %}
+            <span class="badge rounded-pill text-bg-secondary"
+                  data-controller="remove-filters"
+                  data-remove-filters-category-value="labels"
+                  data-remove-filters-id-value="{{ activeLabelsFilter.id }}">
+        {{ activeLabelsFilter.name | upper }}
+        <i class="bi bi-x-lg ms-1 cursor-pointer"
+           data-action="click->remove-filters#remove"></i>
+    </span>
+        {% endfor %}
+    {% endif %}
+    {% if filters.styles %}
+        {% for activeStylesFitler in filters.styles %}
+            <span class="badge rounded-pill text-bg-warning"
+                  data-controller="remove-filters"
+                  data-remove-filters-category-value="styles"
+                  data-remove-filters-id-value="{{ activeStylesFitler.id }}">
+        {{ activeStylesFitler.name | upper }}
+        <i class="bi bi-x-lg ms-1 cursor-pointer" data-action="click->remove-filters#remove"></i>
+    </span>
+        {% endfor %}
+    {% endif %}
+    {% if filters.supports |length > 1 %}
+        {% for activeSupportsFitler in filters.supports %}
+            <span class="badge rounded-pill text-bg-danger"
+                  data-controller="remove-filters"
+                  data-remove-filters-category-value="supports"
+                  data-remove-filters-id-value="{{ activeSupportsFitler.id }}">
+        {{ activeSupportsFitler.name |upper }}
+        <i class="bi bi-x-lg ms-1 cursor-pointer" data-action="click->remove-filters#remove"></i>
+    </span>
+        {% endfor %}
+    {% endif %}
+
 </div>

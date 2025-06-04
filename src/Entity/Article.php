@@ -55,6 +55,8 @@ class Article
     {
         $this->orderDetails = new ArrayCollection();
         $this->userCollections = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable('now');
+        $this->updatedAt = new \DateTimeImmutable('now');
     }
 
     public function getId(): ?int
