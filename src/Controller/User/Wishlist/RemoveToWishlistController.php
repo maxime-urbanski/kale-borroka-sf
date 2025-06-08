@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\User\Wantlist;
+namespace App\Controller\User\Wishlist;
 
 use App\Entity\Article;
 use App\Entity\User;
-use App\Repository\WantlistRepository;
+use App\Repository\WishlistItemRepository;
+use App\Repository\WishlistRepository;
 use App\Service\RefererInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,11 +22,14 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AsController]
-class RemoveToWantlistController
+class RemoveToWishlistController
 {
+    /**
+     * @throws NonUniqueResultException
+     */
     #[Route(
-        path: '/wantlist/remove/{productId}',
-        name: 'app_wantlist_remove',
+        path: '/wishlist/remove/{productId}',
+        name: 'app_wishlist_remove',
         requirements: ['productId' => Requirement::DIGITS],
         methods: [Request::METHOD_GET]
     )]
@@ -36,21 +40,26 @@ class RemoveToWantlistController
         #[MapEntity(mapping: ['productId' => 'id'])]
         Article $article,
         RefererInterface $referer,
-        EntityManagerInterface $entityManager,
-        WantlistRepository $wantlistRepository,
+        WishlistRepository $wishlistRepository,
+        WishlistItemRepository $wishlistItemRepository,
         Request $request,
     ): RedirectResponse {
-        $currentUserWantlist = $wantlistRepository->findOneBy(
-            ['userWantlist' => $user]
-        );
-
         /** @var Session $session */
         $session = $request->getSession();
 
         try {
-            $currentUserWantlist->removeProduct($article);
-            $entityManager->persist($currentUserWantlist);
-            $entityManager->flush();
+            $userWishlist = $wishlistRepository->getUserWishlist($user);
+
+            $wishlistItem = $wishlistItemRepository->findOneBy([
+                'wishlist' => $userWishlist->getOneOrNullResult(),
+                'article' => $article,
+            ]);
+
+            if (null === $wishlistItem) {
+                throw new NotFoundHttpException();
+            }
+
+            $wishlistItemRepository->remove($wishlistItem, true);
             $session->getFlashBag()->add(
                 'success',
                 $article->getName().' à bien été supprimé de la wantlist'

@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\User\Wantlist;
+namespace App\Controller\User\Wishlist;
 
 use App\Entity\Article;
 use App\Entity\User;
-use App\Entity\Wantlist;
-use App\Entity\WantlistItems;
-use App\Repository\WantlistRepository;
+use App\Entity\WishlistItem;
+use App\Repository\WishlistItemRepository;
+use App\Repository\WishlistRepository;
 use App\Service\RefererInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,11 +22,11 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AsController]
-class AddToWantlistController
+class AddToWishlistController
 {
     #[Route(
-        path: '/wantlist/add/{productId}',
-        name: 'app_wantlist_add',
+        path: '/wishlist/add/{productId}',
+        name: 'app_wishlist_add',
         requirements: ['productId' => Requirement::DIGITS],
         methods: [Request::METHOD_GET]
     )]
@@ -38,30 +37,25 @@ class AddToWantlistController
         #[MapEntity(mapping: ['productId' => 'id'])]
         Article $article,
         RefererInterface $referer,
-        EntityManagerInterface $entityManager,
-        WantlistRepository $wantlistRepository,
+        WishlistItemRepository $wishlistItemRepository,
+        WishlistRepository $wishlistRepository,
         Request $request,
     ): RedirectResponse {
-        if (!$user->getWantlist()) {
-            $wantlist = new Wantlist();
-            $wantlist->setUserWantlist($user);
-            $entityManager->persist($wantlist);
-        } else {
-            $wantlist = $wantlistRepository->findOneBy(
-                ['userWantlist' => $user]
-            );
-        }
-
         /** @var Session $session */
         $session = $request->getSession();
 
         try {
-            $wantlistItems = new WantlistItems();
-            $wantlistItems->setWantlist($wantlist);
-            $wantlistItems->setArticle($article);
-            $wantlistItems->setSince(new \DateTime('now'));
-            $entityManager->persist($wantlistItems);
-            $entityManager->flush();
+            $wishlistItem = new WishlistItem();
+            $wishlist = $wishlistRepository->findOneBy(['user' => $user]);
+            $wishlistItem->setWishlist($wishlist);
+            $wishlistItem->setArticle($article);
+            $wishlistItem->setAddedAt(
+                new \DateTimeImmutable('now',
+                    new \DateTimeZone('Europe/Paris'))
+            );
+
+            $wishlistItemRepository->save($wishlistItem, true);
+
             $session->getFlashBag()->add(
                 'success',
                 $article->getName().' à bien été ajouté à la wantlist'

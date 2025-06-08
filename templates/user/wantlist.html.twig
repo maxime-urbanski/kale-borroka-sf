@@ -1,12 +1,10 @@
 {% extends 'user/user-dashboard.html.twig' %}
 
 {% block content %}
-    {% set categories = ['', '', '', 'Produit', 'Prix', 'Quantité disponible'] %}
     {% include 'user/_table_product.html.twig' with {
-        categories,
-        products: wantlist.items,
+        categories: ['', '', '', 'Produit', 'Prix', 'Quantité disponible'],
+        products: pagination.items[0],
         empty_message: 'Rien dans ta wantlist !'
     } %}
-    {{ knp_pagination_render(wantlist, 'partials/_pagination.html.twig') }}
-
+    {{ knp_pagination_render(pagination, 'partials/_pagination.html.twig') }}
 {% endblock %}

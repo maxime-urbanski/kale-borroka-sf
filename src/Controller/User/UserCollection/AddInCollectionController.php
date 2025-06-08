@@ -6,11 +6,11 @@ namespace App\Controller\User\UserCollection;
 
 use App\Entity\Article;
 use App\Entity\User;
-use App\Entity\UserCollection;
 use App\Entity\UserCollectionItems;
+use App\Repository\UserCollectionItemsRepository;
 use App\Repository\UserCollectionRepository;
 use App\Service\RefererInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +25,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 class AddInCollectionController
 {
+    /**
+     * @throws NonUniqueResultException
+     * @throws \Exception
+     */
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     #[Route(
         path: '/collection/add/{productId}',
@@ -38,29 +42,26 @@ class AddInCollectionController
         #[MapEntity(mapping: ['productId' => 'id'])]
         Article $article,
         RefererInterface $referer,
-        EntityManagerInterface $entityManager,
         UserCollectionRepository $userCollectionRepository,
+        UserCollectionItemsRepository $userCollectionItemsRepository,
         Request $request,
     ): RedirectResponse {
-        if (!$user->getUserCollection()) {
-            $collection = new UserCollection();
-            $collection->setUserCollection($user);
-            $entityManager->persist($collection);
-        } else {
-            $collection = $userCollectionRepository->findOneBy(['user_collection' => $user]);
-        }
-
+        $userCollection = $userCollectionRepository->getUserCollection($user)->getOneOrNullResult();
         /** @var Session $session */
         $session = $request->getSession();
 
         try {
             $userCollectionItems = new UserCollectionItems();
-            $userCollectionItems->setUserCollection($collection);
+            $userCollectionItems->setCollection($userCollection);
             $userCollectionItems->setArticle($article);
-            $userCollectionItems->setSince(new \DateTime('now'));
+            $userCollectionItems->setAddedAt(
+                new \DateTimeImmutable('now',
+                    new \DateTimeZone('Europe/Paris')
+                )
+            );
+
+            $userCollectionItemsRepository->save($userCollectionItems, true);
             $session->getFlashbag()->add('success', $article->getName().' a bien été ajouté à ta collection');
-            $entityManager->persist($userCollectionItems);
-            $entityManager->flush();
         } catch (NotFoundHttpException $exception) {
             $session->getFlashbag()->add('danger', $exception);
         }

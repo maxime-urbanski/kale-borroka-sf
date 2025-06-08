@@ -4,10 +4,9 @@
     {% set categories = ['', '', 'Produit', 'Support', 'Ajouter le'] %}
     {% include 'user/_table_product.html.twig' with {
         categories,
-        products: collection.items,
+        products: pagination.items[0] ?? [],
         empty_message: 'Ta collection est vide !'
     } %}
-    {{ knp_pagination_render(collection, 'partials/_pagination.html.twig') }}
-
+    {{ knp_pagination_render(pagination, 'partials/_pagination.html.twig') }}
 {% endblock %}
 

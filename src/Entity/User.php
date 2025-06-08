@@ -60,14 +60,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OrderBy(['isMainAddress' => 'DESC'])]
     private Collection $addresses;
 
-    #[ORM\OneToOne(mappedBy: 'userWantlist', cascade: ['persist', 'remove'])]
-    private ?Wantlist $wantlist = null;
-
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Address $defaultAddress = null;
-
-    #[ORM\OneToOne(mappedBy: 'user_collection', cascade: ['persist', 'remove'])]
-    private ?UserCollection $user_collection = null;
 
     public function getId(): ?int
     {
@@ -245,18 +239,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getWantlist(): ?Wantlist
-    {
-        return $this->wantlist;
-    }
-
-    public function setWantlist(?Wantlist $wantlist): static
-    {
-        $this->wantlist = $wantlist;
-
-        return $this;
-    }
-
     public function getDefaultAddress(): ?Address
     {
         return $this->defaultAddress;
@@ -265,23 +247,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setDefaultAddress(?Address $defaultAddress): static
     {
         $this->defaultAddress = $defaultAddress;
-
-        return $this;
-    }
-
-    public function getUserCollection(): ?UserCollection
-    {
-        return $this->user_collection;
-    }
-
-    public function setUserCollection(UserCollection $user_collection): static
-    {
-        // set the owning side of the relation if necessary
-        if ($user_collection->getUserCollection() !== $this) {
-            $user_collection->setUserCollection($this);
-        }
-
-        $this->user_collection = $user_collection;
 
         return $this;
     }

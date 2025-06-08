@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace App\Controller\Security;
 
 use App\Entity\User;
+use App\Entity\UserCollection;
+use App\Entity\Wishlist;
 use App\Form\RegistrationFormType;
+use App\Repository\UserCollectionRepository;
+use App\Repository\UserRepository;
+use App\Repository\WishlistRepository;
 use App\Security\UserAuthenticator;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +27,9 @@ class RegistrationController extends AbstractController
         UserPasswordHasherInterface $userPasswordHasher,
         UserAuthenticatorInterface $userAuthenticator,
         UserAuthenticator $authenticator,
-        EntityManagerInterface $entityManager,
+        UserRepository $userRepository,
+        UserCollectionRepository $userCollectionRepository,
+        WishlistRepository $wishlistRepository,
     ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -40,8 +46,15 @@ class RegistrationController extends AbstractController
 
             $user->setRoles(['ROLE_USER']);
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $userRepository->save($user, true);
+
+            $wishlist = new Wishlist();
+            $wishlist->setUser($user);
+            $wishlistRepository->save($wishlist, true);
+
+            $userCollection = new UserCollection();
+            $userCollection->setUser($user);
+            $userCollectionRepository->save($userCollection, true);
             // do anything else you need here, like send an email
 
             return $userAuthenticator->authenticateUser(
