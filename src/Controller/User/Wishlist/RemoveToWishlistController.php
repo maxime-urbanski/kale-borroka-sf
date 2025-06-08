@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Repository\WishlistItemRepository;
 use App\Repository\WishlistRepository;
 use App\Service\RefererInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +24,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 class RemoveToWishlistController
 {
+    /**
+     * @throws NonUniqueResultException
+     */
     #[Route(
         path: '/wishlist/remove/{productId}',
         name: 'app_wishlist_remove',
