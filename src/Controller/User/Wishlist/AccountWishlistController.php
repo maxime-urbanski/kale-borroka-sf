@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\User\Wantlist;
+namespace App\Controller\User\Wishlist;
 
 use App\Entity\User;
-use App\Repository\WantlistItemsRepository;
+use App\Repository\WishlistRepository;
 use App\Service\CustomPaginationInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,18 +22,19 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 #[AsController]
-class AccountWantlistController extends AbstractController
+class AccountWishlistController extends AbstractController
 {
     /**
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
+     * @throws NonUniqueResultException
      */
     #[Route(
-        path: '/mon-compte/ma-wantlist/{page}',
-        name: 'app_user_wantlist',
+        path: '/mon-compte/wishlist/{page}',
+        name: 'app_user_wishlist',
         requirements: [
-            'page' => '^(page-)'.Requirement::DIGITS,
+            'page' => '^(page-)' . Requirement::DIGITS,
         ],
         defaults: ['page' => 'page-1'],
         methods: [Request::METHOD_GET]
@@ -40,20 +42,19 @@ class AccountWantlistController extends AbstractController
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function __invoke(
         #[CurrentUser]
-        User $user,
-        Environment $twig,
-        WantlistItemsRepository $wantlistItemsRepository,
+        User                      $user,
+        Environment               $twig,
+        WishlistRepository        $wishlistRepository,
         CustomPaginationInterface $customPagination,
-        string $page,
-    ): Response {
-        $userWantlist = $user->getWantlist() ?
-            $wantlistItemsRepository->findBy(['wantlist' => $user->getWantlist()]) :
-            [];
+        string                    $page,
+    ): Response
+    {
+        $userWantlist = $wishlistRepository->getUserWishlist($user);
 
-        $wantlistPaginate = $customPagination->pagination($userWantlist, $page, 6);
+        $wishlistPaginate = $customPagination->pagination($userWantlist, $page, 6);
 
         $content = $twig->render('user/wantlist.html.twig', [
-            'wantlist' => $wantlistPaginate,
+            'pagination' => $wishlistPaginate,
         ]);
 
         return new Response($content);

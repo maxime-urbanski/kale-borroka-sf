@@ -2,15 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\User\Wantlist;
+namespace App\Controller\User\Wishlist;
 
 use App\Entity\Article;
 use App\Entity\User;
-use App\Entity\Wantlist;
-use App\Entity\WantlistItems;
-use App\Repository\WantlistRepository;
+use App\Repository\WishlistItemRepository;
+use App\Repository\WishlistRepository;
 use App\Service\RefererInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,48 +21,45 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AsController]
-class AddToWantlistController
+class RemoveToWishlistController
 {
     #[Route(
-        path: '/wantlist/add/{productId}',
-        name: 'app_wantlist_add',
+        path: '/wishlist/remove/{productId}',
+        name: 'app_wishlist_remove',
         requirements: ['productId' => Requirement::DIGITS],
         methods: [Request::METHOD_GET]
     )]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function __invoke(
         #[CurrentUser]
-        User $user,
+        User                   $user,
         #[MapEntity(mapping: ['productId' => 'id'])]
-        Article $article,
-        RefererInterface $referer,
-        EntityManagerInterface $entityManager,
-        WantlistRepository $wantlistRepository,
-        Request $request,
-    ): RedirectResponse {
-        if (!$user->getWantlist()) {
-            $wantlist = new Wantlist();
-            $wantlist->setUserWantlist($user);
-            $entityManager->persist($wantlist);
-        } else {
-            $wantlist = $wantlistRepository->findOneBy(
-                ['userWantlist' => $user]
-            );
-        }
-
+        Article                $article,
+        RefererInterface       $referer,
+        WishlistRepository     $wishlistRepository,
+        WishlistItemRepository $wishlistItemRepository,
+        Request                $request,
+    ): RedirectResponse
+    {
         /** @var Session $session */
         $session = $request->getSession();
 
         try {
-            $wantlistItems = new WantlistItems();
-            $wantlistItems->setWantlist($wantlist);
-            $wantlistItems->setArticle($article);
-            $wantlistItems->setSince(new \DateTime('now'));
-            $entityManager->persist($wantlistItems);
-            $entityManager->flush();
+            $userWishlist = $wishlistRepository->getUserWishlist($user);
+
+            $wishlistItem = $wishlistItemRepository->findOneBy([
+                'wishlist' => $userWishlist->getOneOrNullResult(),
+                'article' => $article
+            ]);
+
+            if (null === $wishlistItem) {
+                throw new NotFoundHttpException();
+            }
+
+            $wishlistItemRepository->remove($wishlistItem, true);
             $session->getFlashBag()->add(
                 'success',
-                $article->getName().' à bien été ajouté à la wantlist'
+                $article->getName() . ' à bien été supprimé de la wantlist'
             );
         } catch (NotFoundHttpException $exception) {
             $session->getFlashBag()->add(

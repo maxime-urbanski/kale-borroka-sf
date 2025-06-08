@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Controller\Security;
 
 use App\Entity\User;
+use App\Entity\Wishlist;
 use App\Form\RegistrationFormType;
+use App\Repository\UserRepository;
+use App\Repository\WishlistRepository;
 use App\Security\UserAuthenticator;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,12 +21,15 @@ class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
     public function register(
-        Request $request,
+        Request                     $request,
         UserPasswordHasherInterface $userPasswordHasher,
-        UserAuthenticatorInterface $userAuthenticator,
-        UserAuthenticator $authenticator,
-        EntityManagerInterface $entityManager,
-    ): Response {
+        UserAuthenticatorInterface  $userAuthenticator,
+        UserAuthenticator           $authenticator,
+        UserRepository              $userRepository,
+        WishlistRepository          $wishlistRepository,
+
+    ): Response
+    {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
@@ -40,8 +45,12 @@ class RegistrationController extends AbstractController
 
             $user->setRoles(['ROLE_USER']);
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $wishlist = new Wishlist();
+            $wishlist->setUser($user);
+
+            $userRepository->save($user, true);
+            $wishlistRepository->save($wishlist, true);
+
             // do anything else you need here, like send an email
 
             return $userAuthenticator->authenticateUser(

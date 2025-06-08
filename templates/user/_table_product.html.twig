@@ -1,6 +1,6 @@
 {% set route = app.current_route %}
-{% set wantlist_route =  route == 'app_user_wantlist' %}
-
+{% set wishlist_route =  route == 'app_user_wishlist' %}
+{% set products_collection = wishlist_route ? products.wishlistItems : [] %}
 <table class="table align-middle rounded-1">
     <thead>
     <tr>
@@ -10,9 +10,9 @@
     </tr>
     </thead>
     <tbody>
-    {% for item in products %}
-        {% set remove_action = wantlist_route ?
-            path('app_wantlist_remove', {productId: item.article.id}) :
+    {% for item in products_collection %}
+        {% set remove_action = wishlist_route ?
+            path('app_wishlist_remove', {productId: item.article.id}) :
             path('app_collection_remove', {productId: item.article.id}) %}
         <tr>
             <th>
@@ -24,7 +24,7 @@
                     } %}
                 </div>
             </th>
-            {% if wantlist_route %}
+            {% if wishlist_route %}
                 <th>
                     <div class="d-flex justify-content-center align-items-center">
                         {% include 'partials/_obfuscation_link.html.twig' with {
@@ -56,12 +56,12 @@
                 {{ item.article.name }} - {{ item.article.support | upper }}
             </th>
             <th class="text-center  fw-light">
-                {{ wantlist_route ?
+                {{ wishlist_route ?
                 (item.article.price / 100) |format_currency('EUR') :
                 item.article.support | upper }}
             </th>
             <th class="text-center fw-light">
-                {{ wantlist_route ?
+                {{ wishlist_route ?
                 item.article.quantity :
                 item.since | date }}
             </th>
