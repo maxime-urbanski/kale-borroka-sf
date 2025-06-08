@@ -33,15 +33,14 @@ class AddToWishlistController
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function __invoke(
         #[CurrentUser]
-        User                   $user,
+        User $user,
         #[MapEntity(mapping: ['productId' => 'id'])]
-        Article                $article,
-        RefererInterface       $referer,
+        Article $article,
+        RefererInterface $referer,
         WishlistItemRepository $wishlistItemRepository,
-        WishlistRepository     $wishlistRepository,
-        Request                $request,
-    ): RedirectResponse
-    {
+        WishlistRepository $wishlistRepository,
+        Request $request,
+    ): RedirectResponse {
         /** @var Session $session */
         $session = $request->getSession();
 
@@ -59,7 +58,7 @@ class AddToWishlistController
 
             $session->getFlashBag()->add(
                 'success',
-                $article->getName() . ' à bien été ajouté à la wantlist'
+                $article->getName().' à bien été ajouté à la wantlist'
             );
         } catch (NotFoundHttpException $exception) {
             $session->getFlashBag()->add(

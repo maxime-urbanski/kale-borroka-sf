@@ -49,7 +49,7 @@ class WishlistRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('w')
             ->where('w.user = :user')
             ->setParameters([
-                'user' => $user
+                'user' => $user,
             ])
             ->getQuery();
     }

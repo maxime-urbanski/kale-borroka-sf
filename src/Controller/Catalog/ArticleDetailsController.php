@@ -6,9 +6,13 @@ namespace App\Controller\Catalog;
 
 use App\Data\AddToCartWithQuantity;
 use App\Entity\Article;
+use App\Entity\User;
 use App\Form\AddToCartWithQuantityType;
 use App\Repository\ArticleRepository;
+use App\Repository\UserCollectionRepository;
+use App\Repository\WishlistRepository;
 use App\Service\BreadcrumbInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -17,6 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -31,6 +36,7 @@ class ArticleDetailsController
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
+     * @throws NonUniqueResultException
      */
     #[Route(
         path: '/catalog/{support}/{slug}',
@@ -47,9 +53,16 @@ class ArticleDetailsController
         FormFactoryInterface $formInterface,
         Request $request,
         UrlGeneratorInterface $urlGenerator,
+        WishlistRepository $wishlistRepository,
+        UserCollectionRepository $userCollectionRepository,
+        #[CurrentUser]
+        User $user,
     ): Response {
         $artistArticle = $articleRepository->getArticleWithSameArtist($article);
         $articleWithSameStyle = $articleRepository->getArticleWithSameStyle($article);
+
+        $userWishlist = $wishlistRepository->getUserWishlist($user)->getOneOrNullResult();
+        $userCollection = $userCollectionRepository->getUserCollection($user)->getOneOrNullResult();
 
         $addToCartData = new AddToCartWithQuantity($article);
         $addToCartForm = $formInterface->create(AddToCartWithQuantityType::class, $addToCartData);
@@ -70,6 +83,8 @@ class ArticleDetailsController
             'articleByArtist' => $artistArticle->getResult(),
             'articleSameStyle' => $articleWithSameStyle->getResult(),
             'form' => $addToCartForm->createView(),
+            'userWishlist' => $userWishlist,
+            'userCollection' => $userCollection,
         ]);
 
         return new Response($content);

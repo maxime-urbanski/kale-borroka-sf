@@ -36,15 +36,14 @@ class RemoveToWishlistController
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function __invoke(
         #[CurrentUser]
-        User                   $user,
+        User $user,
         #[MapEntity(mapping: ['productId' => 'id'])]
-        Article                $article,
-        RefererInterface       $referer,
-        WishlistRepository     $wishlistRepository,
+        Article $article,
+        RefererInterface $referer,
+        WishlistRepository $wishlistRepository,
         WishlistItemRepository $wishlistItemRepository,
-        Request                $request,
-    ): RedirectResponse
-    {
+        Request $request,
+    ): RedirectResponse {
         /** @var Session $session */
         $session = $request->getSession();
 
@@ -53,7 +52,7 @@ class RemoveToWishlistController
 
             $wishlistItem = $wishlistItemRepository->findOneBy([
                 'wishlist' => $userWishlist->getOneOrNullResult(),
-                'article' => $article
+                'article' => $article,
             ]);
 
             if (null === $wishlistItem) {
@@ -63,7 +62,7 @@ class RemoveToWishlistController
             $wishlistItemRepository->remove($wishlistItem, true);
             $session->getFlashBag()->add(
                 'success',
-                $article->getName() . ' à bien été supprimé de la wantlist'
+                $article->getName().' à bien été supprimé de la wantlist'
             );
         } catch (NotFoundHttpException $exception) {
             $session->getFlashBag()->add(

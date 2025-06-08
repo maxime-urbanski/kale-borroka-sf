@@ -3,45 +3,31 @@
 namespace App\Entity;
 
 use App\Repository\UserCollectionItemsRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserCollectionItemsRepository::class)]
 class UserCollectionItems
 {
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $since = null;
+    #[ORM\Column]
+    private ?\DateTimeImmutable $added_at = null;
 
-    #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: UserCollection::class)]
-    #[ORM\JoinColumn(name: 'user_collection_id', referencedColumnName: 'id')]
-    private ?UserCollection $user_collection = null;
-
-    #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: Article::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'article_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Article $article = null;
 
-    public function getSince(): ?\DateTimeInterface
+    #[ORM\Id]
+    #[ORM\ManyToOne(inversedBy: 'collectionItems')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?UserCollection $collection = null;
+
+    public function getAddedAt(): ?\DateTimeImmutable
     {
-        return $this->since;
+        return $this->added_at;
     }
 
-    public function setSince(\DateTimeInterface $since): static
+    public function setAddedAt(\DateTimeImmutable $added_at): static
     {
-        $this->since = $since;
-
-        return $this;
-    }
-
-    public function getUserCollection(): ?UserCollection
-    {
-        return $this->user_collection;
-    }
-
-    public function setUserCollection(?UserCollection $user_collection): static
-    {
-        $this->user_collection = $user_collection;
+        $this->added_at = $added_at;
 
         return $this;
     }
@@ -54,6 +40,18 @@ class UserCollectionItems
     public function setArticle(?Article $article): static
     {
         $this->article = $article;
+
+        return $this;
+    }
+
+    public function getCollection(): ?UserCollection
+    {
+        return $this->collection;
+    }
+
+    public function setCollection(?UserCollection $collection): static
+    {
+        $this->collection = $collection;
 
         return $this;
     }

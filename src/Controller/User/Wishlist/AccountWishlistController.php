@@ -34,7 +34,7 @@ class AccountWishlistController extends AbstractController
         path: '/mon-compte/wishlist/{page}',
         name: 'app_user_wishlist',
         requirements: [
-            'page' => '^(page-)' . Requirement::DIGITS,
+            'page' => '^(page-)'.Requirement::DIGITS,
         ],
         defaults: ['page' => 'page-1'],
         methods: [Request::METHOD_GET]
@@ -42,13 +42,12 @@ class AccountWishlistController extends AbstractController
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function __invoke(
         #[CurrentUser]
-        User                      $user,
-        Environment               $twig,
-        WishlistRepository        $wishlistRepository,
+        User $user,
+        Environment $twig,
+        WishlistRepository $wishlistRepository,
         CustomPaginationInterface $customPagination,
-        string                    $page,
-    ): Response
-    {
+        string $page,
+    ): Response {
         $userWantlist = $wishlistRepository->getUserWishlist($user);
 
         $wishlistPaginate = $customPagination->pagination($userWantlist, $page, 6);

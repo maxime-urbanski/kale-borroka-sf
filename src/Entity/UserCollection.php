@@ -15,16 +15,16 @@ class UserCollection
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'user_collection', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user_collection = null;
+    private ?User $user = null;
 
-    #[ORM\ManyToMany(targetEntity: Article::class, inversedBy: 'userCollections')]
-    private Collection $article;
+    #[ORM\OneToMany(mappedBy: 'collection', targetEntity: UserCollectionItems::class)]
+    private Collection $items;
 
     public function __construct()
     {
-        $this->article = new ArrayCollection();
+        $this->items = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -32,38 +32,44 @@ class UserCollection
         return $this->id;
     }
 
-    public function getUserCollection(): ?User
+    public function getUser(): ?User
     {
-        return $this->user_collection;
+        return $this->user;
     }
 
-    public function setUserCollection(User $user_collection): static
+    public function setUser(User $user): static
     {
-        $this->user_collection = $user_collection;
+        $this->user = $user;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Article>
+     * @return Collection<int, UserCollectionItems>
      */
-    public function getArticle(): Collection
+    public function getItems(): Collection
     {
-        return $this->article;
+        return $this->items;
     }
 
-    public function addArticle(Article $article): static
+    public function addItems(UserCollectionItems $items): static
     {
-        if (!$this->article->contains($article)) {
-            $this->article->add($article);
+        if (!$this->items->contains($items)) {
+            $this->items->add($items);
+            $items->setCollection($this);
         }
 
         return $this;
     }
 
-    public function removeArticle(Article $article): static
+    public function removeItems(UserCollectionItems $items): static
     {
-        $this->article->removeElement($article);
+        if ($this->items->removeElement($items)) {
+            // set the owning side to null (unless already changed)
+            if ($items->getCollection() === $this) {
+                $items->setCollection(null);
+            }
+        }
 
         return $this;
     }

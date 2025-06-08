@@ -20,11 +20,11 @@ class Wishlist
     private ?User $user = null;
 
     #[ORM\OneToMany(mappedBy: 'wishlist', targetEntity: WishlistItem::class)]
-    private Collection $wishlistItems;
+    private Collection $items;
 
     public function __construct()
     {
-        $this->wishlistItems = new ArrayCollection();
+        $this->items = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -47,27 +47,27 @@ class Wishlist
     /**
      * @return Collection<int, WishlistItem>
      */
-    public function getWishlistItems(): Collection
+    public function getItems(): Collection
     {
-        return $this->wishlistItems;
+        return $this->items;
     }
 
-    public function addWishlistItem(WishlistItem $wishlistItem): static
+    public function addItem(WishlistItem $item): static
     {
-        if (!$this->wishlistItems->contains($wishlistItem)) {
-            $this->wishlistItems->add($wishlistItem);
-            $wishlistItem->setWishlist($this);
+        if (!$this->items->contains($item)) {
+            $this->items->add($item);
+            $item->setWishlist($this);
         }
 
         return $this;
     }
 
-    public function removeWishlistItem(WishlistItem $wishlistItem): static
+    public function removeItem(WishlistItem $item): static
     {
-        if ($this->wishlistItems->removeElement($wishlistItem)) {
+        if ($this->items->removeElement($item)) {
             // set the owning side to null (unless already changed)
-            if ($wishlistItem->getWishlist() === $this) {
-                $wishlistItem->setWishlist(null);
+            if ($item->getWishlist() === $this) {
+                $item->setWishlist(null);
             }
         }
 

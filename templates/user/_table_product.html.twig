@@ -1,6 +1,6 @@
 {% set route = app.current_route %}
 {% set wishlist_route =  route == 'app_user_wishlist' %}
-{% set products_collection = wishlist_route ? products.wishlistItems : [] %}
+
 <table class="table align-middle rounded-1">
     <thead>
     <tr>
@@ -10,7 +10,7 @@
     </tr>
     </thead>
     <tbody>
-    {% for item in products_collection %}
+    {% for item in products.items %}
         {% set remove_action = wishlist_route ?
             path('app_wishlist_remove', {productId: item.article.id}) :
             path('app_collection_remove', {productId: item.article.id}) %}
@@ -63,7 +63,7 @@
             <th class="text-center fw-light">
                 {{ wishlist_route ?
                 item.article.quantity :
-                item.since | date }}
+                item.addedAt | date }}
             </th>
         </tr>
     {% else %}

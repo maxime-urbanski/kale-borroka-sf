@@ -63,9 +63,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Address $defaultAddress = null;
 
-    #[ORM\OneToOne(mappedBy: 'user_collection', cascade: ['persist', 'remove'])]
-    private ?UserCollection $user_collection = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -90,7 +87,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string)$this->email;
+        return (string) $this->email;
     }
 
     /**
@@ -179,7 +176,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function fullName(): string
     {
-        return $this->firstname . ' - ' . $this->lastname;
+        return $this->firstname.' - '.$this->lastname;
     }
 
     /**
@@ -250,23 +247,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setDefaultAddress(?Address $defaultAddress): static
     {
         $this->defaultAddress = $defaultAddress;
-
-        return $this;
-    }
-
-    public function getUserCollection(): ?UserCollection
-    {
-        return $this->user_collection;
-    }
-
-    public function setUserCollection(UserCollection $user_collection): static
-    {
-        // set the owning side of the relation if necessary
-        if ($user_collection->getUserCollection() !== $this) {
-            $user_collection->setUserCollection($this);
-        }
-
-        $this->user_collection = $user_collection;
 
         return $this;
     }
