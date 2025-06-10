@@ -6,9 +6,11 @@ namespace App\Controller\User\UserCollection;
 
 use App\Entity\Article;
 use App\Entity\User;
+use App\Repository\UserCollectionItemsRepository;
 use App\Repository\UserCollectionRepository;
 use App\Service\RefererInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +25,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 class RemoveInCollectionController
 {
+    /**
+     * @throws NonUniqueResultException
+     */
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     #[Route(
         path: '/collection/remove/{productId}',
@@ -38,19 +43,18 @@ class RemoveInCollectionController
         RefererInterface $referer,
         EntityManagerInterface $entityManager,
         UserCollectionRepository $userCollectionRepository,
+        UserCollectionItemsRepository $userCollectionItemsRepository,
         Request $request,
     ): RedirectResponse {
-        $currentUserCollection = $userCollectionRepository->findOneBy(
-            ['user_collection' => $user]
-        );
+        $currentUserCollection = $userCollectionRepository->getUserCollection($user)->getOneOrNullResult();
+
+        $currentItemToRemove = $userCollectionItemsRepository->getUserCollectionItem($article, $currentUserCollection);
 
         /** @var Session $session */
         $session = $request->getSession();
 
         try {
-            $currentUserCollection->removeArticle($article);
-            $entityManager->persist($currentUserCollection);
-            $entityManager->flush();
+            $userCollectionItemsRepository->remove($currentItemToRemove, true);
             $session
                 ->getFlashbag()
                 ->add(

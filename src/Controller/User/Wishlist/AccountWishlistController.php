@@ -48,9 +48,9 @@ class AccountWishlistController extends AbstractController
         CustomPaginationInterface $customPagination,
         string $page,
     ): Response {
-        $userWantlist = $wishlistRepository->getUserWishlist($user);
+        $userWishlist = $wishlistRepository->getUserWishlist($user);
 
-        $wishlistPaginate = $customPagination->pagination($userWantlist, $page, 6);
+        $wishlistPaginate = $customPagination->pagination($userWishlist, $page, 6);
 
         $content = $twig->render('user/wantlist.html.twig', [
             'pagination' => $wishlistPaginate,

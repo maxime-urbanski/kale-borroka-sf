@@ -73,4 +73,19 @@ class Wishlist
 
         return $this;
     }
+
+    public function hasInWishlist(Article $product): bool
+    {
+        foreach ($this->items as $item) {
+            if (!$item instanceof WishlistItem) {
+                throw new \LogicException('Ooups, une erreur c\'est produite');
+            }
+
+            if ($item->getArticle() === $product) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
