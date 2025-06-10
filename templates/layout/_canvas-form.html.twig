@@ -108,10 +108,7 @@
         <div class="d-grid col-12 mx-auto mt-3 order-last position-absolute bottom-0 start-0">
             <div class="bg-white px-2 py-4 border-top">
                 <button class="btn btn-outline-dark w-100" type="submit">Envoyer</button>
-                {% if filters.artists is not empty or
-                    filters.styles is not empty or
-                    filters.labels is not empty %}
-
+                {% if action_filter and (filters.artists or filters.styles or filters.labels) %}
                     {% include 'partials/_obfuscation_link.html.twig' with {
                         url: path('app_catalog_list', {
                             support: app.request.get('support')

@@ -1,0 +1,6 @@
+App\Entity\Wishlist:
+    admin_wishlist:
+        user: '@user_admin'
+    
+    user_wishlist:
+        user: '@user_user'

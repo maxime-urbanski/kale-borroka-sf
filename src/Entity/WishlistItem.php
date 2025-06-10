@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\UserCollectionItemsRepository;
+use App\Repository\WishlistItemRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: UserCollectionItemsRepository::class)]
-class UserCollectionItems
+#[ORM\Entity(repositoryClass: WishlistItemRepository::class)]
+class WishlistItem
 {
     #[ORM\Column]
     private ?\DateTimeImmutable $added_at = null;
@@ -16,9 +16,8 @@ class UserCollectionItems
     private ?Article $article = null;
 
     #[ORM\Id]
-    #[ORM\ManyToOne(inversedBy: 'collectionItems')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?UserCollection $collection = null;
+    #[ORM\ManyToOne(inversedBy: 'wishlistItems')]
+    private ?Wishlist $wishlist = null;
 
     public function getAddedAt(): ?\DateTimeImmutable
     {
@@ -44,14 +43,14 @@ class UserCollectionItems
         return $this;
     }
 
-    public function getCollection(): ?UserCollection
+    public function getWishlist(): ?Wishlist
     {
-        return $this->collection;
+        return $this->wishlist;
     }
 
-    public function setCollection(?UserCollection $collection): static
+    public function setWishlist(?Wishlist $wishlist): static
     {
-        $this->collection = $collection;
+        $this->wishlist = $wishlist;
 
         return $this;
     }

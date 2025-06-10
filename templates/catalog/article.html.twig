@@ -57,24 +57,24 @@
                 </div>
                 {% if app.user %}
                     <div class="btn-group mb-3 w-100" role="group">
-                        {% if app.user.wantlist is not null and article in app.user.wantlist.product %}
+                        {% if app.user and userWishlist and article in userWishlist.wishlistItems %}
                             {% include 'partials/_obfuscation_link.html.twig' with {
-                                url: path('app_wantlist_remove', {productId: article.id}),
+                                url: path('app_wishlist_remove', {productId: article.id}),
                                 class: 'btn btn-danger',
-                                text_btn: 'Retirer de la wantlist',
+                                text_btn: 'Retirer de la wishlist',
                                 icon: "bi-eye-slash-fill ms-2",
                                 icon_position: 'right'
                             } %}
                         {% else %}
                             {% include 'partials/_obfuscation_link.html.twig' with {
-                                url: path('app_wantlist_add', {productId: article.id}),
+                                url: path('app_wishlist_add', {productId: article.id}),
                                 class: 'btn btn-outline-dark',
                                 text_btn: 'Ajouter à la wantlist',
                                 icon: "bi-eye-fill me-2",
                                 icon_position: 'left'
                             } %}
                         {% endif %}
-                        {% if app.user.userCollection is not null and article in app.user.userCollection.article %}
+                        {% if app.user and userCollection and article in userCollection.collectionItems %}
                             {% include 'partials/_obfuscation_link.html.twig' with {
                                 url: path('app_collection_remove', {productId: article.id}),
                                 class: 'btn btn-danger',
@@ -101,11 +101,11 @@
                 </div>
             </div>
         </div>
-        {#{% include 'layout/article/_section.html.twig' with {
+        {# {% include 'layout/article/_section.html.twig' with {
             tracklist: article.album.tracklists,
             title: 'Tracklist',
             title_mb: 'mb-4'
-        } %}#}
+        } %} #}
         {% if articleByArtist |length > 1 %}
             {% include 'layout/article/_section.html.twig' with {
                 articles: articleByArtist,
