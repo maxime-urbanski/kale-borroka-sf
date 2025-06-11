@@ -11,6 +11,7 @@ class UserCollectionItems
     #[ORM\Column]
     private ?\DateTimeImmutable $added_at = null;
 
+    #[ORM\Id]
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?Article $article = null;
