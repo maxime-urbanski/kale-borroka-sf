@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Entity\Wishlist;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -44,7 +45,7 @@ class WishlistRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function getUserWishlist(User $user): \Doctrine\ORM\Query
+    public function getUserWishlist(User $user): Query
     {
         return $this->createQueryBuilder('w')
             ->where('w.user = :user')

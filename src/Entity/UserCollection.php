@@ -73,4 +73,19 @@ class UserCollection
 
         return $this;
     }
+
+    public function hasInCollection(Article $product): bool
+    {
+        foreach ($this->items as $item) {
+            if (!$item instanceof UserCollectionItems) {
+                throw new \LogicException('Ooups, une erreur c\'est produite');
+            }
+
+            if ($item->getArticle() === $product) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

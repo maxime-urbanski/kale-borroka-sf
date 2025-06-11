@@ -1,9 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
+use App\Entity\Article;
+use App\Entity\UserCollection;
 use App\Entity\UserCollectionItems;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -37,5 +42,21 @@ class UserCollectionItemsRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function getUserCollectionItem(Article $article, UserCollection $userCollection): UserCollectionItems
+    {
+        return $this->createQueryBuilder('uci')
+            ->where('uci.article = :article')
+            ->andWhere('uci.collection = :userCollection')
+            ->setParameters([
+                'article' => $article,
+                'userCollection' => $userCollection,
+            ])
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

@@ -57,7 +57,7 @@
                 </div>
                 {% if app.user %}
                     <div class="btn-group mb-3 w-100" role="group">
-                        {% if app.user and userWishlist and article in userWishlist.wishlistItems %}
+                        {% if app.user and userWishlist and userWishlist.hasInWishlist(article) %}
                             {% include 'partials/_obfuscation_link.html.twig' with {
                                 url: path('app_wishlist_remove', {productId: article.id}),
                                 class: 'btn btn-danger',
@@ -74,7 +74,7 @@
                                 icon_position: 'left'
                             } %}
                         {% endif %}
-                        {% if app.user and userCollection and article in userCollection.collectionItems %}
+                        {% if app.user and userCollection and userCollection.hasInCollection(article) %}
                             {% include 'partials/_obfuscation_link.html.twig' with {
                                 url: path('app_collection_remove', {productId: article.id}),
                                 class: 'btn btn-danger',
