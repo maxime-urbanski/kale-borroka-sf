@@ -11,12 +11,14 @@ class WishlistItem
     #[ORM\Column]
     private ?\DateTimeImmutable $added_at = null;
 
+    #[ORM\Id]
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?Article $article = null;
 
     #[ORM\Id]
     #[ORM\ManyToOne(inversedBy: 'wishlistItems')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Wishlist $wishlist = null;
 
     public function getAddedAt(): ?\DateTimeImmutable
