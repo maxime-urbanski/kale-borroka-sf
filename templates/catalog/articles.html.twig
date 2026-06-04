@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+{% set active_filters = filters.artists|default([])
+    |merge(filters.styles|default([]))
+    |merge(filters.labels|default([])) %}
+
+{% block body %}
+    <div class="container">
+        {% include 'layout/_breadcrumb.html.twig' with {breadcrumb} %}
+        <div class="d-none d-md-flex row mb-3">
+            <div class="col-2">
+                <div class="d-flex flex-column h-100">
+                    {% include 'layout/_canvas-form.html.twig' with {
+                        action: 'filter',
+                        title: 'Filtres',
+                        form,
+                        canva_position: 'Left',
+                        method: 'GET'
+                    } %}
+                </div>
+            </div>
+            <div class="col-9 position-relative"
+                 data-controller="scrollbar">
+                <i class="bi bi-caret-left prev hidden"
+                   data-scrollbar-target="prev"
+                   data-action="click->scrollbar#prevc"
+                ></i>
+                <div id="container-badges-filter"
+                     class="h-100 overflow-x-hidden"
+                     data-scrollbar-target="main"
+                >
+                    {% include 'layout/article/_active-filter.html.twig' with {
+                        filters
+                    } %}
+                </div>
+                <i class="bi bi-caret-right next hidden"
+                   data-scrollbar-target="next"
+                   data-action="click->scrollbar#next"></i>
+            </div>
+            {% if active_filters %}
+                <div class="col-1">
+                    {% include 'partials/_obfuscation_link.html.twig' with {
+                        url: path('app_catalog_list', {
+                            support: app.request.get('support')
+                        }),
+                        class: "btn btn-sm btn-outline-danger float-end",
+                        icon: 'bi-x'
+                    } %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="row">
+            <div class="col">
+                {% include 'layout/article/_article-grid.html.twig' with {
+                    articles: articles.items,
+                    col_sm: 2,
+                    col_md: 3,
+                    col_lg: 3,
+                    col_xl: 4
+                } %}
+                {{ knp_pagination_render(articles, 'partials/_pagination.html.twig') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

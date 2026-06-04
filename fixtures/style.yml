@@ -1,0 +1,25 @@
+App\Entity\Style:
+    style_template (template):
+        name: '<name()>'
+    
+    
+    style_punk (extends style_template):
+        name: 'Punk'
+    
+    style_streetpunk (extends style_template):
+        name: 'Streetpunk'
+    
+    style_ska (extends style_template):
+        name: 'Ska'
+    
+    style_rap (extends style_template):
+        name: 'Rap'
+    
+    style_oi (extends style_template):
+        name: 'Oi!'
+    
+    style_rocksteady (extends style_template):
+        name: 'Rocksteady'
+    
+    style_hardcore (extends style_template):
+        name: 'Hardcore'

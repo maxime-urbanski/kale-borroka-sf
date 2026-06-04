@@ -1,0 +1,16 @@
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="toast-container top-10 end-0 p-3">
+            <div id="test" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <div class="badge-toast toast-{{ label|default('success') }} rounded me-2"></div>
+                    <strong class="me-auto">Kale Borroka Records</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    {{ message }}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endfor %}

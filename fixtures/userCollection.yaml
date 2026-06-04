@@ -1,0 +1,6 @@
+App\Entity\UserCollection:
+    admin_collection:
+        user: '@user_admin'
+    
+    user_collection:
+        user: '@user_user'

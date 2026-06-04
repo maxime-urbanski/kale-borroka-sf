@@ -1,0 +1,21 @@
+App\Entity\Artist:
+    artist_template (template):
+        name: '<name()>'
+
+    Brixton_Cats (extends artist_template):
+        name: 'Brixton Cats'
+
+    Moscow_Death_Brigade (extends artist_template):
+        name : 'Moscow Death Brigade'
+
+    Krav_Boca (extends artist_template):
+        name: 'Krav Boca'
+
+    Harbour_Rebels (extends artist_template):
+        name: 'Harbour Rebels'
+
+    Union_Thugs (extends artist_template):
+        name: 'Union Thugs'
+
+    artist_{1..150} (extends artist_template):
+

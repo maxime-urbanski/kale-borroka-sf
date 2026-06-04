@@ -1,0 +1,79 @@
+{% extends 'user/user-dashboard.html.twig' %}
+
+{% block content %}
+    {% set user = app.user %}
+    <div class="row row-cols-sm-1 row-cols-lg-2 g-4 justify-content-center">
+        {% for index, address in userAddresses %}
+            {% set userDefaultAddress = address.isMainAddress %}
+            <div class="col">
+                <div class="d-flex flex-column h-100">
+                    <div class="card h-100 border border-secondary px-3 py-2 shadow p-3 bg-body-white rounded">
+                        <div class="d-flex justify-content-between align-items-center my-3">
+                            <span class="fw-bolder text-center">{{ address.name }}</span>
+                            {% if userDefaultAddress %}
+                                <span class="badge text-bg-primary">Adresse de livraison par default</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-justify fw-medium">
+                            {{ address.address }} <br>
+                            {% if address.complementAddress %}
+                                {{ address.complementAddress }} <br>
+                            {% endif %}
+                            {{ address.zipcode }} - {{ address.city }} <br>
+                            {{ address.country }}
+                        </p>
+                        <div class="mt-auto">
+                            {% include 'layout/_canvas-form.html.twig' with {
+                                action: 'update',
+                                text_button: 'Modifier',
+                                key: address.id,
+                                title: 'Modifier mon adresse',
+                                form: forms[address.id],
+                                action_form: path('app_user_addresses_patch_address', {id: address.id}),
+                                method: 'PATCH'
+                            } %}
+                            <div class="btn btn-outline-danger btn-sm"
+                                 data-controller="address"
+                                 data-address-id-value="{{ address.id }}"
+                                 data-address-method-value="DELETE"
+                                 data-action="click->address#action"
+                            >
+                                Supprimer
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 d-flex justify-content-center align-items-center">
+                        <input class="form-check-input cursor-pointer"
+                               type="radio"
+                               name="radioDefaultAddress"
+                               id="radioDefaultAddress"
+                            {% if userDefaultAddress %}
+                                checked
+                            {% else %}
+                                data-controller="address"
+                                data-address-id-value="{{ address.id }}"
+                                data-address-user-value="{{ user.id }}"
+                                data-address-method-value="PATCH"
+                                data-action="click->address#action"
+                            {% endif %}
+                        >
+                        <label for="radioDefaultAddress" class="ms-1">
+                            Définir comme adresse de livraison principal
+                        </label>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="col">
+            <div class="d-flex flex-column h-100">
+                {% include 'layout/_canvas-form.html.twig' with {
+                    action: 'create',
+                    title: 'Nouvelle adresse',
+                    form: formAdd,
+                    action_form: path('app_user_addresses_add'),
+                } %}
+                <p class="text-center mt-auto mb-0 pt-2">Ajouter une adresse</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

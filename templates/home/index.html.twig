@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        {% include 'layout/article/_section.html.twig' with {
+            articles: lastArticle,
+            title: 'Derniers Articles'
+        } %}
+        {% include 'layout/article/_section.html.twig' with {
+            articles: lastProduction,
+            title: 'Dernières prod'
+        } %}
+    </div>
+{% endblock %}

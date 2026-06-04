@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+
+        <div class="d-grid col-4 ms-auto my-5">
+            {% include 'partials/_obfuscation_link.html.twig' with {
+                url: path('app_logout'),
+                class: "float-end btn btn-outline-danger",
+                text_btn: 'Déconnexion'
+            } %}
+        </div>
+        <div class="row bg-light mb-5 py-5">
+            <div class="col-4">
+                {% include 'layout/_sidebar.html.twig' %}
+            </div>
+            <div class="col-8">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

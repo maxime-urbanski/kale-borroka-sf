@@ -1,0 +1,60 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary py-3">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ path('app_homepage') }}">Kale Borroka Records</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% for link in links %}
+                    {% if link.child is defined %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                Le Shop
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{{ path(link.link) }}">{{ link.name }}</a>
+                                    <ul>
+                                        {% for child in link.child %}
+                                            <li><a class="dropdown-item"
+                                                   href="{{ path('app_catalog_list', { support: child.name,}) }}">{{ child.name|upper }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class=" nav-item">
+                            <a class="nav-link" href="{{ path(link.link) }}">{{ link.name }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% if app.user %}
+            <a href="{{ path('app_user_informations') }}" class="btn btn-outline-danger fs-5 me-4">
+                <i class="bi-person-check"></i>
+            </a>
+        {% else %}
+            <a href="{{ path('app_login') }}" class="btn btn-outline-danger fs-5 me-4">
+                <i class="bi-person"></i>
+            </a>
+        {% endif %}
+        {% if itemsInCart %}
+            <a href="{{ path('app_cart_index') }}" class="btn btn-outline-success fs-5 me-4 position-relative">
+                <i class="bi bi-cart"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{ itemsInCart }}
+              </span>
+            </a>
+        {% else %}
+            <a href="{{ path('app_cart_index') }}" class="btn btn-outline-success fs-5 me-4">
+                <i class="bi bi-cart"></i>
+            </a>
+        {% endif %}
+    </div>
+</nav>

@@ -1,0 +1,14 @@
+App\Entity\Label:
+    label_template (template ):
+        name: '<name()>'
+        isFriend: '<boolean()>'
+    
+    FireAndFlames (extends label_template):
+        name: 'Fire & Flames'
+        isFriend: true
+    
+    RudysBack (extends label_template):
+        name: "Rudy's back"
+        isFriend: false
+        
+    label_{1..50} (extends label_template):

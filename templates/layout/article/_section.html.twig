@@ -1,0 +1,25 @@
+<section class="mb-5">
+    <h2 class="fs-3 text-center text-decoration-underline red w-content mx-auto {{ title_mb | default('mb-5') }}">
+        {{ title | upper }}
+    </h2>
+    {% if articles is defined %}
+        {% include 'layout/article/_article-grid.html.twig' with {
+            articles,
+            col_sm: 2,
+            col_md: 3,
+            col_lg: 4,
+            col_xl: 5,
+        } %}
+    {% endif %}
+    {% if tracklist is defined %}
+        <div class="row">
+            <div class="col">
+                <p class="fs-5 text-start w-content mb-0 mx-auto">
+                    {% for track in tracklist %}
+                        <span class="text-success">{{ track.track }}</span> - {{ track.name }} <br>
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+    {% endif %}
+</section>

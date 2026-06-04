@@ -1,0 +1,25 @@
+{% extends 'connect.html.twig' %}
+
+{% block connect_error %}
+    {% for flash_error in app.flashes('reset_password_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+{% endblock %}
+
+{% block form %}
+    <div>
+        <small>
+            Saisissez votre adresse électronique et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+            lien pour réinitialiser votre mot de passe.
+        </small>
+    </div>
+    {{ form_start(requestForm) }}
+    <div class="form-floating my-3">
+        {{ form_widget(requestForm.email) }}
+        {{ form_label(requestForm.email) }}
+    </div>
+    <div class="d-grid col-8 mx-auto">
+        <button class="btn btn-outline-success">Lien pour réinitialiser votre mot de passe.</button>
+    </div>
+    {{ form_end(requestForm) }}
+{% endblock %}

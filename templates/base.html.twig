@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kale Borroka Records | {% block title %}Antifascist distro & label since 2019{% endblock %}</title>
+    <link rel="apple-touch-icon" sizes="180x180" href={{ asset("/apple-touch-icon.png") }}>
+    <link rel="icon" type="image/png" sizes="32x32" href={{ asset("/favicon-32x32.png") }}>
+    <link rel="icon" type="image/png" sizes="16x16" href={{ asset("/favicon-16x16.png") }}>
+    <link rel="manifest" href={{ asset("/site.webmanifest") }}>
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
+</head>
+<body>
+<header>
+    {{ render(controller('App\\Controller\\MenuController::navbar')) }}
+</header>
+<div class="row">
+    <div class="col">
+        {% include 'layout/_toast.html.twig' %}
+    </div>
+</div>
+{% block body %}
+    <div class="container">
+        <h1>Kale Borroka Home</h1>
+    </div>
+{% endblock %}
+{{ render(controller('App\\Controller\\Layout\\FooterController')) }}
+</body>
+</html>

@@ -1,0 +1,48 @@
+@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap-icons';
+
+@import "articles";
+@import "article";
+@import "layout/footer";
+@import "layout/breadcrumb";
+@import "layout/overlay";
+@import "layout/active-filter";
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.badge-toast {
+    width: 10px;
+    height: 10px;
+}
+
+.badge-toast.toast-success {
+    background-color: $success;
+}
+
+.badge-toast.toast-danger {
+    background-color: $danger;
+}
+
+.badge-toast.toast-warning {
+    background-color: $warning;
+}
+
+.w-content {
+    width: fit-content;
+}
+
+.no-scroll-bar {
+    overflow: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.no-scroll-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.mb-100 {
+    margin-bottom: 100px;
+}

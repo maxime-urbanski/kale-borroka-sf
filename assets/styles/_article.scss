@@ -1,0 +1,14 @@
+.text-decoration-underline.red {
+    position: relative;
+    text-decoration: none !important;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 35px;
+        left: 0;
+        width: 100px;
+        height: 3px;
+        background-color: $danger;
+    }
+}

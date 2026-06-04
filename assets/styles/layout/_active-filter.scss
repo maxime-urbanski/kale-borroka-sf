@@ -1,0 +1,19 @@
+.prev, .next {
+    position: absolute;
+    z-index: 2;
+    cursor: pointer;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.prev {
+    left: -.5rem;
+}
+
+.next {
+    right: -.5rem;
+}
+
+.prev.hidden, .next.hidden {
+    display: none;
+}

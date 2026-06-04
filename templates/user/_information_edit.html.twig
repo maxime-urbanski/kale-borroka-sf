@@ -1,0 +1,45 @@
+{% extends 'user/user-dashboard.html.twig' %}
+
+{% block content %}
+    <div class="border border-secondary rounded-1 px-5 py-3 bg-white">
+        <h2>Modifier mes informations</h2>
+
+        {{ form_start(form, {
+            attr: {
+                class: 'row g-3 mt-2'
+            }
+        }) }}
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.lastname) }}
+                {{ form_label(form.lastname) }}
+                {{ form_errors(form.lastname) }}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.firstname) }}
+                {{ form_label(form.firstname) }}
+                {{ form_errors(form.firstname) }}
+            </div>
+        </div>
+        <div class="col-md-8 mx-auto">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.email) }}
+                {{ form_label(form.email) }}
+                {{ form_errors(form.email) }}
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.address) }}
+                {{ form_errors(form.address) }}
+                {{ form_label(form.address) }}
+            </div>
+        </div>
+        <div class="d-grid col-md-8 mx-auto">
+            {{ form_widget(form.submit) }}
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
