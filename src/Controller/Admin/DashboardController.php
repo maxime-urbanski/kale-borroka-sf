@@ -8,21 +8,16 @@ use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
-    public function __construct(private readonly AdminUrlGenerator $adminUrlGenerator)
-    {
-    }
-
     public function index(): Response
     {
-        return $this->redirect(
-            $this->adminUrlGenerator->setController(ArtitstCrudController::class)->generateUrl()
-        );
+        // With pretty URLs, EasyAdmin registers a real Symfony route per CRUD action,
+        // so redirecting by route name is enough — no AdminUrlGenerator needed.
+        return $this->redirectToRoute('admin_artist_index');
     }
 
     public function configureDashboard(): Dashboard
@@ -36,7 +31,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
 
         yield MenuItem::section('Album');
-        yield MenuItem::linkTo(ArtitstCrudController::class, 'Artiste', 'fas fa-list');
+        yield MenuItem::linkTo(ArtistCrudController::class, 'Artiste', 'fas fa-list');
         yield MenuItem::linkTo(AlbumCrudController::class, 'Album', 'fas fa-list');
         yield MenuItem::linkTo(StyleCrudController::class, 'Style', 'fas fa-list');
         yield MenuItem::linkTo(LabelCrudController::class, 'Label', 'fas fa-list');
