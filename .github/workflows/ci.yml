@@ -49,9 +49,7 @@ jobs:
           node-version: 24
           cache: yarn
       - name: Test YARN
-        # See the note in the Dockerfile: the lockfile format and packageManager disagree,
-        # so --frozen-lockfile cannot be used yet.
-        run: yarn install && yarn dev
+        run: yarn install --frozen-lockfile && yarn dev
       - name: Create test database
         run: docker compose exec -T php bin/console -e test doctrine:database:create
       - name: Run migrations

@@ -1,7 +1,7 @@
 #syntax=docker/dockerfile:1
 
 # Versions
-FROM dunglas/frankenphp:1-php8.3 AS frankenphp_upstream
+FROM dunglas/frankenphp:1-php8.5 AS frankenphp_upstream
 FROM node:24-alpine AS node_upstream
 
 
@@ -78,10 +78,7 @@ FROM node_upstream AS assets_builder
 WORKDIR /app
 
 COPY --link package.json yarn.lock ./
-# No --frozen-lockfile: yarn.lock is currently in Yarn Berry format while package.json
-# declares yarn@1.22.22, so classic yarn has to re-resolve it. Switch this back to
-# --frozen-lockfile once the lockfile and the declared package manager agree.
-RUN yarn install
+RUN yarn install --frozen-lockfile
 
 COPY --link webpack.config.js ./
 COPY --link assets assets/
