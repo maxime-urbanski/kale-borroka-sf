@@ -1,46 +1,85 @@
-# Symfony Docker
+# Kale Borroka Records
 
-A [Docker](https://www.docker.com/)-based installer and runtime for the [Symfony](https://symfony.com) web framework, with full [HTTP/2](https://symfony.com/doc/current/weblink.html), HTTP/3 and HTTPS support.
+E-commerce site of Kale Borroka Records, an antifascist record label and distro.
 
-![CI](https://github.com/dunglas/symfony-docker/workflows/CI/badge.svg)
+Built on Symfony, running on [FrankenPHP](https://frankenphp.dev) and
+[Caddy](https://caddyserver.com/) with the [Docker](https://www.docker.com/)-based
+runtime from [symfony-docker](https://github.com/dunglas/symfony-docker).
+
+![CI](https://github.com/Maxiloud/kale-borroka-sf/workflows/CI/badge.svg)
 
 ## Getting Started
 
 1. If not already done, [install Docker Compose](https://docs.docker.com/compose/install/) (v2.10+)
-2. Run `docker compose build --no-cache` to build fresh images
-3. Run `docker compose up --pull --wait` to start the project
-4. Open `https://localhost` in your favorite web browser and [accept the auto-generated TLS certificate](https://stackoverflow.com/a/15076602/1352334)
-5. Run `docker compose down --remove-orphans` to stop the Docker containers.
+2. Run `docker compose build --pull` to build the images
+3. Run `docker compose up --wait` to start the project
+4. Run `yarn install && yarn dev` on the host to build the assets — without them
+   every page fails with `Asset manifest file … does not exist`
+5. Open `https://localhost` and [accept the auto-generated TLS certificate](https://stackoverflow.com/a/15076602/1352334)
+6. Run `docker compose down --remove-orphans` to stop the containers
 
-## Features
+The HTTP port defaults to `81` (`HTTP_PORT`) so it does not clash with other
+projects; HTTPS and HTTP/3 use `443` (`HTTPS_PORT`, `HTTP3_PORT`).
 
-* Production, development and CI ready
-* [Installation of extra Docker Compose services](docs/extra-services.md) with Symfony Flex
-* Automatic HTTPS (in dev and in prod!)
-* HTTP/2, HTTP/3 and [Preload](https://symfony.com/doc/current/web_link.html) support
-* Built-in [Mercure](https://symfony.com/doc/current/mercure.html) hub
-* [Vulcain](https://vulcain.rocks) support
-* Native [XDebug](docs/xdebug.md) integration
-* Just 2 services (PHP FPM and Caddy server)
-* Super-readable configuration
+Mails sent in dev are caught by [Mailpit](https://mailpit.axllent.org) on
+<http://localhost:8025> (`MAILPIT_PORT`).
 
-**Enjoy!**
+## Common Commands
+
+Everything PHP runs inside the `php` container, which serves the app *and* runs
+the CLI — there is no separate web server container.
+
+```bash
+docker compose exec php bin/console doctrine:migrations:migrate
+docker compose exec php bin/console hautelook:fixtures:load   # dev + test only
+docker compose exec php bin/console app:create-admin [email]  # create/promote a ROLE_ADMIN user
+
+docker compose exec -T php bin/phpunit
+docker compose exec -T php vendor/bin/phpstan analyse --memory-limit=-1
+docker compose exec -T php vendor/bin/php-cs-fixer fix
+```
+
+Assets are built on the host: `yarn dev`, `yarn watch`, `yarn build`.
+
+Dependencies are installed by the entrypoint only when `vendor/` is empty. After
+changing `composer.json`, run `docker compose exec php composer install` yourself.
+
+## Deploying in Production
+
+```bash
+docker compose -f compose.yaml -f compose.prod.yaml build --pull --no-cache
+SERVER_NAME=your-domain-name.example.com \
+APP_SECRET=<random> \
+  docker compose -f compose.yaml -f compose.prod.yaml up --wait
+```
+
+The production image builds the Webpack Encore assets itself (`assets_builder`
+stage) and runs as `www-data`. Uploaded files live in the `uploads` and `media`
+volumes declared in `compose.prod.yaml`.
+
+When switching between the dev and prod stacks on the same machine, drop the Caddy
+volumes first — the dev container runs as root and leaves a root-owned local CA in
+them, which the `www-data` prod container cannot read:
+
+```bash
+docker volume rm kale-borroka-sf_caddy_data kale-borroka-sf_caddy_config
+```
+
+Note that `MAILER_DSN` in `.env` points at the dev Mailpit container; override it
+in production before `composer dump-env prod` bakes it in.
 
 ## Docs
 
-1. [Build options](docs/build.md)
-2. [Using Symfony Docker with an existing project](docs/existing-project.md)
-3. [Support for extra services](docs/extra-services.md)
-4. [Deploying in production](docs/production.md)
-5. [Debugging with Xdebug](docs/xdebug.md)
-6. [TLS Certificates](docs/tls.md)
-7. [Using a Makefile](docs/makefile.md)
-8. [Troubleshooting](docs/troubleshooting.md)
-
-## License
-
-Symfony Docker is available under the MIT License.
+The upstream template documentation applies to this stack:
+[options](https://github.com/dunglas/symfony-docker/blob/main/docs/options.md),
+[production](https://github.com/dunglas/symfony-docker/blob/main/docs/production.md),
+[Xdebug](https://github.com/dunglas/symfony-docker/blob/main/docs/xdebug.md),
+[TLS](https://github.com/dunglas/symfony-docker/blob/main/docs/tls.md),
+[troubleshooting](https://github.com/dunglas/symfony-docker/blob/main/docs/troubleshooting.md).
 
 ## Credits
 
-Created by [Kévin Dunglas](https://dunglas.fr), co-maintained by [Maxime Helias](https://twitter.com/maxhelias) and sponsored by [Les-Tilleuls.coop](https://les-tilleuls.coop).
+Runtime based on [symfony-docker](https://github.com/dunglas/symfony-docker),
+created by [Kévin Dunglas](https://dunglas.dev), co-maintained by
+[Maxime Helias](https://twitter.com/maxhelias) and sponsored by
+[Les-Tilleuls.coop](https://les-tilleuls.coop).

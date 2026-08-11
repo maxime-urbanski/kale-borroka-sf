@@ -15,19 +15,24 @@ jobs:
   tests:
     name: Tests
     runs-on: ubuntu-latest
+    env:
+      # The compose file defaults HTTP to 81 for local use; CI checks the standard port.
+      HTTP_PORT: 80
+      HTTPS_PORT: 443
+      HTTP3_PORT: 443
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Build Docker images
-        uses: docker/bake-action@v3
+        uses: docker/bake-action@v6
         with:
           pull: true
           load: true
           files: |
-            docker-compose.yml
-            docker-compose.override.yml
+            compose.yaml
+            compose.override.yaml
           set: |
             *.cache-from=type=gha,scope=${{github.ref}}
             *.cache-from=type=gha,scope=refs/heads/main
@@ -38,8 +43,15 @@ jobs:
         run: curl -v -o /dev/null http://localhost
       - name: Check HTTPS reachability
         run: curl -vk -o /dev/null https://localhost
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
       - name: Test YARN
-        run: yarn &&  yarn dev
+        # See the note in the Dockerfile: the lockfile format and packageManager disagree,
+        # so --frozen-lockfile cannot be used yet.
+        run: yarn install && yarn dev
       - name: Create test database
         run: docker compose exec -T php bin/console -e test doctrine:database:create
       - name: Run migrations
@@ -48,10 +60,14 @@ jobs:
         run: docker compose exec -T php bin/console -e test hautelook:fixtures:load --no-interaction
       - name: Run PHPUnit
         run: docker compose exec -T php bin/phpunit
+      - name: PHPStan
+        # The container's CLI memory_limit is 128M, which PHPStan overruns on this codebase.
+        run: docker compose exec -T php vendor/bin/phpstan analyse --memory-limit=-1
+      - name: PHP-CS-Fixer
+        run: docker compose exec -T php vendor/bin/php-cs-fixer fix --dry-run --diff
       - name: Doctrine Schema Validator
-        if: false
         run: docker compose exec -T php bin/console -e test doctrine:schema:validate
-        
+
   lint:
     name: Docker Lint
     runs-on: ubuntu-latest
@@ -60,23 +76,3 @@ jobs:
         uses: actions/checkout@v4
       - name: Lint Dockerfile
         uses: hadolint/hadolint-action@v3.1.0
-
-  php-cs-fixer:
-    name: Php-cs-fixer
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: PHP-CS-Fixer
-        uses: docker://oskarstark/php-cs-fixer-ga
-        with:
-          args: --config=.php-cs-fixer.dist.php --diff --dry-run
-  
-  phpstan:
-    name: Php-stan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: php-actions/composer@v6 # or alternative dependency management
-      - uses: php-actions/phpstan@v3
-        with:
-          path: src/
