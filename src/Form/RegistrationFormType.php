@@ -34,9 +34,7 @@ class RegistrationFormType extends AbstractType
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter a password',
-                    ]),
+                    new NotBlank(message: 'Please enter a password'),
                     new Length(
                         min: 6,
                         // max length allowed by Symfony for security reasons
@@ -48,9 +46,7 @@ class RegistrationFormType extends AbstractType
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [
-                    new IsTrue([
-                        'message' => 'You should agree to our terms.',
-                    ]),
+                    new IsTrue(message: 'You should agree to our terms.'),
                 ],
             ]);
     }
