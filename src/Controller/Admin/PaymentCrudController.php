@@ -7,6 +7,9 @@ namespace App\Controller\Admin;
 use App\Entity\Payment;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
+/**
+ * @extends AbstractCrudController<Payment>
+ */
 class PaymentCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

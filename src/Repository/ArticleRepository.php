@@ -14,11 +14,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Article>
- *
- * @method Article|null find($id, $lockMode = null, $lockVersion = null)
- * @method Article|null findOneBy(array $criteria, array $orderBy = null)
- * @method Article[]    findAll()
- * @method Article[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class ArticleRepository extends ServiceEntityRepository
 {
@@ -111,10 +106,8 @@ class ArticleRepository extends ServiceEntityRepository
             ->andWhere('article != :article')
             ->orderBy('article.name', 'ASC')
             ->setMaxResults(10)
-            ->setParameters([
-                'artist' => $article->getAlbum()->getArtist(),
-                'article' => $article,
-            ]);
+            ->setParameter('artist', $article->getAlbum()->getArtist())
+            ->setParameter('article', $article);
 
         return $query->getQuery();
     }
@@ -128,10 +121,8 @@ class ArticleRepository extends ServiceEntityRepository
             ->andWhere('article != :article')
             ->orderBy('article.name', 'ASC')
             ->setMaxResults(10)
-            ->setParameters([
-                'styles' => $article->getAlbum()->getStyles(),
-                'article' => $article,
-            ]);
+            ->setParameter('styles', $article->getAlbum()->getStyles())
+            ->setParameter('article', $article);
 
         return $query->getQuery();
     }

@@ -40,7 +40,7 @@
                 <div class="col-1">
                     {% include 'partials/_obfuscation_link.html.twig' with {
                         url: path('app_catalog_list', {
-                            support: app.request.get('support')
+                            support: app.request.attributes.get('support')
                         }),
                         class: "btn btn-sm btn-outline-danger float-end",
                         icon: 'bi-x'

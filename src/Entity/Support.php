@@ -23,6 +23,7 @@ class Support
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $icon = null;
 
+    /** @var Collection<int, Article> */
     #[ORM\OneToMany(mappedBy: 'support', targetEntity: Article::class)]
     private Collection $articles;
 

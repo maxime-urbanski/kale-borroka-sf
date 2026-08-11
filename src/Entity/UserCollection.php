@@ -19,6 +19,7 @@ class UserCollection
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    /** @var Collection<int, UserCollectionItems> */
     #[ORM\OneToMany(mappedBy: 'collection', targetEntity: UserCollectionItems::class)]
     private Collection $items;
 
@@ -77,10 +78,6 @@ class UserCollection
     public function hasInCollection(Article $product): bool
     {
         foreach ($this->items as $item) {
-            if (!$item instanceof UserCollectionItems) {
-                throw new \LogicException('Ooups, une erreur c\'est produite');
-            }
-
             if ($item->getArticle() === $product) {
                 return true;
             }

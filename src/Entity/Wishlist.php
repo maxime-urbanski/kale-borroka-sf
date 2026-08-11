@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Wishlist
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]
     private ?int $id = null;
 
@@ -19,6 +19,7 @@ class Wishlist
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    /** @var Collection<int, WishlistItem> */
     #[ORM\OneToMany(mappedBy: 'wishlist', targetEntity: WishlistItem::class)]
     private Collection $items;
 
@@ -77,10 +78,6 @@ class Wishlist
     public function hasInWishlist(Article $product): bool
     {
         foreach ($this->items as $item) {
-            if (!$item instanceof WishlistItem) {
-                throw new \LogicException('Ooups, une erreur c\'est produite');
-            }
-
             if ($item->getArticle() === $product) {
                 return true;
             }

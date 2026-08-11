@@ -12,11 +12,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Address>
- *
- * @method Address|null find($id, $lockMode = null, $lockVersion = null)
- * @method Address|null findOneBy(array $criteria, array $orderBy = null)
- * @method Address[]    findAll()
- * @method Address[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class AddressRepository extends ServiceEntityRepository
 {
@@ -50,9 +45,7 @@ class AddressRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('a')
             ->where('a.users = :user')
-            ->setParameters([
-                'user' => $user,
-            ])
+            ->setParameter('user', $user)
             ->getQuery()
             ->getResult();
     }
@@ -65,9 +58,7 @@ class AddressRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('a')
             ->where('a.users = :user')
             ->andWhere('a.isMainAddress = true')
-            ->setParameters([
-                'user' => $user,
-            ])
+            ->setParameter('user', $user)
             ->getQuery()
             ->getOneOrNullResult();
     }

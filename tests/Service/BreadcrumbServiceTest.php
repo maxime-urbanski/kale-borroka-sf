@@ -6,7 +6,7 @@ namespace App\Tests\Service;
 
 use App\Service\BreadcrumbService;
 use PHPUnit\Framework\MockObject\Exception;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -79,9 +79,9 @@ class BreadcrumbServiceTest extends KernelTestCase
         return Request::create($uri);
     }
 
-    private function mockRouterMatch(): RouterInterface|MockObject
+    private function mockRouterMatch(): RouterInterface&Stub
     {
-        $router = self::createMock(RouterInterface::class);
+        $router = self::createStub(RouterInterface::class);
 
         $router->method('match')->willReturnCallback(function ($uri) {
             $routes = [
@@ -110,9 +110,9 @@ class BreadcrumbServiceTest extends KernelTestCase
     /**
      * @throws Exception
      */
-    private function mockRequestStack(string $uri): RequestStack|MockObject
+    private function mockRequestStack(string $uri): RequestStack&Stub
     {
-        $requestStack = self::createMock(RequestStack::class);
+        $requestStack = self::createStub(RequestStack::class);
         $requestStack
             ->method('getMainRequest')
             ->willReturn(self::createTestRequest($uri)

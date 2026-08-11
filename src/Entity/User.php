@@ -53,9 +53,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(options: ['default' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeImmutable $created_at = null;
 
+    /** @var Collection<int, Order> */
     #[ORM\OneToMany(mappedBy: 'buyer', targetEntity: Order::class)]
     private Collection $orders;
 
+    /** @var Collection<int, Address> */
     #[ORM\OneToMany(mappedBy: 'users', targetEntity: Address::class)]
     #[ORM\OrderBy(['isMainAddress' => 'DESC'])]
     private Collection $addresses;

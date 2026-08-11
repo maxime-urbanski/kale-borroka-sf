@@ -34,6 +34,7 @@ class Order
     #[ORM\Column]
     private ?int $totalPrice = null;
 
+    /** @var Collection<int, OrderDetails> */
     #[ORM\OneToMany(mappedBy: 'orders', targetEntity: OrderDetails::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $orderDetails;
 

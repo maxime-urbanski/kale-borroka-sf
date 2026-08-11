@@ -8,6 +8,9 @@ use App\Entity\Artist;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
+/**
+ * @extends AbstractCrudController<Artist>
+ */
 class ArtitstCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

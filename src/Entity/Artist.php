@@ -20,9 +20,11 @@ class Artist
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    /** @var Collection<int, Album> */
     #[ORM\OneToMany(mappedBy: 'artist', targetEntity: Album::class)]
     private Collection $albums;
 
+    /** @var Collection<int, Song> */
     #[ORM\ManyToMany(targetEntity: Song::class, mappedBy: 'artist')]
     private Collection $songs;
 

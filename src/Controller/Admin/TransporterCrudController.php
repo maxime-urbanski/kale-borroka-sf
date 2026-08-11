@@ -7,6 +7,9 @@ namespace App\Controller\Admin;
 use App\Entity\Transporter;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
+/**
+ * @extends AbstractCrudController<Transporter>
+ */
 class TransporterCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

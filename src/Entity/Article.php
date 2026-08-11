@@ -45,6 +45,7 @@ class Article
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    /** @var Collection<int, OrderDetails> */
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: OrderDetails::class)]
     private Collection $orderDetails;
 

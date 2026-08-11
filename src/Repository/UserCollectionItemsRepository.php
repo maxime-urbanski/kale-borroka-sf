@@ -13,11 +13,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<UserCollectionItems>
- *
- * @method UserCollectionItems|null find($id, $lockMode = null, $lockVersion = null)
- * @method UserCollectionItems|null findOneBy(array $criteria, array $orderBy = null)
- * @method UserCollectionItems[]    findAll()
- * @method UserCollectionItems[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class UserCollectionItemsRepository extends ServiceEntityRepository
 {
@@ -52,10 +47,8 @@ class UserCollectionItemsRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('uci')
             ->where('uci.article = :article')
             ->andWhere('uci.collection = :userCollection')
-            ->setParameters([
-                'article' => $article,
-                'userCollection' => $userCollection,
-            ])
+            ->setParameter('article', $article)
+            ->setParameter('userCollection', $userCollection)
             ->getQuery()
             ->getOneOrNullResult();
     }

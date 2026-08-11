@@ -20,6 +20,7 @@ class Payment
     #[ORM\Column(length: 100)]
     private ?string $name = null;
 
+    /** @var Collection<int, Order> */
     #[ORM\OneToMany(mappedBy: 'payment', targetEntity: Order::class)]
     private Collection $orders;
 

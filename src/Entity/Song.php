@@ -23,9 +23,11 @@ class Song
     #[ORM\Column]
     private ?int $track = null;
 
+    /** @var Collection<int, Album> */
     #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'tracklists', cascade: ['persist'])]
     private Collection $albums;
 
+    /** @var Collection<int, Artist> */
     #[ORM\ManyToMany(targetEntity: Artist::class, inversedBy: 'songs')]
     private Collection $artist;
 

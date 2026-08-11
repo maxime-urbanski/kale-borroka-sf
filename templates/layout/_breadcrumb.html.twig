@@ -1,4 +1,4 @@
-{% set route = app.request.get('_route') %}
+{% set route = app.request.attributes.get('_route') %}
 
 <div class="row my-5 justify-content-md-end">
     <div class="col align-self-end">

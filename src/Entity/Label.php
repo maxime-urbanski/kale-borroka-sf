@@ -26,6 +26,7 @@ class Label
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $logo = null;
 
+    /** @var Collection<int, Album> */
     #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'labels', cascade: ['persist'])]
     private Collection $albums;
 
