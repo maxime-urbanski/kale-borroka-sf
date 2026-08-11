@@ -30,7 +30,7 @@ class ArticleCrudController extends AbstractCrudController
     /**
      * @throws \Exception
      */
-    public function createEntity(string $entityFqcn): mixed
+    public function createEntity(string $entityFqcn): object
     {
         $entity = new $entityFqcn();
         $entity->setCreatedAt(
@@ -45,16 +45,10 @@ class ArticleCrudController extends AbstractCrudController
     }
 
     /**
-     * @phpstan-param mixed $entityInstance
-     *
      * @throws \Exception
      */
-    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    public function updateEntity(EntityManagerInterface $entityManager, object $entityInstance): void
     {
-        if (!$entityInstance instanceof Article) {
-            return;
-        }
-
         $entityInstance->setUpdatedAt(
             new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'))
         );
@@ -66,7 +60,7 @@ class ArticleCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $viewArticle = Action::new('view', 'Voir la page de l\'article')
-            ->displayAsLink()
+            ->renderAsLink()
             ->linkToRoute('app_catalog_show', fn (Article $article) => [
                 'support' => $article->getSupport()?->getName(),
                 'slug' => $article->getSlug(),
