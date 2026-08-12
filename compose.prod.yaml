@@ -1,0 +1,19 @@
+---
+# Production environment override
+services:
+  php:
+    image: ${IMAGES_PREFIX:-}app-php-prod
+    build:
+      context: .
+      target: frankenphp_prod
+    environment:
+      APP_SECRET: ${APP_SECRET}
+    volumes:
+      # VichUploader destinations, see config/packages/vich_uploader.yaml.
+      # Without these, uploaded files are lost when the container is replaced.
+      - uploads:/app/public/upload
+      - media:/app/public/media
+
+volumes:
+  uploads:
+  media:

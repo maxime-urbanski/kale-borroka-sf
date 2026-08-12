@@ -1,127 +1,192 @@
-#syntax=docker/dockerfile:1.4
+#syntax=docker/dockerfile:1
 
 # Versions
-FROM php:8.2-fpm-alpine AS php_upstream
-FROM mlocati/php-extension-installer:2 AS php_extension_installer_upstream
-FROM composer/composer:2-bin AS composer_upstream
-FROM caddy:2-alpine AS caddy_upstream
+FROM dunglas/frankenphp:1-php8.3 AS frankenphp_upstream
+FROM node:24-alpine AS node_upstream
 
 
 # The different stages of this Dockerfile are meant to be built into separate images
-# https://docs.docker.com/develop/develop-images/multistage-build/#stop-at-a-specific-build-stage
-# https://docs.docker.com/compose/compose-file/#target
+# https://docs.docker.com/build/building/multi-stage/#stop-at-a-specific-build-stage
+# https://docs.docker.com/reference/compose-file/build/#target
 
 
-# Base PHP image
-FROM php_upstream AS php_base
+# Base FrankenPHP image
+FROM frankenphp_upstream AS frankenphp_base
 
-WORKDIR /srv/app
+SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
-# persistent / runtime deps
-# hadolint ignore=DL3018
-RUN apk add --no-cache \
-		acl \
-		fcgi \
+WORKDIR /app
+
+# persistent deps
+# hadolint ignore=DL3008
+RUN <<-EOF
+	apt-get update
+	apt-get install -y --no-install-recommends \
 		file \
-		gettext \
-		git \
-	;
-
-# php extensions installer: https://github.com/mlocati/docker-php-extension-installer
-COPY --from=php_extension_installer_upstream --link /usr/bin/install-php-extensions /usr/local/bin/
-
-RUN set -eux; \
-    install-php-extensions \
+		git
+	install-php-extensions \
+		@composer \
 		apcu \
 		intl \
 		opcache \
-		zip \
-    ;
-
-###> recipes ###
-###> doctrine/doctrine-bundle ###
-RUN apk add --no-cache --virtual .pgsql-deps postgresql-dev; \
-	docker-php-ext-install -j"$(nproc)" pdo_pgsql; \
-	apk add --no-cache --virtual .pgsql-rundeps so:libpq.so.5; \
-	apk del .pgsql-deps
-###< doctrine/doctrine-bundle ###
-###< recipes ###
-
-COPY --link docker/php/conf.d/app.ini $PHP_INI_DIR/conf.d/
-
-COPY --link docker/php/php-fpm.d/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
-RUN mkdir -p /var/run/php
-
-COPY --link docker/php/docker-healthcheck.sh /usr/local/bin/docker-healthcheck
-RUN chmod +x /usr/local/bin/docker-healthcheck
-
-HEALTHCHECK --interval=10s --timeout=3s --retries=3 CMD ["docker-healthcheck"]
-
-COPY --link docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
-RUN chmod +x /usr/local/bin/docker-entrypoint
-
-ENTRYPOINT ["docker-entrypoint"]
-CMD ["php-fpm"]
+		zip
+	rm -rf /var/lib/apt/lists/*
+EOF
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
 ENV COMPOSER_ALLOW_SUPERUSER=1
-ENV PATH="${PATH}:/root/.composer/vendor/bin"
 
-COPY --from=composer_upstream --link /composer /usr/bin/composer
+ENV PHP_INI_SCAN_DIR=":$PHP_INI_DIR/app.conf.d"
 
+###> recipes ###
+###> doctrine/doctrine-bundle ###
+RUN install-php-extensions pdo_pgsql
+###< doctrine/doctrine-bundle ###
+###< recipes ###
 
-# Dev PHP image
-FROM php_base AS php_dev
+COPY --link frankenphp/conf.d/10-app.ini $PHP_INI_DIR/app.conf.d/
+COPY --link --chmod=755 frankenphp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
+COPY --link frankenphp/Caddyfile /etc/frankenphp/Caddyfile
 
-USER root:root
+ENTRYPOINT ["docker-entrypoint"]
 
-ENV APP_ENV=dev XDEBUG_MODE=off
-VOLUME /srv/app/var/
+HEALTHCHECK --start-period=60s CMD php -r 'exit(false === @file_get_contents("http://localhost:2019/metrics", context: stream_context_create(["http" => ["timeout" => 5]])) ? 1 : 0);'
+CMD [ "frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile" ]
 
-RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+# Dev FrankenPHP image
+FROM frankenphp_base AS frankenphp_dev
 
-RUN set -eux; \
-	install-php-extensions \
-    	xdebug \
-    ;
+ENV APP_ENV=dev
+ENV XDEBUG_MODE=off
+ENV FRANKENPHP_WORKER_CONFIG=watch
 
-COPY --link docker/php/conf.d/app.dev.ini $PHP_INI_DIR/conf.d/
+# dev dependencies
+RUN <<-EOF
+	mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+	install-php-extensions xdebug
+	useradd -m -s /bin/bash nonroot
+	git config --system --add safe.directory /app
+EOF
 
-# Prod PHP image
-FROM php_base AS php_prod
+COPY --link frankenphp/conf.d/20-app.dev.ini $PHP_INI_DIR/app.conf.d/
+
+CMD [ "frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile", "--watch" ]
+
+# Builder for the Webpack Encore assets shipped in the prod image
+FROM node_upstream AS assets_builder
+
+WORKDIR /app
+
+COPY --link package.json yarn.lock ./
+# No --frozen-lockfile: yarn.lock is currently in Yarn Berry format while package.json
+# declares yarn@1.22.22, so classic yarn has to re-resolve it. Switch this back to
+# --frozen-lockfile once the lockfile and the declared package manager agree.
+RUN yarn install
+
+COPY --link webpack.config.js ./
+COPY --link assets assets/
+RUN yarn build
+
+# Builder for the prod FrankenPHP image
+FROM frankenphp_base AS frankenphp_prod_builder
 
 ENV APP_ENV=prod
 
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-COPY --link docker/php/conf.d/app.prod.ini $PHP_INI_DIR/conf.d/
+
+COPY --link frankenphp/conf.d/20-app.prod.ini $PHP_INI_DIR/app.conf.d/
 
 # prevent the reinstallation of vendors at every changes in the source code
 COPY --link composer.* symfony.* ./
-RUN set -eux; \
-	composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
+RUN composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
 
 # copy sources
-COPY --link . ./
-RUN rm -Rf docker/
+COPY --link --exclude=frankenphp/ . ./
 
-RUN set -eux; \
-	mkdir -p var/cache var/log; \
-	composer dump-autoload --classmap-authoritative --no-dev; \
-	composer dump-env prod; \
-	composer run-script --no-dev post-install-cmd; \
-	chmod +x bin/console; sync;
+# compiled assets: public/build/ is gitignored and never part of the build context
+COPY --link --from=assets_builder /app/public/build public/build
 
+RUN <<-EOF
+	mkdir -p var/cache var/log var/share
+	# VichUploader destinations, see config/packages/vich_uploader.yaml
+	mkdir -p public/upload/albums public/media
+	composer dump-autoload --classmap-authoritative --no-dev
+	composer dump-env prod
+	composer run-script --no-dev post-install-cmd
+	if [ -f importmap.php ]; then
+		php bin/console asset-map:compile
+	fi
+	chmod +x bin/console
+	chmod -R g=u var public/upload public/media
+	sync
+EOF
 
-# Base Caddy image
-FROM caddy_upstream AS caddy_base
+# Collect shared libraries needed by FrankenPHP and PHP extensions
+# hadolint ignore=DL3008,SC3054,DL4006
+RUN <<-'EOF'
+	apt-get update
+	apt-get install -y --no-install-recommends libtree
+	mkdir -p /tmp/libs
+	BINARIES=(frankenphp php file)
+	for target in $(printf '%s\n' "${BINARIES[@]}" | xargs -I{} which {}) \
+		$(find "$(php -r 'echo ini_get("extension_dir");')" -maxdepth 2 -name "*.so"); do
+		libtree -pv "$target" 2>/dev/null | grep -oP '(?:── )\K/\S+(?= \[)' | while IFS= read -r lib; do
+			[ -f "$lib" ] && cp -n "$lib" /tmp/libs/
+		done
+	done
+	rm -rf /var/lib/apt/lists/*
+EOF
 
-ARG TARGETARCH
+# Prod FrankenPHP image
+FROM debian:13-slim AS frankenphp_prod
 
-WORKDIR /srv/app
+SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
-COPY --link docker/caddy/Caddyfile /etc/caddy/Caddyfile
+ENV APP_ENV=prod
+ENV PHP_INI_SCAN_DIR=":/usr/local/etc/php/app.conf.d"
 
-# Prod Caddy image
-FROM caddy_base AS caddy_prod
+COPY --from=frankenphp_prod_builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
+COPY --from=frankenphp_prod_builder /usr/local/bin/php /usr/local/bin/php
+COPY --from=frankenphp_prod_builder /usr/local/bin/docker-php-entrypoint /usr/local/bin/docker-php-entrypoint
+COPY --from=frankenphp_prod_builder /usr/local/lib/php/extensions /usr/local/lib/php/extensions
+COPY --from=frankenphp_prod_builder /tmp/libs /usr/lib
 
-COPY --from=php_prod --link /srv/app/public public/
+COPY --from=frankenphp_prod_builder /usr/local/etc/php/conf.d /usr/local/etc/php/conf.d
+COPY --from=frankenphp_prod_builder /usr/local/etc/php/php.ini /usr/local/etc/php/php.ini
+COPY --from=frankenphp_prod_builder /usr/local/etc/php/app.conf.d /usr/local/etc/php/app.conf.d
+
+COPY --from=frankenphp_prod_builder /etc/frankenphp/Caddyfile /etc/frankenphp/Caddyfile
+
+# CA certificates for TLS, file/libmagic for Symfony MIME type detection
+COPY --from=frankenphp_prod_builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=frankenphp_prod_builder /etc/ssl/openssl.cnf /etc/ssl/openssl.cnf
+COPY --from=frankenphp_prod_builder /usr/bin/file /usr/bin/file
+COPY --from=frankenphp_prod_builder /usr/lib/file/magic.mgc /usr/lib/file/magic.mgc
+
+ENV  OPENSSL_CONF=/etc/ssl/openssl.cnf XDG_CONFIG_HOME=/config XDG_DATA_HOME=/data SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+
+RUN <<-EOF
+	mkdir -p /data/caddy /config/caddy
+	chown -R www-data:www-data /data /config
+	# Remove setuid/setgid bits
+	find / -perm /6000 -type f -exec chmod a-s {} + 2>/dev/null || true
+EOF
+
+COPY --link --exclude=var --exclude=public/upload --exclude=public/media --from=frankenphp_prod_builder /app /app
+# Group 0 + g=u for arbitrary-UID runtimes (e.g. OpenShift).
+COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/var /app/var
+# VichUploader writes here at runtime; mount a volume over them to persist uploads.
+COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/public/upload /app/public/upload
+COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/public/media /app/public/media
+RUN chmod g=u /app/var /app/public/upload /app/public/media
+
+COPY --link --chmod=755 frankenphp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
+
+USER www-data
+
+WORKDIR /app
+
+ENTRYPOINT ["docker-entrypoint"]
+
+HEALTHCHECK --start-period=60s CMD php -r 'exit(false === @file_get_contents("http://localhost:2019/metrics", context: stream_context_create(["http" => ["timeout" => 5]])) ? 1 : 0);'
+CMD [ "frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile" ]

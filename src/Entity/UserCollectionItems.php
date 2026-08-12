@@ -17,7 +17,7 @@ class UserCollectionItems
     private ?Article $article = null;
 
     #[ORM\Id]
-    #[ORM\ManyToOne(inversedBy: 'collectionItems')]
+    #[ORM\ManyToOne(inversedBy: 'items')]
     #[ORM\JoinColumn(nullable: false)]
     private ?UserCollection $collection = null;
 
