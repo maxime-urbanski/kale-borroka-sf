@@ -3,11 +3,11 @@
 {% block body %}
     <div class="container">
         {% include 'layout/article/_section.html.twig' with {
-            editions: lastEditions,
+            albums: lastAlbums,
             title: 'Derniers Articles'
         } %}
         {% include 'layout/article/_section.html.twig' with {
-            editions: lastProduction,
+            albums: lastProduction,
             title: 'Dernières prod'
         } %}
     </div>

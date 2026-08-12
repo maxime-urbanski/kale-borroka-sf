@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Controller\Catalog;
 
 use App\Data\ArticleFilterData;
-use App\Repository\EditionRepository;
+use App\Repository\AlbumRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -44,10 +44,11 @@ class ProductionControllerTest extends WebTestCase
         $filters = new ArticleFilterData();
         $filters->kbrProduction = true;
 
-        $editionRepository = self::getContainer()->get(EditionRepository::class);
-        $ownProdEditions = $editionRepository->filterEditionQuery($filters);
-        $numberProdEditions = count($ownProdEditions->getResult());
+        // Counted in albums, not pressings: the grid shows one card per record.
+        $albumRepository = self::getContainer()->get(AlbumRepository::class);
+        $ownProdAlbums = $albumRepository->filterAlbumQuery($filters);
+        $numberProdAlbums = count($ownProdAlbums->getResult());
 
-        self::assertEquals((string) $numberProdEditions.' éléments trouvés.', $badge);
+        self::assertEquals((string) $numberProdAlbums.' éléments trouvés.', $badge);
     }
 }

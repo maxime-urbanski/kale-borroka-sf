@@ -6,7 +6,7 @@ namespace App\Controller\Catalog;
 
 use App\Data\ArticleFilterData;
 use App\Form\ProductionFilterFormType;
-use App\Repository\EditionRepository;
+use App\Repository\AlbumRepository;
 use App\Service\BreadcrumbInterface;
 use App\Service\CustomPaginationService;
 use App\Service\DispatchFilterValueService;
@@ -19,7 +19,7 @@ class ProductionController extends AbstractController
 {
     #[Route('/production/{page}', 'app_production', requirements: ['page' => '^(page-)\d+'])]
     public function index(
-        EditionRepository $editionRepository,
+        AlbumRepository $albumRepository,
         CustomPaginationService $paginationService,
         DispatchFilterValueService $dispatchFilterValueService,
         Request $request,
@@ -32,12 +32,12 @@ class ProductionController extends AbstractController
         $productionForm = $this->createForm(ProductionFilterFormType::class, $filters);
         $productionForm->handleRequest($request);
 
-        $productions = $editionRepository
-            ->filterEditionQuery($dispatchFilterValueService->dispatchFilterValue($filters));
+        $productions = $albumRepository
+            ->filterAlbumQuery($dispatchFilterValueService->dispatchFilterValue($filters));
         $pagination = $paginationService->pagination($productions, $page);
 
         return $this->render('catalog/articles.html.twig', [
-            'editions' => $pagination,
+            'albums' => $pagination,
             'breadcrumb' => $breadcrumb->breadcrumb(),
             'form' => $productionForm,
             'filters' => $filters,

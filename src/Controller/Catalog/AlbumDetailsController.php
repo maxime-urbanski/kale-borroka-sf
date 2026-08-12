@@ -10,6 +10,7 @@ use App\Entity\Edition;
 use App\Entity\User;
 use App\Enum\SupportType;
 use App\Form\AddToCartWithQuantityType;
+use App\Repository\AlbumRepository;
 use App\Repository\ArticleRepository;
 use App\Repository\EditionRepository;
 use App\Repository\UserCollectionRepository;
@@ -51,6 +52,7 @@ class AlbumDetailsController
         string $support,
         string $slug,
         EditionRepository $editionRepository,
+        AlbumRepository $albumRepository,
         ArticleRepository $articleRepository,
         FormFactoryInterface $formInterface,
         Request $request,
@@ -108,8 +110,8 @@ class AlbumDetailsController
             'selectedEdition' => $selected,
             'offers' => $offers,
             'breadcrumb' => $breadcrumb->breadcrumb(lastItemName: $album->getName()),
-            'editionsByArtist' => $editionRepository->getEditionWithSameArtist($selected)->getResult(),
-            'editionsSameStyle' => $editionRepository->getEditionWithSameStyle($selected)->getResult(),
+            'albumsByArtist' => $albumRepository->getAlbumWithSameArtist($album)->getResult(),
+            'albumsSameStyle' => $albumRepository->getAlbumWithSameStyle($album)->getResult(),
             'form' => $addToCartForm?->createView(),
             'userWishlist' => $userWishlist,
             'userCollection' => $userCollection,

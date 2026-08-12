@@ -2,9 +2,10 @@
     <h2 class="fs-3 text-center text-decoration-underline red w-content mx-auto {{ title_mb | default('mb-5') }}">
         {{ title | upper }}
     </h2>
-    {% if editions is defined %}
+    {% if albums is defined %}
         {% include 'layout/article/_article-grid.html.twig' with {
-            editions,
+            albums,
+            supportScope: supportScope|default(null),
             col_sm: 2,
             col_md: 3,
             col_lg: 4,

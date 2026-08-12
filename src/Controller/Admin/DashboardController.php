@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Repository\ArticleRepository;
+use App\Repository\EditionRepository;
+use App\Repository\OrderRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -13,11 +16,20 @@ use Symfony\Component\HttpFoundation\Response;
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
+    public function __construct(
+        private readonly ArticleRepository $articleRepository,
+        private readonly EditionRepository $editionRepository,
+        private readonly OrderRepository $orderRepository,
+    ) {
+    }
+
     public function index(): Response
     {
-        // With pretty URLs, EasyAdmin registers a real Symfony route per CRUD action,
-        // so redirecting by route name is enough — no AdminUrlGenerator needed.
-        return $this->redirectToRoute('admin_artist_index');
+        return $this->render('admin/dashboard.html.twig', [
+            'lowStock' => $this->articleRepository->findLowStock(),
+            'editionsWithoutOffer' => $this->editionRepository->findWithoutOffer(),
+            'lastOrders' => $this->orderRepository->findBy([], ['created_at' => 'DESC'], 5),
+        ]);
     }
 
     public function configureDashboard(): Dashboard

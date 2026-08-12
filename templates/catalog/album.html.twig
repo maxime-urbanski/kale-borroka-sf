@@ -198,15 +198,15 @@
                 title_mb: 'mb-4'
             } %}
         {% endif %}
-        {% if editionsByArtist|length %}
+        {% if albumsByArtist|length %}
             {% include 'layout/article/_section.html.twig' with {
-                editions: editionsByArtist,
+                albums: albumsByArtist,
                 title: 'Du même artiste',
                 title_mb: 'mb-5'
             } %}
         {% endif %}
-        {% if editionsSameStyle|length %}
-            {% include 'layout/article/_section.html.twig' with {editions: editionsSameStyle, title: 'Dans le même style'} %}
+        {% if albumsSameStyle|length %}
+            {% include 'layout/article/_section.html.twig' with {albums: albumsSameStyle, title: 'Dans le même style'} %}
         {% endif %}
     </div>
 {% endblock %}

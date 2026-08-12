@@ -7,11 +7,13 @@ namespace App\Controller\Admin;
 use App\Entity\Artist;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 /**
@@ -58,5 +60,17 @@ class ArtistCrudController extends AbstractCrudController
             ->setFormType(VichImageType::class)
             ->onlyOnForms()
             ->setColumns(6);
+        // links is a plateforme => URL map (schema.org sameAs). A keyed collection keeps
+        // it editable without inventing an entity for two or three URLs per artist.
+        yield ArrayField::new('links', 'Liens externes')
+            ->setHelp('Clé = plateforme (bandcamp, discogs…), valeur = URL.')
+            ->setFormTypeOptions([
+                'entry_type' => UrlType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'entry_options' => ['required' => false],
+            ])
+            ->hideOnIndex()
+            ->setColumns(12);
     }
 }

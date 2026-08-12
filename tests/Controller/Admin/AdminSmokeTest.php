@@ -50,10 +50,11 @@ class AdminSmokeTest extends WebTestCase
         $this->client->loginUser($admin);
     }
 
-    public function testDashboardIsReachable(): void
+    public function testDashboardRenders(): void
     {
         $this->client->request('GET', '/admin');
-        self::assertResponseRedirects();
+
+        self::assertResponseIsSuccessful();
     }
 
     /**
@@ -74,6 +75,35 @@ class AdminSmokeTest extends WebTestCase
         $this->client->request('GET', $url);
 
         self::assertResponseIsSuccessful(sprintf('la liste %s ne s\'affiche pas', $routeName));
+    }
+
+    /**
+     * Applying a filter is what actually builds the DQL. Enum-backed choice filters are
+     * the fragile combination — rendering the list alone never exercises them.
+     */
+    public function testEnumFiltersCanBeApplied(): void
+    {
+        $url = self::getContainer()->get('router')->generate('admin_article_index');
+
+        $this->client->request('GET', $url, [
+            'filters' => [
+                'condition' => ['comparison' => '=', 'value' => ['used']],
+                'availability' => ['comparison' => '=', 'value' => ['in_stock']],
+            ],
+        ]);
+
+        self::assertResponseIsSuccessful('le filtre sur les enums doit produire une requête valide');
+    }
+
+    public function testEntityFilterCanBeApplied(): void
+    {
+        $url = self::getContainer()->get('router')->generate('admin_edition_index');
+
+        $this->client->request('GET', $url, [
+            'filters' => ['color' => ['comparison' => 'like', 'value' => 'rouge']],
+        ]);
+
+        self::assertResponseIsSuccessful();
     }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('crudRouteProvider')]

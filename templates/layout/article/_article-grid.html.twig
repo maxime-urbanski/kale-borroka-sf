@@ -1,13 +1,16 @@
-{# One card per Edition: two offers of the same pressing (new and second-hand) must not
-   show up as two identical cards. #}
+{# One card per album: a record pressed on black and red vinyl is a single entry here, and
+   the picker on the album page takes over from there. #}
 <div
     class="row row-cols-{{ col_sm }} row-cols-md-{{ col_md}} row-cols-lg-{{ col_lg }} {% if col_xl is defined %} row-cols-xl-{{ col_xl }}{% endif %} g-4">
-    {% for edition in editions %}
-        <article class="col">
-            <a href="{{ path('app_catalog_show', edition.routeParams) }}"
-               class="card-title text-decoration-none mb-0">
-                {% include 'layout/article/_card.html.twig' with {edition} %}
-            </a>
-        </article>
+    {% for album in albums %}
+        {% set preview = album.getPreviewEdition(supportScope|default(null)) %}
+        {% if preview %}
+            <article class="col">
+                <a href="{{ path('app_catalog_show', preview.routeParams) }}"
+                   class="card-title text-decoration-none mb-0">
+                    {% include 'layout/article/_card.html.twig' with {album, supportScope: supportScope|default(null)} %}
+                </a>
+            </article>
+        {% endif %}
     {% endfor %}
 </div>

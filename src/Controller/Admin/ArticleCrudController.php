@@ -10,6 +10,7 @@ use App\Enum\ItemCondition;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -19,6 +20,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
 
 /**
  * Article is the offer: price, stock and condition only. What the record *is* belongs to
@@ -28,6 +32,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
  */
 class ArticleCrudController extends AbstractCrudController
 {
+    private const int LOW_STOCK_THRESHOLD = 3;
+
     public static function getEntityFqcn(): string
     {
         return Article::class;
@@ -55,6 +61,18 @@ class ArticleCrudController extends AbstractCrudController
             ->add(Crud::PAGE_EDIT, $viewArticle);
     }
 
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(EntityFilter::new('edition', 'Édition'))
+            ->add(ChoiceFilter::new('condition', 'État')
+                ->setChoices($this->enumChoices(ItemCondition::cases())))
+            ->add(ChoiceFilter::new('availability', 'Disponibilité')
+                ->setChoices($this->enumChoices(ItemAvailability::cases())))
+            ->add(NumericFilter::new('quantity', 'Stock'))
+            ->add(NumericFilter::new('price', 'Prix'));
+    }
+
     public function configureFields(string $pageName): iterable
     {
         yield AssociationField::new('edition', 'Édition')
@@ -70,6 +88,13 @@ class ArticleCrudController extends AbstractCrudController
             ->setCurrency('EUR')
             ->setColumns(3);
         yield IntegerField::new('quantity', 'Quantité disponible')
+            // Plain text rather than markup: EasyAdmin escapes formatted values, and a
+            // marker is enough to spot what needs restocking when scanning the list.
+            ->formatValue(static fn (?int $value): string => match (true) {
+                null === $value, $value <= 0 => '0 — rupture',
+                $value <= self::LOW_STOCK_THRESHOLD => $value.' — stock faible',
+                default => (string) $value,
+            })
             ->setColumns(3);
         yield IntegerField::new('weight', 'Poids (g)')
             ->setHelp('Utilisé pour le calcul des frais de port.')

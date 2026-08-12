@@ -161,6 +161,22 @@ class EditionRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Pressings with no offer attached: they exist in the catalogue but cannot be bought,
+     * which is almost always an unfinished admin entry.
+     *
+     * @return Edition[]
+     */
+    public function findWithoutOffer(): array
+    {
+        return $this->baseQuery()
+            ->leftJoin('edition.articles', 'article')
+            ->andWhere('article.id IS NULL')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function countForSupport(Support $support): int
     {
         return (int) $this->createQueryBuilder('edition')

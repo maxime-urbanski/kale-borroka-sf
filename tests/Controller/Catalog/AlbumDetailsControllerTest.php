@@ -112,6 +112,32 @@ class AlbumDetailsControllerTest extends WebTestCase
         );
     }
 
+    /**
+     * The headline claim of the Edition refactor: a record pressed twice on the same
+     * support is one card in the grid, not two look-alikes.
+     */
+    public function testAlbumWithTwoLpEditionsAppearsOnceInTheGrid(): void
+    {
+        $crawler = $this->client->request('GET', '/catalog/lp');
+
+        self::assertResponseIsSuccessful();
+
+        $titles = $crawler->filter('article .card-body p.fw-semibold')->each(
+            static fn ($node): string => trim($node->text())
+        );
+
+        $quartierMaudit = array_filter(
+            $titles,
+            static fn (string $title): bool => str_contains($title, 'Quartier Maudit')
+        );
+
+        self::assertCount(
+            1,
+            $quartierMaudit,
+            'les deux pressages LP de Quartier Maudit doivent tenir sur une seule carte'
+        );
+    }
+
     private function uriFor(object $edition): string
     {
         return sprintf(

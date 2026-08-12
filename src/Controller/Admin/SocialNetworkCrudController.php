@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Admin;
 
 use App\Entity\SocialNetwork;
@@ -37,10 +39,13 @@ class SocialNetworkCrudController extends AbstractCrudController
             })
         ;
 
+        // basePath must match the Vich `media_object` uri_prefix (/media), and uploadDir
+        // is resolved from the project root — the previous '/' + '/public/media' pair
+        // produced a path that did not resolve.
         yield ImageField::new('file.filename')
             ->setLabel('Image')
-            ->setBasePath('/')
-            ->setUploadDir('/public/media')
+            ->setBasePath('/media')
+            ->setUploadDir('public/media')
             ->hideOnForm()
         ;
 

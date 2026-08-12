@@ -326,6 +326,74 @@ class Album
         return $this;
     }
 
+    /**
+     * Editions of this album, optionally narrowed to one support — the catalogue is
+     * browsed per support, so /catalog/lp must only price and picture the LP pressings.
+     *
+     * @return Collection<int, Edition>
+     */
+    public function getEditionsForSupport(?Support $support = null): Collection
+    {
+        if (null === $support) {
+            return $this->editions;
+        }
+
+        return $this->editions->filter(
+            static fn (Edition $edition): bool => $edition->getSupport() === $support
+        );
+    }
+
+    /**
+     * The edition a catalogue card stands for: the cheapest one still purchasable, or
+     * failing that the first, so a sold-out record is still displayed.
+     */
+    public function getPreviewEdition(?Support $support = null): ?Edition
+    {
+        $editions = $this->getEditionsForSupport($support);
+
+        $withOffer = $editions->filter(
+            static fn (Edition $edition): bool => null !== $edition->getCheapestArticle()
+        );
+
+        $candidates = $withOffer->isEmpty() ? $editions : $withOffer;
+
+        if ($candidates->isEmpty()) {
+            return null;
+        }
+
+        $sorted = $candidates->toArray();
+        usort($sorted, static fn (Edition $a, Edition $b): int => ($a->getCheapestArticle()?->getPrice() ?? PHP_INT_MAX)
+            <=> ($b->getCheapestArticle()?->getPrice() ?? PHP_INT_MAX));
+
+        return $sorted[0];
+    }
+
+    public function getCheapestArticle(?Support $support = null): ?Article
+    {
+        return $this->getPreviewEdition($support)?->getCheapestArticle();
+    }
+
+    /**
+     * True when the card should advertise "from X €" rather than a single price: either
+     * several pressings, or several offers on the one pressing.
+     */
+    public function hasSeveralOffers(?Support $support = null): bool
+    {
+        $editions = $this->getEditionsForSupport($support);
+
+        if ($editions->count() > 1) {
+            return true;
+        }
+
+        return $this->getPreviewEdition($support)?->hasSeveralOffers() ?? false;
+    }
+
+    public function getCoverImage(?Support $support = null): ?Image
+    {
+        return $this->getPreviewEdition($support)?->getCoverImage()
+            ?: ($this->images->first() ?: null);
+    }
+
     public function fullName(): string
     {
         return $this->artist.' - '.$this->name;
