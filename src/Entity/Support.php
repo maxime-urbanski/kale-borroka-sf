@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\SupportType;
 use App\Repository\SupportRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -19,6 +20,15 @@ class Support
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
+
+    /**
+     * Canonical format, typed with the SupportType enum.
+     *
+     * `name` stays the URL segment for backward compatibility; `code` is what the
+     * application should branch on.
+     */
+    #[ORM\Column(length: 32, unique: true, enumType: SupportType::class)]
+    private ?SupportType $code = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $icon = null;
@@ -45,6 +55,18 @@ class Support
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getCode(): ?SupportType
+    {
+        return $this->code;
+    }
+
+    public function setCode(SupportType $code): static
+    {
+        $this->code = $code;
 
         return $this;
     }

@@ -6,6 +6,7 @@ namespace App\Controller\Catalog;
 
 use App\Data\ArticleFilterData;
 use App\Entity\Support;
+use App\Enum\SupportType;
 use App\Form\ArticleFilterFormType;
 use App\Repository\ArticleRepository;
 use App\Service\BreadcrumbInterface;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\EnumRequirement;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -26,8 +28,6 @@ use Twig\Error\SyntaxError;
 #[AsController]
 class CatalogBySupportController
 {
-    public const SUPPORT_REQUIREMENTS = 'lp|ep|tape|fanzine|cd';
-
     /**
      * @throws RuntimeError
      * @throws SyntaxError
@@ -37,7 +37,7 @@ class CatalogBySupportController
         path: '/catalog/{support}/{page}',
         name: 'app_catalog_list',
         requirements: [
-            'support' => self::SUPPORT_REQUIREMENTS,
+            'support' => new EnumRequirement(SupportType::class),
             'page' => '^(page-)'.Requirement::DIGITS,
         ],
         defaults: ['page' => 'page-1'],

@@ -7,6 +7,7 @@ namespace App\Controller\Catalog;
 use App\Data\AddToCartWithQuantity;
 use App\Entity\Article;
 use App\Entity\User;
+use App\Enum\SupportType;
 use App\Form\AddToCartWithQuantityType;
 use App\Repository\ArticleRepository;
 use App\Repository\UserCollectionRepository;
@@ -21,6 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Requirement\EnumRequirement;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -30,8 +32,6 @@ use Twig\Error\SyntaxError;
 #[AsController]
 class ArticleDetailsController
 {
-    public const SUPPORT_REQUIREMENTS = 'lp|ep|tape|fanzine|cd';
-
     /**
      * @throws SyntaxError
      * @throws RuntimeError
@@ -41,7 +41,7 @@ class ArticleDetailsController
     #[Route(
         path: '/catalog/{support}/{slug}',
         name: 'app_catalog_show',
-        requirements: ['support' => self::SUPPORT_REQUIREMENTS],
+        requirements: ['support' => new EnumRequirement(SupportType::class)],
         methods: Request::METHOD_GET
     )]
     public function __invoke(

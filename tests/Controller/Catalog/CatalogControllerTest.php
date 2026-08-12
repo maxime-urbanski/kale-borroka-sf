@@ -83,6 +83,26 @@ class CatalogControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
     }
 
+    /**
+     * The {support} route requirement is generated from SupportType via EnumRequirement,
+     * so a case added to the enum without a matching Support row would produce a route
+     * that matches but 404s on entity resolution. This guards the two staying paired.
+     */
+    public function testEverySupportTypeHasAReachableCatalogPage(): void
+    {
+        $supportRepository = self::getContainer()->get(SupportRepository::class);
+
+        foreach (SupportType::cases() as $supportType) {
+            self::assertNotNull(
+                $supportRepository->findOneBy(['code' => $supportType]),
+                sprintf('aucun Support en base pour le format "%s"', $supportType->value)
+            );
+
+            $this->client->request('GET', self::DEFAULT_URI.'/'.$supportType->value);
+            self::assertResponseIsSuccessful();
+        }
+    }
+
     public function testAccessCatalogWithBadSupport(): void
     {
         $this->client->request('GET', self::DEFAULT_URI.self::ERROR_SUPPORT);
