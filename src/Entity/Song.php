@@ -23,6 +23,17 @@ class Song
     #[ORM\Column]
     private ?int $track = null;
 
+    /** Running time, in seconds. */
+    #[ORM\Column(nullable: true)]
+    private ?int $duration = null;
+
+    /** Physical side the track sits on (A, B, C, … ) — meaningless for CD and digital. */
+    #[ORM\Column(length: 4, nullable: true)]
+    private ?string $side = null;
+
+    #[ORM\Column(length: 12, nullable: true)]
+    private ?string $isrc = null;
+
     /** @var Collection<int, Album> */
     #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'tracklists', cascade: ['persist'])]
     private Collection $albums;
@@ -62,6 +73,42 @@ class Song
     public function setTrack(int $track): static
     {
         $this->track = $track;
+
+        return $this;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(?int $duration): static
+    {
+        $this->duration = $duration;
+
+        return $this;
+    }
+
+    public function getSide(): ?string
+    {
+        return $this->side;
+    }
+
+    public function setSide(?string $side): static
+    {
+        $this->side = $side;
+
+        return $this;
+    }
+
+    public function getIsrc(): ?string
+    {
+        return $this->isrc;
+    }
+
+    public function setIsrc(?string $isrc): static
+    {
+        $this->isrc = $isrc;
 
         return $this;
     }

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\AlbumProductionType;
 use App\Repository\AlbumRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: AlbumRepository::class)]
 class Album
@@ -21,8 +23,26 @@ class Album
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\Column(length: 255, unique: true)]
+    #[Gedmo\Slug(fields: ['name'])]
+    private ?string $slug = null;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $note = null;
+
+    #[ORM\Column(length: 32, nullable: true, enumType: AlbumProductionType::class)]
+    private ?AlbumProductionType $productionType = null;
+
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $recordingYear = null;
+
+    /** ISO 3166-1 alpha-2 country code. */
+    #[ORM\Column(length: 2, nullable: true)]
+    private ?string $countryOfOrigin = null;
+
+    /** Total running time, in seconds. */
+    #[ORM\Column(nullable: true)]
+    private ?int $duration = null;
 
     #[ORM\Column]
     private ?bool $kbrProduction = null;
@@ -83,6 +103,66 @@ class Album
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getProductionType(): ?AlbumProductionType
+    {
+        return $this->productionType;
+    }
+
+    public function setProductionType(?AlbumProductionType $productionType): static
+    {
+        $this->productionType = $productionType;
+
+        return $this;
+    }
+
+    public function getRecordingYear(): ?int
+    {
+        return $this->recordingYear;
+    }
+
+    public function setRecordingYear(?int $recordingYear): static
+    {
+        $this->recordingYear = $recordingYear;
+
+        return $this;
+    }
+
+    public function getCountryOfOrigin(): ?string
+    {
+        return $this->countryOfOrigin;
+    }
+
+    public function setCountryOfOrigin(?string $countryOfOrigin): static
+    {
+        $this->countryOfOrigin = $countryOfOrigin;
+
+        return $this;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(?int $duration): static
+    {
+        $this->duration = $duration;
 
         return $this;
     }
