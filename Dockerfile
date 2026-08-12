@@ -98,7 +98,7 @@ COPY --link composer.* symfony.* ./
 RUN composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
 
 # copy sources
-COPY --link --exclude=frankenphp/ . ./
+COPY --link . ./
 
 # compiled assets: public/build/ is gitignored and never part of the build context
 COPY --link --from=assets_builder /app/public/build public/build
@@ -169,7 +169,7 @@ RUN <<-EOF
 	find / -perm /6000 -type f -exec chmod a-s {} + 2>/dev/null || true
 EOF
 
-COPY --link --exclude=var --exclude=public/upload --exclude=public/media --from=frankenphp_prod_builder /app /app
+COPY --link --from=frankenphp_prod_builder /app /app
 # Group 0 + g=u for arbitrary-UID runtimes (e.g. OpenShift).
 COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/var /app/var
 # VichUploader writes here at runtime; mount a volume over them to persist uploads.
