@@ -1,5 +1,4 @@
 parameters:
-    checkGenericClassInNonGenericObjectType: false
     checkUninitializedProperties: true
     level: 6
     paths:
@@ -8,3 +7,10 @@ parameters:
         - public/
         - src/
         - tests/
+    ignoreErrors:
+        # Doctrine assigns entity identifiers through reflection, so PHPStan never
+        # sees an int being written to $id and suggests narrowing the type to null.
+        -
+            identifier: property.unusedType
+            message: '#Property App\\Entity\\[A-Za-z]+::\$id \(int\|null\) is never assigned int#'
+            path: src/Entity/*

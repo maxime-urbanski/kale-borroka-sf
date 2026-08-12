@@ -111,7 +111,7 @@
                 {% if action_filter and (filters.artists or filters.styles or filters.labels) %}
                     {% include 'partials/_obfuscation_link.html.twig' with {
                         url: path('app_catalog_list', {
-                            support: app.request.get('support')
+                            support: app.request.attributes.get('support')
                         }),
                         class: "btn btn-danger w-100 mt-3",
                         text_btn: 'Supprimer les filtres'

@@ -1,7 +1,7 @@
 #syntax=docker/dockerfile:1
 
 # Versions
-FROM dunglas/frankenphp:1-php8.3 AS frankenphp_upstream
+FROM dunglas/frankenphp:1-php8.5 AS frankenphp_upstream
 FROM node:24-alpine AS node_upstream
 
 
@@ -78,10 +78,7 @@ FROM node_upstream AS assets_builder
 WORKDIR /app
 
 COPY --link package.json yarn.lock ./
-# No --frozen-lockfile: yarn.lock is currently in Yarn Berry format while package.json
-# declares yarn@1.22.22, so classic yarn has to re-resolve it. Switch this back to
-# --frozen-lockfile once the lockfile and the declared package manager agree.
-RUN yarn install
+RUN yarn install --frozen-lockfile
 
 COPY --link webpack.config.js ./
 COPY --link assets assets/
@@ -101,7 +98,7 @@ COPY --link composer.* symfony.* ./
 RUN composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
 
 # copy sources
-COPY --link --exclude=frankenphp/ . ./
+COPY --link . ./
 
 # compiled assets: public/build/ is gitignored and never part of the build context
 COPY --link --from=assets_builder /app/public/build public/build
@@ -172,7 +169,7 @@ RUN <<-EOF
 	find / -perm /6000 -type f -exec chmod a-s {} + 2>/dev/null || true
 EOF
 
-COPY --link --exclude=var --exclude=public/upload --exclude=public/media --from=frankenphp_prod_builder /app /app
+COPY --link --from=frankenphp_prod_builder /app /app
 # Group 0 + g=u for arbitrary-UID runtimes (e.g. OpenShift).
 COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/var /app/var
 # VichUploader writes here at runtime; mount a volume over them to persist uploads.

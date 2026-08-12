@@ -8,11 +8,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<WishlistItem>
- *
- * @method WishlistItem|null find($id, $lockMode = null, $lockVersion = null)
- * @method WishlistItem|null findOneBy(array $criteria, array $orderBy = null)
- * @method WishlistItem[]    findAll()
- * @method WishlistItem[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class WishlistItemRepository extends ServiceEntityRepository
 {

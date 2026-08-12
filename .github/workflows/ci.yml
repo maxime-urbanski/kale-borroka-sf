@@ -49,9 +49,7 @@ jobs:
           node-version: 24
           cache: yarn
       - name: Test YARN
-        # See the note in the Dockerfile: the lockfile format and packageManager disagree,
-        # so --frozen-lockfile cannot be used yet.
-        run: yarn install && yarn dev
+        run: yarn install --frozen-lockfile && yarn dev
       - name: Create test database
         run: docker compose exec -T php bin/console -e test doctrine:database:create
       - name: Run migrations
@@ -75,9 +73,4 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Lint Dockerfile
-        # v3.1.0 ships hadolint 2.12, whose parser rejects `COPY --exclude`.
-        uses: hadolint/hadolint-action@v3.4.0
-        with:
-          # The upstream symfony-docker Dockerfile trips DL3025 (HEALTHCHECK shell
-          # form) and DL3066 (`USER www-data`); upstream's own linter runs at `error`.
-          failure-threshold: error
+        uses: hadolint/hadolint-action@v3.1.0

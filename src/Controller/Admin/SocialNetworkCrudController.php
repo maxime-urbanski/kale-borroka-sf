@@ -10,6 +10,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 
+/**
+ * @extends AbstractCrudController<SocialNetwork>
+ */
 class SocialNetworkCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

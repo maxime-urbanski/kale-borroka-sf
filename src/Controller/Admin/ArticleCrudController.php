@@ -17,6 +17,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
+/**
+ * @extends AbstractCrudController<Article>
+ */
 class ArticleCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -42,9 +45,9 @@ class ArticleCrudController extends AbstractCrudController
     }
 
     /**
-     * @throws \Exception
-     *
      * @phpstan-param mixed $entityInstance
+     *
+     * @throws \Exception
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {

@@ -9,6 +9,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
+/**
+ * @extends AbstractCrudController<MediaObject>
+ */
 class MediaObjectCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

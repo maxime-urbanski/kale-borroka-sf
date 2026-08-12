@@ -33,13 +33,16 @@ class Album
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $date_release = null;
 
+    /** @var Collection<int, Label> */
     #[ORM\ManyToMany(targetEntity: Label::class, inversedBy: 'albums', cascade: ['persist'])]
     private Collection $labels;
 
+    /** @var Collection<int, Song> */
     #[ORM\ManyToMany(targetEntity: Song::class, inversedBy: 'albums', cascade: ['persist'])]
     #[ORM\OrderBy(['track' => 'ASC'])]
     private Collection $tracklists;
 
+    /** @var Collection<int, Style> */
     #[ORM\ManyToMany(targetEntity: Style::class, inversedBy: 'albums', cascade: ['persist'])]
     private Collection $styles;
 
@@ -47,9 +50,11 @@ class Album
     #[ORM\JoinColumn(nullable: false)]
     private ?Artist $artist = null;
 
+    /** @var Collection<int, Article> */
     #[ORM\OneToMany(mappedBy: 'album', targetEntity: Article::class, orphanRemoval: true)]
     private Collection $articles;
 
+    /** @var Collection<int, Image> */
     #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'album')]
     private Collection $images;
 

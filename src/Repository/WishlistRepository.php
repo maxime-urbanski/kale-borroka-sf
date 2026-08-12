@@ -11,11 +11,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Wishlist>
- *
- * @method Wishlist|null find($id, $lockMode = null, $lockVersion = null)
- * @method Wishlist|null findOneBy(array $criteria, array $orderBy = null)
- * @method Wishlist[]    findAll()
- * @method Wishlist[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class WishlistRepository extends ServiceEntityRepository
 {
@@ -49,9 +44,7 @@ class WishlistRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('w')
             ->where('w.user = :user')
-            ->setParameters([
-                'user' => $user,
-            ])
+            ->setParameter('user', $user)
             ->getQuery();
     }
 }

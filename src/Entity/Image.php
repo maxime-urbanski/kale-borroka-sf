@@ -32,6 +32,7 @@ class Image
     #[Vich\UploadableField(mapping: 'albums', fileNameProperty: 'imageName', size: 'imageSize')]
     private ?File $imageFile = null;
 
+    /** @var Collection<int, Album> */
     #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'images')]
     private Collection $album;
 

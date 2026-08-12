@@ -20,6 +20,7 @@ class Style
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    /** @var Collection<int, Album> */
     #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'styles', cascade: ['persist'])]
     private Collection $albums;
 
