@@ -55,14 +55,17 @@ class ArticleDetailsController
         UrlGeneratorInterface $urlGenerator,
         WishlistRepository $wishlistRepository,
         UserCollectionRepository $userCollectionRepository,
+        // Nullable on purpose: this is a public catalog page. A non-nullable argument
+        // makes UserValueResolver throw an AccessDeniedException for anonymous visitors,
+        // which the firewall turns into a redirect to the login page.
         #[CurrentUser]
-        User $user,
+        ?User $user = null,
     ): Response {
         $artistArticle = $articleRepository->getArticleWithSameArtist($article);
         $articleWithSameStyle = $articleRepository->getArticleWithSameStyle($article);
 
-        $userWishlist = $wishlistRepository->getUserWishlist($user)->getOneOrNullResult();
-        $userCollection = $userCollectionRepository->getUserCollection($user)->getOneOrNullResult();
+        $userWishlist = null === $user ? null : $wishlistRepository->getUserWishlist($user)->getOneOrNullResult();
+        $userCollection = null === $user ? null : $userCollectionRepository->getUserCollection($user)->getOneOrNullResult();
 
         $addToCartData = new AddToCartWithQuantity($article);
         $addToCartForm = $formInterface->create(AddToCartWithQuantityType::class, $addToCartData);

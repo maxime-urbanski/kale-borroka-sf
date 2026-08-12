@@ -11,7 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 /**
  * @extends AbstractCrudController<Artist>
  */
-class ArtitstCrudController extends AbstractCrudController
+class ArtistCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {

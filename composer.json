@@ -12,7 +12,7 @@
         "doctrine/doctrine-bundle": "^3.3",
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3.6",
-        "easycorp/easyadmin-bundle": "^4.29",
+        "easycorp/easyadmin-bundle": "^5.5",
         "gedmo/doctrine-extensions": "^3.22",
         "knplabs/knp-paginator-bundle": "^6.10",
         "phpdocumentor/reflection-docblock": "^5.6",

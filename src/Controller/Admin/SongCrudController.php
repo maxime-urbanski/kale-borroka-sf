@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Entity\Song;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
@@ -29,7 +30,7 @@ class SongCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('track')
+        yield IntegerField::new('track')
             ->setLabel('track')
             ->setColumns(3)
         ;
