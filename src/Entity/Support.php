@@ -33,13 +33,13 @@ class Support
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $icon = null;
 
-    /** @var Collection<int, Article> */
-    #[ORM\OneToMany(mappedBy: 'support', targetEntity: Article::class)]
-    private Collection $articles;
+    /** @var Collection<int, Edition> */
+    #[ORM\OneToMany(mappedBy: 'support', targetEntity: Edition::class)]
+    private Collection $editions;
 
     public function __construct()
     {
-        $this->articles = new ArrayCollection();
+        $this->editions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -84,28 +84,28 @@ class Support
     }
 
     /**
-     * @return Collection<int, Article>
+     * @return Collection<int, Edition>
      */
-    public function getArticles(): Collection
+    public function getEditions(): Collection
     {
-        return $this->articles;
+        return $this->editions;
     }
 
-    public function addArticle(Article $article): static
+    public function addEdition(Edition $edition): static
     {
-        if (!$this->articles->contains($article)) {
-            $this->articles->add($article);
-            $article->setSupport($this);
+        if (!$this->editions->contains($edition)) {
+            $this->editions->add($edition);
+            $edition->setSupport($this);
         }
 
         return $this;
     }
 
-    public function removeArticle(Article $article): static
+    public function removeEdition(Edition $edition): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->articles->removeElement($article) && $article->getSupport() === $this) {
-            $article->setSupport(null);
+        if ($this->editions->removeElement($edition) && $edition->getSupport() === $this) {
+            $edition->setSupport(null);
         }
 
         return $this;

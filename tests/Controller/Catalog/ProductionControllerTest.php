@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Controller\Catalog;
 
 use App\Data\ArticleFilterData;
-use App\Repository\ArticleRepository;
+use App\Repository\EditionRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -44,10 +44,10 @@ class ProductionControllerTest extends WebTestCase
         $filters = new ArticleFilterData();
         $filters->kbrProduction = true;
 
-        $articleRepository = self::getContainer()->get(ArticleRepository::class);
-        $ownProdArticle = $articleRepository->filterArticleQuery($filters);
-        $numberProdArticle = count($ownProdArticle->getResult());
+        $editionRepository = self::getContainer()->get(EditionRepository::class);
+        $ownProdEditions = $editionRepository->filterEditionQuery($filters);
+        $numberProdEditions = count($ownProdEditions->getResult());
 
-        self::assertEquals((string) $numberProdArticle.' éléments trouvés.', $badge);
+        self::assertEquals((string) $numberProdEditions.' éléments trouvés.', $badge);
     }
 }

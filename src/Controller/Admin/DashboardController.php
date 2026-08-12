@@ -39,7 +39,8 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Catalogue');
         yield MenuItem::linkTo(SupportCrudController::class, 'Support', 'fas fa-list');
-        yield MenuItem::linkTo(ArticleCrudController::class, 'Article', 'fas fa-list');
+        yield MenuItem::linkTo(EditionCrudController::class, 'Édition', 'fas fa-compact-disc');
+        yield MenuItem::linkTo(ArticleCrudController::class, 'Offre', 'fas fa-tag');
 
         yield MenuItem::section('Commande');
         yield MenuItem::linkTo(PaymentCrudController::class, 'Mode de paiement', 'fas fa-list');

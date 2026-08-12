@@ -67,5 +67,12 @@ class AlbumCrudController extends AbstractCrudController
         yield BooleanField::new('kbrProduction')
             ->setLabel('Prodution K.B.R')
             ->setColumns(3);
+
+        // Lets a whole record be created in one go: the album, each of its pressings, and
+        // the offers under them.
+        yield CollectionField::new('editions', 'Éditions')
+            ->useEntryCrudForm(EditionCrudController::class)
+            ->hideOnIndex()
+            ->setColumns(12);
     }
 }

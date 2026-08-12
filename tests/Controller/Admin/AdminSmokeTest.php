@@ -27,6 +27,7 @@ class AdminSmokeTest extends WebTestCase
         'admin_album',
         'admin_article',
         'admin_artist',
+        'admin_edition',
         'admin_image',
         'admin_label',
         'admin_order',

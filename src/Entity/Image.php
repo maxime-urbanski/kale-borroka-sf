@@ -36,9 +36,19 @@ class Image
     #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'images')]
     private Collection $album;
 
+    /**
+     * Editions this image belongs to. An album-level image is the generic sleeve; an
+     * edition-level one is that specific pressing — the photo of the red vinyl.
+     *
+     * @var Collection<int, Edition>
+     */
+    #[ORM\ManyToMany(targetEntity: Edition::class, inversedBy: 'images')]
+    private Collection $editions;
+
     public function __construct()
     {
         $this->album = new ArrayCollection();
+        $this->editions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -127,5 +137,34 @@ class Image
         $this->album->removeElement($album);
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Edition>
+     */
+    public function getEditions(): Collection
+    {
+        return $this->editions;
+    }
+
+    public function addEdition(Edition $edition): static
+    {
+        if (!$this->editions->contains($edition)) {
+            $this->editions->add($edition);
+        }
+
+        return $this;
+    }
+
+    public function removeEdition(Edition $edition): static
+    {
+        $this->editions->removeElement($edition);
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->imageName;
     }
 }

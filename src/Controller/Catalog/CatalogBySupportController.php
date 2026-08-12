@@ -8,7 +8,7 @@ use App\Data\ArticleFilterData;
 use App\Entity\Support;
 use App\Enum\SupportType;
 use App\Form\ArticleFilterFormType;
-use App\Repository\ArticleRepository;
+use App\Repository\EditionRepository;
 use App\Service\BreadcrumbInterface;
 use App\Service\CustomPaginationInterface;
 use App\Service\DispatchFilterValueInterface;
@@ -50,7 +50,7 @@ class CatalogBySupportController
         BreadcrumbInterface $breadcrumb,
         DispatchFilterValueInterface $dispatchFilterValue,
         CustomPaginationInterface $customPagination,
-        ArticleRepository $articleRepository,
+        EditionRepository $editionRepository,
         #[MapEntity(mapping: ['support' => 'name'])]
         Support $support,
         string $page,
@@ -61,15 +61,15 @@ class CatalogBySupportController
         $form = $formInterface->create(ArticleFilterFormType::class, $filters);
         $form->handleRequest($request);
 
-        $articles = $articleRepository->filterArticleQuery(
+        $editions = $editionRepository->filterEditionQuery(
             $dispatchFilterValue->dispatchFilterValue($filters)
         );
-        $pagination = $customPagination->pagination($articles, $page, 12);
+        $pagination = $customPagination->pagination($editions, $page, 12);
 
         unset($filters->globalFilters);
 
         $content = $twig->render('catalog/articles.html.twig', [
-            'articles' => $pagination,
+            'editions' => $pagination,
             'breadcrumb' => $breadcrumb->breadcrumb(),
             'form' => $form->createView(),
             'filters' => $filters,

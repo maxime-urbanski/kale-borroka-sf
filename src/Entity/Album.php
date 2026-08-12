@@ -70,9 +70,9 @@ class Album
     #[ORM\JoinColumn(nullable: false)]
     private ?Artist $artist = null;
 
-    /** @var Collection<int, Article> */
-    #[ORM\OneToMany(mappedBy: 'album', targetEntity: Article::class, orphanRemoval: true)]
-    private Collection $articles;
+    /** @var Collection<int, Edition> */
+    #[ORM\OneToMany(mappedBy: 'album', targetEntity: Edition::class, orphanRemoval: true)]
+    private Collection $editions;
 
     /** @var Collection<int, Image> */
     #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'album')]
@@ -86,7 +86,7 @@ class Album
         $this->labels = new ArrayCollection();
         $this->tracklists = new ArrayCollection();
         $this->styles = new ArrayCollection();
-        $this->articles = new ArrayCollection();
+        $this->editions = new ArrayCollection();
         $this->images = new ArrayCollection();
     }
 
@@ -300,30 +300,27 @@ class Album
     }
 
     /**
-     * @return Collection<int, Article>
+     * @return Collection<int, Edition>
      */
-    public function getArticles(): Collection
+    public function getEditions(): Collection
     {
-        return $this->articles;
+        return $this->editions;
     }
 
-    public function addArticle(Article $article): static
+    public function addEdition(Edition $edition): static
     {
-        if (!$this->articles->contains($article)) {
-            $this->articles->add($article);
-            $article->setAlbum($this);
+        if (!$this->editions->contains($edition)) {
+            $this->editions->add($edition);
+            $edition->setAlbum($this);
         }
 
         return $this;
     }
 
-    public function removeArticle(Article $article): static
+    public function removeEdition(Edition $edition): static
     {
-        if ($this->articles->removeElement($article)) {
-            // set the owning side to null (unless already changed)
-            if ($article->getAlbum() === $this) {
-                $article->setAlbum(null);
-            }
+        if ($this->editions->removeElement($edition) && $edition->getAlbum() === $this) {
+            $edition->setAlbum(null);
         }
 
         return $this;

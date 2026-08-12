@@ -5,19 +5,25 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Article;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Enum\ItemAvailability;
+use App\Enum\ItemCondition;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
+ * Article is the offer: price, stock and condition only. What the record *is* belongs to
+ * Edition and Album.
+ *
  * @extends AbstractCrudController<Article>
  */
 class ArticleCrudController extends AbstractCrudController
@@ -27,44 +33,21 @@ class ArticleCrudController extends AbstractCrudController
         return Article::class;
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function createEntity(string $entityFqcn): object
+    public function configureCrud(Crud $crud): Crud
     {
-        $entity = new $entityFqcn();
-        $entity->setCreatedAt(
-            new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'))
-        );
-
-        $entity->setUpdatedAt(
-            new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'))
-        );
-
-        return $entity;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function updateEntity(EntityManagerInterface $entityManager, object $entityInstance): void
-    {
-        $entityInstance->setUpdatedAt(
-            new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'))
-        );
-
-        $entityManager->persist($entityInstance);
-        $entityManager->flush();
+        return $crud
+            ->setEntityLabelInSingular('Offre')
+            ->setEntityLabelInPlural('Offres')
+            ->setDefaultSort(['updatedAt' => 'DESC'])
+            ->setSearchFields(['sku', 'gtin13', 'edition.name', 'edition.album.name'])
+            ->showEntityActionsInlined();
     }
 
     public function configureActions(Actions $actions): Actions
     {
         $viewArticle = Action::new('view', 'Voir la page de l\'article')
             ->renderAsLink()
-            ->linkToRoute('app_catalog_show', fn (Article $article) => [
-                'support' => $article->getSupport()?->getName(),
-                'slug' => $article->getSlug(),
-            ])
+            ->linkToRoute('app_catalog_show', fn (Article $article) => $article->getRouteParams())
             ->setHtmlAttributes(['target' => '_blank'])
             ->setCssClass('btn btn-success');
 
@@ -74,33 +57,58 @@ class ArticleCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield DateTimeField::new('created_at', 'Ajouter le')
-            ->setFormTypeOption('input', 'datetime_immutable')
+        yield AssociationField::new('edition', 'Édition')
+            ->autocomplete()
+            ->setColumns(6);
+        yield ChoiceField::new('condition', 'État')
+            ->setChoices($this->enumChoices(ItemCondition::cases()))
+            ->setColumns(3);
+        yield ChoiceField::new('availability', 'Disponibilité')
+            ->setChoices($this->enumChoices(ItemAvailability::cases()))
+            ->setColumns(3);
+        yield MoneyField::new('price', 'Prix')
+            ->setCurrency('EUR')
+            ->setColumns(3);
+        yield IntegerField::new('quantity', 'Quantité disponible')
+            ->setColumns(3);
+        yield IntegerField::new('weight', 'Poids (g)')
+            ->setHelp('Utilisé pour le calcul des frais de port.')
+            ->hideOnIndex()
+            ->setColumns(3);
+        yield DateField::new('availableFrom', 'Disponible à partir du')
+            ->setHelp('Pour les précommandes.')
+            ->hideOnIndex()
+            ->setColumns(3);
+        yield TextField::new('sku', 'Référence interne')
+            ->hideOnIndex()
+            ->setColumns(6);
+        yield TextField::new('gtin13', 'Code-barres (EAN-13)')
+            ->hideOnIndex()
+            ->setColumns(6);
+        yield TextareaField::new('description', 'Description')
+            ->hideOnIndex()
+            ->setColumns(12);
+        yield DateTimeField::new('createdAt', 'Ajouté le')
             ->setTimezone('Europe/Paris')
-            ->setColumns(3)
-            ->setFormTypeOption('attr', ['readonly' => true])
-            ->hideOnIndex();
-        yield DateTimeField::new('updated_at', 'Modifier le')
-            ->setFormTypeOption('input', 'datetime_immutable')
+            ->onlyOnDetail();
+        yield DateTimeField::new('updatedAt', 'Modifié le')
             ->setTimezone('Europe/Paris')
-            ->setColumns(3)
-            ->setFormTypeOption('attr', ['readonly' => true])
-            ->hideOnIndex();
-        yield SlugField::new('slug')
-            ->setColumns(6)
-            ->setTargetFieldName('name');
-        yield AssociationField::new('album')
-            ->setColumns(6);
-        yield AssociationField::new('album')
-            ->setColumns(6);
-        yield TextField::new('name', 'Nom de l\'article')
-            ->setColumns(6);
-        yield AssociationField::new('support')
-            ->setColumns(4);
-        yield NumberField::new('quantity', 'Quantité disponible')
-            ->setColumns(4);
-        yield MoneyField::new('price', 'Prix du produit')
-            ->setColumns(4)
-            ->setCurrency('EUR');
+            ->onlyOnDetail();
+    }
+
+    /**
+     * @param array<int, ItemCondition|ItemAvailability> $cases
+     *
+     * @return array<string, ItemCondition|ItemAvailability>
+     */
+    private function enumChoices(array $cases): array
+    {
+        $choices = [];
+
+        foreach ($cases as $case) {
+            $choices[$case->label()] = $case;
+        }
+
+        return $choices;
     }
 }
