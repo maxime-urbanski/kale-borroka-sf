@@ -51,56 +51,83 @@ class EditionCrudController extends AbstractCrudController
             ->add(NumericFilter::new('pressingRun', 'Tirage'));
     }
 
+    /**
+     * Rendered two ways: as a page of its own, and as a row inside the album form. Nested,
+     * the album is already known and tabs inside a collapsible row read as clutter, so the
+     * form drops to fieldsets and short helps.
+     */
     public function configureFields(string $pageName): iterable
     {
-        yield FormField::addTab('Pressage')
-            ->setHelp("Une édition est un pressage précis d'un album. Deux vinyles de couleurs différentes du même disque font deux éditions ; c'est entre elles que bascule le sélecteur sur la page publique.")
-            ->onlyOnForms();
-        yield AssociationField::new('album', 'Album')
-            ->autocomplete()
-            ->setHelp('Disque dont cette édition est un pressage.')
+        $embedded = $this->isEmbeddedInAlbum();
+
+        if (!$embedded) {
+            yield FormField::addFieldset('Pressage')
+                ->setHelp("Une édition est un pressage précis d'un album. Deux vinyles de couleurs différentes du même disque font deux éditions ; c'est entre elles que bascule le sélecteur sur la page publique.")
+                ->onlyOnForms();
+            yield AssociationField::new('album', 'Album')
+                ->autocomplete()
+                ->setHelp('Disque dont cette édition est un pressage.')
+                ->setColumns(6);
+        }
+
+        yield TextField::new('name', 'Nom de l\'édition')
+            ->setHelp('Ce qu\'affiche le sélecteur : « LP », « LP vinyle rouge », « CD digipack ».')
             ->setColumns(6);
         yield AssociationField::new('support', 'Support')
-            ->setHelp("Format physique : LP, EP, CD, K7, fanzine. Il détermine sous quelle rubrique du catalogue l'édition apparaît.")
+            ->setHelp($embedded ? 'Format physique.' : "Format physique. Détermine la rubrique du catalogue où l'édition apparaît.")
             ->setColumns(3);
-        yield TextField::new('name', 'Nom de l\'édition')
-            ->setHelp('Ce que le sélecteur affiche : « LP », « LP vinyle rouge », « CD digipack ». Court et distinctif.')
-            ->setColumns(6);
         yield TextField::new('color', 'Couleur')
-            ->setHelp('Couleur du vinyle : « rouge », « splatter vert/noir ». À laisser vide pour un CD ou un pressage noir standard.')
+            ->setHelp('Couleur du vinyle. Vide pour un CD ou un pressage noir.')
             ->setColumns(3);
+
         yield TextField::new('editionLabel', 'Mention d\'édition')
-            ->setHelp('« Collector », « Édition limitée », « Réédition 2024 ». Mise en avant sous forme de badge sur la page.')
+            ->setHelp('« Collector », « Édition limitée »… Affiché en badge.')
             ->hideOnIndex()
-            ->setColumns(3);
+            ->setColumns(4);
         yield TextField::new('catalogNumber', 'N° de catalogue')
-            ->setHelp('Référence du label pour ce pressage. Sert à identifier une édition sans ambiguïté.')
+            ->setHelp('Référence du label pour ce pressage.')
             ->hideOnIndex()
-            ->setColumns(3);
+            ->setColumns(4);
         yield IntegerField::new('pressingRun', 'Tirage')
-            ->setHelp('Nombre d\'exemplaires pressés, pour les tirages limités. Affiché tel quel au client.')
+            ->setHelp('Nombre d\'exemplaires pressés, pour un tirage limité.')
             ->hideOnIndex()
-            ->setColumns(3);
+            ->setColumns(2);
         yield DateField::new('releaseDate', 'Date de sortie')
-            ->setHelp("Date de sortie de ce pressage, quand elle diffère de celle de l'album — cas d'une réédition.")
+            ->setHelp('Si différente de celle de l\'album.')
             ->hideOnIndex()
-            ->setColumns(3);
+            ->setColumns(2);
         yield TextareaField::new('description', 'Description')
-            ->setHelp('Précisions propres à ce pressage : encart, poster inclus, gravure… Affiché sous le sélecteur.')
+            ->setHelp('Précisions propres à ce pressage : encart, poster inclus, gravure…')
+            ->setFormTypeOption('attr', ['rows' => 3])
             ->hideOnIndex()
             ->setColumns(12);
 
-        yield FormField::addTab('Visuels')->onlyOnForms();
+        yield FormField::addFieldset('Visuels')->onlyOnForms();
         yield AssociationField::new('images', 'Visuels propres à l\'édition')
-            ->setHelp("Photos de ce pressage précis, par exemple le vinyle rouge. Laisser vide pour réutiliser la pochette de l'album.")
+            ->setHelp("Photos de ce pressage précis. Vide : la pochette de l'album est reprise.")
             ->hideOnIndex()
-            ->setColumns(12);
+            ->setColumns(6);
 
-        yield FormField::addTab('Offres')->onlyOnForms();
+        yield FormField::addFieldset('Offres')->onlyOnForms();
         yield CollectionField::new('articles', 'Offres')
             ->useEntryCrudForm(ArticleCrudController::class)
-            ->setHelp("Ce qui est réellement vendu : prix et stock. Plusieurs offres pour un même pressage permettent de proposer un exemplaire neuf et un d'occasion à des prix différents. Sans offre, l'édition n'est pas achetable.")
+            ->setHelp("Prix et stock. Plusieurs offres permettent de vendre le même pressage neuf et d'occasion. Sans offre, l'édition n'est pas achetable.")
             ->hideOnIndex()
             ->setColumns(12);
+    }
+
+    /**
+     * True when this form is rendered as a row of the album's Éditions collection rather
+     * than as its own admin page.
+     *
+     * Detection goes through the controller owning the admin context rather than its
+     * entity: EasyAdmin's generics pin getEntity()->getFqcn() to Edition, so comparing it
+     * to Album is a contradiction as far as static analysis is concerned.
+     */
+    private function isEmbeddedInAlbum(): bool
+    {
+        $context = $this->getContext();
+
+        return null !== $context && self::class !== $context->getCrud()?->getControllerFqcn();
     }
 }

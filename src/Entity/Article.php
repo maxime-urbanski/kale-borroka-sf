@@ -287,7 +287,11 @@ class Article
      */
     public function getName(): string
     {
-        $name = (string) $this->edition?->fullName();
+        if (null === $this->edition) {
+            return '';
+        }
+
+        $name = $this->edition->fullName();
 
         if (ItemCondition::NEW !== $this->condition) {
             $name .= ' ('.$this->condition->label().')';
@@ -309,8 +313,12 @@ class Article
         return $this->availability->isPurchasable() && $this->quantity > 0;
     }
 
+    /**
+     * Also the header of each row in the edition's Offres collection, rendered before the
+     * offer has been filled in.
+     */
     public function __toString(): string
     {
-        return $this->getName();
+        return $this->getName() ?: 'Nouvelle offre';
     }
 }

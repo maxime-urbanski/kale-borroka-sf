@@ -318,11 +318,15 @@ class Edition
 
     public function fullName(): string
     {
-        return $this->album?->fullName().' — '.$this->name;
+        return implode(' — ', array_filter([$this->album?->fullName(), $this->name]));
     }
 
+    /**
+     * Used as the header of each row in the album's Éditions collection, which is rendered
+     * before anything has been typed — hence the fallback.
+     */
     public function __toString(): string
     {
-        return $this->fullName();
+        return $this->fullName() ?: 'Nouvelle édition';
     }
 }

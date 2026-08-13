@@ -86,6 +86,29 @@ class AdminSmokeTest extends WebTestCase
     }
 
     /**
+     * Inside the album form, an edition already knows which album it belongs to: offering
+     * an Album selector there invites picking a different one and silently moving the
+     * pressing somewhere else.
+     */
+    public function testEmbeddedEditionFormOmitsTheAlbumSelector(): void
+    {
+        $url = self::getContainer()->get('router')->generate('admin_album_new');
+
+        $this->client->request('GET', $url);
+
+        self::assertResponseIsSuccessful();
+
+        $html = html_entity_decode((string) $this->client->getResponse()->getContent());
+
+        self::assertStringContainsString(
+            'editions][__editionsname__][name]',
+            $html,
+            'le formulaire imbriqué des éditions doit être rendu'
+        );
+        self::assertStringNotContainsString('editions][__editionsname__][album]', $html);
+    }
+
+    /**
      * Applying a filter is what actually builds the DQL. Enum-backed choice filters are
      * the fragile combination — rendering the list alone never exercises them.
      */

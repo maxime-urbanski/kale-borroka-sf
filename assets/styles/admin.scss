@@ -1,5 +1,8 @@
 // Back office overrides, loaded on top of EasyAdmin's own stylesheet.
 //
+// EasyAdmin ships its rules inside `@layer ea`, and unlayered declarations beat layered
+// ones whatever their specificity — so everything here wins without a specificity war.
+
 // EasyAdmin caps the content width but gives it no automatic margins:
 //
 //   body:not(.ea-content-width-full) .content-wrapper { max-inline-size: var(--body-max-width) }
@@ -7,10 +10,100 @@
 // so the content sits flush against the sidebar and leaves the whole right side
 // empty on a wide screen. Restoring the auto margins centres it inside the column
 // while keeping the readable max width.
-//
-// The alternative would be Dashboard::renderContentMaximized(), which drops the cap
-// entirely and stretches everything edge to edge — better for wide tables, worse for
-// forms, and not what "centred" means.
 body:not(.ea-content-width-full) .content-wrapper {
   margin-inline: auto;
+}
+
+// ---------------------------------------------------------------------------
+// Collections — Éditions, Offres, Tracklist
+//
+// By default EasyAdmin frames the whole collection in one flat box, glues the rows
+// together edge to edge, and lays each nested field out horizontally:
+//
+//   .form-group.field-collection .accordion-item .form-group { display: flex }
+//
+// which squeezes labels into a narrow left column where "Mention d'édition" and
+// "N° de catalogue" wrap onto three lines. Each entry becomes a standalone card
+// instead, with labels back above their field.
+// ---------------------------------------------------------------------------
+.form-group.field-collection {
+  // Drop the frame drawn around the group as a whole.
+  .accordion {
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .ea-form-collection-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ea-sp-4);
+  }
+
+  .field-collection-item {
+    display: block;
+    margin-block-start: 0;
+  }
+
+  .accordion-item {
+    background: var(--body-bg);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+    overflow: hidden;
+  }
+
+  .accordion-header {
+    box-shadow: none;
+  }
+
+  .accordion-button {
+    font-weight: 600;
+    padding-block: var(--ea-sp-4);
+
+    &:not(.collapsed) {
+      box-shadow: inset 0 -1px 0 var(--border-color);
+    }
+  }
+
+  .accordion-body {
+    padding: var(--ea-sp-6);
+  }
+
+  // Labels back above their field.
+  .accordion-item .form-group {
+    display: block;
+    padding: 0 0 var(--ea-sp-5);
+  }
+
+  .accordion-item .form-group > .form-label {
+    display: block;
+    margin-block-end: var(--ea-sp-1);
+  }
+
+  .accordion-item .form-help {
+    display: block;
+    margin-block-start: var(--ea-sp-1);
+  }
+
+  // Fieldset headings inside a card are section separators, not page titles.
+  .accordion-body .form-fieldset-title-content {
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .accordion-body .form-fieldset-header {
+    margin-block-start: var(--ea-sp-2);
+  }
+
+  // "Add a new item" reads as a drop zone rather than a stray link.
+  .field-collection-add-button {
+    border: var(--border-width) dashed var(--border-color);
+    border-radius: var(--border-radius);
+    inline-size: 100%;
+    justify-content: center;
+    margin-block-start: var(--ea-sp-4);
+    padding-block: var(--ea-sp-3);
+    text-decoration: none;
+  }
 }

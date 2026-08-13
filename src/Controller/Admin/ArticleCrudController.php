@@ -73,12 +73,19 @@ class ArticleCrudController extends AbstractCrudController
             ->add(NumericFilter::new('price', 'Prix'));
     }
 
+    /**
+     * Rendered both as its own page and as a row inside the edition form, where the
+     * pressing is already known.
+     */
     public function configureFields(string $pageName): iterable
     {
-        yield AssociationField::new('edition', 'Édition')
-            ->autocomplete()
-            ->setHelp('Pressage mis en vente par cette offre.')
-            ->setColumns(6);
+        if (!$this->isEmbeddedInParentForm()) {
+            yield AssociationField::new('edition', 'Édition')
+                ->autocomplete()
+                ->setHelp('Pressage mis en vente par cette offre.')
+                ->setColumns(6);
+        }
+
         yield ChoiceField::new('condition', 'État')
             ->setChoices($this->enumChoices(ItemCondition::cases()))
             ->setHelp("État de l'exemplaire. C'est ce qui distingue deux offres d'un même pressage : neuf et occasion.")
@@ -129,6 +136,21 @@ class ArticleCrudController extends AbstractCrudController
             ->setTimezone('Europe/Paris')
             ->setHelp('Renseigné automatiquement à chaque modification.')
             ->onlyOnDetail();
+    }
+
+    /**
+     * True when this form is a row of an Éditions or Offres collection rather than its own
+     * admin page — nested, the parent already fixes which pressing is being sold.
+     *
+     * Detection goes through the controller owning the admin context rather than its
+     * entity: EasyAdmin's generics pin getEntity()->getFqcn() to Article, which makes any
+     * comparison to another entity look impossible to static analysis.
+     */
+    private function isEmbeddedInParentForm(): bool
+    {
+        $context = $this->getContext();
+
+        return null !== $context && self::class !== $context->getCrud()?->getControllerFqcn();
     }
 
     /**
