@@ -42,11 +42,11 @@ class SongCrudController extends AbstractCrudController
         ;
         yield TextField::new('side', 'Face')
             ->setHelp('Face du disque : A, B, C… Sans objet pour un CD ou une K7.')
-            ->setColumns(2)
+            ->setColumns(4)
         ;
         yield IntegerField::new('duration', 'Durée (s)')
             ->setHelp('Durée du morceau en secondes — 185 pour 3 min 05. Affichée en minutes sur le site.')
-            ->setColumns(2)
+            ->setColumns(4)
         ;
         yield TextField::new('isrc', 'ISRC')
             ->setHelp('Code international du morceau, 12 caractères. Rarement renseigné sur les sorties autoproduites.')

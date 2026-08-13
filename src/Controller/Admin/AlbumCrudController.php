@@ -17,7 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
@@ -84,9 +84,10 @@ class AlbumCrudController extends AbstractCrudController
             ->autocomplete()
             ->setHelp('Label(s) ayant sorti le disque. Plusieurs valeurs possibles pour une coproduction.')
             ->setColumns(6);
-        yield TextareaField::new('note')
+        yield TextEditorField::new('note')
             ->setLabel('Description')
             ->setHelp("Texte de présentation affiché sur la page de l'album, sous les informations de vente.")
+            ->setNumOfRows(8)
             ->setColumns(12)
             ->hideOnIndex();
 

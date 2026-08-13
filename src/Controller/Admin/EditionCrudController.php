@@ -13,7 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
@@ -91,14 +91,14 @@ class EditionCrudController extends AbstractCrudController
         yield IntegerField::new('pressingRun', 'Tirage')
             ->setHelp('Nombre d\'exemplaires pressés, pour un tirage limité.')
             ->hideOnIndex()
-            ->setColumns(2);
+            ->setColumns(4);
         yield DateField::new('releaseDate', 'Date de sortie')
             ->setHelp('Si différente de celle de l\'album.')
             ->hideOnIndex()
-            ->setColumns(2);
-        yield TextareaField::new('description', 'Description')
+            ->setColumns(4);
+        yield TextEditorField::new('description', 'Description')
             ->setHelp('Précisions propres à ce pressage : encart, poster inclus, gravure…')
-            ->setFormTypeOption('attr', ['rows' => 3])
+            ->setNumOfRows(5)
             ->hideOnIndex()
             ->setColumns(12);
 

@@ -12,7 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
@@ -65,7 +65,7 @@ class LabelCrudController extends AbstractCrudController
             ->setLabel('Ami')
             ->setHelp('Marque les labels avec lesquels vous êtes en lien, pour les distinguer du reste de la distro.')
             ->setColumns(3);
-        yield TextareaField::new('description', 'Description')
+        yield TextEditorField::new('description', 'Description')
             ->setHelp('Présentation du label.')
             ->hideOnIndex()
             ->setColumns(12);

@@ -7,7 +7,7 @@ namespace App\Controller\Admin;
 use App\Entity\Style;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
@@ -36,7 +36,7 @@ class StyleCrudController extends AbstractCrudController
             ->setLabel('Style')
             ->setHelp('Genre musical (punk, oi!, hardcore…). Rattaché aux albums, il sert de filtre dans le catalogue. Doit être unique.')
             ->setColumns(6);
-        yield TextareaField::new('description', 'Description')
+        yield TextEditorField::new('description', 'Description')
             ->setHelp('Note interne sur le genre. Optionnel.')
             ->hideOnIndex()
             ->setColumns(12);

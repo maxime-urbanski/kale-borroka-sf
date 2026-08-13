@@ -8,7 +8,7 @@ use App\Entity\Transporter;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
@@ -39,7 +39,7 @@ class TransporterCrudController extends AbstractCrudController
             ->setCurrency('EUR')
             ->setHelp('Frais de port facturés pour ce mode de livraison.')
             ->setColumns(3);
-        yield TextareaField::new('description', 'Description')
+        yield TextEditorField::new('description', 'Description')
             ->setHelp('Délai indicatif, zone desservie, conditions… Affiché sous le libellé lors du choix.')
             ->setColumns(12);
     }

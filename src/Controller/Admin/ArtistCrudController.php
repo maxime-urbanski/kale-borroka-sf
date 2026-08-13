@@ -11,7 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Vich\UploaderBundle\Form\Type\VichImageType;
@@ -56,7 +56,7 @@ class ArtistCrudController extends AbstractCrudController
         yield IntegerField::new('foundedYear', 'Année de formation')
             ->setHelp('Année de création du groupe. Purement informatif.')
             ->setColumns(3);
-        yield TextareaField::new('description', 'Description')
+        yield TextEditorField::new('description', 'Description')
             ->setHelp('Biographie ou présentation du groupe.')
             ->hideOnIndex()
             ->setColumns(12);

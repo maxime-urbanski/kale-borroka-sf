@@ -18,7 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
@@ -89,15 +89,15 @@ class ArticleCrudController extends AbstractCrudController
         yield ChoiceField::new('condition', 'État')
             ->setChoices($this->enumChoices(ItemCondition::cases()))
             ->setHelp("État de l'exemplaire. C'est ce qui distingue deux offres d'un même pressage : neuf et occasion.")
-            ->setColumns(3);
+            ->setColumns(4);
         yield ChoiceField::new('availability', 'Disponibilité')
             ->setChoices($this->enumChoices(ItemAvailability::cases()))
             ->setHelp("Commande possible en stock et en précommande uniquement. En rupture ou épuisé, l'offre reste visible mais n'est plus achetable.")
-            ->setColumns(3);
+            ->setColumns(4);
         yield MoneyField::new('price', 'Prix')
             ->setCurrency('EUR')
             ->setHelp("Prix de vente TTC. La vignette du catalogue affiche « dès » ce prix quand l'album a plusieurs offres.")
-            ->setColumns(3);
+            ->setColumns(4);
         yield IntegerField::new('quantity', 'Quantité disponible')
             // Plain text rather than markup: EasyAdmin escapes formatted values, and a
             // marker is enough to spot what needs restocking when scanning the list.
@@ -107,15 +107,15 @@ class ArticleCrudController extends AbstractCrudController
                 default => (string) $value,
             })
             ->setHelp("Nombre d'exemplaires en stock. Le panier ne laisse pas dépasser cette quantité.")
-            ->setColumns(3);
+            ->setColumns(4);
         yield IntegerField::new('weight', 'Poids (g)')
             ->setHelp('Poids du colis, en grammes. Utilisé pour le calcul des frais de port.')
             ->hideOnIndex()
-            ->setColumns(3);
+            ->setColumns(4);
         yield DateField::new('availableFrom', 'Disponible à partir du')
             ->setHelp("Date d'expédition annoncée. À renseigner uniquement pour une précommande.")
             ->hideOnIndex()
-            ->setColumns(3);
+            ->setColumns(4);
         yield TextField::new('sku', 'Référence interne')
             ->setHelp('Votre référence de gestion. Doit être unique, ou laissée vide.')
             ->hideOnIndex()
@@ -124,8 +124,9 @@ class ArticleCrudController extends AbstractCrudController
             ->setHelp('Les 13 chiffres du code-barres imprimé sur la jaquette, si le disque en a un.')
             ->hideOnIndex()
             ->setColumns(6);
-        yield TextareaField::new('description', 'Description')
+        yield TextEditorField::new('description', 'Description')
             ->setHelp("Précisions sur cet exemplaire précis — l'état d'une occasion, par exemple. La description du disque se saisit sur l'album.")
+            ->setNumOfRows(5)
             ->hideOnIndex()
             ->setColumns(12);
         yield DateTimeField::new('createdAt', 'Ajouté le')
