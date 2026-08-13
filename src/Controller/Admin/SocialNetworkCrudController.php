@@ -24,9 +24,11 @@ class SocialNetworkCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('name', 'Nom');
+        yield TextField::new('name', 'Nom')
+            ->setHelp('Nom du réseau, utilisé comme libellé du lien (Instagram, Bandcamp, Mail…).');
 
         yield UrlField::new('url', 'URL')
+            ->setHelp('Adresse complète du profil. Pour une adresse mail, préfixez par mailto: — le lien est alors mis en forme automatiquement.')
             ->formatValue(function ($value) {
                 if (str_contains($value, 'mailto')) {
                     $hrefLink = str_replace('http://', '', $value);
@@ -46,17 +48,21 @@ class SocialNetworkCrudController extends AbstractCrudController
             ->setLabel('Image')
             ->setBasePath('/media')
             ->setUploadDir('public/media')
+            ->setHelp("Aperçu de l'icône enregistrée.")
             ->hideOnForm()
         ;
 
         yield AssociationField::new('file')
             ->setLabel('Image')
+            ->setHelp('Icône affichée à côté du lien.')
             ->setCrudController(MediaObjectCrudController::class)
             ->renderAsEmbeddedForm()
             ->onlyOnForms()
         ;
 
-        yield BooleanField::new('isPublish', 'Publier');
-        yield BooleanField::new('inFooter', 'Ajouter au footer');
+        yield BooleanField::new('isPublish', 'Publier')
+            ->setHelp('Décoché, le lien est conservé mais n\'apparaît nulle part sur le site.');
+        yield BooleanField::new('inFooter', 'Ajouter au footer')
+            ->setHelp('Affiche également le lien dans le pied de page, en plus du menu.');
     }
 }

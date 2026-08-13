@@ -32,8 +32,12 @@ class StyleCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('name')->setLabel('Style')->setColumns(6);
+        yield TextField::new('name')
+            ->setLabel('Style')
+            ->setHelp('Genre musical (punk, oi!, hardcore…). Rattaché aux albums, il sert de filtre dans le catalogue. Doit être unique.')
+            ->setColumns(6);
         yield TextareaField::new('description', 'Description')
+            ->setHelp('Note interne sur le genre. Optionnel.')
             ->hideOnIndex()
             ->setColumns(12);
     }

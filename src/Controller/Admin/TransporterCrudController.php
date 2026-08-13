@@ -32,10 +32,15 @@ class TransporterCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('name', 'Nom')->setColumns(6);
+        yield TextField::new('name', 'Nom')
+            ->setHelp('Libellé proposé au client au moment de la commande (Colissimo, Mondial Relay…).')
+            ->setColumns(6);
         yield MoneyField::new('price', 'Tarif')
             ->setCurrency('EUR')
+            ->setHelp('Frais de port facturés pour ce mode de livraison.')
             ->setColumns(3);
-        yield TextareaField::new('description', 'Description')->setColumns(12);
+        yield TextareaField::new('description', 'Description')
+            ->setHelp('Délai indicatif, zone desservie, conditions… Affiché sous le libellé lors du choix.')
+            ->setColumns(12);
     }
 }

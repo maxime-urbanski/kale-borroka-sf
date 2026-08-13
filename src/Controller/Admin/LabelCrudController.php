@@ -48,23 +48,37 @@ class LabelCrudController extends AbstractCrudController
         yield ImageField::new('logo')
             ->setBasePath('/upload/labels')
             ->setUploadDir('public/upload/labels')
+            ->setHelp('Aperçu du logo enregistré.')
             ->onlyOnIndex();
-        yield TextField::new('name')->setLabel('Nom du label')->setColumns(6);
-        yield UrlField::new('url', 'Site web')->setColumns(6);
+        yield TextField::new('name')
+            ->setLabel('Nom du label')
+            ->setHelp('Nom du label. Sert de filtre dans le catalogue via « Produit par ».')
+            ->setColumns(6);
+        yield UrlField::new('url', 'Site web')
+            ->setHelp('Adresse du site officiel du label, avec le https://.')
+            ->setColumns(6);
         yield TextField::new('country', 'Pays')
-            ->setHelp('Code ISO à 2 lettres (FR, US, DE, …).')
+            ->setHelp('Pays où le label est établi. Code ISO à 2 lettres (FR, US, DE, …).')
             ->hideOnIndex()
             ->setColumns(3);
-        yield BooleanField::new('isFriend')->setLabel('Ami')->setColumns(3);
+        yield BooleanField::new('isFriend')
+            ->setLabel('Ami')
+            ->setHelp('Marque les labels avec lesquels vous êtes en lien, pour les distinguer du reste de la distro.')
+            ->setColumns(3);
         yield TextareaField::new('description', 'Description')
+            ->setHelp('Présentation du label.')
             ->hideOnIndex()
             ->setColumns(12);
         // The logo column is the Vich fileNameProperty, so the upload widget goes on the
         // non-persisted logoFile property.
         yield Field::new('logoFile', 'Logo')
             ->setFormType(VichImageType::class)
+            ->setHelp('Logo du label. Remplace le précédent à chaque envoi.')
             ->onlyOnForms()
             ->setColumns(6);
-        yield AssociationField::new('albums')->setLabel('Albums')->hideOnForm();
+        yield AssociationField::new('albums')
+            ->setLabel('Albums')
+            ->setHelp('Albums sortis sur ce label. Se renseigne depuis la fiche album.')
+            ->hideOnForm();
     }
 }

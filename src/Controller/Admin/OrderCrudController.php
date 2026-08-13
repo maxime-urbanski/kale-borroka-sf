@@ -58,18 +58,35 @@ class OrderCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('reference', 'Référence')->setColumns(4);
+        yield TextField::new('reference', 'Référence')
+            ->setHelp('Référence générée à la commande. Sert d\'identifiant dans les échanges avec le client.')
+            ->setColumns(4);
         yield DateTimeField::new('created_at', 'Passée le')
             ->setTimezone('Europe/Paris')
+            ->setHelp('Date de validation de la commande.')
             ->setColumns(4);
-        yield TextField::new('status', 'Statut')->setColumns(4);
-        yield AssociationField::new('buyer', 'Client')->setColumns(4);
+        yield TextField::new('status', 'Statut')
+            ->setHelp("État d'avancement de la commande. C'est le seul champ que vous ayez normalement à modifier.")
+            ->setColumns(4);
+        yield AssociationField::new('buyer', 'Client')
+            ->setHelp('Compte ayant passé la commande.')
+            ->setColumns(4);
         yield MoneyField::new('totalPrice', 'Total')
             ->setCurrency('EUR')
+            ->setHelp('Montant figé au moment de la commande : il ne suit pas les changements de prix ultérieurs.')
             ->setColumns(4);
-        yield AssociationField::new('payment', 'Paiement')->setColumns(4);
-        yield AssociationField::new('delivery', 'Livraison')->setColumns(4);
-        yield AssociationField::new('address', 'Adresse')->hideOnIndex()->setColumns(6);
-        yield AssociationField::new('orderDetails', 'Lignes')->onlyOnDetail();
+        yield AssociationField::new('payment', 'Paiement')
+            ->setHelp('Moyen de paiement retenu par le client.')
+            ->setColumns(4);
+        yield AssociationField::new('delivery', 'Livraison')
+            ->setHelp('Mode d\'expédition retenu par le client.')
+            ->setColumns(4);
+        yield AssociationField::new('address', 'Adresse')
+            ->setHelp('Adresse de livraison telle que saisie lors de la commande.')
+            ->hideOnIndex()
+            ->setColumns(6);
+        yield AssociationField::new('orderDetails', 'Lignes')
+            ->setHelp('Articles commandés, avec le prix et la quantité figés à la commande.')
+            ->onlyOnDetail();
     }
 }

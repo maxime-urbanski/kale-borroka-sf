@@ -42,18 +42,21 @@ class ImageCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield ImageField::new('imageName')
+            ->setLabel('Aperçu')
             ->setBasePath('/upload/albums')
             ->setUploadDir('/upload/albums')
+            ->setHelp('Aperçu du fichier enregistré.')
             ->onlyOnIndex();
         yield AssociationField::new('album', 'Albums')
-            ->setHelp('Pochette générique, valable pour toutes les éditions.')
+            ->setHelp("Rattacher l'image à un album en fait la pochette générique, reprise par toutes ses éditions.")
             ->setColumns(6);
         yield AssociationField::new('editions', 'Éditions')
-            ->setHelp('Visuel propre à un pressage — la photo du vinyle rouge, par exemple.')
+            ->setHelp("Rattacher l'image à une édition la réserve à ce pressage — la photo du vinyle rouge, par exemple. Elle prend alors le pas sur la pochette de l'album.")
             ->setColumns(6);
 
         yield Field::new('imageFile', 'Image')
             ->setFormType(VichImageType::class)
+            ->setHelp('Fichier à envoyer. Remplace le précédent à chaque envoi.')
             ->onlyOnForms();
     }
 }

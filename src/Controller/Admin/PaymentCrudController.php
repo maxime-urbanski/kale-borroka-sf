@@ -30,6 +30,8 @@ class PaymentCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('name', 'Nom')->setColumns(6);
+        yield TextField::new('name', 'Nom')
+            ->setHelp('Libellé proposé au client au moment de la commande (virement, chèque, espèces…).')
+            ->setColumns(6);
     }
 }

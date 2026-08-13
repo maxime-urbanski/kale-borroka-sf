@@ -45,25 +45,30 @@ class ArtistCrudController extends AbstractCrudController
         yield ImageField::new('imageName', 'Photo')
             ->setBasePath('/upload/artists')
             ->setUploadDir('public/upload/artists')
+            ->setHelp('Aperçu de la photo enregistrée.')
             ->onlyOnIndex();
         yield TextField::new('name', 'Nom')
+            ->setHelp("Nom du groupe tel qu'il doit apparaître devant le titre de chaque album.")
             ->setColumns(6);
         yield TextField::new('countryOfOrigin', 'Pays')
-            ->setHelp('Code ISO à 2 lettres (FR, US, DE, …).')
+            ->setHelp("Pays d'origine du groupe. Code ISO à 2 lettres (FR, US, DE, …).")
             ->setColumns(3);
         yield IntegerField::new('foundedYear', 'Année de formation')
+            ->setHelp('Année de création du groupe. Purement informatif.')
             ->setColumns(3);
         yield TextareaField::new('description', 'Description')
+            ->setHelp('Biographie ou présentation du groupe.')
             ->hideOnIndex()
             ->setColumns(12);
         yield Field::new('imageFile', 'Photo')
             ->setFormType(VichImageType::class)
+            ->setHelp('Photo du groupe. Remplace la précédente à chaque envoi.')
             ->onlyOnForms()
             ->setColumns(6);
         // links is a plateforme => URL map (schema.org sameAs). A keyed collection keeps
         // it editable without inventing an entity for two or three URLs per artist.
         yield ArrayField::new('links', 'Liens externes')
-            ->setHelp('Clé = plateforme (bandcamp, discogs…), valeur = URL.')
+            ->setHelp('Profils du groupe ailleurs sur le web. Clé = plateforme (bandcamp, discogs…), valeur = URL complète.')
             ->setFormTypeOptions([
                 'entry_type' => UrlType::class,
                 'allow_add' => true,

@@ -32,20 +32,24 @@ class SongCrudController extends AbstractCrudController
     {
         yield IntegerField::new('track')
             ->setLabel('N°')
+            ->setHelp("Numéro de piste. Détermine l'ordre d'affichage de la tracklist.")
             ->setColumns(2)
         ;
         yield TextField::new('name')
             ->setLabel('Titre')
+            ->setHelp('Titre du morceau.')
             ->setColumns(6)
         ;
         yield TextField::new('side', 'Face')
-            ->setHelp('A, B, C… — sans objet pour un CD.')
+            ->setHelp('Face du disque : A, B, C… Sans objet pour un CD ou une K7.')
             ->setColumns(2)
         ;
         yield IntegerField::new('duration', 'Durée (s)')
+            ->setHelp('Durée du morceau en secondes — 185 pour 3 min 05. Affichée en minutes sur le site.')
             ->setColumns(2)
         ;
         yield TextField::new('isrc', 'ISRC')
+            ->setHelp('Code international du morceau, 12 caractères. Rarement renseigné sur les sorties autoproduites.')
             ->hideOnIndex()
             ->setColumns(4)
         ;

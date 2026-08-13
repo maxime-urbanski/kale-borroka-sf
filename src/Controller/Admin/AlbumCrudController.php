@@ -57,57 +57,73 @@ class AlbumCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield ImageField::new('folder')
+            ->setLabel('Pochette')
             ->setBasePath('/upload/albums')
             ->setUploadDir('/upload/albums')
+            ->setHelp('Aperçu de la pochette. Les visuels se gèrent dans Références › Visuels.')
             ->onlyOnIndex();
 
-        yield FormField::addTab('Œuvre');
+        yield FormField::addTab('Œuvre')
+            ->setHelp("L'album est l'œuvre elle-même, indépendamment du format sur lequel elle est vendue.");
         yield AssociationField::new('artist')
             ->autocomplete()
             ->setLabel('Artiste')
+            ->setHelp("Groupe ou artiste qui signe le disque. S'il n'existe pas encore, créez-le d'abord dans Références › Artistes.")
             ->setColumns(6);
         yield TextField::new('name')
             ->setLabel("Nom de l'album")
+            ->setHelp("Titre seul, sans le nom de l'artiste : il est ajouté automatiquement à l'affichage.")
             ->setColumns(6);
         yield AssociationField::new('styles')
+            ->setLabel('Styles')
+            ->setHelp('Genres musicaux. Servent de filtres dans le catalogue et alimentent le bloc « Dans le même style ».')
             ->setColumns(6)
             ->hideOnIndex();
         yield AssociationField::new('labels')
             ->setLabel('Produit par')
             ->autocomplete()
+            ->setHelp('Label(s) ayant sorti le disque. Plusieurs valeurs possibles pour une coproduction.')
             ->setColumns(6);
         yield TextareaField::new('note')
             ->setLabel('Description')
+            ->setHelp("Texte de présentation affiché sur la page de l'album, sous les informations de vente.")
             ->setColumns(12)
             ->hideOnIndex();
 
         yield FormField::addTab('Métadonnées')->onlyOnForms();
         yield ChoiceField::new('productionType', 'Type de production')
             ->setChoices($this->productionTypeChoices())
+            ->setHelp('Nature de l\'enregistrement : studio, live, compilation, démo, split ou bootleg.')
             ->setColumns(4);
         yield DateField::new('date_release')
             ->setLabel('Date de sortie')
+            ->setHelp("Sortie d'origine de l'œuvre. Une réédition porte sa propre date au niveau de l'édition.")
             ->setColumns(4);
         yield IntegerField::new('recordingYear', "Année d'enregistrement")
+            ->setHelp("Année de l'enregistrement, quand elle diffère de la date de sortie.")
             ->hideOnIndex()
             ->setColumns(4);
         yield TextField::new('countryOfOrigin', 'Pays')
-            ->setHelp('Code ISO à 2 lettres (FR, US, DE, …).')
+            ->setHelp('Pays de production du disque. Code ISO à 2 lettres (FR, US, DE, …).')
             ->hideOnIndex()
             ->setColumns(4);
         yield IntegerField::new('duration', 'Durée totale (s)')
+            ->setHelp("Durée totale de l'album, en secondes. Purement informatif.")
             ->hideOnIndex()
             ->setColumns(4);
         yield BooleanField::new('kbrProduction')
             ->setLabel('Production K.B.R')
+            ->setHelp("Coché, l'album apparaît dans la page Production et reçoit son bandeau sur les vignettes.")
             ->setColumns(4);
         yield TextField::new('kbrProductionId', 'Référence K.B.R')
+            ->setHelp('Numéro de catalogue du label, affiché dans le bandeau des productions maison.')
             ->hideOnIndex()
             ->setColumns(4);
 
         yield FormField::addTab('Tracklist')->onlyOnForms();
         yield CollectionField::new('tracklists', 'Morceaux')
             ->useEntryCrudForm(SongCrudController::class)
+            ->setHelp("Liste des titres, affichée sur la page de l'album. L'ordre suit le numéro de piste.")
             ->setColumns(12)
             ->hideOnIndex();
 
@@ -116,6 +132,7 @@ class AlbumCrudController extends AbstractCrudController
         // the offers under them.
         yield CollectionField::new('editions', 'Éditions')
             ->useEntryCrudForm(EditionCrudController::class)
+            ->setHelp('Les différents pressages du disque : LP noir, LP rouge, CD… Chaque édition porte ensuite ses propres offres (prix et stock). Tout se saisit ici, en une seule fois.')
             ->hideOnIndex()
             ->setColumns(12);
     }
