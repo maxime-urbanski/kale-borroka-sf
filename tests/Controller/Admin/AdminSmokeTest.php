@@ -52,9 +52,17 @@ class AdminSmokeTest extends WebTestCase
 
     public function testDashboardRenders(): void
     {
-        $this->client->request('GET', '/admin');
+        $crawler = $this->client->request('GET', '/admin');
 
         self::assertResponseIsSuccessful();
+
+        // The back office stylesheet is what re-centres the content; losing the Encore
+        // entry would silently push everything back against the sidebar.
+        self::assertGreaterThan(
+            0,
+            $crawler->filter('link[href*="admin"][rel="stylesheet"]')->count(),
+            'la feuille de style admin doit être chargée'
+        );
     }
 
     /**

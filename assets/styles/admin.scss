@@ -1,0 +1,16 @@
+// Back office overrides, loaded on top of EasyAdmin's own stylesheet.
+//
+// EasyAdmin caps the content width but gives it no automatic margins:
+//
+//   body:not(.ea-content-width-full) .content-wrapper { max-inline-size: var(--body-max-width) }
+//
+// so the content sits flush against the sidebar and leaves the whole right side
+// empty on a wide screen. Restoring the auto margins centres it inside the column
+// while keeping the readable max width.
+//
+// The alternative would be Dashboard::renderContentMaximized(), which drops the cap
+// entirely and stretches everything edge to edge — better for wide tables, worse for
+// forms, and not what "centred" means.
+body:not(.ea-content-width-full) .content-wrapper {
+  margin-inline: auto;
+}

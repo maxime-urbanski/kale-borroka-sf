@@ -8,6 +8,7 @@ use App\Repository\ArticleRepository;
 use App\Repository\EditionRepository;
 use App\Repository\OrderRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -30,6 +31,11 @@ class DashboardController extends AbstractDashboardController
             'editionsWithoutOffer' => $this->editionRepository->findWithoutOffer(),
             'lastOrders' => $this->orderRepository->findBy([], ['created_at' => 'DESC'], 5),
         ]);
+    }
+
+    public function configureAssets(): Assets
+    {
+        return Assets::new()->addWebpackEncoreEntry('admin');
     }
 
     public function configureDashboard(): Dashboard

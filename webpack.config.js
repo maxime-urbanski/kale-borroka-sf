@@ -22,6 +22,9 @@ Encore
    */
   .addEntry('app', './assets/app.js')
 
+  // CSS-only entry for the back office, pulled in by DashboardController::configureAssets()
+  .addStyleEntry('admin', './assets/styles/admin.scss')
+
   // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
   .splitEntryChunks()
 
