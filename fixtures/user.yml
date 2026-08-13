@@ -1,6 +1,6 @@
 parameters:
-    pw_admin: $2y$13$LhfacaWvO8Ah.UnWAWAoceWaVyC1XIMdz0AlCjnng6tIg/Qyty/Q6
-    pw_user: $2y$13$1HnHf2YaceDZAYsjfoSIaeemZeYQ5Ov2Oehd177a0L1EnJ5jiqV2u
+    pw_admin: $2y$13$O2QfkbzxmWvDk.cYw8k5bOjpwur3SZnKtWRzq0f.DhzTlkB5Clt3G #password123
+    pw_user: $2y$13$O2QfkbzxmWvDk.cYw8k5bOjpwur3SZnKtWRzq0f.DhzTlkB5Clt3G # password123
 
 App\Entity\User:
     user_admin:
