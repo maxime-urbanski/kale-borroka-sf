@@ -23,6 +23,7 @@ class MediaObjectCrudController extends AbstractCrudController
     {
         yield Field::new('file', 'Image')
             ->setLabel('Image actuelle')
+            ->setHelp('Icône du réseau social. Remplace la précédente à chaque envoi.')
             ->setFormType(VichImageType::class);
     }
 }

@@ -12,12 +12,19 @@ use App\Entity\Support;
 class ArticleFilterData
 {
     /**
-     * @var array{'artists'?: array<Artist>, 'styles'?: array<Style>, 'label'?: array<Label>, 'kbrProduction'?: bool}
+     * Values coming from the "global" filter form, merged into the flat properties below
+     * by DispatchFilterValueService.
+     *
+     * Keys must stay plural and match GlobalArticleFilterType's field names, which is
+     * what the service reads — the defaults used to be declared as 'artist'/'label' and
+     * only worked because the bound form replaced the whole array.
+     *
+     * @var array{'artists'?: array<Artist>, 'styles'?: array<Style>, 'labels'?: array<Label>, 'kbrProduction'?: bool}
      */
     public array $globalFilters = [
-        'artist' => [],
+        'artists' => [],
         'styles' => [],
-        'label' => [],
+        'labels' => [],
         'kbrProduction' => false,
     ];
 

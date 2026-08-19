@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Data\AddToCartWithQuantity;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -42,6 +43,9 @@ class AddToCartWithQuantityType extends AbstractType
                     'class' => 'btn btn-outline-success',
                     'data-action' => 'click->add-to-cart#more ',
                 ],
+            ])
+            ->add('articleId', HiddenType::class, [
+                'attr' => ['data-edition-picker-target' => 'articleId'],
             ]);
     }
 

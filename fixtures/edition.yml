@@ -1,0 +1,24 @@
+App\Entity\Edition:
+    edition_template (template):
+        album: '@album_*'
+        support: '@support_*'
+        name: '<randomElement(["LP", "CD", "K7", "LP vinyle rouge", "LP vinyle splatter"])>'
+        color: '<randomElement([null, "rouge", "noir", "splatter vert/noir"])>'
+        catalogNumber: 'KBR<numberBetween(100, 999)>'
+
+    edition_QuartierMaudit_LP:
+        album: '@Quartier_Maudit'
+        support: '@support_LP'
+        name: 'LP'
+
+    # Two pressings of one album on the same support: the case the old model could not
+    # express, and what the edition picker exists for.
+    edition_QuartierMaudit_LP_rouge:
+        album: '@Quartier_Maudit'
+        support: '@support_LP'
+        name: 'LP vinyle rouge'
+        color: 'rouge'
+        editionLabel: 'Édition limitée'
+        pressingRun: 100
+
+    edition_{1..50} (extends edition_template):

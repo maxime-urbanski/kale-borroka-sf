@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\SupportType;
 use App\Repository\SupportRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -20,16 +21,25 @@ class Support
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    /**
+     * Canonical format, typed with the SupportType enum.
+     *
+     * `name` stays the URL segment for backward compatibility; `code` is what the
+     * application should branch on.
+     */
+    #[ORM\Column(length: 32, unique: true, enumType: SupportType::class)]
+    private ?SupportType $code = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $icon = null;
 
-    /** @var Collection<int, Article> */
-    #[ORM\OneToMany(mappedBy: 'support', targetEntity: Article::class)]
-    private Collection $articles;
+    /** @var Collection<int, Edition> */
+    #[ORM\OneToMany(mappedBy: 'support', targetEntity: Edition::class)]
+    private Collection $editions;
 
     public function __construct()
     {
-        $this->articles = new ArrayCollection();
+        $this->editions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -49,6 +59,18 @@ class Support
         return $this;
     }
 
+    public function getCode(): ?SupportType
+    {
+        return $this->code;
+    }
+
+    public function setCode(SupportType $code): static
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
     public function getIcon(): ?string
     {
         return $this->icon;
@@ -62,28 +84,28 @@ class Support
     }
 
     /**
-     * @return Collection<int, Article>
+     * @return Collection<int, Edition>
      */
-    public function getArticles(): Collection
+    public function getEditions(): Collection
     {
-        return $this->articles;
+        return $this->editions;
     }
 
-    public function addArticle(Article $article): static
+    public function addEdition(Edition $edition): static
     {
-        if (!$this->articles->contains($article)) {
-            $this->articles->add($article);
-            $article->setSupport($this);
+        if (!$this->editions->contains($edition)) {
+            $this->editions->add($edition);
+            $edition->setSupport($this);
         }
 
         return $this;
     }
 
-    public function removeArticle(Article $article): static
+    public function removeEdition(Edition $edition): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->articles->removeElement($article) && $article->getSupport() === $this) {
-            $article->setSupport(null);
+        if ($this->editions->removeElement($edition) && $edition->getSupport() === $this) {
+            $edition->setSupport(null);
         }
 
         return $this;

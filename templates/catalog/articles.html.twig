@@ -51,13 +51,14 @@
         <div class="row">
             <div class="col">
                 {% include 'layout/article/_article-grid.html.twig' with {
-                    articles: articles.items,
+                    albums: albums.items,
+                    supportScope: supportScope|default(null),
                     col_sm: 2,
                     col_md: 3,
                     col_lg: 3,
                     col_xl: 4
                 } %}
-                {{ knp_pagination_render(articles, 'partials/_pagination.html.twig') }}
+                {{ knp_pagination_render(albums, 'partials/_pagination.html.twig') }}
             </div>
         </div>
     </div>

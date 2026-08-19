@@ -1,16 +1,24 @@
 App\Entity\Article:
-    article_template (template): 
-        name: '<name()>'
+    article_template (template):
         quantity: '<numberBetween(1,50)>'
         price: '<numberBetween(700,2500)>'
-        support: '@support_*'
-        album: '@album_*'
-    
+        edition: '@edition_*'
+
     article_QuartierMaudit (extends article_template):
-        name: 'Brixton Cats - Quartier Maudit'
         quantity: 2
         price: 1000
-        support: '@support_LP'
-        album: '@Quartier_Maudit'
+        edition: '@edition_QuartierMaudit_LP'
+
+    # Same pressing offered twice: new and second-hand, at different prices.
+    article_QuartierMaudit_occasion (extends article_template):
+        quantity: 1
+        price: 600
+        edition: '@edition_QuartierMaudit_LP'
+        condition: !php/enum App\Enum\ItemCondition::USED
+
+    article_QuartierMaudit_rouge (extends article_template):
+        quantity: 5
+        price: 2500
+        edition: '@edition_QuartierMaudit_LP_rouge'
 
     article_{1..50} (extends article_template):

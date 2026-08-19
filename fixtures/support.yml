@@ -1,17 +1,22 @@
 App\Entity\Support:
-    support (template): 
-    
+    support (template):
+
     support_LP (extends support):
         name: 'lp'
-    
+        code: !php/enum App\Enum\SupportType::LP
+
     support_EP (extends support):
         name: 'ep'
-    
+        code: !php/enum App\Enum\SupportType::EP
+
     support_CD (extends support):
         name: 'cd'
-    
+        code: !php/enum App\Enum\SupportType::CD
+
     support_FANZINE (extends support):
         name: 'fanzine'
-    
+        code: !php/enum App\Enum\SupportType::FANZINE
+
     support_TAPE (extends support):
-            name: 'tape'
+        name: 'tape'
+        code: !php/enum App\Enum\SupportType::TAPE

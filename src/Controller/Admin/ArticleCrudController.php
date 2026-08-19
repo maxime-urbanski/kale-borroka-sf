@@ -5,66 +5,55 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Article;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Enum\ItemAvailability;
+use App\Enum\ItemCondition;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
 
 /**
+ * Article is the offer: price, stock and condition only. What the record *is* belongs to
+ * Edition and Album.
+ *
  * @extends AbstractCrudController<Article>
  */
 class ArticleCrudController extends AbstractCrudController
 {
+    private const int LOW_STOCK_THRESHOLD = 3;
+
     public static function getEntityFqcn(): string
     {
         return Article::class;
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function createEntity(string $entityFqcn): object
+    public function configureCrud(Crud $crud): Crud
     {
-        $entity = new $entityFqcn();
-        $entity->setCreatedAt(
-            new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'))
-        );
-
-        $entity->setUpdatedAt(
-            new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'))
-        );
-
-        return $entity;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function updateEntity(EntityManagerInterface $entityManager, object $entityInstance): void
-    {
-        $entityInstance->setUpdatedAt(
-            new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'))
-        );
-
-        $entityManager->persist($entityInstance);
-        $entityManager->flush();
+        return $crud
+            ->setEntityLabelInSingular('Offre')
+            ->setEntityLabelInPlural('Offres')
+            ->setDefaultSort(['updatedAt' => 'DESC'])
+            ->setSearchFields(['sku', 'gtin13', 'edition.name', 'edition.album.name'])
+            ->showEntityActionsInlined();
     }
 
     public function configureActions(Actions $actions): Actions
     {
         $viewArticle = Action::new('view', 'Voir la page de l\'article')
             ->renderAsLink()
-            ->linkToRoute('app_catalog_show', fn (Article $article) => [
-                'support' => $article->getSupport()?->getName(),
-                'slug' => $article->getSlug(),
-            ])
+            ->linkToRoute('app_catalog_show', fn (Article $article) => $article->getRouteParams())
             ->setHtmlAttributes(['target' => '_blank'])
             ->setCssClass('btn btn-success');
 
@@ -72,35 +61,112 @@ class ArticleCrudController extends AbstractCrudController
             ->add(Crud::PAGE_EDIT, $viewArticle);
     }
 
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(EntityFilter::new('edition', 'Édition'))
+            ->add(ChoiceFilter::new('condition', 'État')
+                ->setChoices($this->enumChoices(ItemCondition::cases())))
+            ->add(ChoiceFilter::new('availability', 'Disponibilité')
+                ->setChoices($this->enumChoices(ItemAvailability::cases())))
+            ->add(NumericFilter::new('quantity', 'Stock'))
+            ->add(NumericFilter::new('price', 'Prix'));
+    }
+
+    /**
+     * Rendered both as its own page and as a row inside the edition form, where the
+     * pressing is already known.
+     */
     public function configureFields(string $pageName): iterable
     {
-        yield DateTimeField::new('created_at', 'Ajouter le')
-            ->setFormTypeOption('input', 'datetime_immutable')
-            ->setTimezone('Europe/Paris')
-            ->setColumns(3)
-            ->setFormTypeOption('attr', ['readonly' => true])
-            ->hideOnIndex();
-        yield DateTimeField::new('updated_at', 'Modifier le')
-            ->setFormTypeOption('input', 'datetime_immutable')
-            ->setTimezone('Europe/Paris')
-            ->setColumns(3)
-            ->setFormTypeOption('attr', ['readonly' => true])
-            ->hideOnIndex();
-        yield SlugField::new('slug')
-            ->setColumns(6)
-            ->setTargetFieldName('name');
-        yield AssociationField::new('album')
-            ->setColumns(6);
-        yield AssociationField::new('album')
-            ->setColumns(6);
-        yield TextField::new('name', 'Nom de l\'article')
-            ->setColumns(6);
-        yield AssociationField::new('support')
+        if (!$this->isEmbeddedInParentForm()) {
+            yield AssociationField::new('edition', 'Édition')
+                ->autocomplete()
+                ->setHelp('Pressage mis en vente par cette offre.')
+                ->setColumns(6);
+        }
+
+        yield ChoiceField::new('condition', 'État')
+            ->setChoices($this->enumChoices(ItemCondition::cases()))
+            ->setHelp("État de l'exemplaire. C'est ce qui distingue deux offres d'un même pressage : neuf et occasion.")
             ->setColumns(4);
-        yield NumberField::new('quantity', 'Quantité disponible')
+        yield ChoiceField::new('availability', 'Disponibilité')
+            ->setChoices($this->enumChoices(ItemAvailability::cases()))
+            ->setHelp("Commande possible en stock et en précommande uniquement. En rupture ou épuisé, l'offre reste visible mais n'est plus achetable.")
             ->setColumns(4);
-        yield MoneyField::new('price', 'Prix du produit')
-            ->setColumns(4)
-            ->setCurrency('EUR');
+        yield MoneyField::new('price', 'Prix')
+            ->setCurrency('EUR')
+            ->setHelp("Prix de vente TTC. La vignette du catalogue affiche « dès » ce prix quand l'album a plusieurs offres.")
+            ->setColumns(4);
+        yield IntegerField::new('quantity', 'Quantité disponible')
+            // Plain text rather than markup: EasyAdmin escapes formatted values, and a
+            // marker is enough to spot what needs restocking when scanning the list.
+            ->formatValue(static fn (?int $value): string => match (true) {
+                null === $value, $value <= 0 => '0 — rupture',
+                $value <= self::LOW_STOCK_THRESHOLD => $value.' — stock faible',
+                default => (string) $value,
+            })
+            ->setHelp("Nombre d'exemplaires en stock. Le panier ne laisse pas dépasser cette quantité.")
+            ->setColumns(4);
+        yield IntegerField::new('weight', 'Poids (g)')
+            ->setHelp('Poids du colis, en grammes. Utilisé pour le calcul des frais de port.')
+            ->hideOnIndex()
+            ->setColumns(4);
+        yield DateField::new('availableFrom', 'Disponible à partir du')
+            ->setHelp("Date d'expédition annoncée. À renseigner uniquement pour une précommande.")
+            ->hideOnIndex()
+            ->setColumns(4);
+        yield TextField::new('sku', 'Référence interne')
+            ->setHelp('Votre référence de gestion. Doit être unique, ou laissée vide.')
+            ->hideOnIndex()
+            ->setColumns(6);
+        yield TextField::new('gtin13', 'Code-barres (EAN-13)')
+            ->setHelp('Les 13 chiffres du code-barres imprimé sur la jaquette, si le disque en a un.')
+            ->hideOnIndex()
+            ->setColumns(6);
+        yield TextEditorField::new('description', 'Description')
+            ->setHelp("Précisions sur cet exemplaire précis — l'état d'une occasion, par exemple. La description du disque se saisit sur l'album.")
+            ->setNumOfRows(5)
+            ->hideOnIndex()
+            ->setColumns(12);
+        yield DateTimeField::new('createdAt', 'Ajouté le')
+            ->setTimezone('Europe/Paris')
+            ->setHelp('Renseigné automatiquement à la création.')
+            ->onlyOnDetail();
+        yield DateTimeField::new('updatedAt', 'Modifié le')
+            ->setTimezone('Europe/Paris')
+            ->setHelp('Renseigné automatiquement à chaque modification.')
+            ->onlyOnDetail();
+    }
+
+    /**
+     * True when this form is a row of an Éditions or Offres collection rather than its own
+     * admin page — nested, the parent already fixes which pressing is being sold.
+     *
+     * Detection goes through the controller owning the admin context rather than its
+     * entity: EasyAdmin's generics pin getEntity()->getFqcn() to Article, which makes any
+     * comparison to another entity look impossible to static analysis.
+     */
+    private function isEmbeddedInParentForm(): bool
+    {
+        $context = $this->getContext();
+
+        return null !== $context && self::class !== $context->getCrud()?->getControllerFqcn();
+    }
+
+    /**
+     * @param array<int, ItemCondition|ItemAvailability> $cases
+     *
+     * @return array<string, ItemCondition|ItemAvailability>
+     */
+    private function enumChoices(array $cases): array
+    {
+        $choices = [];
+
+        foreach ($cases as $case) {
+            $choices[$case->label()] = $case;
+        }
+
+        return $choices;
     }
 }

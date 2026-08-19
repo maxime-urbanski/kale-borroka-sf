@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\AlbumProductionType;
 use App\Repository\AlbumRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AlbumRepository::class)]
 class Album
@@ -19,10 +22,29 @@ class Album
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Donnez un nom à l'album.")]
     private ?string $name = null;
+
+    #[ORM\Column(length: 255, unique: true)]
+    #[Gedmo\Slug(fields: ['name'])]
+    private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $note = null;
+
+    #[ORM\Column(length: 32, nullable: true, enumType: AlbumProductionType::class)]
+    private ?AlbumProductionType $productionType = null;
+
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $recordingYear = null;
+
+    /** ISO 3166-1 alpha-2 country code. */
+    #[ORM\Column(length: 2, nullable: true)]
+    private ?string $countryOfOrigin = null;
+
+    /** Total running time, in seconds. */
+    #[ORM\Column(nullable: true)]
+    private ?int $duration = null;
 
     #[ORM\Column]
     private ?bool $kbrProduction = null;
@@ -50,9 +72,18 @@ class Album
     #[ORM\JoinColumn(nullable: false)]
     private ?Artist $artist = null;
 
-    /** @var Collection<int, Article> */
-    #[ORM\OneToMany(mappedBy: 'album', targetEntity: Article::class, orphanRemoval: true)]
-    private Collection $articles;
+    /**
+     * Editions are created inside the album form, so they must cascade: a pressing added
+     * there is a brand new entity reachable only through this collection.
+     *
+     * `Assert\Valid` is what makes the validator walk into them: without it, an edition
+     * filled in halfway inside the album form goes straight to a NOT NULL violation.
+     *
+     * @var Collection<int, Edition>
+     */
+    #[ORM\OneToMany(mappedBy: 'album', targetEntity: Edition::class, cascade: ['persist'], orphanRemoval: true)]
+    #[Assert\Valid]
+    private Collection $editions;
 
     /** @var Collection<int, Image> */
     #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'album')]
@@ -66,7 +97,7 @@ class Album
         $this->labels = new ArrayCollection();
         $this->tracklists = new ArrayCollection();
         $this->styles = new ArrayCollection();
-        $this->articles = new ArrayCollection();
+        $this->editions = new ArrayCollection();
         $this->images = new ArrayCollection();
     }
 
@@ -83,6 +114,66 @@ class Album
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getProductionType(): ?AlbumProductionType
+    {
+        return $this->productionType;
+    }
+
+    public function setProductionType(?AlbumProductionType $productionType): static
+    {
+        $this->productionType = $productionType;
+
+        return $this;
+    }
+
+    public function getRecordingYear(): ?int
+    {
+        return $this->recordingYear;
+    }
+
+    public function setRecordingYear(?int $recordingYear): static
+    {
+        $this->recordingYear = $recordingYear;
+
+        return $this;
+    }
+
+    public function getCountryOfOrigin(): ?string
+    {
+        return $this->countryOfOrigin;
+    }
+
+    public function setCountryOfOrigin(?string $countryOfOrigin): static
+    {
+        $this->countryOfOrigin = $countryOfOrigin;
+
+        return $this;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(?int $duration): static
+    {
+        $this->duration = $duration;
 
         return $this;
     }
@@ -220,33 +311,98 @@ class Album
     }
 
     /**
-     * @return Collection<int, Article>
+     * @return Collection<int, Edition>
      */
-    public function getArticles(): Collection
+    public function getEditions(): Collection
     {
-        return $this->articles;
+        return $this->editions;
     }
 
-    public function addArticle(Article $article): static
+    public function addEdition(Edition $edition): static
     {
-        if (!$this->articles->contains($article)) {
-            $this->articles->add($article);
-            $article->setAlbum($this);
+        if (!$this->editions->contains($edition)) {
+            $this->editions->add($edition);
+            $edition->setAlbum($this);
         }
 
         return $this;
     }
 
-    public function removeArticle(Article $article): static
+    public function removeEdition(Edition $edition): static
     {
-        if ($this->articles->removeElement($article)) {
-            // set the owning side to null (unless already changed)
-            if ($article->getAlbum() === $this) {
-                $article->setAlbum(null);
-            }
+        if ($this->editions->removeElement($edition) && $edition->getAlbum() === $this) {
+            $edition->setAlbum(null);
         }
 
         return $this;
+    }
+
+    /**
+     * Editions of this album, optionally narrowed to one support — the catalogue is
+     * browsed per support, so /catalog/lp must only price and picture the LP pressings.
+     *
+     * @return Collection<int, Edition>
+     */
+    public function getEditionsForSupport(?Support $support = null): Collection
+    {
+        if (null === $support) {
+            return $this->editions;
+        }
+
+        return $this->editions->filter(
+            static fn (Edition $edition): bool => $edition->getSupport() === $support
+        );
+    }
+
+    /**
+     * The edition a catalogue card stands for: the cheapest one still purchasable, or
+     * failing that the first, so a sold-out record is still displayed.
+     */
+    public function getPreviewEdition(?Support $support = null): ?Edition
+    {
+        $editions = $this->getEditionsForSupport($support);
+
+        $withOffer = $editions->filter(
+            static fn (Edition $edition): bool => null !== $edition->getCheapestArticle()
+        );
+
+        $candidates = $withOffer->isEmpty() ? $editions : $withOffer;
+
+        if ($candidates->isEmpty()) {
+            return null;
+        }
+
+        $sorted = $candidates->toArray();
+        usort($sorted, static fn (Edition $a, Edition $b): int => ($a->getCheapestArticle()?->getPrice() ?? PHP_INT_MAX)
+            <=> ($b->getCheapestArticle()?->getPrice() ?? PHP_INT_MAX));
+
+        return $sorted[0];
+    }
+
+    public function getCheapestArticle(?Support $support = null): ?Article
+    {
+        return $this->getPreviewEdition($support)?->getCheapestArticle();
+    }
+
+    /**
+     * True when the card should advertise "from X €" rather than a single price: either
+     * several pressings, or several offers on the one pressing.
+     */
+    public function hasSeveralOffers(?Support $support = null): bool
+    {
+        $editions = $this->getEditionsForSupport($support);
+
+        if ($editions->count() > 1) {
+            return true;
+        }
+
+        return $this->getPreviewEdition($support)?->hasSeveralOffers() ?? false;
+    }
+
+    public function getCoverImage(?Support $support = null): ?Image
+    {
+        return $this->getPreviewEdition($support)?->getCoverImage()
+            ?: ($this->images->first() ?: null);
     }
 
     public function fullName(): string
