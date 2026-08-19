@@ -11,6 +11,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Sluggable\Handler\RelativeSlugHandler;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A physical pressing of an Album (schema.org: MusicRelease).
@@ -29,6 +30,7 @@ class Edition
 
     /** Short qualifier shown in the edition picker — "LP", "LP vinyle rouge", "CD digipack". */
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Donnez un nom à l'édition.")]
     private ?string $name = null;
 
     /**
@@ -52,6 +54,7 @@ class Edition
 
     #[ORM\ManyToOne(inversedBy: 'editions')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: 'Choisissez un support.')]
     private ?Support $support = null;
 
     /** Vinyl colour, free text: "rouge", "splatter vert/noir", … */
@@ -80,8 +83,14 @@ class Edition
     #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'editions')]
     private Collection $images;
 
-    /** @var Collection<int, Article> */
-    #[ORM\OneToMany(mappedBy: 'edition', targetEntity: Article::class, orphanRemoval: true)]
+    /**
+     * Offers are created inside the edition form — itself nested in the album form — so they
+     * must cascade, exactly like Album::$editions.
+     *
+     * @var Collection<int, Article>
+     */
+    #[ORM\OneToMany(mappedBy: 'edition', targetEntity: Article::class, cascade: ['persist'], orphanRemoval: true)]
+    #[Assert\Valid]
     private Collection $articles;
 
     public function __construct()
@@ -319,6 +328,27 @@ class Edition
     public function fullName(): string
     {
         return implode(' — ', array_filter([$this->album?->fullName(), $this->name]));
+    }
+
+    /**
+     * A row nobody typed into. The album form opens an empty edition on arrival so the whole
+     * record can be entered in one screen; submitted untouched, that row must be dropped
+     * rather than saved or turned into a validation error.
+     *
+     * Only what the admin can fill in counts: album is set by the parent, slug by Gedmo.
+     */
+    public function isBlank(): bool
+    {
+        return null === $this->name
+            && null === $this->support
+            && null === $this->color
+            && null === $this->editionLabel
+            && null === $this->catalogNumber
+            && null === $this->pressingRun
+            && null === $this->releaseDate
+            && null === $this->description
+            && $this->images->isEmpty()
+            && $this->articles->isEmpty();
     }
 
     /**

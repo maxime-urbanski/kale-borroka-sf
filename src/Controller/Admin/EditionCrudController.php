@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\Article;
 use App\Entity\Edition;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -29,6 +30,16 @@ class EditionCrudController extends AbstractCrudController
     public static function getEntityFqcn(): string
     {
         return Edition::class;
+    }
+
+    /**
+     * A pressing without an offer cannot be sold, so the form opens with one blank offer
+     * already in place. EasyAdmin also calls this for the collection prototype, which means
+     * every edition added from the album form arrives with its offer row too.
+     */
+    public function createEntity(string $entityFqcn): Edition
+    {
+        return (new Edition())->addArticle(new Article());
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -73,9 +84,20 @@ class EditionCrudController extends AbstractCrudController
         yield TextField::new('name', 'Nom de l\'édition')
             ->setHelp('Ce qu\'affiche le sélecteur : « LP », « LP vinyle rouge », « CD digipack ».')
             ->setColumns(6);
-        yield AssociationField::new('support', 'Support')
+        $support = AssociationField::new('support', 'Support')
             ->setHelp($embedded ? 'Format physique.' : "Format physique. Détermine la rubrique du catalogue où l'édition apparaît.")
             ->setColumns(3);
+
+        if ($embedded) {
+            // The column is NOT NULL, so EasyAdmin renders the select as required — hence
+            // without an empty option, hence pre-selecting the first support. In the blank
+            // row the album form opens, that would look like a filled-in pressing and block
+            // saving an album with no edition at all. Assert\NotNull on the entity is what
+            // really enforces the value.
+            $support->setRequired(false);
+        }
+
+        yield $support;
         yield TextField::new('color', 'Couleur')
             ->setHelp('Couleur du vinyle. Vide pour un CD ou un pressage noir.')
             ->setColumns(3);
@@ -112,6 +134,12 @@ class EditionCrudController extends AbstractCrudController
         yield CollectionField::new('articles', 'Offres')
             ->useEntryCrudForm(ArticleCrudController::class)
             ->setHelp("Prix et stock. Plusieurs offres permettent de vendre le même pressage neuf et d'occasion. Sans offre, l'édition n'est pas achetable.")
+            // Always expanded: an offer is four fields, and nested in the album form its
+            // visibility is already governed by the surrounding edition accordion.
+            ->renderExpanded()
+            // Same reasoning as Album::$editions: a pristine offer is dropped instead of
+            // failing validation.
+            ->setFormTypeOption('delete_empty', static fn (?Article $article): bool => null === $article || $article->isBlank())
             ->hideOnIndex()
             ->setColumns(12);
     }

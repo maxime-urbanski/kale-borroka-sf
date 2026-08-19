@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AlbumRepository::class)]
 class Album
@@ -21,6 +22,7 @@ class Album
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Donnez un nom à l'album.")]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, unique: true)]
@@ -70,8 +72,17 @@ class Album
     #[ORM\JoinColumn(nullable: false)]
     private ?Artist $artist = null;
 
-    /** @var Collection<int, Edition> */
-    #[ORM\OneToMany(mappedBy: 'album', targetEntity: Edition::class, orphanRemoval: true)]
+    /**
+     * Editions are created inside the album form, so they must cascade: a pressing added
+     * there is a brand new entity reachable only through this collection.
+     *
+     * `Assert\Valid` is what makes the validator walk into them: without it, an edition
+     * filled in halfway inside the album form goes straight to a NOT NULL violation.
+     *
+     * @var Collection<int, Edition>
+     */
+    #[ORM\OneToMany(mappedBy: 'album', targetEntity: Edition::class, cascade: ['persist'], orphanRemoval: true)]
+    #[Assert\Valid]
     private Collection $editions;
 
     /** @var Collection<int, Image> */

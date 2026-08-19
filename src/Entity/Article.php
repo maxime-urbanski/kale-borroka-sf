@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A sellable offer on a given Edition (schema.org: Product + Offer).
@@ -34,10 +35,12 @@ class Article
     private ?Edition $edition = null;
 
     #[ORM\Column]
+    #[Assert\NotNull(message: 'Indiquez un stock.')]
     private ?int $quantity = null;
 
     /** Price in cents. */
     #[ORM\Column]
+    #[Assert\NotNull(message: 'Indiquez un prix.')]
     private ?int $price = null;
 
     /** Internal reference (schema.org: sku). */
@@ -311,6 +314,25 @@ class Article
     public function isPurchasable(): bool
     {
         return $this->availability->isPurchasable() && $this->quantity > 0;
+    }
+
+    /**
+     * A row nobody typed into. Every edition form opens an empty offer so a pressing and its
+     * price can be entered in one go; submitted untouched, that row must be dropped.
+     *
+     * `condition` and `availability` are deliberately ignored: they are non-nullable enums
+     * with a default, so their select always comes back filled and would make every row
+     * look filled in.
+     */
+    public function isBlank(): bool
+    {
+        return null === $this->price
+            && null === $this->quantity
+            && null === $this->sku
+            && null === $this->gtin13
+            && null === $this->description
+            && null === $this->weight
+            && null === $this->availableFrom;
     }
 
     /**

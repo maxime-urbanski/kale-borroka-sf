@@ -106,6 +106,53 @@ class AdminSmokeTest extends WebTestCase
             'le formulaire imbriqué des éditions doit être rendu'
         );
         self::assertStringNotContainsString('editions][__editionsname__][album]', $html);
+        self::assertStringNotContainsString('Album[editions][0][album]', $html);
+    }
+
+    /**
+     * The whole record — album, pressing, price — has to be reachable without a single click:
+     * createEntity() opens one blank edition carrying one blank offer, and both collections
+     * render expanded.
+     */
+    public function testAlbumCreationOpensABlankEditionAndItsOffer(): void
+    {
+        $url = self::getContainer()->get('router')->generate('admin_album_new');
+
+        $crawler = $this->client->request('GET', $url);
+
+        self::assertResponseIsSuccessful();
+
+        $html = html_entity_decode((string) $this->client->getResponse()->getContent());
+
+        // A real row, not just the prototype the collection carries for the add button.
+        self::assertStringContainsString('Album[editions][0][name]', $html, 'une édition vierge doit être ouverte');
+        self::assertStringContainsString('Album[editions][0][articles][0][price]', $html, "l'édition vierge doit porter une offre vierge");
+
+        foreach (['Album_editions_0', 'Album_editions_0_articles_0'] as $id) {
+            self::assertStringContainsString(
+                'show',
+                (string) $crawler->filter('#'.$id.'-contents')->attr('class'),
+                sprintf('la ligne %s doit être dépliée', $id)
+            );
+        }
+    }
+
+    /**
+     * Nested, the Support select needs an empty option: otherwise the untouched row comes back
+     * with the first support pre-selected, stops looking blank, and blocks the creation of an
+     * album that has no pressing yet.
+     */
+    public function testEmbeddedSupportSelectOffersAnEmptyOption(): void
+    {
+        $url = self::getContainer()->get('router')->generate('admin_album_new');
+
+        $crawler = $this->client->request('GET', $url);
+
+        self::assertResponseIsSuccessful();
+
+        $options = $crawler->filter('#Album_editions_0_support option')->extract(['value']);
+
+        self::assertContains('', $options, 'le support imbriqué doit pouvoir rester vide');
     }
 
     /**

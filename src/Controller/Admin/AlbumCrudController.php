@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Album;
+use App\Entity\Article;
+use App\Entity\Edition;
 use App\Enum\AlbumProductionType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -31,6 +33,20 @@ class AlbumCrudController extends AbstractCrudController
     public static function getEntityFqcn(): string
     {
         return Album::class;
+    }
+
+    /**
+     * Opens the record with one blank pressing, itself carrying one blank offer, so the
+     * creation screen already shows every field down to the price instead of two collapsed
+     * collections waiting to be clicked. Untouched rows are dropped on submit — see the
+     * `delete_empty` callables below.
+     */
+    public function createEntity(string $entityFqcn): Album
+    {
+        $album = new Album();
+        $album->addEdition((new Edition())->addArticle(new Article()));
+
+        return $album;
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -134,6 +150,16 @@ class AlbumCrudController extends AbstractCrudController
         yield CollectionField::new('editions', 'Éditions')
             ->useEntryCrudForm(EditionCrudController::class)
             ->setHelp('Les différents pressages du disque : LP noir, LP rouge, CD… Chaque édition porte ensuite ses propres offres (prix et stock). Tout se saisit ici, en une seule fois.')
+            // Expanded on creation, where the blank pressing added by createEntity() is the
+            // whole point of the screen. On an existing album the rows stay collapsed cards —
+            // eight pressings unfolded is unreadable — and anything added afterwards opens by
+            // itself (EasyAdmin's field-collection.js does that).
+            ->renderExpanded(Crud::PAGE_NEW === $pageName)
+            // A pristine row must vanish instead of being saved: an admin who only wants the
+            // album should not have to empty the pressing we opened for them. The callable
+            // form of delete_empty runs before validation and bypasses Form::isEmpty(), which
+            // never reports an entity-backed entry as empty.
+            ->setFormTypeOption('delete_empty', static fn (?Edition $edition): bool => null === $edition || $edition->isBlank())
             ->hideOnIndex()
             ->setColumns(12);
     }
