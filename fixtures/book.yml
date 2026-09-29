@@ -1,0 +1,11 @@
+App\Entity\Book:
+    book_{1..6}:
+        name: '<sentence(3)>'
+        bookType: '<(App\Enum\BookType::cases()[$current % 2])>'
+        author: '<name()>'
+        numberOfPages: '<numberBetween(20,300)>'
+        stock: '<numberBetween(0,20)>'
+        price: '<numberBetween(300,2000)>'
+        publisher: '@label_*'
+        category: '@category_fanzines'
+        published: true

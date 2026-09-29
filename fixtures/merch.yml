@@ -1,0 +1,27 @@
+App\Entity\Merch:
+    merch_brixton_tee:
+        name: 'T-shirt Brixton Cats'
+        artist: '@Brixton_Cats'
+        category: '@category_tshirts'
+        published: true
+
+    merch_kbr_tote:
+        name: 'Tote bag Kale Borroka'
+        published: true
+
+App\Entity\MerchVariant:
+    merch_brixton_tee_{s, m, l, xl}:
+        merch: '@merch_brixton_tee'
+        size: '<(App\Enum\MerchSize::from($current))>'
+        color: 'noir'
+        stock: '<numberBetween(0,10)>'
+        price: 1500
+        published: true
+
+    merch_kbr_tote_one:
+        merch: '@merch_kbr_tote'
+        size: '<(App\Enum\MerchSize::ONE_SIZE)>'
+        color: 'écru'
+        stock: 25
+        price: 800
+        published: true

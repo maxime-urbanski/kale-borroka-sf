@@ -20,8 +20,12 @@ class Label
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?bool $isFriend = null;
+    /** Third-party label whose records we distribute. */
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isDistro = false;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $website = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $logo = null;
@@ -30,9 +34,14 @@ class Label
     #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'labels', cascade: ['persist'])]
     private Collection $albums;
 
+    /** @var Collection<int, Release> */
+    #[ORM\OneToMany(mappedBy: 'label', targetEntity: Release::class)]
+    private Collection $releases;
+
     public function __construct()
     {
         $this->albums = new ArrayCollection();
+        $this->releases = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -52,16 +61,36 @@ class Label
         return $this;
     }
 
-    public function isIsFriend(): ?bool
+    public function isDistro(): bool
     {
-        return $this->isFriend;
+        return $this->isDistro;
     }
 
-    public function setIsFriend(?bool $isFriend): static
+    public function setIsDistro(bool $isDistro): static
     {
-        $this->isFriend = $isFriend;
+        $this->isDistro = $isDistro;
 
         return $this;
+    }
+
+    public function getWebsite(): ?string
+    {
+        return $this->website;
+    }
+
+    public function setWebsite(?string $website): static
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Release>
+     */
+    public function getReleases(): Collection
+    {
+        return $this->releases;
     }
 
     public function getLogo(): ?string

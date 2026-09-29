@@ -1,0 +1,10 @@
+App\Entity\Page:
+    page_cgv:
+        title: 'Conditions générales de vente'
+        content: '<paragraph(5)>'
+        published: true
+
+    page_about:
+        title: 'Qui sommes-nous'
+        content: '<paragraph(5)>'
+        published: true

@@ -23,6 +23,10 @@ class Song
     #[ORM\Column]
     private ?int $track = null;
 
+    /** Length in seconds (schema.org: duration, rendered as ISO 8601). */
+    #[ORM\Column(nullable: true)]
+    private ?int $duration = null;
+
     /** @var Collection<int, Album> */
     #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'tracklists', cascade: ['persist'])]
     private Collection $albums;
@@ -50,6 +54,18 @@ class Song
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(?int $duration): static
+    {
+        $this->duration = $duration;
 
         return $this;
     }

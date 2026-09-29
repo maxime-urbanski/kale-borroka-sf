@@ -36,10 +36,10 @@
                 </th>
             {% endif %}
             <th>
-                <a href="{{ path('app_catalog_show', { support: item.article.support, slug: item.article.slug}) }}">
-                    {% if item.article.album.images[0] is defined %}
+                <a href="{{ article_path(item.article) }}">
+                    {% if item.article.coverImageName %}
                         <img
-                            src="{{ asset('upload/albums/' ~ item.article.album.images[0].imageName) }}"
+                            src="{{ asset('upload/albums/' ~ item.article.coverImageName) }}"
                             alt="{{ item.article.name }}"
                             class="img-thumbnail"
                             width="80" height="80">
@@ -53,16 +53,16 @@
                 </a>
             </th>
             <th class="text-center fw-light">
-                {{ item.article.name }} - {{ item.article.support | upper }}
+                {{ item.article.name }} - {{ item.article.formatLabel }}
             </th>
             <th class="text-center  fw-light">
                 {{ wishlist_route ?
                 (item.article.price / 100) |format_currency('EUR') :
-                item.article.support | upper }}
+                item.article.formatLabel }}
             </th>
             <th class="text-center fw-light">
                 {{ wishlist_route ?
-                item.article.quantity :
+                item.article.stock :
                 item.addedAt | date }}
             </th>
         </tr>

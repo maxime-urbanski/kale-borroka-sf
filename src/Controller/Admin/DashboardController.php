@@ -39,7 +39,10 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Catalogue');
         yield MenuItem::linkTo(SupportCrudController::class, 'Support', 'fas fa-list');
-        yield MenuItem::linkTo(ArticleCrudController::class, 'Article', 'fas fa-list');
+        yield MenuItem::linkTo(ReleaseCrudController::class, 'Pressages', 'fas fa-compact-disc');
+        yield MenuItem::linkTo(BookCrudController::class, 'Fanzines & livres', 'fas fa-book');
+        yield MenuItem::linkTo(MerchCrudController::class, 'Merch & textiles', 'fas fa-shirt');
+        yield MenuItem::linkTo(CategoryCrudController::class, 'Catégories', 'fas fa-folder-tree');
 
         yield MenuItem::section('Commande');
         yield MenuItem::linkTo(PaymentCrudController::class, 'Mode de paiement', 'fas fa-list');
@@ -47,6 +50,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkTo(OrderCrudController::class, 'Commande', 'fas fa-list');
 
         yield MenuItem::section('Configuration');
+        yield MenuItem::linkTo(PageCrudController::class, 'Pages', 'fas fa-file-lines');
         yield MenuItem::linkTo(SocialNetworkCrudController::class, 'Réseaux Sociaux', 'fas fa-list');
     }
 }

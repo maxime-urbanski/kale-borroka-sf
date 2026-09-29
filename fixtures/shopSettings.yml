@@ -1,0 +1,5 @@
+App\Entity\ShopSettings:
+    shop_settings:
+        lowStockThreshold: 2
+        freeShippingThreshold: 8000
+        contactEmail: 'contact@kaleborroka.test'

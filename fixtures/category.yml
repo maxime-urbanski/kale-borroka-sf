@@ -1,0 +1,10 @@
+App\Entity\Category:
+    category_textile:
+        name: 'Textile'
+
+    category_tshirts:
+        name: 'T-shirts'
+        parent: '@category_textile'
+
+    category_fanzines:
+        name: 'Fanzines'

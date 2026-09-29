@@ -5,22 +5,24 @@ declare(strict_types=1);
 namespace App\Controller\Catalog;
 
 use App\Data\AddToCartWithQuantity;
-use App\Entity\Article;
+use App\Entity\Release;
 use App\Entity\User;
+use App\Enum\SupportType;
 use App\Form\AddToCartWithQuantityType;
 use App\Repository\ArticleRepository;
+use App\Repository\ReleaseRepository;
 use App\Repository\UserCollectionRepository;
 use App\Repository\WishlistRepository;
 use App\Service\BreadcrumbInterface;
-use Doctrine\ORM\NonUniqueResultException;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Requirement\EnumRequirement;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -30,26 +32,24 @@ use Twig\Error\SyntaxError;
 #[AsController]
 class ArticleDetailsController
 {
-    public const SUPPORT_REQUIREMENTS = 'lp|ep|tape|fanzine|cd';
-
     /**
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
-     * @throws NonUniqueResultException
      */
     #[Route(
         path: '/catalog/{support}/{slug}',
         name: 'app_catalog_show',
-        requirements: ['support' => self::SUPPORT_REQUIREMENTS],
+        requirements: ['support' => new EnumRequirement(SupportType::class)],
         methods: Request::METHOD_GET
     )]
     public function __invoke(
         Environment $twig,
         BreadcrumbInterface $breadcrumb,
-        #[MapEntity(expr: 'repository.findOneBySupportAndSlug(support, slug)')]
-        Article $article,
+        SupportType $support,
+        string $slug,
         ArticleRepository $articleRepository,
+        ReleaseRepository $releaseRepository,
         FormFactoryInterface $formInterface,
         Request $request,
         UrlGeneratorInterface $urlGenerator,
@@ -61,8 +61,23 @@ class ArticleDetailsController
         #[CurrentUser]
         ?User $user = null,
     ): Response {
-        $artistArticle = $articleRepository->getArticleWithSameArtist($article);
-        $articleWithSameStyle = $articleRepository->getArticleWithSameStyle($article);
+        $article = $articleRepository->findPublishedBySlug($slug);
+        $canonicalSupport = $article?->getSupportType();
+
+        if (null === $canonicalSupport) {
+            throw new NotFoundHttpException('Cet article n\'existe pas.');
+        }
+
+        // A release can be listed under several sections but has a single URL.
+        if ($canonicalSupport !== $support) {
+            return new RedirectResponse($urlGenerator->generate('app_catalog_show', [
+                'support' => $canonicalSupport->value,
+                'slug' => $slug,
+            ]), Response::HTTP_MOVED_PERMANENTLY);
+        }
+
+        $artistArticle = $article instanceof Release ? $releaseRepository->getReleasesWithSameArtist($article)->getResult() : [];
+        $articleWithSameStyle = $article instanceof Release ? $releaseRepository->getReleasesWithSameStyle($article)->getResult() : [];
 
         $userWishlist = null === $user ? null : $wishlistRepository->getUserWishlist($user)->getOneOrNullResult();
         $userCollection = null === $user ? null : $userCollectionRepository->getUserCollection($user)->getOneOrNullResult();
@@ -83,8 +98,8 @@ class ArticleDetailsController
         $content = $twig->render('catalog/article.html.twig', [
             'article' => $article,
             'breadcrumb' => $breadcrumb->breadcrumb(lastItemName: $article->getName()),
-            'articleByArtist' => $artistArticle->getResult(),
-            'articleSameStyle' => $articleWithSameStyle->getResult(),
+            'articleByArtist' => $artistArticle,
+            'articleSameStyle' => $articleWithSameStyle,
             'form' => $addToCartForm->createView(),
             'userWishlist' => $userWishlist,
             'userCollection' => $userCollection,

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Album;
+use App\Enum\AlbumReleaseType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
@@ -46,6 +48,12 @@ class AlbumCrudController extends AbstractCrudController
         yield TextField::new('name')
             ->setLabel("Nom de l'album")
             ->setColumns(6);
+        yield ChoiceField::new('releaseType')
+            ->setLabel('Type')
+            ->setChoices(AlbumReleaseType::cases())
+            ->setFormTypeOption('choice_label', static fn (AlbumReleaseType $type): string => $type->label())
+            ->setHelp('Un 12" d\'un EP est rangé dans le rayon EP.')
+            ->setColumns(3);
         yield AssociationField::new('styles')
             ->setColumns(6)
             ->hideOnIndex();

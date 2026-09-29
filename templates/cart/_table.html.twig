@@ -22,10 +22,10 @@
                         } %}
                     </th>
                     <th>
-                        <a href="{{ path('app_catalog_show', { support: article.product.support, slug: article.product.slug}) }}">
-                            {% if article.product.album.images[0] is defined %}
+                        <a href="{{ article_path(article.product) }}">
+                            {% if article.product.coverImageName %}
                                 <img
-                                    src="{{ asset('upload/albums/' ~ article.product.album.images[0].imageName) }}"
+                                    src="{{ asset('upload/albums/' ~ article.product.coverImageName) }}"
                                     alt="{{ article.product.name }}"
                                     class="img-thumbnail"
                                     width="80" height="80">
@@ -39,7 +39,7 @@
                         </a>
                     </th>
                     <th class="text-center fw-light">{{ article.product.name }}
-                        - {{ article.product.support | upper }}</th>
+                        - {{ article.product.formatLabel }}</th>
                     <th class="text-center  fw-light">{{ (article.product.price / 100) |format_currency('EUR') }}</th>
                     <th class="text-center fw-light">
                         <div class="input-group justify-content-center">

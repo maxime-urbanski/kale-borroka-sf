@@ -36,7 +36,11 @@ class SongCrudController extends AbstractCrudController
         ;
         yield TextField::new('name')
             ->setLabel('Titre')
-            ->setColumns(9)
+            ->setColumns(6)
+        ;
+        yield IntegerField::new('duration')
+            ->setLabel('Durée (s)')
+            ->setColumns(3)
         ;
     }
 }

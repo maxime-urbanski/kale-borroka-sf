@@ -5,8 +5,8 @@
         {% include 'layout/_breadcrumb.html.twig' with {breadcrumb} %}
         <div class="row mb-5">
             <div class="col-sm-12 col-md-5">
-                {% if article.album.images[0] is defined %}
-                    <img src="{{ asset('upload/albums/' ~ article.album.images[0].imageName) }}"
+                {% if article.coverImageName %}
+                    <img src="{{ asset('upload/albums/' ~ article.coverImageName) }}"
                          alt="{{ article.name }}"
                          class="w-100 ratio-1x1">
                 {% else %}
@@ -19,14 +19,18 @@
                     <div class="col-12">
                         <h1 class="text-center text-md-start fw-bolder lh-1 mt-4 mt-md-0 mb-0">{{ article.name | upper }}</h1>
                         <p class="text-secondary mb-3">
-                            {% for style in article.album.styles %}
-                                {{ style }} {% if not loop.last %} | {% endif %}
-                            {% endfor %}
+                            {% if article is release %}
+                                {% for style in article.album.styles %}
+                                    {{ style }} {% if not loop.last %} | {% endif %}
+                                {% endfor %}
+                            {% elseif article is book %}
+                                {{ article.author }}
+                            {% endif %}
                         </p>
                         <div class="d-flex align-items-center">
                             <p class="fs-5 fw-bolder m-0">
                                 <span class="text-danger border border-danger px-2 py-1">
-                                    {{ article.support | upper }}
+                                    {{ article.formatLabel }}
                                 </span>
                             </p>
                             <p class="fs-5 ms-3 my-auto me-3">
@@ -35,7 +39,14 @@
                                 </span>
                             </p>
                         </div>
-                        <p class="mt-3 mb-md-0">Release date: {{ article.album.dateRelease|date('Y') }}</p>
+                        {% if article is release %}
+                            <p class="mt-3 mb-md-0">
+                                Sortie : {{ article.album.dateRelease ? article.album.dateRelease|date('Y') : '—' }}
+                                {% if article.color %} · {{ article.color }}{% endif %}
+                                {% if article.editionLabel %} · {{ article.editionLabel }}{% endif %}
+                                {% if article.limitedTo %} · Limité à {{ article.limitedTo }} ex.{% endif %}
+                            </p>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -96,7 +107,7 @@
                 <hr>
                 <div class="row">
                     <div class="col">
-                        <p class="m-0 text-center">{{ article.album.note }}</p>
+                        <p class="m-0 text-center">{{ article is release ? article.album.note }}</p>
                     </div>
                 </div>
             </div>

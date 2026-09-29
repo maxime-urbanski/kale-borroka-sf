@@ -23,13 +23,13 @@ readonly class CartService implements CartInterface
         $cart = $this->getSession()->get('cart', []);
         $article = $this->articleRepository->find($articleId);
 
-        if ($article) {
+        if ($article?->isPublished()) {
             if (empty($cart[$articleId])) {
                 $cart[$articleId] = $quantity;
-            } elseif ($article->getQuantity() > $cart[$articleId]) {
+            } elseif ($article->getStock() > $cart[$articleId]) {
                 ++$cart[$articleId];
             } else {
-                $cart[$articleId] = $article->getQuantity();
+                $cart[$articleId] = $article->getStock();
             }
 
             $this->getSession()->set('cart', $cart);
@@ -83,7 +83,7 @@ readonly class CartService implements CartInterface
             $cartWithData[] = [
                 'product' => $article,
                 'quantity' => $quantity,
-                'quantityMaxAvailable' => $article->getQuantity(),
+                'quantityMaxAvailable' => $article->getStock(),
             ];
         }
 
