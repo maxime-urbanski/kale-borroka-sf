@@ -41,6 +41,11 @@ class AddToWishlistController
         WishlistRepository $wishlistRepository,
         Request $request,
     ): RedirectResponse {
+        // Drafts are invisible in the shop: do not let them in through a guessed id either.
+        if (!$article->isPublished()) {
+            throw new NotFoundHttpException();
+        }
+
         /** @var Session $session */
         $session = $request->getSession();
 

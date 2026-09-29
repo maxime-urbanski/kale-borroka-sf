@@ -7,6 +7,10 @@ namespace App\Entity;
 use App\Repository\OrderDetailsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * One line of an order. Name, SKU and unit price are copied from the article when the
+ * order is placed: the article can be renamed, repriced or deleted afterwards.
+ */
 #[ORM\Entity(repositoryClass: OrderDetailsRepository::class)]
 class OrderDetails
 {
@@ -15,8 +19,19 @@ class OrderDetails
     #[ORM\Column]
     private ?int $id = null;
 
+    /** Line total in cents (unitPrice × quantity). */
     #[ORM\Column]
     private ?int $price = null;
+
+    /** Price of one item when the order was placed, in cents. */
+    #[ORM\Column]
+    private ?int $unitPrice = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $productName = null;
+
+    #[ORM\Column(length: 64)]
+    private ?string $sku = null;
 
     #[ORM\Column]
     private ?int $quantity = null;
@@ -42,6 +57,42 @@ class OrderDetails
     public function setPrice(int $price): static
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getUnitPrice(): ?int
+    {
+        return $this->unitPrice;
+    }
+
+    public function setUnitPrice(int $unitPrice): static
+    {
+        $this->unitPrice = $unitPrice;
+
+        return $this;
+    }
+
+    public function getProductName(): ?string
+    {
+        return $this->productName;
+    }
+
+    public function setProductName(string $productName): static
+    {
+        $this->productName = $productName;
+
+        return $this;
+    }
+
+    public function getSku(): ?string
+    {
+        return $this->sku;
+    }
+
+    public function setSku(string $sku): static
+    {
+        $this->sku = $sku;
 
         return $this;
     }

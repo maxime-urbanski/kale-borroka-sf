@@ -1,12 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use App\Enum\OrderStatus;
+use App\Enum\PaymentStatus;
 use App\Repository\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * A customer order. `status` is driven by the `order` workflow (config/packages/workflow.yaml)
+ * through getMarking()/setMarking(): apply transitions, never set it by hand.
+ */
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
 class Order
@@ -16,7 +24,7 @@ class Order
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100, unique: true)]
     private ?string $reference = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
@@ -28,8 +36,14 @@ class Order
     #[ORM\ManyToOne]
     private ?Address $address = null;
 
-    #[ORM\Column(length: 20)]
-    private ?string $status = null;
+    #[ORM\Column(length: 20, enumType: OrderStatus::class, options: ['default' => 'pending'])]
+    private OrderStatus $status = OrderStatus::PENDING;
+
+    #[ORM\Column(length: 20, enumType: PaymentStatus::class, options: ['default' => 'awaiting'])]
+    private PaymentStatus $paymentStatus = PaymentStatus::AWAITING;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $paidAt = null;
 
     #[ORM\Column]
     private ?int $totalPrice = null;
@@ -102,14 +116,49 @@ class Order
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): OrderStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    /**
+     * Workflow marking store accessor (the workflow deals in strings).
+     */
+    public function getMarking(): string
     {
-        $this->status = $status;
+        return $this->status->value;
+    }
+
+    /**
+     * Workflow marking store accessor. Only the workflow calls this.
+     *
+     * @param array<string, mixed> $context
+     */
+    public function setMarking(string $marking, array $context = []): void
+    {
+        $this->status = OrderStatus::from($marking);
+    }
+
+    public function getPaymentStatus(): PaymentStatus
+    {
+        return $this->paymentStatus;
+    }
+
+    public function setPaymentStatus(PaymentStatus $paymentStatus): static
+    {
+        $this->paymentStatus = $paymentStatus;
+
+        return $this;
+    }
+
+    public function getPaidAt(): ?\DateTimeImmutable
+    {
+        return $this->paidAt;
+    }
+
+    public function setPaidAt(?\DateTimeImmutable $paidAt): static
+    {
+        $this->paidAt = $paidAt;
 
         return $this;
     }

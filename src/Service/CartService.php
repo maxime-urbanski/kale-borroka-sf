@@ -80,6 +80,15 @@ readonly class CartService implements CartInterface
         $cartWithData = [];
         foreach ($cart as $id => $quantity) {
             $article = $this->articleRepository->find($id);
+
+            // Deleted or unpublished since it was added: drop it from the cart.
+            if (!$article?->isPublished()) {
+                unset($cart[$id]);
+                $this->getSession()->set('cart', $cart);
+
+                continue;
+            }
+
             $cartWithData[] = [
                 'product' => $article,
                 'quantity' => $quantity,
