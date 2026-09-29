@@ -15,4 +15,5 @@ App\Entity\Album:
         styles: ['@style_punk', '@style_streetpunk']
         labels: ['@FireAndFlames', '@RudysBack']
 
-    album_{1..50} (extends album_template): 
+    album_{1..50} (extends album_template):
+        releaseType: '<(App\Enum\AlbumReleaseType::cases()[$current % 6])>'

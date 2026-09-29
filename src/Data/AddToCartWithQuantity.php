@@ -15,6 +15,6 @@ class AddToCartWithQuantity
     public function __construct(
         private readonly Article $article,
     ) {
-        $this->quantityAvailable = $this->article->getQuantity();
+        $this->quantityAvailable = $this->article->getStock();
     }
 }

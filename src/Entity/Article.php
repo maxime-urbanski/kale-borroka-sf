@@ -4,56 +4,134 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\ItemCondition;
+use App\Enum\SupportType;
 use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Anything that can be put in the cart (schema.org: Product + Offer).
+ *
+ * Single table inheritance: the cart, orders, wishlists and collections all point at this
+ * root, so they do not care whether the item is a record, a fanzine or a t-shirt.
+ * Doctrine cannot reach subclass fields from a query on this root: catalogue queries
+ * that filter on album, format… go through ReleaseRepository / BookRepository.
+ */
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
-class Article
+#[ORM\InheritanceType('SINGLE_TABLE')]
+#[ORM\DiscriminatorColumn(name: 'type', type: 'string', length: 20)]
+#[ORM\DiscriminatorMap(['release' => Release::class, 'book' => Book::class, 'merch' => MerchVariant::class])]
+#[ORM\HasLifecycleCallbacks]
+abstract class Article
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]
-    private ?int $id = null;
+    protected ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    #[Assert\NotBlank(message: 'Donnez un nom à l\'article.')]
+    protected ?string $name = null;
 
     #[ORM\Column(length: 255, unique: true)]
     #[Gedmo\Slug(fields: ['name'])]
-    private ?string $slug = null;
+    protected ?string $slug = null;
+
+    /** Internal reference (schema.org: sku). Generated on insert when left blank. */
+    #[ORM\Column(length: 64, unique: true)]
+    protected ?string $sku = null;
+
+    /** EAN-13 / UPC barcode (schema.org: gtin13). */
+    #[ORM\Column(length: 14, unique: true, nullable: true)]
+    #[Assert\Regex(pattern: '/^\d{8,14}$/', message: 'Un code-barres ne contient que 8 à 14 chiffres.')]
+    protected ?string $gtin = null;
+
+    /** Price in cents. */
+    #[ORM\Column]
+    #[Assert\NotNull(message: 'Indiquez un prix.')]
+    #[Assert\PositiveOrZero]
+    protected ?int $price = null;
 
     #[ORM\Column]
-    private ?int $quantity = null;
+    #[Assert\NotNull(message: 'Indiquez un stock.')]
+    #[Assert\PositiveOrZero]
+    protected ?int $stock = null;
+
+    /** Free text (schema.org: color): "noir", "rouge translucide", "splatter vert/noir"… */
+    #[ORM\Column(length: 100, nullable: true)]
+    protected ?string $color = null;
+
+    /** Mapped to `item_condition`: `condition` is a reserved word in PostgreSQL. */
+    #[ORM\Column(name: 'item_condition', length: 20, enumType: ItemCondition::class, options: ['default' => 'new'])]
+    protected ItemCondition $itemCondition = ItemCondition::NEW;
+
+    /** Unpublished articles (drafts, duplicates being edited) never show up in the shop. */
+    #[ORM\Column(options: ['default' => false])]
+    protected bool $published = false;
 
     #[ORM\Column]
-    private ?int $price = null;
-
-    #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Support $support = null;
-
-    #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Album $album = null;
+    #[Gedmo\Timestampable(on: 'create')]
+    protected ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    #[Gedmo\Timestampable(on: 'update')]
+    protected ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $updatedAt = null;
+    /**
+     * Pictures of this very item. When empty, the parent's pictures (album, merch design) are used.
+     *
+     * @var Collection<int, Image>
+     */
+    #[ORM\ManyToMany(targetEntity: Image::class)]
+    #[ORM\JoinTable(name: 'article_image')]
+    protected Collection $images;
 
     /** @var Collection<int, OrderDetails> */
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: OrderDetails::class)]
-    private Collection $orderDetails;
+    protected Collection $orderDetails;
 
     public function __construct()
     {
+        $this->images = new ArrayCollection();
         $this->orderDetails = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable('now');
-        $this->updatedAt = new \DateTimeImmutable('now');
+    }
+
+    /**
+     * Catalogue section this article is listed under, and the `{support}` segment of its URL.
+     * Null when it has no catalogue page (yet).
+     */
+    abstract public function getSupportType(): ?SupportType;
+
+    /**
+     * Short format tag shown next to the price: "Vinyle 12"", "Fanzine", "T-shirt M".
+     */
+    abstract public function getFormatLabel(): string;
+
+    /**
+     * @return Collection<int, Image>
+     */
+    abstract protected function getParentImages(): Collection;
+
+    #[ORM\PrePersist]
+    public function generateSku(): void
+    {
+        if (null === $this->sku || '' === $this->sku) {
+            $this->sku = 'KBR-'.strtoupper(bin2hex(random_bytes(4)));
+        }
+    }
+
+    public function getCoverImage(): ?Image
+    {
+        return $this->images->first() ?: ($this->getParentImages()->first() ?: null);
+    }
+
+    public function getCoverImageName(): ?string
+    {
+        return $this->getCoverImage()?->getImageName();
     }
 
     public function getId(): ?int
@@ -78,21 +156,33 @@ class Article
         return $this->slug;
     }
 
-    public function setSlug(string $slug): static
+    public function setSlug(?string $slug): static
     {
         $this->slug = $slug;
 
         return $this;
     }
 
-    public function getQuantity(): ?int
+    public function getSku(): ?string
     {
-        return $this->quantity;
+        return $this->sku;
     }
 
-    public function setQuantity(int $quantity): static
+    public function setSku(?string $sku): static
     {
-        $this->quantity = $quantity;
+        $this->sku = $sku;
+
+        return $this;
+    }
+
+    public function getGtin(): ?string
+    {
+        return $this->gtin;
+    }
+
+    public function setGtin(?string $gtin): static
+    {
+        $this->gtin = $gtin;
 
         return $this;
     }
@@ -109,26 +199,50 @@ class Article
         return $this;
     }
 
-    public function getSupport(): ?Support
+    public function getStock(): ?int
     {
-        return $this->support;
+        return $this->stock;
     }
 
-    public function setSupport(?Support $support): static
+    public function setStock(int $stock): static
     {
-        $this->support = $support;
+        $this->stock = $stock;
 
         return $this;
     }
 
-    public function getAlbum(): ?Album
+    public function getColor(): ?string
     {
-        return $this->album;
+        return $this->color;
     }
 
-    public function setAlbum(?Album $album): static
+    public function setColor(?string $color): static
     {
-        $this->album = $album;
+        $this->color = $color;
+
+        return $this;
+    }
+
+    public function getItemCondition(): ItemCondition
+    {
+        return $this->itemCondition;
+    }
+
+    public function setItemCondition(ItemCondition $itemCondition): static
+    {
+        $this->itemCondition = $itemCondition;
+
+        return $this;
+    }
+
+    public function isPublished(): bool
+    {
+        return $this->published;
+    }
+
+    public function setPublished(bool $published): static
+    {
+        $this->published = $published;
 
         return $this;
     }
@@ -153,6 +267,30 @@ class Article
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Image>
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(Image $image): static
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): static
+    {
+        $this->images->removeElement($image);
 
         return $this;
     }
@@ -185,5 +323,10 @@ class Article
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->name;
     }
 }

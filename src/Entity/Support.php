@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\SupportType;
 use App\Repository\SupportRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * A catalogue section as shown in the menus. `code` ties it to SupportType; `name` is the URL segment.
+ */
 #[ORM\Entity(repositoryClass: SupportRepository::class)]
 class Support
 {
@@ -20,17 +22,11 @@ class Support
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\Column(length: 20, unique: true, enumType: SupportType::class)]
+    private ?SupportType $code = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $icon = null;
-
-    /** @var Collection<int, Article> */
-    #[ORM\OneToMany(mappedBy: 'support', targetEntity: Article::class)]
-    private Collection $articles;
-
-    public function __construct()
-    {
-        $this->articles = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -49,6 +45,18 @@ class Support
         return $this;
     }
 
+    public function getCode(): ?SupportType
+    {
+        return $this->code;
+    }
+
+    public function setCode(SupportType $code): static
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
     public function getIcon(): ?string
     {
         return $this->icon;
@@ -61,36 +69,8 @@ class Support
         return $this;
     }
 
-    /**
-     * @return Collection<int, Article>
-     */
-    public function getArticles(): Collection
-    {
-        return $this->articles;
-    }
-
-    public function addArticle(Article $article): static
-    {
-        if (!$this->articles->contains($article)) {
-            $this->articles->add($article);
-            $article->setSupport($this);
-        }
-
-        return $this;
-    }
-
-    public function removeArticle(Article $article): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->articles->removeElement($article) && $article->getSupport() === $this) {
-            $article->setSupport(null);
-        }
-
-        return $this;
-    }
-
     public function __toString(): string
     {
-        return $this->name;
+        return (string) $this->name;
     }
 }

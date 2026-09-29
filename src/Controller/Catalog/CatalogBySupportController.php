@@ -6,8 +6,10 @@ namespace App\Controller\Catalog;
 
 use App\Data\ArticleFilterData;
 use App\Entity\Support;
+use App\Enum\SupportType;
 use App\Form\ArticleFilterFormType;
-use App\Repository\ArticleRepository;
+use App\Repository\BookRepository;
+use App\Repository\ReleaseRepository;
 use App\Service\BreadcrumbInterface;
 use App\Service\CustomPaginationInterface;
 use App\Service\DispatchFilterValueInterface;
@@ -17,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\EnumRequirement;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -26,8 +29,6 @@ use Twig\Error\SyntaxError;
 #[AsController]
 class CatalogBySupportController
 {
-    public const SUPPORT_REQUIREMENTS = 'lp|ep|tape|fanzine|cd';
-
     /**
      * @throws RuntimeError
      * @throws SyntaxError
@@ -37,7 +38,7 @@ class CatalogBySupportController
         path: '/catalog/{support}/{page}',
         name: 'app_catalog_list',
         requirements: [
-            'support' => self::SUPPORT_REQUIREMENTS,
+            'support' => new EnumRequirement(SupportType::class),
             'page' => '^(page-)'.Requirement::DIGITS,
         ],
         defaults: ['page' => 'page-1'],
@@ -50,7 +51,8 @@ class CatalogBySupportController
         BreadcrumbInterface $breadcrumb,
         DispatchFilterValueInterface $dispatchFilterValue,
         CustomPaginationInterface $customPagination,
-        ArticleRepository $articleRepository,
+        ReleaseRepository $releaseRepository,
+        BookRepository $bookRepository,
         #[MapEntity(mapping: ['support' => 'name'])]
         Support $support,
         string $page,
@@ -61,9 +63,9 @@ class CatalogBySupportController
         $form = $formInterface->create(ArticleFilterFormType::class, $filters);
         $form->handleRequest($request);
 
-        $articles = $articleRepository->filterArticleQuery(
-            $dispatchFilterValue->dispatchFilterValue($filters)
-        );
+        $articles = SupportType::FANZINE === $support->getCode()
+            ? $bookRepository->filterBookQuery($dispatchFilterValue->dispatchFilterValue($filters))
+            : $releaseRepository->filterReleaseQuery($dispatchFilterValue->dispatchFilterValue($filters));
         $pagination = $customPagination->pagination($articles, $page, 12);
 
         unset($filters->globalFilters);

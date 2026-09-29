@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\AlbumReleaseType;
 use App\Repository\AlbumRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: AlbumRepository::class)]
 class Album
@@ -21,8 +23,16 @@ class Album
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\Column(length: 255, unique: true)]
+    #[Gedmo\Slug(fields: ['name'])]
+    private ?string $slug = null;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $note = null;
+
+    /** Album, EP, split… Decides whether a 12" is filed under LP or EP (SupportType::forRelease()). */
+    #[ORM\Column(length: 20, enumType: AlbumReleaseType::class, options: ['default' => 'album'])]
+    private AlbumReleaseType $releaseType = AlbumReleaseType::ALBUM;
 
     #[ORM\Column]
     private ?bool $kbrProduction = null;
@@ -50,9 +60,13 @@ class Album
     #[ORM\JoinColumn(nullable: false)]
     private ?Artist $artist = null;
 
-    /** @var Collection<int, Article> */
-    #[ORM\OneToMany(mappedBy: 'album', targetEntity: Article::class, orphanRemoval: true)]
-    private Collection $articles;
+    /**
+     * Pressings of this album. Created from the album form, hence the cascade.
+     *
+     * @var Collection<int, Release>
+     */
+    #[ORM\OneToMany(mappedBy: 'album', targetEntity: Release::class, cascade: ['persist'], orphanRemoval: true)]
+    private Collection $releases;
 
     /** @var Collection<int, Image> */
     #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'album')]
@@ -66,7 +80,7 @@ class Album
         $this->labels = new ArrayCollection();
         $this->tracklists = new ArrayCollection();
         $this->styles = new ArrayCollection();
-        $this->articles = new ArrayCollection();
+        $this->releases = new ArrayCollection();
         $this->images = new ArrayCollection();
     }
 
@@ -83,6 +97,30 @@ class Album
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getReleaseType(): AlbumReleaseType
+    {
+        return $this->releaseType;
+    }
+
+    public function setReleaseType(AlbumReleaseType $releaseType): static
+    {
+        $this->releaseType = $releaseType;
 
         return $this;
     }
@@ -220,30 +258,28 @@ class Album
     }
 
     /**
-     * @return Collection<int, Article>
+     * @return Collection<int, Release>
      */
-    public function getArticles(): Collection
+    public function getReleases(): Collection
     {
-        return $this->articles;
+        return $this->releases;
     }
 
-    public function addArticle(Article $article): static
+    public function addRelease(Release $release): static
     {
-        if (!$this->articles->contains($article)) {
-            $this->articles->add($article);
-            $article->setAlbum($this);
+        if (!$this->releases->contains($release)) {
+            $this->releases->add($release);
+            $release->setAlbum($this);
         }
 
         return $this;
     }
 
-    public function removeArticle(Article $article): static
+    public function removeRelease(Release $release): static
     {
-        if ($this->articles->removeElement($article)) {
-            // set the owning side to null (unless already changed)
-            if ($article->getAlbum() === $this) {
-                $article->setAlbum(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->releases->removeElement($release) && $release->getAlbum() === $this) {
+            $release->setAlbum(null);
         }
 
         return $this;

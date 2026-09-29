@@ -1,0 +1,36 @@
+App\Entity\Release:
+    release_template (template):
+        name: '<name()>'
+        stock: '<numberBetween(0,50)>'
+        price: '<numberBetween(700,2500)>'
+        album: '@album_*'
+        color: '<randomElement(["noir", "rouge", "splatter vert/noir", null])>'
+        published: true
+
+    release_QuartierMaudit (extends release_template):
+        name: 'Brixton Cats - Quartier Maudit'
+        sku: 'KBR-QM-LP-BLK'
+        stock: 2
+        price: 1000
+        format: '<(App\Enum\ReleaseFormat::VINYL_12)>'
+        color: 'noir'
+        album: '@Quartier_Maudit'
+
+    release_QuartierMaudit_red (extends release_template):
+        name: 'Brixton Cats - Quartier Maudit (rouge)'
+        sku: 'KBR-QM-LP-RED'
+        stock: 1
+        price: 1500
+        format: '<(App\Enum\ReleaseFormat::VINYL_12)>'
+        color: 'rouge'
+        limitedTo: 300
+        album: '@Quartier_Maudit'
+
+    # Cycles through every format so that each catalogue section has content.
+    release_{1..50} (extends release_template):
+        format: '<(App\Enum\ReleaseFormat::cases()[$current % 5])>'
+
+    release_draft (extends release_template):
+        name: 'Brouillon jamais publié'
+        format: '<(App\Enum\ReleaseFormat::CD)>'
+        published: false

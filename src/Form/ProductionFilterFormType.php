@@ -6,6 +6,9 @@ namespace App\Form;
 
 use App\Data\ArticleFilterData;
 use App\Entity\Support;
+use App\Enum\SupportType;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,6 +26,11 @@ class ProductionFilterFormType extends AbstractType
                     'class' => 'text-uppercase fs-6',
                 ],
                 'class' => Support::class,
+                // Our productions are records: the fanzine section would always come up empty.
+                'query_builder' => static fn (EntityRepository $repository): QueryBuilder => $repository
+                    ->createQueryBuilder('support')
+                    ->where('support.code != :fanzine')
+                    ->setParameter('fanzine', SupportType::FANZINE->value),
                 'required' => false,
                 'multiple' => true,
                 'expanded' => true,

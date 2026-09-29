@@ -3,15 +3,20 @@ App\Entity\Support:
     
     support_LP (extends support):
         name: 'lp'
+        code: '<(App\Enum\SupportType::LP)>'
     
     support_EP (extends support):
         name: 'ep'
+        code: '<(App\Enum\SupportType::EP)>'
     
     support_CD (extends support):
         name: 'cd'
+        code: '<(App\Enum\SupportType::CD)>'
     
     support_FANZINE (extends support):
         name: 'fanzine'
+        code: '<(App\Enum\SupportType::FANZINE)>'
     
     support_TAPE (extends support):
-            name: 'tape'
+        name: 'tape'
+        code: '<(App\Enum\SupportType::TAPE)>'

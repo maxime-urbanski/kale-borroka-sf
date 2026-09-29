@@ -83,6 +83,30 @@ class CatalogControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
     }
 
+    /**
+     * SupportType drives the route requirement; each case needs its Support row, and each
+     * section should list something with the fixtures (fanzines are books, the rest releases).
+     */
+    public function testEverySupportTypeHasAReachableCatalogPage(): void
+    {
+        $supportRepository = self::getContainer()->get(SupportRepository::class);
+
+        foreach (SupportType::cases() as $supportType) {
+            self::assertNotNull(
+                $supportRepository->findOneBy(['code' => $supportType]),
+                \sprintf('no Support row for SupportType::%s', $supportType->name),
+            );
+
+            $crawler = $this->client->request('GET', self::DEFAULT_URI.'/'.$supportType->value);
+            self::assertResponseIsSuccessful(\sprintf('/catalog/%s should be reachable', $supportType->value));
+            self::assertGreaterThan(
+                0,
+                $crawler->filter('article')->count(),
+                \sprintf('/catalog/%s should list at least one article', $supportType->value),
+            );
+        }
+    }
+
     public function testAccessCatalogWithBadSupport(): void
     {
         $this->client->request('GET', self::DEFAULT_URI.self::ERROR_SUPPORT);

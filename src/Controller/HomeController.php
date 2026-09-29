@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Repository\ArticleRepository;
+use App\Repository\ReleaseRepository;
 use App\Repository\SupportRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,10 +15,10 @@ final class HomeController extends AbstractController
     #[Route('/', 'app_homepage')]
     public function index(
         SupportRepository $supportRepository,
-        ArticleRepository $articleRepository,
+        ReleaseRepository $releaseRepository,
     ): Response {
-        $lastArticle = $articleRepository->getLastArticle();
-        $lasProduction = $articleRepository->getOwnProduction(true);
+        $lastArticle = $releaseRepository->getLastReleases();
+        $lasProduction = $releaseRepository->getOwnProduction(true);
 
         return $this->render('home/index.html.twig', [
             'support' => $supportRepository->findAll(),
