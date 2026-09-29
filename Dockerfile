@@ -4,7 +4,6 @@
 FROM dunglas/frankenphp:1-php8.5 AS frankenphp_upstream
 FROM node:24-alpine AS node_upstream
 
-
 # The different stages of this Dockerfile are meant to be built into separate images
 # https://docs.docker.com/build/building/multi-stage/#stop-at-a-specific-build-stage
 # https://docs.docker.com/reference/compose-file/build/#target
@@ -98,7 +97,7 @@ COPY --link composer.* symfony.* ./
 RUN composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
 
 # copy sources
-COPY --link . ./
+COPY --link --exclude=frankenphp/ . ./
 
 # compiled assets: public/build/ is gitignored and never part of the build context
 COPY --link --from=assets_builder /app/public/build public/build
@@ -169,7 +168,7 @@ RUN <<-EOF
 	find / -perm /6000 -type f -exec chmod a-s {} + 2>/dev/null || true
 EOF
 
-COPY --link --from=frankenphp_prod_builder /app /app
+COPY --link --exclude=var --exclude=public/upload --exclude=public/media --from=frankenphp_prod_builder /app /app
 # Group 0 + g=u for arbitrary-UID runtimes (e.g. OpenShift).
 COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/var /app/var
 # VichUploader writes here at runtime; mount a volume over them to persist uploads.
