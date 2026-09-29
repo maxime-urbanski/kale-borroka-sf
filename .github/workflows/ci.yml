@@ -48,7 +48,9 @@ jobs:
       - name: Check HTTP reachability
         run: curl -v --fail-with-body -o /dev/null http://localhost
       - name: Check HTTPS reachability
-        run: curl -v --insecure --fail-with-body -o /dev/null https://localhost
+        # TLS reachability only, no --fail-with-body: at this point the assets are not built
+        # and the dev database is not migrated, so the homepage itself answers 500.
+        run: curl -v --insecure -o /dev/null https://localhost
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
