@@ -1,0 +1,111 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}Tableau de bord{% endblock %}
+
+{% macro euros(cents) %}{{ (cents / 100)|format_currency('EUR', locale: 'fr') }}{% endmacro %}
+
+{% block main %}
+    {% import _self as m %}
+
+    {# KPIs #}
+    <div class="row g-3 mb-4">
+        {% for revenue in revenues %}
+            <div class="col-md-4">
+                <div class="card h-100" data-test="revenue-{{ revenue.period.value }}">
+                    <div class="card-body">
+                        <p class="text-muted text-uppercase small mb-1">{{ revenue.period.label }}</p>
+                        <p class="fs-3 fw-bold mb-1">{{ m.euros(revenue.amount) }}</p>
+                        <p class="small mb-0">
+                            {{ revenue.orderCount }} commande{{ revenue.orderCount > 1 ? 's' }} encaissée{{ revenue.orderCount > 1 ? 's' }}
+                            {% set variation = revenue.variation %}
+                            {% if variation is not null %}
+                                · <span class="{{ variation >= 0 ? 'text-success' : 'text-danger' }}">
+                                    {{ variation >= 0 ? '+' }}{{ variation|number_format(1, ',', ' ') }} %
+                                </span>
+                                <span class="text-muted">{{ revenue.period.comparisonLabel }}</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="row g-3">
+        {# Orders to process #}
+        <div class="col-lg-7">
+            <div class="card h-100" data-test="orders-to-process">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Commandes à traiter</span>
+                    <span>
+                        {% for status, count in orderCounts %}
+                            <span class="badge text-bg-{{ status == 'pending' ? 'warning' : 'info' }} ms-1">
+                                {{ count }} {{ enum('App\\Enum\\OrderStatus').from(status).label|lower }}
+                            </span>
+                        {% endfor %}
+                    </span>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for order in ordersToProcess %}
+                        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                           href="{{ path('admin_order_detail', {entityId: order.id}) }}">
+                            <span>
+                                <strong>{{ order.reference }}</strong>
+                                <span class="text-muted small ms-2">{{ order.buyer ? order.buyer.email }}</span>
+                            </span>
+                            <span class="d-flex align-items-center gap-2">
+                                <span class="text-muted small">{{ order.createdAt|date('d/m/Y H:i', 'Europe/Paris') }}</span>
+                                <span class="badge text-bg-{{ order.status.value == 'pending' ? 'warning' : 'info' }}">{{ order.status.label }}</span>
+                                <span class="badge text-bg-dark">{{ m.euros(order.totalPrice) }}</span>
+                            </span>
+                        </a>
+                    {% else %}
+                        <div class="list-group-item text-muted">Rien à traiter pour le moment.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        {# Payments, last 30 days #}
+        <div class="col-lg-5">
+            <div class="card h-100" data-test="payments">
+                <div class="card-header">Paiements des commandes des 30 derniers jours</div>
+                <div class="card-body">
+                    {% set totalCount = payments|reduce((carry, p) => carry + p.count, 0) %}
+                    {% for status, figures in payments %}
+                        {% set share = totalCount > 0 ? figures.count / totalCount * 100 : 0 %}
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between small">
+                                <span>{{ enum('App\\Enum\\PaymentStatus').from(status).label }}</span>
+                                <span>{{ figures.count }} · {{ m.euros(figures.amount) }}</span>
+                            </div>
+                            <div class="progress" role="progressbar" aria-valuenow="{{ share|round }}" aria-valuemin="0" aria-valuemax="100" style="height: .5rem">
+                                <div class="progress-bar {{ {paid: 'bg-success', awaiting: 'bg-warning', failed: 'bg-danger', refunded: 'bg-secondary'}[status] }}" style="width: {{ share|round(1) }}%"></div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <a href="{{ path('admin_finances') }}" class="small">Synthèse financière →</a>
+                </div>
+            </div>
+        </div>
+
+        {# Stock alerts #}
+        <div class="col-12">
+            <div class="card" data-test="low-stock">
+                <div class="card-header">Alerte stocks <span class="text-muted small">(épuisés ou ≤ {{ lowStockThreshold }})</span></div>
+                <div class="list-group list-group-flush">
+                    {% for item in lowStock %}
+                        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" href="{{ item.editUrl }}">
+                            <span>{{ item.article.name }} <span class="text-muted small ms-2">{{ item.article.formatLabel }}</span></span>
+                            <span class="badge {{ item.article.stock > 0 ? 'text-bg-warning' : 'text-bg-danger' }}">
+                                {{ item.article.stock > 0 ? item.article.stock : 'Épuisé' }}
+                            </span>
+                        </a>
+                    {% else %}
+                        <div class="list-group-item text-muted">Aucun article en stock critique.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

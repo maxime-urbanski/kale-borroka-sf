@@ -1,10 +1,27 @@
 App\Entity\Page:
     page_cgv:
         title: 'Conditions générales de vente'
+        slug: 'cgv'
         content: '<paragraph(5)>'
         published: true
+        footerPlacement: '<(App\Enum\FooterPlacement::BOTTOM)>'
+        footerPosition: 1
+
+    page_legal:
+        title: 'Mentions légales'
+        content: '<paragraph(3)>'
+        published: true
+        footerPlacement: '<(App\Enum\FooterPlacement::BOTTOM)>'
+        footerPosition: 2
 
     page_about:
         title: 'Qui sommes-nous'
         content: '<paragraph(5)>'
         published: true
+        footerPlacement: '<(App\Enum\FooterPlacement::ABOUT)>'
+
+    page_draft:
+        title: 'Page en préparation'
+        content: '<paragraph(2)>'
+        published: false
+        footerPlacement: '<(App\Enum\FooterPlacement::ABOUT)>'

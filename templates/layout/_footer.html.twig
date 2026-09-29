@@ -4,6 +4,7 @@
             <div class="row">
                 <div class="col-sm-12 col-md-4">
                     <h5 class="fs-4 mx-auto">A PROPOS</h5>
+                    {{ _self.page_links(pages.about ?? []) }}
                 </div>
                 <div class="col-sm-12 col-md-4 mt-4 mt-md-0">
                     <h5 class="fs-4 mx-auto">LE SHOP</h5>
@@ -14,6 +15,11 @@
                                    class="text-decoration-none text-white">
                                     {{ support |upper }}
                                 </a>
+                            </li>
+                        {% endfor %}
+                        {% for page in pages.shop ?? [] %}
+                            <li class="nav-item fs-5">
+                                <a href="{{ path('app_page_show', {slug: page.slug}) }}" class="text-decoration-none text-white">{{ page.title }}</a>
                             </li>
                         {% endfor %}
                     </ul>
@@ -38,6 +44,25 @@
         </div>
     </div>
     <div class="container-fluid bg-white py-1 overflow-hidden">
+        {% if pages.bottom is defined %}
+            <nav class="text-center small my-1" data-test="footer-bottom-pages">
+                {% for page in pages.bottom %}
+                    <a href="{{ path('app_page_show', {slug: page.slug}) }}" class="text-dark">{{ page.title }}</a>{% if not loop.last %} · {% endif %}
+                {% endfor %}
+            </nav>
+        {% endif %}
         <h6 class="text-center m-0">{{ 'now' | date('Y') }} - {{ '&copy;' }}Kale Borroka records - All Rights reserved - Make racists afraid again</h6>
     </div>
 </footer>
+
+{% macro page_links(pages) %}
+    {% if pages is not empty %}
+        <ul class="nav flex-column align-items-center mt-4">
+            {% for page in pages %}
+                <li class="nav-item fs-5">
+                    <a href="{{ path('app_page_show', {slug: page.slug}) }}" class="text-decoration-none text-white">{{ page.title }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endmacro %}
