@@ -1,0 +1,10 @@
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# Threshold computed once per request by AbstractArticleCrudController (ShopSettings). #}
+{% set threshold = field.customOptions.get('lowStockThreshold') %}
+{% if field.value <= 0 %}
+    <span class="badge text-bg-danger" title="Épuisé">{{ field.value }}</span>
+{% elseif field.value <= threshold %}
+    <span class="badge text-bg-warning" title="Stock critique (seuil : {{ threshold }})">{{ field.value }}</span>
+{% else %}
+    <span class="badge text-bg-success">{{ field.value }}</span>
+{% endif %}

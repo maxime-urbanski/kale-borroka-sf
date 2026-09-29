@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AlbumRepository::class)]
 class Album
@@ -66,6 +67,7 @@ class Album
      * @var Collection<int, Release>
      */
     #[ORM\OneToMany(mappedBy: 'album', targetEntity: Release::class, cascade: ['persist'], orphanRemoval: true)]
+    #[Assert\Valid]
     private Collection $releases;
 
     /** @var Collection<int, Image> */
@@ -320,6 +322,11 @@ class Album
         }
 
         return $this;
+    }
+
+    public function getCoverImageName(): ?string
+    {
+        return ($this->images->first() ?: null)?->getImageName();
     }
 
     public function getKbrProductionId(): ?string

@@ -5,27 +5,30 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Release;
-use App\Enum\ItemCondition;
 use App\Enum\ReleaseFormat;
+use App\Repository\AlbumRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 
 /**
- * Pressings ("Exemplaires & Pressages"). Also used as the entry form of the releases
- * collection in AlbumCrudController, where the album field is implied.
+ * Pressings ("Exemplaires & pressages"). Also the entry form of the releases collection
+ * in AlbumCrudController, under the page names below, where the album is implied.
  *
- * @extends AbstractCrudController<Release>
+ * @extends AbstractArticleCrudController<Release>
  */
-class ReleaseCrudController extends AbstractCrudController
+class ReleaseCrudController extends AbstractArticleCrudController
 {
+    public const string PAGE_IN_ALBUM_NEW = 'album_release_new';
+    public const string PAGE_IN_ALBUM_EDIT = 'album_release_edit';
+
     public static function getEntityFqcn(): string
     {
         return Release::class;
@@ -33,38 +36,68 @@ class ReleaseCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud
+        return parent::configureCrud($crud)
             ->setEntityLabelInSingular('Pressage')
             ->setEntityLabelInPlural('Exemplaires & pressages')
-            ->setSearchFields(['name', 'sku', 'gtin', 'catalogNumber', 'album.name'])
-            ->showEntityActionsInlined();
+            ->setSearchFields(['name', 'sku', 'gtin', 'catalogNumber', 'color', 'album.name', 'album.artist.name']);
+    }
+
+    /**
+     * "+ Pressage" on an album links here with ?album=<id>.
+     */
+    public function createEntity(string $entityFqcn): Release
+    {
+        $release = new Release();
+        $albumId = $this->getContext()?->getRequest()->query->getInt('album');
+
+        if ($albumId > 0) {
+            $release->setAlbum($this->container->get(AlbumRepository::class)->find($albumId));
+        }
+
+        return $release;
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(parent::getSubscribedServices(), [AlbumRepository::class]);
     }
 
     public function configureActions(Actions $actions): Actions
     {
-        $viewArticle = Action::new('view', 'Voir la page de l\'article')
-            ->renderAsLink()
-            ->linkToRoute('app_catalog_show', fn (Release $release) => [
+        $viewOnSite = Action::new('viewOnSite', 'Voir sur le site', 'fa fa-arrow-up-right-from-square')
+            ->linkToRoute('app_catalog_show', static fn (Release $release): array => [
                 'support' => $release->getSupportType()?->value,
                 'slug' => $release->getSlug(),
             ])
             ->displayIf(static fn (Release $release): bool => $release->isPublished())
-            ->setHtmlAttributes(['target' => '_blank'])
-            ->setCssClass('btn btn-success');
+            ->setHtmlAttributes(['target' => '_blank']);
 
-        return $actions
-            ->add(Crud::PAGE_EDIT, $viewArticle);
+        return parent::configureActions($actions)
+            ->add(Crud::PAGE_EDIT, $viewOnSite)
+            ->add(Crud::PAGE_DETAIL, $viewOnSite);
     }
 
-    public function configureFields(string $pageName): iterable
+    public function configureFilters(Filters $filters): Filters
     {
-        yield AssociationField::new('album')
-            ->autocomplete()
-            ->setColumns(6)
-            // Implied when the release is edited inside its album's form.
-            ->setFormTypeOption('required', true);
-        yield TextField::new('name', 'Nom de l\'article')
-            ->setColumns(6);
+        return parent::configureFilters($filters)
+            ->add(EntityFilter::new('album', 'Album'))
+            ->add(ChoiceFilter::new('format', 'Format')->setChoices(array_combine(
+                array_map(static fn (ReleaseFormat $format): string => $format->label(), ReleaseFormat::cases()),
+                ReleaseFormat::cases(),
+            )));
+    }
+
+    protected function configureSpecificFields(string $pageName): iterable
+    {
+        if (!\in_array($pageName, [self::PAGE_IN_ALBUM_NEW, self::PAGE_IN_ALBUM_EDIT], true)) {
+            yield AssociationField::new('album', 'Album')
+                ->autocomplete()
+                ->setHelp(\sprintf(
+                    'Album absent ? <a href="%s" target="_blank">Créez-le</a>, puis revenez ici.',
+                    $this->adminUrl()->setController(AlbumCrudController::class)->setAction(Action::NEW)->generateUrl(),
+                ))
+                ->setColumns(6);
+        }
         yield ChoiceField::new('format', 'Format')
             ->setChoices(ReleaseFormat::cases())
             ->setFormTypeOption('choice_label', static fn (ReleaseFormat $format): string => $format->label())
@@ -72,6 +105,7 @@ class ReleaseCrudController extends AbstractCrudController
         yield TextField::new('color', 'Couleur')
             ->setColumns(3);
         yield TextField::new('editionLabel', 'Édition')
+            ->setHelp('« Réédition 2024 », « Édition limitée »…')
             ->setColumns(3)
             ->hideOnIndex();
         yield IntegerField::new('limitedTo', 'Tirage limité à')
@@ -80,29 +114,11 @@ class ReleaseCrudController extends AbstractCrudController
         yield TextField::new('catalogNumber', 'N° de catalogue')
             ->setColumns(3)
             ->hideOnIndex();
-        yield AssociationField::new('label', 'Label (distro)')
-            ->setColumns(3)
-            ->hideOnIndex();
         yield IntegerField::new('pressingYear', 'Année de pressage')
             ->setColumns(3)
             ->hideOnIndex();
-        yield ChoiceField::new('itemCondition', 'État')
-            ->setChoices(ItemCondition::cases())
-            ->setFormTypeOption('choice_label', static fn (ItemCondition $condition): string => $condition->label())
+        yield AssociationField::new('label', 'Label (distro)')
             ->setColumns(3)
             ->hideOnIndex();
-        yield TextField::new('sku', 'SKU')
-            ->setHelp('Laisser vide pour le générer.')
-            ->setRequired(false)
-            ->setColumns(3);
-        yield TextField::new('gtin', 'EAN / UPC')
-            ->setColumns(3)
-            ->hideOnIndex();
-        yield IntegerField::new('stock', 'Stock')
-            ->setColumns(3);
-        yield MoneyField::new('price', 'Prix')
-            ->setCurrency('EUR')
-            ->setColumns(3);
-        yield BooleanField::new('published', 'Publié');
     }
 }

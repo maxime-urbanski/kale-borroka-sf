@@ -325,6 +325,25 @@ abstract class Article
         return $this;
     }
 
+    /**
+     * A duplicate is a new, unpublished draft with no stock and no identifiers of its own:
+     * slug and SKU are regenerated on insert, the barcode has to be typed in again.
+     * Pictures are shared with the original.
+     */
+    public function __clone()
+    {
+        $this->id = null;
+        $this->slug = null;
+        $this->sku = null;
+        $this->gtin = null;
+        $this->stock = 0;
+        $this->published = false;
+        $this->createdAt = null;
+        $this->updatedAt = null;
+        $this->images = new ArrayCollection($this->images->toArray());
+        $this->orderDetails = new ArrayCollection();
+    }
+
     public function __toString(): string
     {
         return (string) $this->name;

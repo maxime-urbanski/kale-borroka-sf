@@ -19,10 +19,10 @@ class AdminSmokeTest extends WebTestCase
      */
     public static function pageProvider(): iterable
     {
-        foreach (['release', 'book', 'merch', 'merch_variant', 'category', 'page', 'album', 'artist', 'label', 'support'] as $crud) {
+        foreach (['release', 'book', 'merch', 'merch_variant', 'category', 'page', 'album', 'artist', 'label', 'support', 'order', 'user', 'song', 'style', 'payment', 'transporter', 'image', 'social_network'] as $crud) {
             yield $crud.' index' => ['admin_'.$crud.'_index'];
 
-            if ('merch_variant' !== $crud) {
+            if (!\in_array($crud, ['merch_variant', 'order', 'user'], true)) {
                 yield $crud.' new' => ['admin_'.$crud.'_new'];
             }
         }
@@ -52,6 +52,8 @@ class AdminSmokeTest extends WebTestCase
             'admin_release_edit' => \App\Entity\Release::class,
             'admin_book_edit' => \App\Entity\Book::class,
             'admin_merch_edit' => \App\Entity\Merch::class,
+            'admin_album_edit' => \App\Entity\Album::class,
+            'admin_user_edit' => \App\Entity\User::class,
         ] as $route => $class) {
             $entity = $doctrine->getRepository($class)->findOneBy([]);
             self::assertNotNull($entity);

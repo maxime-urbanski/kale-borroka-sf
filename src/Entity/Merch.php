@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\MerchSize;
 use App\Repository\MerchRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -168,6 +169,37 @@ class Merch
         }
 
         return $this;
+    }
+
+    /**
+     * Adds an unpublished, out-of-stock variant for every given size the design does not
+     * have yet in that colour, priced like the existing ones.
+     *
+     * @param MerchSize[] $sizes
+     *
+     * @return int number of variants added
+     */
+    public function addMissingSizes(array $sizes, ?string $color): int
+    {
+        $template = $this->variants->first() ?: null;
+        $added = 0;
+
+        foreach ($sizes as $size) {
+            $exists = $this->variants->exists(static fn (int $key, MerchVariant $variant): bool => $variant->getSize() === $size && $variant->getColor() === $color);
+
+            if ($exists) {
+                continue;
+            }
+
+            $this->addVariant((new MerchVariant())
+                ->setSize($size)
+                ->setColor($color)
+                ->setPrice($template?->getPrice() ?? 0)
+                ->setStock(0));
+            ++$added;
+        }
+
+        return $added;
     }
 
     /**

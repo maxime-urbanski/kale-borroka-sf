@@ -1,0 +1,18 @@
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# Lines show the snapshot taken when the order was placed, not the article as it is now. #}
+<table class="table table-sm mb-0">
+    <thead>
+        <tr><th>Article</th><th>SKU</th><th class="text-end">Qté</th><th class="text-end">Prix unitaire</th><th class="text-end">Total</th></tr>
+    </thead>
+    <tbody>
+        {% for line in field.value %}
+            <tr>
+                <td>{{ line.productName }}</td>
+                <td><code>{{ line.sku }}</code></td>
+                <td class="text-end">{{ line.quantity }}</td>
+                <td class="text-end">{{ (line.unitPrice / 100)|format_currency('EUR', locale: 'fr') }}</td>
+                <td class="text-end">{{ (line.price / 100)|format_currency('EUR', locale: 'fr') }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
