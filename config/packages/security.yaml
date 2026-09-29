@@ -36,13 +36,6 @@ security:
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
-    # ROLE_BENEVOLE: catalogue and CMS back office (per-CRUD permissions come with the admin rework;
-    # until then /admin stays ROLE_ADMIN). ROLE_SUPER_ADMIN: users, roles and shop settings.
-    role_hierarchy:
-        ROLE_BENEVOLE: [ROLE_USER]
-        ROLE_ADMIN: [ROLE_BENEVOLE]
-        ROLE_SUPER_ADMIN: [ROLE_ADMIN]
-
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/mon-compte, roles: ROLE_USER }

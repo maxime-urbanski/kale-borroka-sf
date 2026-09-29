@@ -6,20 +6,16 @@ namespace App\Controller\Admin;
 
 use App\Entity\Book;
 use App\Enum\BookType;
-use App\Enum\ItemCondition;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
- * @extends AbstractCrudController<Book>
+ * @extends AbstractArticleCrudController<Book>
  */
-class BookCrudController extends AbstractCrudController
+class BookCrudController extends AbstractArticleCrudController
 {
     public static function getEntityFqcn(): string
     {
@@ -28,17 +24,14 @@ class BookCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud
+        return parent::configureCrud($crud)
             ->setEntityLabelInSingular('Fanzine / livre')
             ->setEntityLabelInPlural('Fanzines & livres')
-            ->setSearchFields(['name', 'author', 'isbn', 'sku'])
-            ->showEntityActionsInlined();
+            ->setSearchFields(['name', 'author', 'isbn', 'sku']);
     }
 
-    public function configureFields(string $pageName): iterable
+    protected function configureSpecificFields(string $pageName): iterable
     {
-        yield TextField::new('name', 'Titre')
-            ->setColumns(6);
         yield ChoiceField::new('bookType', 'Type')
             ->setChoices(BookType::cases())
             ->setFormTypeOption('choice_label', static fn (BookType $type): string => $type->label())
@@ -57,20 +50,5 @@ class BookCrudController extends AbstractCrudController
         yield IntegerField::new('numberOfPages', 'Pages')
             ->setColumns(3)
             ->hideOnIndex();
-        yield ChoiceField::new('itemCondition', 'État')
-            ->setChoices(ItemCondition::cases())
-            ->setFormTypeOption('choice_label', static fn (ItemCondition $condition): string => $condition->label())
-            ->setColumns(3)
-            ->hideOnIndex();
-        yield TextField::new('sku', 'SKU')
-            ->setHelp('Laisser vide pour le générer.')
-            ->setRequired(false)
-            ->setColumns(3);
-        yield IntegerField::new('stock', 'Stock')
-            ->setColumns(3);
-        yield MoneyField::new('price', 'Prix')
-            ->setCurrency('EUR')
-            ->setColumns(3);
-        yield BooleanField::new('published', 'Publié');
     }
 }
