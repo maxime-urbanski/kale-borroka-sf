@@ -1,0 +1,12 @@
+framework:
+    messenger:
+        # Commands are handled synchronously, inside a database transaction: a handler that
+        # throws (e.g. insufficient stock on the third line of an order) rolls back everything
+        # it did, including the atomic stock updates run through DBAL.
+        # No transport: messages without routing are handled synchronously.
+        default_bus: command.bus
+        buses:
+            command.bus:
+                middleware:
+                    - doctrine_ping_connection
+                    - doctrine_transaction

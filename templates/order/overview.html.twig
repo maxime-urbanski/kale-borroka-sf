@@ -1,7 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{%block body %}
-    <div class="container">
-        <h3>Merci pour votre commande numero: {{ order.reference }}</h3>
+{% block body %}
+    <div class="container py-5">
+        <h3>Merci pour votre commande n° {{ order.reference }}</h3>
+        <p>
+            Statut : <span class="badge border border-primary text-primary">{{ order.status.label }}</span>
+        </p>
+        <ul class="list-unstyled">
+            {% for line in order.orderDetails %}
+                <li>{{ line.quantity }} × {{ line.productName }} — {{ (line.price / 100)|format_currency('EUR') }}</li>
+            {% endfor %}
+        </ul>
+        <p class="fw-bolder">Total : {{ (order.totalPrice / 100)|format_currency('EUR') }}</p>
     </div>
 {% endblock %}

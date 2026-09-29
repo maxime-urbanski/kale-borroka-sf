@@ -46,6 +46,11 @@ class AddInCollectionController
         UserCollectionItemsRepository $userCollectionItemsRepository,
         Request $request,
     ): RedirectResponse {
+        // Drafts are invisible in the shop: do not let them in through a guessed id either.
+        if (!$article->isPublished()) {
+            throw new NotFoundHttpException();
+        }
+
         $userCollection = $userCollectionRepository->getUserCollection($user)->getOneOrNullResult();
         /** @var Session $session */
         $session = $request->getSession();

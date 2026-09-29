@@ -1,0 +1,40 @@
+framework:
+    workflows:
+        # Order lifecycle. Places mirror App\Enum\OrderStatus; transitions mirror
+        # App\Enum\OrderTransition. Stock and payment side effects live in
+        # App\Order\EventSubscriber\OrderWorkflowSubscriber.
+        order:
+            type: state_machine
+            marking_store:
+                type: method
+                property: marking
+            supports:
+                - App\Entity\Order
+            initial_marking: pending
+            places:
+                - pending
+                - paid
+                - preparing
+                - shipped
+                - delivered
+                - cancelled
+                - refunded
+            transitions:
+                pay:
+                    from: pending
+                    to: paid
+                prepare:
+                    from: paid
+                    to: preparing
+                ship:
+                    from: [paid, preparing]
+                    to: shipped
+                deliver:
+                    from: shipped
+                    to: delivered
+                cancel:
+                    from: [pending, paid, preparing]
+                    to: cancelled
+                refund:
+                    from: [shipped, delivered]
+                    to: refunded
