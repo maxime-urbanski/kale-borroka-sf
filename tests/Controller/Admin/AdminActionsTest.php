@@ -167,6 +167,44 @@ class AdminActionsTest extends WebTestCase
         self::assertFalse($merch->getVariants()->last()->isPublished());
     }
 
+    public function testPageSlugIsGeneratedKeptOnRenameAndChecked(): void
+    {
+        $this->submitPage('/admin/page/new', ['title' => 'Nos distros amies', 'slug' => '', 'footerPlacement' => 'shop', 'published' => '1']);
+        $page = $this->entityManager()->getRepository(\App\Entity\Page::class)->findOneBy(['title' => 'Nos distros amies']);
+        self::assertSame('nos-distros-amies', $page?->getSlug());
+
+        // Renaming keeps the address: shared links keep working.
+        $this->submitPage(\sprintf('/admin/page/%d/edit', $page->getId()), ['title' => 'Distros amies']);
+        self::assertSame('nos-distros-amies', $this->reload($page)->getSlug());
+
+        // An address already used by another page is refused with a message.
+        $crawler = $this->submitPage(\sprintf('/admin/page/%d/edit', $page->getId()), ['slug' => 'cgv'], expectRedirect: false);
+        self::assertStringContainsString('Une autre page utilise déjà cette adresse.', $crawler->text());
+    }
+
+    /**
+     * @param array<string, string> $fields
+     */
+    private function submitPage(string $uri, array $fields, bool $expectRedirect = true): Crawler
+    {
+        $form = $this->client->request('GET', $uri)->filter('form[name="Page"]')->form();
+        $values = $form->getPhpValues();
+        foreach ($fields as $name => $value) {
+            $values['Page'][$name] = $value;
+        }
+        if ('0' === ($fields['published'] ?? null)) {
+            unset($values['Page']['published']);
+        }
+
+        $crawler = $this->client->request('POST', $form->getUri(), $values);
+
+        if ($expectRedirect) {
+            self::assertResponseRedirects(null, null, 'the page form should be valid');
+        }
+
+        return $crawler;
+    }
+
     public function testShopSettingsListGoesStraightToTheForm(): void
     {
         $settings = $this->entityManager()->getRepository(ShopSettings::class)->findOneBy([]);

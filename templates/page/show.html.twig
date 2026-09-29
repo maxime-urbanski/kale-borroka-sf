@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        {% if preview %}
+            <div class="alert alert-warning" role="alert">
+                Aperçu : cette page n'est pas publiée, seuls les administrateurs la voient.
+            </div>
+        {% endif %}
+        <h1 class="fw-bolder mb-4">{{ page.title }}</h1>
+        {# Written in the back office: sanitized, never trusted as is. #}
+        <div class="page-content">{{ page.content|sanitize_html('app.rich_text_sanitizer') }}</div>
+        <p class="text-muted small mt-5">Mis à jour le {{ page.updatedAt|date('d/m/Y', 'Europe/Paris') }}</p>
+    </div>
+{% endblock %}

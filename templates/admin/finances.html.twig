@@ -1,0 +1,60 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}Synthèse financière {{ year }}{% endblock %}
+
+{% macro euros(cents) %}{{ (cents / 100)|format_currency('EUR', locale: 'fr') }}{% endmacro %}
+
+{% block main %}
+    {% import _self as m %}
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <form method="get" class="d-flex align-items-center gap-2">
+            <label for="year" class="form-label mb-0">Année</label>
+            <select id="year" name="year" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+                {% for option in years %}
+                    <option value="{{ option }}" {{ option == year ? 'selected' }}>{{ option }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        <a class="btn btn-secondary btn-sm" href="{{ path('admin_finances_export', {year: year}) }}">
+            <i class="fa fa-file-csv"></i> Exporter les paiements (CSV)
+        </a>
+    </div>
+
+    <p class="text-muted small">
+        Chiffre d'affaires encaissé : commandes payées, à leur date de paiement (heure de Paris).
+        Les remboursements sont comptés sur le mois où la commande avait été payée.
+    </p>
+
+    <table class="table table-hover" data-test="finances">
+        <thead>
+            <tr>
+                <th>Mois</th>
+                <th class="text-end">Commandes payées</th>
+                <th class="text-end">Chiffre d'affaires</th>
+                <th class="text-end">Panier moyen</th>
+                <th class="text-end">Remboursé</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in months %}
+                <tr class="{{ row.orders == 0 and row.refunded == 0 ? 'text-muted' }}">
+                    <td>{{ row.month|format_date(pattern: 'MMMM', locale: 'fr')|capitalize }}</td>
+                    <td class="text-end">{{ row.orders }}</td>
+                    <td class="text-end">{{ m.euros(row.revenue) }}</td>
+                    <td class="text-end">{{ row.orders > 0 ? m.euros(row.revenue / row.orders) : '—' }}</td>
+                    <td class="text-end">{{ row.refunded > 0 ? m.euros(row.refunded) : '—' }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot class="fw-bold">
+            <tr>
+                <td>Total</td>
+                <td class="text-end">{{ totals.orders }}</td>
+                <td class="text-end">{{ m.euros(totals.revenue) }}</td>
+                <td class="text-end">{{ totals.orders > 0 ? m.euros(totals.revenue / totals.orders) : '—' }}</td>
+                <td class="text-end">{{ totals.refunded > 0 ? m.euros(totals.refunded) : '—' }}</td>
+            </tr>
+        </tfoot>
+    </table>
+{% endblock %}

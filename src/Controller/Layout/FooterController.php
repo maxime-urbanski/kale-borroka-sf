@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Layout;
 
+use App\Repository\PageRepository;
 use App\Repository\SocialNetworkRepository;
 use App\Repository\SupportRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,6 +25,7 @@ class FooterController
     public function __invoke(
         SupportRepository $supportRepository,
         SocialNetworkRepository $socialNetworkRepository,
+        PageRepository $pageRepository,
         Environment $twig,
     ): Response {
         $supports = $supportRepository->findAll();
@@ -32,6 +34,7 @@ class FooterController
         $content = $twig->render('layout/_footer.html.twig', [
             'supports' => $supports,
             'socialNetworks' => $socialNetworks,
+            'pages' => $pageRepository->findForFooter(),
         ]);
 
         return new Response($content);
