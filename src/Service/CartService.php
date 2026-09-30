@@ -12,6 +12,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 readonly class CartService implements CartInterface
 {
+    /** Main request attribute: the count of the lines getFullCart() has just loaded. */
+    private const string COUNT_ATTRIBUTE = '_cart_item_count';
+
     public function __construct(
         private RequestStack $requestStack,
         private ArticleRepository $articleRepository,
@@ -99,6 +102,12 @@ readonly class CartService implements CartInterface
      */
     public function countItems(): int
     {
+        // The cart or delivery page has just loaded the lines: no need to ask again.
+        $counted = $this->requestStack->getMainRequest()?->attributes->get(self::COUNT_ATTRIBUTE);
+        if (\is_int($counted)) {
+            return $counted;
+        }
+
         $cart = $this->getSession()->get('cart', []);
 
         if ([] === $cart) {
@@ -109,10 +118,21 @@ readonly class CartService implements CartInterface
         $count = 0;
 
         foreach ($cart as $id => $quantity) {
-            $count += min((int) $quantity, max(0, $stock[(int) $id] ?? 0));
+            $count += self::available((int) $quantity, $stock[(int) $id] ?? null);
         }
 
         return $count;
+    }
+
+    /**
+     * How many of a line count, on the cart page and in the navbar alike: none of an
+     * unpublished, deleted or sold-out article, never more than the stock.
+     *
+     * @param int|null $stock the article's stock, null when it is unpublished or deleted
+     */
+    private static function available(int $quantity, ?int $stock): int
+    {
+        return null === $stock ? 0 : min($quantity, max(0, $stock));
     }
 
     /**
@@ -123,6 +143,8 @@ readonly class CartService implements CartInterface
         $cart = $this->getSession()->get('cart', []);
 
         if ([] === $cart) {
+            $this->requestStack->getMainRequest()?->attributes->set(self::COUNT_ATTRIBUTE, 0);
+
             return [];
         }
 
@@ -138,7 +160,7 @@ readonly class CartService implements CartInterface
             $article = $articles[$id] ?? null;
             // Deleted, unpublished or sold since it was added: never more than the stock,
             // and no empty line.
-            $available = $article?->isPublished() ? min($quantity, max(0, (int) $article->getStock())) : 0;
+            $available = self::available($quantity, $article?->isPublished() ? (int) $article->getStock() : null);
 
             if ($available !== $quantity) {
                 $changed = true;
@@ -161,6 +183,8 @@ readonly class CartService implements CartInterface
         if ($changed) {
             $this->getSession()->set('cart', $cart);
         }
+
+        $this->requestStack->getMainRequest()?->attributes->set(self::COUNT_ATTRIBUTE, array_sum(array_column($cartWithData, 'quantity')));
 
         return $cartWithData;
     }

@@ -103,7 +103,12 @@ class ArticleRepository extends ServiceEntityRepository
             ->getQuery()
             ->getArrayResult();
 
-        return array_column(array_map(static fn (array $row): array => ['id' => (int) $row['id'], 'stock' => (int) $row['stock']], $rows), 'stock', 'id');
+        $stock = [];
+        foreach ($rows as $row) {
+            $stock[(int) $row['id']] = (int) $row['stock'];
+        }
+
+        return $stock;
     }
 
     public function findPublishedBySlug(string $slug): ?Article

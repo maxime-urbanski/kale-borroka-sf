@@ -108,6 +108,31 @@ class CartQueriesTest extends WebTestCase
     }
 
     /**
+     * The cart and delivery pages have just loaded the lines: the navbar counts those
+     * instead of asking the stock again.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('cartPages')]
+    public function testCartPagesDoNotAskTheStockTwice(string $page): void
+    {
+        $this->client->loginUser($this->user('test@test.fr'));
+        [$release] = $this->releasesWithStock(5);
+        $this->addToCart($release, 2);
+
+        $this->queriesOf($page);
+        $profile = $this->client->getProfile();
+        self::assertInstanceOf(Profile::class, $profile);
+        $collector = $profile->getCollector('db');
+        self::assertInstanceOf(DoctrineDataCollector::class, $collector);
+        $stockQueries = array_filter(
+            $collector->getQueries()['default'] ?? [],
+            static fn (array $query): bool => 1 === preg_match('/^SELECT \w+\.id AS id_\d+, \w+\.stock AS stock_\d+ FROM article/', $query['sql']),
+        );
+
+        self::assertCount(0, $stockQueries);
+        self::assertSelectorTextSame('header .badge', '2');
+    }
+
+    /**
      * @return iterable<string, array{string}>
      */
     public static function cartPages(): iterable
