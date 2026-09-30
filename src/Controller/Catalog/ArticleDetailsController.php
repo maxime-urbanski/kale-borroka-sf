@@ -76,8 +76,9 @@ class ArticleDetailsController
             ]), Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        $artistArticle = $article instanceof Release ? $releaseRepository->getReleasesWithSameArtist($article)->getResult() : [];
-        $articleWithSameStyle = $article instanceof Release ? $releaseRepository->getReleasesWithSameStyle($article)->getResult() : [];
+        // Left unexecuted: the template caches the related sections and only runs them on a miss.
+        $artistArticle = $article instanceof Release ? $releaseRepository->getReleasesWithSameArtist($article) : null;
+        $articleWithSameStyle = $article instanceof Release ? $releaseRepository->getReleasesWithSameStyle($article) : null;
 
         $userWishlist = null === $user ? null : $wishlistRepository->getUserWishlist($user)->getOneOrNullResult();
         $userCollection = null === $user ? null : $userCollectionRepository->getUserCollection($user)->getOneOrNullResult();

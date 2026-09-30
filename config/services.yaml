@@ -22,3 +22,8 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # {% cache %} (twig/cache-extra) stores into our tagged pool instead of its own,
+    # so the entity invalidation reaches it and the adapter can differ per environment.
+    twig.cache:
+        alias: cache.fragments

@@ -8,6 +8,24 @@ services:
       target: frankenphp_prod
     environment:
       APP_SECRET: ${APP_SECRET}
+      # Browser cache for static files, see frankenphp/Caddyfile. Only files that exist on
+      # disk: a 404 falling through to PHP must not be cached. HTML pages keep Symfony's
+      # headers (private as soon as the session starts, which the cart and navbar do).
+      # - public/build: Encore file names carry a content hash in prod (enableVersioning),
+      #   so a new build means new URLs.
+      # - uploads: VichUploader's SmartUniqueNamer gives every upload a new name, but a file
+      #   can still be deleted, hence a week and no "immutable".
+      CADDY_SERVER_EXTRA_DIRECTIVES: |
+        @versionedAssets {
+          path /build/*
+          file
+        }
+        header @versionedAssets Cache-Control "public, max-age=31536000, immutable"
+        @uploads {
+          path /upload/* /media/*
+          file
+        }
+        header @uploads Cache-Control "public, max-age=604800"
     volumes:
       # VichUploader destinations, see config/packages/vich_uploader.yaml.
       # Without these, uploaded files are lost when the container is replaced.
