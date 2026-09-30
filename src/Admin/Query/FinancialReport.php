@@ -99,13 +99,14 @@ readonly class FinancialReport implements FinancialReportInterface
 
     public function years(\DateTimeImmutable $now): array
     {
+        // paid_at holds UTC: 31 December 23:30 UTC already belongs to the next year in Paris.
         $first = $this->entityManager->getConnection()->fetchOne(<<<'SQL'
             SELECT least(
-                (SELECT min(paid_at)::date FROM "order"),
+                (SELECT min(paid_at AT TIME ZONE 'UTC' AT TIME ZONE :timezone)::date FROM "order"),
                 (SELECT min(start_time) FROM event_sale),
                 (SELECT min(payment_due_date) FROM expense)
             )
-            SQL);
+            SQL, ['timezone' => RevenuePeriod::TIMEZONE]);
         $current = (int) $now->setTimezone(new \DateTimeZone(RevenuePeriod::TIMEZONE))->format('Y');
         $oldest = false === $first || null === $first ? $current : (int) substr((string) $first, 0, 4);
 
