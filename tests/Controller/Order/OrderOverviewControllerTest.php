@@ -68,6 +68,23 @@ class OrderOverviewControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
+    public function testPaymentPageIsGuardedLikeTheOverview(): void
+    {
+        $overview = $this->overviewUri($this->user('maxiloud@gmail.com'));
+        $payment = str_replace('/overview', '/payment/choice', $overview);
+
+        $this->client->request('GET', $payment);
+        self::assertResponseRedirects('/login');
+
+        $this->client->loginUser($this->user('test@test.fr'));
+        $this->client->request('GET', $payment);
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+
+        $this->client->loginUser($this->user('maxiloud@gmail.com'));
+        $this->client->request('GET', $payment);
+        self::assertResponseRedirects($overview);
+    }
+
     private function overviewUri(\App\Entity\User $buyer): string
     {
         [$release] = $this->releasesWithStock(5);
