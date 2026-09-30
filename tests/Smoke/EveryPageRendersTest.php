@@ -123,7 +123,7 @@ class EveryPageRendersTest extends WebTestCase
      *
      * @param list<string> $done paths of the actions already submitted, or never to submit
      */
-    private function nextButton(Release $release, string $page, array $done): ?Form
+    private function nextButton(Article $release, string $page, array $done): ?Form
     {
         $this->client->submit($this->client->request('GET', $this->articleUri($release))->filter('form[name="add_to_cart_with_quantity"]')->form());
         self::assertResponseRedirects();
