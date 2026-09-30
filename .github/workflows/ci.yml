@@ -52,7 +52,7 @@ jobs:
         # and the dev database is not migrated, so the homepage itself answers 500.
         run: curl -v --insecure -o /dev/null https://localhost
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: yarn
