@@ -13,14 +13,17 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class LoginThrottlingTest extends WebTestCase
 {
+    /** In both French texts of Symfony's TooManyLoginAttemptsAuthenticationException. */
+    private const string THROTTLED = 'tentatives de connexion';
+
     private ?KernelBrowser $client = null;
 
     protected function setUp(): void
     {
         $this->client = self::createClient();
         $this->client->disableReboot();
-        // The limiter state outlives the test (cache pool): a fresh address per run.
-        $this->client->setServerParameter('REMOTE_ADDR', \sprintf('10.%d.%d.%d', random_int(0, 255), random_int(0, 255), random_int(1, 254)));
+        // The limiter state is in a cache pool that outlives the test.
+        self::getContainer()->get('cache.rate_limiter')->clear();
     }
 
     public function testTheRightPasswordIsRefusedAfterFiveFailures(): void
@@ -31,20 +34,22 @@ class LoginThrottlingTest extends WebTestCase
 
         $this->logIn('test@test.fr', 'password123');
 
+        self::assertSelectorTextContains('.alert-danger', self::THROTTLED);
         self::assertFalse($this->isLoggedIn(), 'still throttled');
     }
 
     /**
-     * E-mails are case-insensitive: changing the case must not reset the count.
+     * E-mails are case-insensitive and trimmed: neither must reset the count.
      */
-    public function testChangingTheCaseOfTheEmailDoesNotHelp(): void
+    public function testChangingTheCaseOrSpacesOfTheEmailDoesNotHelp(): void
     {
-        foreach (['TEST@test.fr', 'Test@Test.fr', 'test@TEST.fr', 'tEst@test.fr', 'test@test.FR'] as $email) {
+        foreach (['TEST@test.fr', ' test@test.fr', 'test@test.fr ', 'Test@Test.fr', '  test@TEST.fr  '] as $email) {
             $this->logIn($email, 'wrong password');
         }
 
         $this->logIn('test@test.fr', 'password123');
 
+        self::assertSelectorTextContains('.alert-danger', self::THROTTLED);
         self::assertFalse($this->isLoggedIn(), 'still throttled');
     }
 
@@ -64,6 +69,10 @@ class LoginThrottlingTest extends WebTestCase
             'email' => $email,
             'password' => $password,
         ]));
+        // A failure redirects back to the login form, which shows the error.
+        if ($this->client->getResponse()->isRedirect('/login')) {
+            $this->client->followRedirect();
+        }
     }
 
     private function isLoggedIn(): bool
