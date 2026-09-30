@@ -53,7 +53,7 @@ class RemoveInCollectionController
 
         $currentUserCollection = $userCollectionRepository->getUserCollection($user)->getOneOrNullResult();
 
-        $currentItemToRemove = $userCollectionItemsRepository->getUserCollectionItem($article, $currentUserCollection);
+        $currentItemToRemove = null === $currentUserCollection ? null : $userCollectionItemsRepository->getUserCollectionItem($article, $currentUserCollection);
 
         /** @var Session $session */
         $session = $request->getSession();
@@ -70,7 +70,7 @@ class RemoveInCollectionController
             ->getFlashbag()
             ->add(
                 'success',
-                $article->getName().' à bien été supprimé de ta collection'
+                $article->getName().' a bien été supprimé de ta collection'
             );
 
         return new RedirectResponse($referer->getReferer());

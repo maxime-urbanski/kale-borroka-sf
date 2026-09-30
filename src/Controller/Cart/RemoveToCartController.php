@@ -36,8 +36,10 @@ class RemoveToCartController
 
         /** @var Session $session */
         $session = $request->getSession();
-        $cart->removeToCart($id);
-        $session->getFlashBag()->add('success', 'Quantité mise à jour');
+        // Already removed from another tab.
+        $cart->removeToCart($id)
+            ? $session->getFlashBag()->add('success', 'Article retiré du panier.')
+            : $session->getFlashBag()->add('danger', 'Cet article n\'est plus dans ton panier.');
 
         return new RedirectResponse($referer->getReferer());
     }

@@ -67,7 +67,7 @@ class RemoveToWishlistController
         $wishlistItemRepository->remove($wishlistItem, true);
         $session->getFlashBag()->add(
             'success',
-            $article->getName().' à bien été supprimé de la wantlist'
+            $article->getName().' a bien été supprimé de la wantlist'
         );
 
         return new RedirectResponse($referer->getReferer());

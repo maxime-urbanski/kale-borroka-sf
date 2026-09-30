@@ -96,16 +96,15 @@ class ArticleDetailsController
         if ($addToCartForm->isSubmitted()) {
             $session = $request->getSession();
             $valid = $addToCartForm->isValid();
-
-            if ($valid) {
-                $cart->addToCart((int) $article->getId(), $addToCartData->quantity);
-            }
+            $inCart = $valid ? $cart->addToCart((int) $article->getId(), $addToCartData->quantity) : 0;
 
             if ($session instanceof FlashBagAwareSessionInterface) {
-                $session->getFlashBag()->add(
-                    $valid ? 'success' : 'danger',
-                    $valid ? 'article ajouté au panier.' : 'Article non ajouté : vérifiez la quantité, ou rechargez la page.',
-                );
+                [$type, $message] = match (true) {
+                    !$valid => ['danger', 'Article non ajouté : vérifiez la quantité, ou rechargez la page.'],
+                    0 === $inCart => ['danger', 'Cet article est épuisé.'],
+                    default => ['success', 'Article ajouté au panier.'],
+                };
+                $session->getFlashBag()->add($type, $message);
             }
 
             return new RedirectResponse($request->getRequestUri(), Response::HTTP_SEE_OTHER);
