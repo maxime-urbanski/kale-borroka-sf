@@ -9,7 +9,9 @@ use App\Entity\User;
 use App\Form\UserInformationFormType;
 use App\Repository\UserRepository;
 use App\Service\UserDefaultAddressInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,7 +62,7 @@ final readonly class PatchUserInformationsController
         ]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid() && $this->emailIsFree($userRepository, $user, $form)) {
             $user->setLastname($updateUserInformation->lastname);
             $user->setFirstname($updateUserInformation->firstname);
             $user->setEmail($updateUserInformation->email);
@@ -81,5 +83,23 @@ final readonly class PatchUserInformationsController
         ]);
 
         return new Response($content);
+    }
+
+    /**
+     * UniqueEntity sits on User, not on this DTO: without it, a taken e-mail hits the unique index.
+     *
+     * @param FormInterface<mixed> $form
+     */
+    private function emailIsFree(UserRepository $userRepository, User $user, FormInterface $form): bool
+    {
+        $owner = $userRepository->findOneBy(['email' => $form->getData()?->email]);
+
+        if (null === $owner || $owner === $user) {
+            return true;
+        }
+
+        $form->get('email')->addError(new FormError('Un compte utilise déjà cette adresse e-mail.'));
+
+        return false;
     }
 }

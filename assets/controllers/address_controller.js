@@ -4,7 +4,8 @@ export default class extends Controller {
   static values = {
     id: Number,
     user: Number,
-    method: String
+    method: String,
+    token: String
   }
 
   async action() {
@@ -21,7 +22,8 @@ export default class extends Controller {
     }
 
     await fetch(url, {
-      method: this.methodValue
+      method: this.methodValue,
+      headers: {'X-CSRF-Token': this.tokenValue}
     }).then(response => window.location.href = response.url)
   }
 }

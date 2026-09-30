@@ -36,6 +36,7 @@
                                  data-controller="address"
                                  data-address-id-value="{{ address.id }}"
                                  data-address-method-value="DELETE"
+                                 data-address-token-value="{{ csrf_token('address-' ~ address.id) }}"
                                  data-action="click->address#action"
                             >
                                 Supprimer
@@ -54,6 +55,7 @@
                                 data-address-id-value="{{ address.id }}"
                                 data-address-user-value="{{ user.id }}"
                                 data-address-method-value="PATCH"
+                                data-address-token-value="{{ csrf_token('address-' ~ address.id) }}"
                                 data-action="click->address#action"
                             {% endif %}
                         >
