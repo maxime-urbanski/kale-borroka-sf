@@ -48,6 +48,7 @@ readonly class PlaceOrderHandler
             ->setBuyer($buyer)
             ->setCreatedAt(new \DateTimeImmutable())
             ->setAddress($address)
+            ->setShippingAddress((string) $address)
             ->setDelivery($this->transporterRepository->find($command->transporterId)
                 ?? throw new InvalidOrderException('Mode de livraison invalide.'))
             ->setPayment($this->paymentRepository->find($command->paymentId)

@@ -9,6 +9,7 @@ use App\Enum\PaymentStatus;
 use App\Repository\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -33,8 +34,17 @@ class Order
     #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
 
+    /** The address book entry picked at checkout; null once the customer deletes it. */
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Address $address = null;
+
+    /**
+     * Copy of the delivery address taken at checkout (Address::__toString(), plain text):
+     * editing or deleting the address book entry later must not change a placed order.
+     */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $shippingAddress = null;
 
     #[ORM\Column(length: 20, enumType: OrderStatus::class, options: ['default' => 'pending'])]
     private OrderStatus $status = OrderStatus::PENDING;
@@ -112,6 +122,18 @@ class Order
     public function setAddress(?Address $address): static
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+    public function getShippingAddress(): ?string
+    {
+        return $this->shippingAddress;
+    }
+
+    public function setShippingAddress(?string $shippingAddress): static
+    {
+        $this->shippingAddress = $shippingAddress;
 
         return $this;
     }

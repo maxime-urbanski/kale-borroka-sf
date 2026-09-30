@@ -43,6 +43,7 @@ App\Entity\Order:
     order_template (template):
         buyer: '@user_customer_<(($current - 1) % 8 + 1)>'
         address: '@address_customer_<(($current - 1) % 8 + 1)>'
+        shippingAddress: '<((string) $address)>'
         delivery: '50%? @colissimo : @mondial_relay'
         payment: '70%? @stripe : @paypal'
         # Orders 1..7 date from the last week, the others are spread over ~13 months.

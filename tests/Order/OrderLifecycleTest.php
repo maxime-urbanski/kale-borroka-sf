@@ -84,6 +84,33 @@ class OrderLifecycleTest extends KernelTestCase
         $this->placeOrder($this->user(self::CUSTOMER), [$release->getId() => 1], (int) $otherAddress?->getId());
     }
 
+    public function testTheOrderKeepsTheAddressAsItWasAtCheckout(): void
+    {
+        [$release] = $this->releasesWithStock(5);
+        $order = $this->placeOrder($this->user(self::CUSTOMER), [$release->getId() => 1]);
+        $address = $order->getAddress();
+        self::assertNotNull($address);
+        $snapshot = (string) $address;
+        self::assertSame($snapshot, $order->getShippingAddress());
+
+        $address->setCity('Ailleurs');
+        $this->entityManager()->flush();
+        $this->entityManager()->refresh($order);
+        self::assertSame($snapshot, $order->getShippingAddress());
+
+        // Deleting an address used by an order no longer fails on the foreign key
+        // (DeleteUserAddressController unsets the default address first, as here).
+        $buyer = $this->user(self::CUSTOMER);
+        if ($buyer->getDefaultAddress() === $address) {
+            $buyer->setDefaultAddress(null);
+        }
+        $this->entityManager()->remove($address);
+        $this->entityManager()->flush();
+        $this->entityManager()->refresh($order);
+        self::assertNull($order->getAddress());
+        self::assertSame($snapshot, $order->getShippingAddress());
+    }
+
     public function testPayingTakesTheItemsOutOfStock(): void
     {
         [$first, $second] = $this->releasesWithStock(5, 2);
