@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Routing\PageMatcher;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -36,10 +37,12 @@ readonly class BreadcrumbService implements BreadcrumbInterface
                     $uriWithoutLastSlash = $uri[0];
                 }
 
-                $match = $this->router->match($uriWithoutLastSlash);
-                unset($match['_controller']);
+                // As a GET, whatever the current request's method; a prefix that is no page
+                // (e.g. a segment of a longer route) is skipped.
+                $match = (new PageMatcher($this->router))->match($uriWithoutLastSlash);
 
-                if ($match) {
+                if (null !== $match) {
+                    unset($match['_controller']);
                     $routeName = $match['_route'];
                     unset($match['_route']);
                     $uriExplode = \explode('/', $uriWithoutLastSlash);

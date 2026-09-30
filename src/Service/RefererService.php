@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Routing\PageMatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Exception\ExceptionInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -26,19 +26,12 @@ readonly class RefererService implements RefererInterface
         $routeReferer = (string) $this->requestStack->getCurrentRequest()?->headers->get('referer');
         $refererPathInfo = Request::create($routeReferer)->getPathInfo();
 
-        // The actions calling this are POST, and the router matches with the current
-        // request's method: match the page as the GET it was, or every GET-only route
-        // throws MethodNotAllowedException. A path that is none of our pages goes home.
-        $context = $this->router->getContext();
-        $method = $context->getMethod();
-        $context->setMethod(Request::METHOD_GET);
+        // The actions calling this are POST: PageMatcher matches the page as the GET it was.
+        // A path that is none of our pages goes home.
+        $routeMatch = (new PageMatcher($this->router))->match($refererPathInfo);
 
-        try {
-            $routeMatch = $this->router->match($refererPathInfo);
-        } catch (ExceptionInterface) {
+        if (null === $routeMatch) {
             return $this->router->generate('app_homepage');
-        } finally {
-            $context->setMethod($method);
         }
 
         $routeName = $routeMatch['_route'] ?? 'app_homepage';
