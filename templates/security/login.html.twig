@@ -11,12 +11,12 @@
     {# Outside the login form: forms cannot be nested. #}
     {% if app.user %}
         <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }},
+            Connecté en tant que {{ app.user.userIdentifier }},
             {% include 'partials/_post_button.html.twig' with {
                 url: path('app_logout'),
                 token_id: 'logout',
                 class: 'btn btn-link p-0 align-baseline',
-                text_btn: 'Logout'
+                text_btn: 'se déconnecter'
             } %}
         </div>
     {% endif %}

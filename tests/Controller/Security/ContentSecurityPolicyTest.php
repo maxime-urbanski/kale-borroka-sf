@@ -7,7 +7,6 @@ namespace App\Tests\Controller\Security;
 use App\Tests\Order\OrderTestTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpFoundation\Response;
 
 class ContentSecurityPolicyTest extends WebTestCase
 {
@@ -62,6 +61,16 @@ class ContentSecurityPolicyTest extends WebTestCase
         self::assertResponseRedirects('/login');
     }
 
+    public function testTheStyleNonceShownByTheBackOfficeDoesNotUnlockScripts(): void
+    {
+        $this->client->loginUser($this->user('maxiloud@gmail.com'));
+        $crawler = $this->client->request('GET', '/admin');
+
+        $styleNonce = (string) $crawler->filter('meta[name="csp-nonce"]')->attr('content');
+        self::assertNotSame('', $styleNonce, 'EasyAdmin prints its style nonce');
+        self::assertStringNotContainsString($styleNonce, (string) $this->client->getResponse()->headers->get('Content-Security-Policy'));
+    }
+
     public function testNotSentOnFiles(): void
     {
         $this->client->loginUser($this->user('maxiloud@gmail.com'));
@@ -74,11 +83,12 @@ class ContentSecurityPolicyTest extends WebTestCase
     {
         $this->client->loginUser($this->user('test@test.fr'));
 
-        // Without a valid token, neither a link nor a forged form logs out.
+        // Without a valid token, neither a link nor a forged form logs out: back to the
+        // account page with a flash, not the firewall's bare 403.
         $this->client->request('GET', '/logout');
-        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        self::assertResponseRedirects('/mon-compte');
         $this->client->request('POST', '/logout', ['_token' => 'forged']);
-        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        self::assertResponseRedirects('/mon-compte');
         $this->client->request('GET', '/mon-compte');
         self::assertResponseIsSuccessful('still logged in');
 

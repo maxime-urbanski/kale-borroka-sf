@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security;
 
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -18,20 +19,25 @@ use Twig\Attribute\AsTwigFunction;
  * make browsers ignore 'unsafe-inline' for them (CSP has no per-attribute exception that
  * every browser supports), while inline styles cannot run code.
  *
- * The nonce is kept on the main request, never on the service: in FrankenPHP worker mode
- * the service outlives the request. nosniff, framing and referrer headers come from Caddy.
+ * One nonce per usage: EasyAdmin prints the style one in plain view (<meta name="csp-nonce">),
+ * so it must never unlock scripts. Nonces are kept on the main request, never on the
+ * service: in FrankenPHP worker mode the service outlives the request. No policy on the
+ * debug error page, whose inline scripts carry no nonce. nosniff, framing and referrer
+ * headers come from Caddy.
  */
 final readonly class ContentSecurityPolicy
 {
-    private const string NONCE_ATTRIBUTE = '_csp_script_nonce';
+    private const string NONCE_ATTRIBUTE = '_csp_nonce_';
 
     public function __construct(
         private RequestStack $requestStack,
+        #[Autowire('%kernel.debug%')]
+        private bool $debug,
     ) {
     }
 
     /**
-     * Same nonce for every inline script and style of the page, sub-requests included.
+     * Same nonce for a given usage across the page, sub-requests included.
      */
     #[AsTwigFunction('csp_nonce')]
     public function nonce(string $usage = 'script'): string
@@ -42,11 +48,13 @@ final readonly class ContentSecurityPolicy
             return '';
         }
 
-        if (!$request->attributes->has(self::NONCE_ATTRIBUTE)) {
-            $request->attributes->set(self::NONCE_ATTRIBUTE, rtrim(strtr(base64_encode(random_bytes(18)), '+/', '-_'), '='));
+        $attribute = self::NONCE_ATTRIBUTE.('script' === $usage ? 'script' : 'other');
+
+        if (!$request->attributes->has($attribute)) {
+            $request->attributes->set($attribute, rtrim(strtr(base64_encode(random_bytes(18)), '+/', '-_'), '='));
         }
 
-        return (string) $request->attributes->get(self::NONCE_ATTRIBUTE);
+        return (string) $request->attributes->get($attribute);
     }
 
     #[AsEventListener(event: KernelEvents::RESPONSE)]
@@ -57,18 +65,21 @@ final readonly class ContentSecurityPolicy
         if (!$event->isMainRequest()
             || $response->headers->has('Content-Security-Policy')
             || !str_contains((string) $response->headers->get('Content-Type', 'text/html'), 'html')
+            || ($this->debug && $response->headers->has('X-Debug-Exception'))
         ) {
             return;
         }
 
-        $nonce = $event->getRequest()->attributes->get(self::NONCE_ATTRIBUTE);
+        $nonce = $event->getRequest()->attributes->get(self::NONCE_ATTRIBUTE.'script');
         $scripts = null === $nonce ? "'self'" : \sprintf("'self' 'nonce-%s'", $nonce);
 
         $response->headers->set('Content-Security-Policy', implode('; ', [
             "default-src 'self'",
             'script-src '.$scripts,
             "style-src 'self' 'unsafe-inline'",
-            "img-src 'self' data:",
+            // CMS pages may show https images (the rich text sanitizer keeps them); blob: for
+            // the previews of the back office's editor. Images cannot run code.
+            "img-src 'self' data: blob: https:",
             "font-src 'self' data:",
             "connect-src 'self'",
             "object-src 'none'",
