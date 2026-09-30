@@ -35,21 +35,45 @@ class CartQueriesTest extends WebTestCase
     }
 
     /**
-     * Every page shows the cart count: it comes from the session, without loading articles.
+     * Every page shows the cart count: one scalar query whatever the number of lines, none
+     * for an empty cart.
      */
-    public function testTheNavbarCountCostsNoQuery(): void
+    public function testTheNavbarCountCostsOneQuery(): void
     {
         // A page without articles of its own: only the navbar could read the cart.
         $releases = $this->releasesWithStock(5, 5, 5, 5);
         $emptyCart = $this->queriesOf('/login');
 
-        foreach ($releases as $i => $release) {
-            $this->addToCart($release, $i + 1);
+        $this->addToCart($releases[0]);
+        $oneLine = $this->queriesOf('/login');
+
+        foreach (\array_slice($releases, 1) as $i => $release) {
+            $this->addToCart($release, $i + 2);
         }
         $fourLines = $this->queriesOf('/login');
 
-        self::assertSame($emptyCart, $fourLines);
+        self::assertSame($emptyCart + 1, $oneLine);
+        self::assertSame($oneLine, $fourLines);
         self::assertSelectorTextSame('header .badge', '9+', '1 + 2 + 3 + 4 items');
+    }
+
+    /**
+     * An article unpublished or sold since it was added no longer counts, on any page.
+     */
+    public function testTheNavbarCountFollowsTheShop(): void
+    {
+        [$kept, $unpublished, $soldOut, $capped] = $this->releasesWithStock(5, 5, 5, 5);
+        foreach ([$kept, $unpublished, $soldOut, $capped] as $release) {
+            $this->addToCart($release, 2);
+        }
+        $connection = $this->entityManager()->getConnection();
+        $connection->executeStatement('UPDATE article SET published = false WHERE id = ?', [$unpublished->getId()]);
+        $connection->executeStatement('UPDATE article SET stock = 0 WHERE id = ?', [$soldOut->getId()]);
+        $connection->executeStatement('UPDATE article SET stock = 1 WHERE id = ?', [$capped->getId()]);
+
+        $this->client->request('GET', '/login');
+
+        self::assertSelectorTextSame('header .badge', '3', '2 kept + 1 capped');
     }
 
     public function testTheNavbarCountsItems(): void
@@ -81,6 +105,31 @@ class CartQueriesTest extends WebTestCase
         $fourLines = $this->queriesOf($page);
 
         self::assertSame($oneLine, $fourLines);
+    }
+
+    /**
+     * The cart and delivery pages have just loaded the lines: the navbar counts those
+     * instead of asking the stock again.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('cartPages')]
+    public function testCartPagesDoNotAskTheStockTwice(string $page): void
+    {
+        $this->client->loginUser($this->user('test@test.fr'));
+        [$release] = $this->releasesWithStock(5);
+        $this->addToCart($release, 2);
+
+        $this->queriesOf($page);
+        $profile = $this->client->getProfile();
+        self::assertInstanceOf(Profile::class, $profile);
+        $collector = $profile->getCollector('db');
+        self::assertInstanceOf(DoctrineDataCollector::class, $collector);
+        $stockQueries = array_filter(
+            $collector->getQueries()['default'] ?? [],
+            static fn (array $query): bool => 1 === preg_match('/^SELECT \w+\.id AS id_\d+, \w+\.stock AS stock_\d+ FROM article/', $query['sql']),
+        );
+
+        self::assertCount(0, $stockQueries);
+        self::assertSelectorTextSame('header .badge', '2');
     }
 
     /**
