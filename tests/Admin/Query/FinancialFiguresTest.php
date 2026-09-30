@@ -83,6 +83,17 @@ class FinancialFiguresTest extends KernelTestCase
         self::assertSame(0, $months[11]['orders']);
     }
 
+    public function testYearsStartFromTheFirstPaymentInParisTime(): void
+    {
+        // 31 December 2019 23:30 UTC is 1 January 2020 in Paris: 2019 has no payment.
+        $this->paidOrder(1500, '2019-12-31 23:30:00');
+
+        $years = self::getContainer()->get(FinancialReportInterface::class)->years(new \DateTimeImmutable('2026-06-15 12:00:00'));
+
+        self::assertSame(2026, $years[0]);
+        self::assertSame(2020, end($years));
+    }
+
     public function testPaymentsExportListsPaidAndRefundedOrders(): void
     {
         $paid = $this->paidOrder(1500, '2026-03-10 12:00:00');
