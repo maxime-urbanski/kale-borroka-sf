@@ -127,6 +127,13 @@ Being logged in is not enough for an object loaded from the URL: check its owner
 
 Validation constraints must be built with **named arguments** — Symfony 8 rejects `new NotBlank(['message' => …])` at runtime, and PHPStan does not catch it because the constructors still accept an array.
 
+### Cache
+
+- **HTML pages are not HTTP-cached**: the navbar reads the session (cart, login state), so Symfony marks every page `private`. Only static files get long-lived headers, from Caddy in prod (`CADDY_SERVER_EXTRA_DIRECTIVES` in `compose.prod.yaml`): `/build/*` immutable (Encore versions file names in prod only, hence not in dev), uploads a week.
+- **Fragments** that are the same for every visitor are cached with Twig's `{% cache 'key' tags([...]) %}` (`twig/cache-extra`) in the `cache.fragments` pool (filesystem in `var/share/prod/pools`, shared with the CLI; array adapter in dev/test, i.e. no caching across requests). Cached today: the footer (key includes the year), the home sections, and an article page's related sections. The controllers pass the unexecuted `Query` and the template calls `.result` inside the block, so a hit runs no SQL.
+- **Invalidation** is automatic: `App\Cache\EntityCacheInvalidator` invalidates, on every flush, the tag of each written entity class and its parent classes (`EntityCacheTag`: `SocialNetwork` → `social_network`, `Release` → `release` + `article`); a collection change tags its owner. List in `tags()` every entity the fragment displays. DBAL/DQL writes bypass it (e.g. `StockManager`), so never put stock — or anything user-specific, a CSRF token, a form or an absolute `url()` — inside a `{% cache %}` block.
+- Doctrine metadata/query/result caches are the recipe's prod defaults (`doctrine.yaml`).
+
 ### Frontend
 
 Single Encore entry `assets/app.js`; SCSS in `assets/styles` (`app.scss` + partials, Bootstrap 5). Stimulus controllers in `assets/controllers/` registered through `assets/controllers.json` — used for cart quantity, address selection, filter accordion, obfuscated links, scrollbar.

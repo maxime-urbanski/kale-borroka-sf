@@ -117,15 +117,20 @@
             title: 'Tracklist',
             title_mb: 'mb-4'
         } %} #}
-        {% if articleByArtist |length > 1 %}
-            {% include 'layout/article/_section.html.twig' with {
-                articles: articleByArtist,
-                title: 'Du même artiste',
-                title_mb: 'mb-5'
-            } %}
-        {% endif %}
-        {% if articleSameStyle|length > 1 %}
-            {% include 'layout/article/_section.html.twig' with {articles: articleSameStyle, title: 'Dans le même style'} %}
-        {% endif %}
+        {# The same for every visitor, unlike the rest of the page (stock, wishlist, cart form). #}
+        {% cache 'article_related_' ~ article.id tags(['article', 'album', 'style']) %}
+            {% set byArtist = articleByArtist ? articleByArtist.result : [] %}
+            {% set sameStyle = articleSameStyle ? articleSameStyle.result : [] %}
+            {% if byArtist|length > 1 %}
+                {% include 'layout/article/_section.html.twig' with {
+                    articles: byArtist,
+                    title: 'Du même artiste',
+                    title_mb: 'mb-5'
+                } %}
+            {% endif %}
+            {% if sameStyle|length > 1 %}
+                {% include 'layout/article/_section.html.twig' with {articles: sameStyle, title: 'Dans le même style'} %}
+            {% endif %}
+        {% endcache %}
     </div>
 {% endblock %}

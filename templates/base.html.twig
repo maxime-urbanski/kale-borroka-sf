@@ -30,6 +30,9 @@
         <h1>Kale Borroka Home</h1>
     </div>
 {% endblock %}
-{{ render(controller('App\\Controller\\Layout\\FooterController')) }}
+{# Same for every visitor: the sub-request only runs on a cache miss. The year is in the key. #}
+{% cache 'footer_' ~ 'now'|date('Y') tags(['support', 'social_network', 'page']) %}
+    {{ render(controller('App\\Controller\\Layout\\FooterController')) }}
+{% endcache %}
 </body>
 </html>
