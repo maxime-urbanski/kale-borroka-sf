@@ -1,6 +1,28 @@
 App\Entity\Wishlist:
     admin_wishlist:
         user: '@user_admin'
-    
+
     user_wishlist:
         user: '@user_user'
+
+# Composite primary key (wishlist, article): an article appears at most once per wishlist.
+App\Entity\WishlistItem:
+    admin_wishlist_item_{1..3}:
+        wishlist: '@admin_wishlist'
+        article: '@release_<(10 + $current)>'
+        added_at: '<(new \DateTimeImmutable(sprintf("-%d days", random_int(0, 180))))>'
+
+    admin_wishlist_item_tee:
+        wishlist: '@admin_wishlist'
+        article: '@merch_brixton_tee_m'
+        added_at: '<(new \DateTimeImmutable(sprintf("-%d days", random_int(0, 180))))>'
+
+    user_wishlist_item_red:
+        wishlist: '@user_wishlist'
+        article: '@release_QuartierMaudit_red'
+        added_at: '<(new \DateTimeImmutable(sprintf("-%d days", random_int(0, 180))))>'
+
+    user_wishlist_item_book:
+        wishlist: '@user_wishlist'
+        article: '@book_1'
+        added_at: '<(new \DateTimeImmutable(sprintf("-%d days", random_int(0, 180))))>'

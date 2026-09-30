@@ -1,14 +1,19 @@
 App\Entity\Label:
-    label_template (template ):
-        name: '<name()>'
+    label_template (template):
+        name: '<company()>'
         isDistro: '<boolean()>'
-    
+
+    # Label of every KBR production (Album::$kbrProduction), see album.yml.
+    KaleBorroka (extends label_template):
+        name: 'Kale Borroka Records'
+        isDistro: false
+
     FireAndFlames (extends label_template):
         name: 'Fire & Flames'
         isDistro: true
-    
+
     RudysBack (extends label_template):
         name: "Rudy's back"
         isDistro: false
-        
+
     label_{1..50} (extends label_template):

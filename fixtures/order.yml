@@ -1,0 +1,62 @@
+# Order history for the dashboard and the financial summary, over the last ~13 months so
+# that the finances page has a previous year too.
+#
+# Everything mirrors what PlaceOrderHandler and the `order` workflow would have produced:
+# - lines copy the article name, SKU and price, and line price = unit price × quantity;
+# - the total is the sum of the lines (shipping is not included);
+# - the buyer is always the address owner;
+# - status, payment status and payment date are consistent with OrderWorkflowSubscriber.
+#
+# order_1..7 are still to process (DashboardMetrics::TO_PROCESS), no more: the dashboard
+# lists the 10 oldest and the tests need room for their own orders.
+# Nothing is paid today, so that the tests start from an empty "today" revenue.
+#
+# Stock is not taken for these orders: fixture stock is the current stock.
+
+# Line N belongs to order_N; order_1..20 also have line N + 40 (a book or a t-shirt).
+App\Entity\OrderDetails:
+    line_{1..40}:
+        product: '@release_<(($current * 7) % 50 + 1)>'
+        productName: '<($product->getName())>'
+        sku: '<($product->getSku())>'
+        unitPrice: '<($product->getPrice())>'
+        quantity: '<numberBetween(1, 2)>'
+        price: '<($unitPrice * $quantity)>'
+
+    line_{41..50}:
+        product: '@book_<($current % 6 + 1)>'
+        productName: '<($product->getName())>'
+        sku: '<($product->getSku())>'
+        unitPrice: '<($product->getPrice())>'
+        quantity: 1
+        price: '<($unitPrice * $quantity)>'
+
+    line_{51..60}:
+        product: '@merch_brixton_tee_*'
+        productName: '<($product->getName())>'
+        sku: '<($product->getSku())>'
+        unitPrice: '<($product->getPrice())>'
+        quantity: 1
+        price: '<($unitPrice * $quantity)>'
+
+App\Entity\Order:
+    order_template (template):
+        buyer: '@user_customer_<(($current - 1) % 8 + 1)>'
+        address: '@address_customer_<(($current - 1) % 8 + 1)>'
+        delivery: '50%? @colissimo : @mondial_relay'
+        payment: '70%? @stripe : @paypal'
+        # Orders 1..7 date from the last week, the others are spread over ~13 months.
+        created_at: '<(new \DateTimeImmutable(sprintf("-%d days %d hours", $current <= 7 ? $current : ($current - 7) * 12 + 7, $current % 10)))>'
+        reference: '<(sprintf("KBR-%s-%08X", $created_at->format("Ymd"), $current))>'
+        marking: '<(match (true) { $current <= 3 => "pending", $current <= 5 => "paid", $current <= 7 => "preparing", $current <= 9 => "shipped", 0 === $current % 9 => "cancelled", 0 === $current % 11 => "refunded", default => "delivered" })>'
+        # A cancelled order was either never paid (odd) or paid then refunded (even).
+        paymentStatus: '<(App\Enum\PaymentStatus::from(match (true) { "pending" === $marking, "cancelled" === $marking && 1 === $current % 2 => "awaiting", "refunded" === $marking, "cancelled" === $marking => "refunded", default => "paid" }))>'
+        paidAt: '<(App\Enum\PaymentStatus::AWAITING === $paymentStatus ? null : $created_at->modify("+1 day"))>'
+
+    order_{1..20} (extends order_template):
+        orderDetails: ['@line_<current()>', '@line_<($current + 40)>']
+        totalPrice: '<(array_sum(array_map(static fn ($line) => $line->getPrice(), $orderDetails)))>'
+
+    order_{21..40} (extends order_template):
+        orderDetails: ['@line_<current()>']
+        totalPrice: '<(array_sum(array_map(static fn ($line) => $line->getPrice(), $orderDetails)))>'

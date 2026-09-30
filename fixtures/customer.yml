@@ -1,0 +1,29 @@
+# Shop customers, the buyers of order.yml. Kept apart from user_admin and user_user,
+# whose order history the tests expect to start empty. Password: password123.
+App\Entity\User:
+    user_customer_{1..8}:
+        email: 'client<current()>\@kaleborroka.test'
+        password: <{pw_user}>
+        roles: [ 'ROLE_USER' ]
+        lastname: '<lastName()>'
+        firstname: '<firstName()>'
+        defaultAddress: '@address_customer_<current()>'
+
+App\Entity\Address:
+    address_customer_{1..8}:
+        name: Maison
+        address: '<streetAddress()>'
+        city: '<city()>'
+        zipcode: '<postcode()>'
+        country: France
+        is_main_address: true
+        users: '@user_customer_<current()>'
+
+# Created at registration for every user (RegistrationController).
+App\Entity\Wishlist:
+    customer_wishlist_{1..8}:
+        user: '@user_customer_<current()>'
+
+App\Entity\UserCollection:
+    customer_collection_{1..8}:
+        user: '@user_customer_<current()>'

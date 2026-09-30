@@ -11,6 +11,7 @@ App\Entity\User:
         roles: [ 'ROLE_ADMIN' ]
         lastname: Loud
         firstname: Maxi
+        defaultAddress: '@home'
     
     user_user:
         email: test@test.fr
@@ -18,4 +19,4 @@ App\Entity\User:
         roles: [ 'ROLE_USER' ]
         lastname: Test
         firstname: Test
-                        
+        defaultAddress: '@home_user'

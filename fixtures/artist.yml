@@ -17,5 +17,5 @@ App\Entity\Artist:
     Union_Thugs (extends artist_template):
         name: 'Union Thugs'
 
-    artist_{1..150} (extends artist_template):
-
+    # Two generated albums each (album_N belongs to artist_((N - 1) % 25 + 1)), see album.yml.
+    artist_{1..25} (extends artist_template):
