@@ -22,7 +22,7 @@ readonly class CartService implements CartInterface
      * Adds at least one item, never more than the stock: the quantity comes from the
      * visitor and can be anything (0, negative, above the stock).
      */
-    public function addToCart(int $articleId, int $quantity = 1): void
+    public function addToCart(int $articleId, int $quantity = 1): int
     {
         $cart = $this->getSession()->get('cart', []);
         $article = $this->articleRepository->find($articleId);
@@ -40,19 +40,26 @@ readonly class CartService implements CartInterface
         }
 
         $this->getSession()->set('cart', $cart);
+
+        return $inCart;
     }
 
-    public function addQuantity(int $id): void
+    public function addQuantity(int $id): int
     {
-        $this->addToCart($id);
+        return $this->addToCart($id);
     }
 
-    public function removeQuantity(int $id): void
+    public function quantityOf(int $id): int
+    {
+        return (int) ($this->getSession()->get('cart', [])[$id] ?? 0);
+    }
+
+    public function removeQuantity(int $id): bool
     {
         $cart = $this->getSession()->get('cart', []);
 
         if (!isset($cart[$id])) {
-            return;
+            return false;
         }
 
         --$cart[$id];
@@ -62,17 +69,22 @@ readonly class CartService implements CartInterface
         }
 
         $this->getSession()->set('cart', $cart);
+
+        return true;
     }
 
-    public function removeToCart(int $id): void
+    public function removeToCart(int $id): bool
     {
         $cart = $this->getSession()->get('cart', []);
 
-        if (!empty($cart[$id])) {
-            unset($cart[$id]);
+        if (!isset($cart[$id])) {
+            return false;
         }
 
+        unset($cart[$id]);
         $this->getSession()->set('cart', $cart);
+
+        return true;
     }
 
     public function removeAll(): void

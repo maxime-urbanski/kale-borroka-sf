@@ -17,7 +17,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -54,22 +53,25 @@ class RemoveInCollectionController
 
         $currentUserCollection = $userCollectionRepository->getUserCollection($user)->getOneOrNullResult();
 
-        $currentItemToRemove = $userCollectionItemsRepository->getUserCollectionItem($article, $currentUserCollection);
+        $currentItemToRemove = null === $currentUserCollection ? null : $userCollectionItemsRepository->getUserCollectionItem($article, $currentUserCollection);
 
         /** @var Session $session */
         $session = $request->getSession();
 
-        try {
-            $userCollectionItemsRepository->remove($currentItemToRemove, true);
-            $session
-                ->getFlashbag()
-                ->add(
-                    'success',
-                    $article->getName().' à bien été supprimé de ta collection'
-                );
-        } catch (NotFoundHttpException $exception) {
-            $session->getFlashbag()->add('danger', $exception);
+        // Already removed from another tab.
+        if (null === $currentItemToRemove) {
+            $session->getFlashbag()->add('danger', 'Cet article n\'est pas dans ta collection.');
+
+            return new RedirectResponse($referer->getReferer());
         }
+
+        $userCollectionItemsRepository->remove($currentItemToRemove, true);
+        $session
+            ->getFlashbag()
+            ->add(
+                'success',
+                $article->getName().' a bien été supprimé de ta collection'
+            );
 
         return new RedirectResponse($referer->getReferer());
     }

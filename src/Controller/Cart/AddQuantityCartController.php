@@ -38,10 +38,19 @@ class AddQuantityCartController
         /** @var Session $session */
         $session = $request->getSession();
         try {
-            $cart->addQuantity($id);
-            $session->getFlashBag()->add('success', 'Quantité mise à jour');
-        } catch (NotFoundHttpException $exception) {
-            $session->getFlashBag()->add('danger', $exception);
+            $before = $cart->quantityOf($id);
+            $inCart = $cart->addQuantity($id);
+
+            if (0 === $inCart) {
+                $session->getFlashBag()->add('danger', 'Cet article est épuisé.');
+            } elseif ($inCart <= $before) {
+                $session->getFlashBag()->add('danger', 'Il n\'y en a pas plus en stock.');
+            } else {
+                $session->getFlashBag()->add('success', 'Quantité mise à jour');
+            }
+        } catch (NotFoundHttpException) {
+            // Unpublished or deleted since the page was shown.
+            $session->getFlashBag()->add('danger', 'Cet article n\'est plus disponible.');
         }
 
         return new RedirectResponse($referer->getReferer());

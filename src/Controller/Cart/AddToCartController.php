@@ -40,12 +40,19 @@ class AddToCartController
 
         try {
             $choosenQuantity = $request->getPayload()->getInt('quantity') ?: 1;
+            $before = $cart->quantityOf($id);
+            $inCart = $cart->addToCart($id, $choosenQuantity);
 
-            $cart->addToCart($id, $choosenQuantity);
-
-            $session->getFlashBag()->add('success', 'article ajouté au panier.');
-        } catch (NotFoundHttpException $exception) {
-            $session->getFlashBag()->add('error', $exception);
+            if (0 === $inCart) {
+                $session->getFlashBag()->add('danger', 'Cet article est épuisé.');
+            } elseif ($inCart <= $before) {
+                $session->getFlashBag()->add('danger', 'Il n\'y en a pas plus en stock.');
+            } else {
+                $session->getFlashBag()->add('success', 'Article ajouté au panier.');
+            }
+        } catch (NotFoundHttpException) {
+            // Unpublished or deleted since the page was shown.
+            $session->getFlashBag()->add('danger', 'Cet article n\'est plus disponible.');
         }
 
         return new RedirectResponse($referer->getReferer());

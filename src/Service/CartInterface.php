@@ -6,13 +6,27 @@ use App\Entity\Article;
 
 interface CartInterface
 {
-    public function addToCart(int $articleId, int $quantity): void;
+    /**
+     * @return int how many are in the cart afterwards, never above the stock (0: sold out)
+     */
+    public function addToCart(int $articleId, int $quantity): int;
 
-    public function addQuantity(int $id): void;
+    /**
+     * @return int how many are in the cart afterwards
+     */
+    public function addQuantity(int $id): int;
 
-    public function removeQuantity(int $id): void;
+    public function quantityOf(int $id): int;
 
-    public function removeToCart(int $id): void;
+    /**
+     * @return bool false if the article was not in the cart
+     */
+    public function removeQuantity(int $id): bool;
+
+    /**
+     * @return bool false if the article was not in the cart
+     */
+    public function removeToCart(int $id): bool;
 
     public function removeAll(): void;
 
