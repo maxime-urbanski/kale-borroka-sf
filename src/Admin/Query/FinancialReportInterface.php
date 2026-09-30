@@ -9,7 +9,7 @@ interface FinancialReportInterface
     /**
      * One row per month of the year (shop time), empty months included.
      *
-     * @return list<array{month: \DateTimeImmutable, orders: int, revenue: int, refunded: int}> amounts in cents
+     * @return list<array{month: \DateTimeImmutable, orders: int, revenue: int, refunded: int, eventSales: int, expenses: int}> amounts in cents
      */
     public function monthly(int $year): array;
 
@@ -21,7 +21,7 @@ interface FinancialReportInterface
     public function payments(int $year): iterable;
 
     /**
-     * @return list<int> years with at least one payment, plus the current one, most recent first
+     * @return list<int> years with at least one payment, event sale or expense, plus the current one, most recent first
      */
     public function years(\DateTimeImmutable $now): array;
 }

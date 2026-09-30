@@ -19,7 +19,7 @@ class AdminSmokeTest extends WebTestCase
      */
     public static function pageProvider(): iterable
     {
-        foreach (['release', 'book', 'merch', 'merch_variant', 'category', 'page', 'album', 'artist', 'label', 'support', 'order', 'user', 'song', 'style', 'payment', 'transporter', 'image', 'social_network'] as $crud) {
+        foreach (['release', 'book', 'merch', 'merch_variant', 'category', 'page', 'album', 'artist', 'label', 'support', 'order', 'user', 'song', 'style', 'payment', 'transporter', 'image', 'social_network', 'expense', 'event_sale'] as $crud) {
             yield $crud.' index' => ['admin_'.$crud.'_index'];
 
             if (!\in_array($crud, ['merch_variant', 'order', 'user'], true)) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\ShopSettingsRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -29,6 +30,17 @@ class ShopSettings
     #[ORM\Column(nullable: true)]
     #[Assert\PositiveOrZero]
     private ?int $freeShippingThreshold = null;
+
+    /**
+     * Funds of the label on openingBalanceDate (cents, may be negative): the label existed before
+     * the shop. Shop payments, event sales and expenses from that day on are added to it.
+     */
+    #[ORM\Column(options: ['default' => 0])]
+    private int $openingBalance = 0;
+
+    /** Null: every movement ever recorded counts. */
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $openingBalanceDate = null;
 
     #[ORM\Column(length: 180, nullable: true)]
     #[Assert\Email]
@@ -71,6 +83,30 @@ class ShopSettings
     public function setContactEmail(?string $contactEmail): static
     {
         $this->contactEmail = $contactEmail;
+
+        return $this;
+    }
+
+    public function getOpeningBalance(): int
+    {
+        return $this->openingBalance;
+    }
+
+    public function setOpeningBalance(?int $openingBalance): static
+    {
+        $this->openingBalance = $openingBalance ?? 0;
+
+        return $this;
+    }
+
+    public function getOpeningBalanceDate(): ?\DateTimeImmutable
+    {
+        return $this->openingBalanceDate;
+    }
+
+    public function setOpeningBalanceDate(?\DateTimeImmutable $openingBalanceDate): static
+    {
+        $this->openingBalanceDate = $openingBalanceDate;
 
         return $this;
     }

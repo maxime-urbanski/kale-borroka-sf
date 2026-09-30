@@ -106,7 +106,7 @@ COPY --link --from=assets_builder /app/public/build public/build
 RUN <<-EOF
 	mkdir -p var/cache var/log var/share
 	# VichUploader destinations, see config/packages/vich_uploader.yaml
-	mkdir -p public/upload/albums public/media
+	mkdir -p public/upload/albums public/media private/invoices
 	composer dump-autoload --classmap-authoritative --no-dev
 	composer dump-env prod
 	composer run-script --no-dev post-install-cmd
@@ -114,7 +114,7 @@ RUN <<-EOF
 		php bin/console asset-map:compile
 	fi
 	chmod +x bin/console
-	chmod -R g=u var public/upload public/media
+	chmod -R g=u var public/upload public/media private
 	sync
 EOF
 
@@ -169,13 +169,14 @@ RUN <<-EOF
 	find / -perm /6000 -type f -exec chmod a-s {} + 2>/dev/null || true
 EOF
 
-COPY --link --exclude=var --exclude=public/upload --exclude=public/media --from=frankenphp_prod_builder /app /app
+COPY --link --exclude=var --exclude=public/upload --exclude=public/media --exclude=private --from=frankenphp_prod_builder /app /app
 # Group 0 + g=u for arbitrary-UID runtimes (e.g. OpenShift).
 COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/var /app/var
 # VichUploader writes here at runtime; mount a volume over them to persist uploads.
 COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/public/upload /app/public/upload
 COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/public/media /app/public/media
-RUN chmod g=u /app/var /app/public/upload /app/public/media
+COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/private /app/private
+RUN chmod g=u /app/var /app/public/upload /app/public/media /app/private /app/private/invoices
 
 COPY --link --chmod=755 frankenphp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 

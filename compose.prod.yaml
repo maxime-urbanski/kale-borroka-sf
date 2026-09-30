@@ -13,7 +13,9 @@ services:
       # Without these, uploaded files are lost when the container is replaced.
       - uploads:/app/public/upload
       - media:/app/public/media
+      - invoices:/app/private/invoices
 
 volumes:
   uploads:
   media:
+  invoices:

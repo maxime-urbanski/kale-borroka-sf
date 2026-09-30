@@ -24,6 +24,7 @@
     <p class="text-muted small">
         Chiffre d'affaires encaissé : commandes payées, à leur date de paiement (heure de Paris).
         Les remboursements sont comptés sur le mois où la commande avait été payée.
+        Solde du mois : chiffre d'affaires + ventes en événement − frais du label.
     </p>
 
     <table class="table table-hover" data-test="finances">
@@ -34,16 +35,23 @@
                 <th class="text-end">Chiffre d'affaires</th>
                 <th class="text-end">Panier moyen</th>
                 <th class="text-end">Remboursé</th>
+                <th class="text-end">Ventes en événement</th>
+                <th class="text-end">Frais du label</th>
+                <th class="text-end">Solde du mois</th>
             </tr>
         </thead>
         <tbody>
             {% for row in months %}
-                <tr class="{{ row.orders == 0 and row.refunded == 0 ? 'text-muted' }}">
+                {% set net = row.revenue + row.eventSales - row.expenses %}
+                <tr class="{{ row.orders == 0 and row.refunded == 0 and row.eventSales == 0 and row.expenses == 0 ? 'text-muted' }}">
                     <td>{{ row.month|format_date(pattern: 'MMMM', locale: 'fr')|capitalize }}</td>
                     <td class="text-end">{{ row.orders }}</td>
                     <td class="text-end">{{ m.euros(row.revenue) }}</td>
                     <td class="text-end">{{ row.orders > 0 ? m.euros(row.revenue / row.orders) : '—' }}</td>
                     <td class="text-end">{{ row.refunded > 0 ? m.euros(row.refunded) : '—' }}</td>
+                    <td class="text-end">{{ row.eventSales > 0 ? m.euros(row.eventSales) : '—' }}</td>
+                    <td class="text-end">{{ row.expenses > 0 ? m.euros(row.expenses) : '—' }}</td>
+                    <td class="text-end {{ net < 0 ? 'text-danger' }}">{{ m.euros(net) }}</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -54,6 +62,10 @@
                 <td class="text-end">{{ m.euros(totals.revenue) }}</td>
                 <td class="text-end">{{ totals.orders > 0 ? m.euros(totals.revenue / totals.orders) : '—' }}</td>
                 <td class="text-end">{{ totals.refunded > 0 ? m.euros(totals.refunded) : '—' }}</td>
+                <td class="text-end">{{ totals.eventSales > 0 ? m.euros(totals.eventSales) : '—' }}</td>
+                <td class="text-end">{{ totals.expenses > 0 ? m.euros(totals.expenses) : '—' }}</td>
+                {% set net = totals.revenue + totals.eventSales - totals.expenses %}
+                <td class="text-end {{ net < 0 ? 'text-danger' }}">{{ m.euros(net) }}</td>
             </tr>
         </tfoot>
     </table>
