@@ -11,8 +11,8 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
- * The navbar reads the cart on every page: its articles are loaded in one query, however
- * many lines the cart has.
+ * The navbar shows the cart on every page, the cart and delivery pages list it: none of
+ * them may run more queries as the cart grows.
  */
 class CartQueriesTest extends WebTestCase
 {
@@ -33,36 +33,62 @@ class CartQueriesTest extends WebTestCase
         parent::tearDown();
     }
 
-    public function testMoreLinesDoNotMeanMoreQueries(): void
+    /**
+     * Every page shows the cart count: it comes from the session, without loading articles.
+     */
+    public function testTheNavbarCountCostsNoQuery(): void
     {
+        // A page without articles of its own: only the navbar could read the cart.
+        $releases = $this->releasesWithStock(5, 5, 5, 5);
+        $emptyCart = $this->queriesOf('/login');
+
+        foreach ($releases as $i => $release) {
+            $this->addToCart($release, $i + 1);
+        }
+        $fourLines = $this->queriesOf('/login');
+
+        self::assertSame($emptyCart, $fourLines);
+        self::assertSelectorTextSame('header .badge', '9+', '1 + 2 + 3 + 4 items');
+    }
+
+    public function testTheNavbarCountsItems(): void
+    {
+        [$first, $second] = $this->releasesWithStock(5, 5);
+        $this->addToCart($first, 2);
+        $this->addToCart($second, 3);
+
+        $this->client->request('GET', '/');
+
+        self::assertSelectorTextSame('header .badge', '5');
+    }
+
+    /**
+     * Articles, their images and their albums are loaded in batches, not line by line.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('cartPages')]
+    public function testCartPagesDoNotGrowWithTheLines(string $page): void
+    {
+        $this->client->loginUser($this->user('test@test.fr'));
         $releases = $this->releasesWithStock(5, 5, 5, 5);
 
         $this->addToCart($releases[0]);
-        $oneLine = $this->queriesOf('/');
+        $oneLine = $this->queriesOf($page);
 
         foreach (\array_slice($releases, 1) as $release) {
             $this->addToCart($release);
         }
-        $fourLines = $this->queriesOf('/');
+        $fourLines = $this->queriesOf($page);
 
         self::assertSame($oneLine, $fourLines);
     }
 
-    public function testTheCartPageReadsTheCartOncePerComponent(): void
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function cartPages(): iterable
     {
-        [$release] = $this->releasesWithStock(5);
-        $this->addToCart($release);
-        $this->queriesOf('/cart');
-
-        $collector = $this->client->getProfile()->getCollector('db');
-        self::assertInstanceOf(DoctrineDataCollector::class, $collector);
-        $articleQueries = array_filter(
-            $collector->getQueries()['default'] ?? [],
-            static fn (array $query): bool => str_contains($query['sql'], 'FROM article'),
-        );
-
-        // The navbar's and the page's; the total reuses the page's lines.
-        self::assertCount(2, $articleQueries);
+        yield 'cart' => ['/cart'];
+        yield 'delivery' => ['/order/delivery'];
     }
 
     public function testTheCartIsStillFilteredAndCapped(): void
@@ -92,6 +118,9 @@ class CartQueriesTest extends WebTestCase
 
     private function queriesOf(string $uri): int
     {
+        // A first, unmeasured request: the collector also counts the queries run since the
+        // previous request, such as this test's own setup.
+        $this->client->request('GET', $uri);
         $this->client->enableProfiler();
         $this->client->request('GET', $uri);
         $collector = $this->client->getProfile()->getCollector('db');

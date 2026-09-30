@@ -31,12 +31,8 @@ class MenuController extends AbstractController
             ],
         ];
 
-        $cart = $this->cartService->getFullCart();
-        $cartQuantity = 0;
-
-        foreach ($cart as $product) {
-            $cartQuantity = $cartQuantity + $product['quantity'];
-        }
+        // From the session: this sub-request runs on every page.
+        $cartQuantity = $this->cartService->countItems();
 
         return $this->render('layout/_navbar.html.twig', [
             'links' => $links,
