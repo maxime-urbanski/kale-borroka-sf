@@ -16,14 +16,16 @@ readonly class CustomPaginationService implements CustomPaginationInterface
     {
     }
 
-    // TODO: Fix error phpstan
-
     /**
-     * @phpstan-ignore-next-line
+     * @param Query|array<mixed> $data       what to paginate: a query, or the items themselves
+     * @param string             $pageParams the {page} route segment, "page-N"
+     *
+     * @return PaginationInterface<int, mixed>
      */
     public function pagination(Query|array $data, string $pageParams = 'page-1', int $productPerPage = self::PRODUCT_PER_PAGE): PaginationInterface
     {
-        $page = (int) explode('-', $pageParams)[1];
+        // The routes accept page-0: KnpPaginator refuses anything below 1.
+        $page = max(1, (int) (explode('-', $pageParams)[1] ?? 1));
 
         return $this->paginator->paginate(
             $data,

@@ -31,7 +31,7 @@ class AdminFundsTest extends WebTestCase
 
     private const string PDF = "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[]/Count 0>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n";
 
-    private ?KernelBrowser $client = null;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
@@ -53,7 +53,7 @@ class AdminFundsTest extends WebTestCase
         $before = $this->funds();
 
         [$release] = $this->releasesWithStock(5);
-        $order = $this->placeOrder($this->user('test@test.fr'), [$release->getId() => 1]);
+        $order = $this->placeOrder($this->user('test@test.fr'), [self::idOf($release) => 1]);
         $this->bus()->dispatch(new ApplyOrderTransition((int) $order->getId(), OrderTransition::PAY));
         $this->entityManager()->persist((new EventSale())->setName('Fest')->setStartTime(new \DateTimeImmutable())->setPrice(5000));
         $this->entityManager()->persist((new Expense())->setName('Timbres')->setCategory(ExpenseCategory::SHIPPING)->setPaymentDueDate(new \DateTimeImmutable())->setTotalPaymentDue(1200));
@@ -186,12 +186,12 @@ class AdminFundsTest extends WebTestCase
     {
         $entityManager = $this->entityManager();
 
-        return (new FundsBalance($entityManager, new ShopSettingsProvider(self::getContainer()->get(ShopSettingsRepository::class)), new NativeClock()))->summary();
+        return (new FundsBalance($entityManager, new ShopSettingsProvider(self::service(ShopSettingsRepository::class)), new NativeClock()))->summary();
     }
 
     private function settings(): ShopSettings
     {
-        $settings = self::getContainer()->get(ShopSettingsRepository::class)->findOneBy([]);
+        $settings = self::service(ShopSettingsRepository::class)->findOneBy([]);
         self::assertInstanceOf(ShopSettings::class, $settings);
 
         return $settings;

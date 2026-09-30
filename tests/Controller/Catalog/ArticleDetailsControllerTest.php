@@ -10,13 +10,16 @@ use App\Entity\Release;
 use App\Enum\SupportType;
 use App\Repository\ArticleRepository;
 use App\Repository\UserRepository;
+use App\Tests\ServiceTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class ArticleDetailsControllerTest extends WebTestCase
 {
-    private ?KernelBrowser $client = null;
+    use ServiceTrait;
+
+    private KernelBrowser $client;
 
     public function setUp(): void
     {
@@ -38,7 +41,7 @@ class ArticleDetailsControllerTest extends WebTestCase
 
     public function testLoggedInUserCanSeeAnArticle(): void
     {
-        $user = self::getContainer()->get(UserRepository::class)->findOneBy([]);
+        $user = self::service(UserRepository::class)->findOneBy([]);
         self::assertNotNull($user, 'the fixtures should provide at least one user');
 
         $this->client->loginUser($user);
@@ -70,7 +73,7 @@ class ArticleDetailsControllerTest extends WebTestCase
 
     public function testUnpublishedArticleIsNotFound(): void
     {
-        $draft = self::getContainer()->get(ArticleRepository::class)->findOneBy(['published' => false]);
+        $draft = self::service(ArticleRepository::class)->findOneBy(['published' => false]);
         self::assertInstanceOf(Release::class, $draft, 'the fixtures should provide an unpublished release');
 
         $this->client->request('GET', $this->uriOf($draft));
@@ -83,7 +86,7 @@ class ArticleDetailsControllerTest extends WebTestCase
      */
     private function published(string $class): Article
     {
-        $article = self::getContainer()->get('doctrine')->getRepository($class)->findOneBy(['published' => true]);
+        $article = self::service(\Doctrine\Persistence\ManagerRegistry::class)->getRepository($class)->findOneBy(['published' => true]);
         self::assertInstanceOf($class, $article, \sprintf('the fixtures should provide a published %s', $class));
 
         return $article;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Controller\Admin;
 
 use App\Repository\UserRepository;
+use App\Tests\ServiceTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -14,6 +15,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class AdminSmokeTest extends WebTestCase
 {
+    use ServiceTrait;
+
     /**
      * @return iterable<string, array{string}>
      */
@@ -32,11 +35,11 @@ class AdminSmokeTest extends WebTestCase
     public function testPageRenders(string $route): void
     {
         $client = self::createClient();
-        $admin = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'maxiloud@gmail.com']);
+        $admin = self::service(UserRepository::class)->findOneBy(['email' => 'maxiloud@gmail.com']);
         self::assertNotNull($admin);
         $client->loginUser($admin);
 
-        $client->request('GET', self::getContainer()->get('router')->generate($route));
+        $client->request('GET', self::service(\Symfony\Component\Routing\RouterInterface::class)->generate($route));
 
         self::assertResponseIsSuccessful();
     }
@@ -44,9 +47,10 @@ class AdminSmokeTest extends WebTestCase
     public function testEditPagesRenderForEveryArticleType(): void
     {
         $client = self::createClient();
-        $container = self::getContainer();
-        $client->loginUser($container->get(UserRepository::class)->findOneBy(['email' => 'maxiloud@gmail.com']));
-        $doctrine = $container->get('doctrine');
+        $admin = self::service(UserRepository::class)->findOneBy(['email' => 'maxiloud@gmail.com']);
+        self::assertNotNull($admin);
+        $client->loginUser($admin);
+        $doctrine = self::service(\Doctrine\Persistence\ManagerRegistry::class);
 
         foreach ([
             'admin_release_edit' => \App\Entity\Release::class,
@@ -60,12 +64,12 @@ class AdminSmokeTest extends WebTestCase
             $entity = $doctrine->getRepository($class)->findOneBy([]);
             self::assertNotNull($entity);
 
-            $client->request('GET', $container->get('router')->generate($route, ['entityId' => $entity->getId()]));
+            $client->request('GET', self::service(\Symfony\Component\Routing\RouterInterface::class)->generate($route, ['entityId' => $entity->getId()]));
             self::assertResponseIsSuccessful($route);
 
             // Detail pages have their own layout (tabs, detail-only fields).
             $detail = str_replace('_edit', '_detail', $route);
-            $client->request('GET', $container->get('router')->generate($detail, ['entityId' => $entity->getId()]));
+            $client->request('GET', self::service(\Symfony\Component\Routing\RouterInterface::class)->generate($detail, ['entityId' => $entity->getId()]));
             self::assertResponseIsSuccessful($detail);
         }
     }

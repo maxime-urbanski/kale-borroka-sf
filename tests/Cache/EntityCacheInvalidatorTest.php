@@ -118,7 +118,7 @@ class EntityCacheInvalidatorTest extends KernelTestCase
         // A concurrent request caches the old page before the commit.
         $this->warm(['page_fragment' => 'page']);
 
-        self::getContainer()->get(EntityCacheInvalidator::class)->onTerminate();
+        self::service(EntityCacheInvalidator::class)->onTerminate();
 
         self::assertFalse($this->isCached('page_fragment'));
     }
@@ -141,6 +141,6 @@ class EntityCacheInvalidatorTest extends KernelTestCase
 
     private function cache(): TagAwareAdapterInterface
     {
-        return self::getContainer()->get('cache.fragments');
+        return self::service(TagAwareAdapterInterface::class, 'cache.fragments');
     }
 }

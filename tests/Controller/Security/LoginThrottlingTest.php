@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller\Security;
 
+use App\Tests\ServiceTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -13,17 +14,19 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class LoginThrottlingTest extends WebTestCase
 {
+    use ServiceTrait;
+
     /** In both French texts of Symfony's TooManyLoginAttemptsAuthenticationException. */
     private const string THROTTLED = 'tentatives de connexion';
 
-    private ?KernelBrowser $client = null;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
         $this->client = self::createClient();
         $this->client->disableReboot();
         // The limiter state is in a cache pool that outlives the test.
-        self::getContainer()->get('cache.rate_limiter')->clear();
+        self::service(\Symfony\Component\Cache\Adapter\AdapterInterface::class, 'cache.rate_limiter')->clear();
     }
 
     public function testTheRightPasswordIsRefusedAfterFiveFailures(): void

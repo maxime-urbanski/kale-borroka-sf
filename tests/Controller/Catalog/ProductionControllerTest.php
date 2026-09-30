@@ -6,14 +6,17 @@ namespace App\Tests\Controller\Catalog;
 
 use App\Data\ArticleFilterData;
 use App\Repository\ReleaseRepository;
+use App\Tests\ServiceTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ProductionControllerTest extends WebTestCase
 {
-    private ?KernelBrowser $client = null;
-    private ?Crawler $crawler = null;
+    use ServiceTrait;
+
+    private KernelBrowser $client;
+    private Crawler $crawler;
     private const PRODUCTION_URI = '/production';
 
     protected function setUp(): void
@@ -44,7 +47,7 @@ class ProductionControllerTest extends WebTestCase
         $filters = new ArticleFilterData();
         $filters->kbrProduction = true;
 
-        $releaseRepository = self::getContainer()->get(ReleaseRepository::class);
+        $releaseRepository = self::service(ReleaseRepository::class);
         $ownProdArticle = $releaseRepository->filterReleaseQuery($filters);
         $numberProdArticle = count($ownProdArticle->getResult());
 

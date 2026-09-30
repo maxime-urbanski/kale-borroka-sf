@@ -16,7 +16,7 @@ class OrderOverviewControllerTest extends WebTestCase
 {
     use OrderTestTrait;
 
-    private ?KernelBrowser $client = null;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
@@ -88,7 +88,7 @@ class OrderOverviewControllerTest extends WebTestCase
     private function overviewUri(\App\Entity\User $buyer): string
     {
         [$release] = $this->releasesWithStock(5);
-        $order = $this->placeOrder($buyer, [$release->getId() => 1]);
+        $order = $this->placeOrder($buyer, [self::idOf($release) => 1]);
 
         return \sprintf('/order/%s/overview', $order->getReference());
     }

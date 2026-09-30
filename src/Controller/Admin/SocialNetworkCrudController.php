@@ -27,18 +27,9 @@ class SocialNetworkCrudController extends AbstractCrudController
     {
         yield FormField::addColumn(7);
         yield TextField::new('name', 'Nom');
+        // http(s) only (SocialNetwork::$url): a mailto: or javascript: link is refused.
         yield UrlField::new('url', 'URL')
-            ->setHelp('https://… ou mailto:contact@… pour un e-mail.')
-            ->formatValue(function ($value) {
-                if (str_contains((string) $value, 'mailto')) {
-                    $hrefLink = str_replace('http://', '', $value);
-                    $textDisplay = str_replace('mailto:', '', $hrefLink);
-
-                    return \sprintf('<a href="%s">%s</a>', $hrefLink, $textDisplay);
-                }
-
-                return $value;
-            });
+            ->setHelp('Adresse https://… de la page du réseau.');
         yield BooleanField::new('isPublish', 'Publié')->setColumns(6);
         yield BooleanField::new('inFooter', 'Dans le footer')->setColumns(6);
 

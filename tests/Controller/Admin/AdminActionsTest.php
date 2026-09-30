@@ -7,6 +7,7 @@ namespace App\Tests\Controller\Admin;
 use App\Entity\Album;
 use App\Entity\Artist;
 use App\Entity\Merch;
+use App\Entity\MerchVariant;
 use App\Entity\Release;
 use App\Entity\ShopSettings;
 use App\Enum\OrderStatus;
@@ -24,7 +25,7 @@ class AdminActionsTest extends WebTestCase
 {
     use OrderTestTrait;
 
-    private ?KernelBrowser $client = null;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
@@ -79,7 +80,7 @@ class AdminActionsTest extends WebTestCase
     public function testPayingAnOrderFromTheBackOfficeTakesTheStock(): void
     {
         [$release] = $this->releasesWithStock(3);
-        $order = $this->placeOrder($this->user('test@test.fr'), [$release->getId() => 2]);
+        $order = $this->placeOrder($this->user('test@test.fr'), [self::idOf($release) => 2]);
 
         $crawler = $this->client->request('GET', \sprintf('/admin/order/%d', $order->getId()));
         self::assertResponseIsSuccessful();
@@ -95,7 +96,7 @@ class AdminActionsTest extends WebTestCase
     public function testPayingWithoutStockShowsAnErrorInsteadOfFailing(): void
     {
         [$release] = $this->releasesWithStock(3);
-        $order = $this->placeOrder($this->user('test@test.fr'), [$release->getId() => 2]);
+        $order = $this->placeOrder($this->user('test@test.fr'), [self::idOf($release) => 2]);
         $this->entityManager()->getConnection()->executeStatement('UPDATE article SET stock = 1 WHERE id = ?', [$release->getId()]);
 
         $crawler = $this->client->request('GET', \sprintf('/admin/order/%d', $order->getId()));
@@ -148,7 +149,9 @@ class AdminActionsTest extends WebTestCase
         $album = $this->entityManager()->getRepository(Album::class)->findOneBy(['name' => 'Album et pressages']);
         self::assertInstanceOf(Album::class, $album);
         self::assertSame(['LP noir', 'K7'], $album->getReleases()->map(fn (Release $release) => $release->getName())->getValues());
-        self::assertSame(2000, $album->getReleases()->first()->getPrice());
+        $first = $album->getReleases()->first();
+        self::assertInstanceOf(Release::class, $first);
+        self::assertSame(2000, $first->getPrice());
     }
 
     public function testGeneratingMerchSizes(): void
@@ -163,8 +166,10 @@ class AdminActionsTest extends WebTestCase
         self::assertResponseRedirects();
         $merch = $this->reload($merch);
         // The fixtures have S, M, L, XL: only XXL is missing.
-        self::assertSame($before + 1, $merch->getVariants()->count());
-        self::assertFalse($merch->getVariants()->last()->isPublished());
+        self::assertCount($before + 1, $merch->getVariants());
+        $added = $merch->getVariants()->last();
+        self::assertInstanceOf(MerchVariant::class, $added);
+        self::assertFalse($added->isPublished());
     }
 
     public function testPageSlugIsGeneratedKeptOnRenameAndChecked(): void
@@ -227,7 +232,8 @@ class AdminActionsTest extends WebTestCase
      */
     private function reload(object $entity): object
     {
-        $reloaded = $this->entityManager()->find($entity::class, $entity->getId());
+        // Composite keys too (WishlistItem, UserCollectionItems).
+        $reloaded = $this->entityManager()->find($entity::class, $this->entityManager()->getClassMetadata($entity::class)->getIdentifierValues($entity));
         self::assertNotNull($reloaded);
 
         return $reloaded;

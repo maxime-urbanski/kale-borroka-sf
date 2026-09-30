@@ -15,7 +15,7 @@ class EmailCaseTest extends WebTestCase
 {
     use OrderTestTrait;
 
-    private ?KernelBrowser $client = null;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
@@ -47,7 +47,7 @@ class EmailCaseTest extends WebTestCase
 
     public function testRegisteringTheSameEmailInAnotherCaseIsRefused(): void
     {
-        $users = self::getContainer()->get(UserRepository::class);
+        $users = self::service(UserRepository::class);
         $count = $users->count();
 
         $crawler = $this->client->request('GET', '/register');

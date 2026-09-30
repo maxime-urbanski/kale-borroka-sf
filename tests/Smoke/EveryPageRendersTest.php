@@ -47,7 +47,7 @@ class EveryPageRendersTest extends WebTestCase
     /** Flash shown when an action refused its CSRF token (ActionCsrfToken). */
     private const string EXPIRED = 'La page a expiré';
 
-    private ?KernelBrowser $client = null;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
@@ -83,7 +83,7 @@ class EveryPageRendersTest extends WebTestCase
     {
         $this->client->loginUser($this->user('test@test.fr'));
         [$release] = $this->releasesWithStock(5);
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = self::service(RouterInterface::class);
         $article = $this->articleUri($release);
         $pages = [$article, $router->generate('app_cart_index'), $router->generate('app_user_wishlist'), $router->generate('app_user_collection')];
 
@@ -182,7 +182,7 @@ class EveryPageRendersTest extends WebTestCase
      */
     private function getRoutes(): iterable
     {
-        foreach (self::getContainer()->get(RouterInterface::class)->getRouteCollection() as $name => $route) {
+        foreach (self::service(RouterInterface::class)->getRouteCollection() as $name => $route) {
             $methods = $route->getMethods();
 
             if (str_starts_with($name, '_') || isset(self::EXCLUDED[$name]) || ([] !== $methods && !\in_array('GET', $methods, true))) {
@@ -207,7 +207,7 @@ class EveryPageRendersTest extends WebTestCase
             $parameters[$variable] = $this->valueOf($name, $variable, $route);
         }
 
-        return self::getContainer()->get(RouterInterface::class)->generate($name, $parameters);
+        return self::service(RouterInterface::class)->generate($name, $parameters);
     }
 
     private function valueOf(string $routeName, string $variable, Route $route): string|int
@@ -234,7 +234,7 @@ class EveryPageRendersTest extends WebTestCase
 
     private function articleUri(Article $article): string
     {
-        return self::getContainer()->get(RouterInterface::class)->generate('app_catalog_show', [
+        return self::service(RouterInterface::class)->generate('app_catalog_show', [
             'support' => $article->getSupportType()?->value,
             'slug' => $article->getSlug(),
         ]);

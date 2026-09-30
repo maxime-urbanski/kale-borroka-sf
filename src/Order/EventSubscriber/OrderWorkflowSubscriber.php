@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Order\EventSubscriber;
 
+use App\Entity\Article;
 use App\Entity\Order;
+use App\Entity\OrderDetails;
 use App\Enum\PaymentStatus;
 use App\Service\StockManagerInterface;
 use Symfony\Component\Workflow\Attribute\AsTransitionListener;
@@ -30,7 +32,7 @@ readonly class OrderWorkflowSubscriber
         $order = $event->getSubject();
 
         foreach ($order->getOrderDetails() as $line) {
-            $this->stockManager->take($line->getProduct(), (int) $line->getQuantity());
+            $this->stockManager->take(self::articleOf($line), (int) $line->getQuantity());
         }
 
         $order
@@ -50,7 +52,7 @@ readonly class OrderWorkflowSubscriber
 
         if ($order->getStatus()->holdsStock()) {
             foreach ($order->getOrderDetails() as $line) {
-                $this->stockManager->putBack($line->getProduct(), (int) $line->getQuantity());
+                $this->stockManager->putBack(self::articleOf($line), (int) $line->getQuantity());
             }
         }
 
@@ -69,5 +71,13 @@ readonly class OrderWorkflowSubscriber
     public function onRefund(TransitionEvent $event): void
     {
         $event->getSubject()->setPaymentStatus(PaymentStatus::REFUNDED);
+    }
+
+    /**
+     * product_id is NOT NULL: a saved order line always has its article.
+     */
+    private static function articleOf(OrderDetails $line): Article
+    {
+        return $line->getProduct() ?? throw new \LogicException('An order line always has its article.');
     }
 }

@@ -46,7 +46,7 @@ docker compose exec -T php bin/phpunit --filter testCatalogPage
 Static analysis / style / schema (all gate CI):
 
 ```bash
-docker compose exec php vendor/bin/phpstan analyse --memory-limit=-1   # level 6, uses phpstan.dist.neon
+docker compose exec php vendor/bin/phpstan analyse --memory-limit=-1   # level 8 (nullability), uses phpstan.dist.neon + phpstan-phpunit
 docker compose exec php vendor/bin/php-cs-fixer fix           # @Symfony ruleset
 docker compose exec php vendor/bin/php-cs-fixer fix --dry-run --diff
 docker compose exec -T php bin/console -e test doctrine:schema:validate
@@ -104,7 +104,7 @@ Every service in `src/Service` has a matching `…Interface` and is injected by 
 ### Doctrine / entities
 
 - Repositories are `ServiceEntityRepository` with hand-added `save(entity, flush)` / `remove(entity, flush)` helpers. Typing comes from the `@extends ServiceEntityRepository<Entity>` docblock alone — `ServiceEntityRepository` is generic in doctrine-bundle 3, so do *not* re-add `@method find()/findBy()/...` docblocks: PHPStan 2 rejects their untyped `array` parameters.
-- `Collection` properties on entities need a `@var Collection<int, Target>` docblock (PHPStan level 6), and EasyAdmin CRUD controllers need `@extends AbstractCrudController<Entity>`.
+- `Collection` properties on entities need a `@var Collection<int, Target>` docblock (PHPStan), and EasyAdmin CRUD controllers need `@extends AbstractCrudController<Entity>`.
 - `QueryBuilder::setParameters()` no longer accepts an array in ORM 3 — chain `setParameter()` calls instead.
 - Slugs come from `Gedmo\Slug` (StofDoctrineExtensions); most user-facing routes look up entities by `slug` or by name via `#[MapEntity(mapping: [...])]` rather than by id.
 - Join entities (`WishlistItem`, `UserCollectionItems`) use **composite primary keys** made of two `#[ORM\Id] #[ORM\ManyToOne]` associations — no surrogate id, so `find()` needs an array key.
@@ -148,7 +148,8 @@ Single Encore entry `assets/app.js`; SCSS in `assets/styles` (`app.scss` + parti
 ## Conventions
 
 - New entities follow Schema.org naming (e.g. `Expense` ≈ `Invoice`: `provider`, `totalPaymentDue`, `paymentDueDate`; `EventSale` ≈ `SellAction`: `startTime`, `price`, `location`), documented in the class docblock.
-- `declare(strict_types=1);` in new PHP files (most of `src/` has it; a few older entities/enums do not).
+- `declare(strict_types=1);` in every PHP file of `src/`, `tests/` and `migrations/` (`StrictTypesTest` fails otherwise).
+- Tests reach the container through `App\Tests\ServiceTrait::service(Foo::class)` (typed, unlike `getContainer()->get()`), and keep `KernelBrowser` as a non-nullable property set in `setUp()`.
 - Entity setters return `static` for chaining.
 - Fixtures are Alice YAML in `fixtures/`. Generated albums, releases and songs are linked by index (`album_N` → `artist_((N - 1) % 25 + 1)`, `release_N`, `song_((N - 1) * 10 + 1..N * 10)`) so artists, labels and tracklists stay consistent; `album_1..10` are KBR productions. Alice cannot chain a dynamic reference with a property (`@album_<current()>->name` fails to parse): read a sibling property with `<($album->…)>` instead. `order.yml` holds ~13 months of orders bought by `customer.yml`'s `user_customer_*` (never by `user_admin`/`user_user`: tests expect their order history empty), with nothing paid today and at most 7 orders to process — the dashboard tests rely on both. Order lines copy the article's SKU, which is why fixture articles set `sku` explicitly. Fixture orders have no shipping cost (`shippingPrice` 0). Escape a literal `@` as `\@` (emails).
 - `tests/Smoke/EveryPageRendersTest.php` requests every GET route (visitor and admin) and submits every one-click button of the shop pages, failing on any 5xx. A new route whose parameter it cannot resolve fails it: teach `valueOf()`, or add the route to `EXCLUDED` with a reason. Every EasyAdmin entity needs at least one fixture row (`fixtures/media.yml` holds the image, media object and social network ones).

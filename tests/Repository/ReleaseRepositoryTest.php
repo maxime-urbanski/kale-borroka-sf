@@ -7,17 +7,20 @@ namespace App\Tests\Repository;
 use App\Entity\Release;
 use App\Enum\SupportType;
 use App\Repository\ReleaseRepository;
+use App\Tests\ServiceTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ReleaseRepositoryTest extends KernelTestCase
 {
+    use ServiceTrait;
+
     /**
      * SupportType::forRelease() builds URLs, ReleaseRepository::applySupports() builds the
      * section listings: a release must always be listed under the section of its own URL.
      */
     public function testEveryReleaseIsListedUnderItsCanonicalSection(): void
     {
-        $repository = self::getContainer()->get(ReleaseRepository::class);
+        $repository = self::service(ReleaseRepository::class);
 
         /** @var Release[] $releases */
         $releases = $repository->findBy(['published' => true]);
@@ -43,7 +46,7 @@ class ReleaseRepositoryTest extends KernelTestCase
 
     public function testUnpublishedReleasesAreNotListed(): void
     {
-        $repository = self::getContainer()->get(ReleaseRepository::class);
+        $repository = self::service(ReleaseRepository::class);
 
         foreach ($repository->getLastReleases()->getResult() as $release) {
             self::assertTrue($release->isPublished());

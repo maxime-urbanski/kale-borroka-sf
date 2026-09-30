@@ -25,6 +25,7 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
 
     public function __construct(object $user, \DateTimeInterface $expiresAt, string $selector, string $hashedToken)
     {
+        \assert($user instanceof User);
         $this->user = $user;
         $this->initialize($expiresAt, $selector, $hashedToken);
     }
@@ -34,8 +35,8 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
         return $this->id;
     }
 
-    public function getUser(): object
+    public function getUser(): User
     {
-        return $this->user;
+        return $this->user ?? throw new \LogicException('A reset request always has its user.');
     }
 }
