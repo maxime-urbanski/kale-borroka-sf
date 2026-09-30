@@ -55,8 +55,16 @@ class Order
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $paidAt = null;
 
+    /** Lines plus shipping, in cents: what the buyer pays. */
     #[ORM\Column]
     private ?int $totalPrice = null;
+
+    /**
+     * Shipping cost in cents, copied from the transporter at checkout (0 above
+     * ShopSettings::$freeShippingThreshold). Orders placed before it was charged hold 0.
+     */
+    #[ORM\Column(options: ['default' => 0])]
+    private int $shippingPrice = 0;
 
     /** @var Collection<int, OrderDetails> */
     #[ORM\OneToMany(mappedBy: 'orders', targetEntity: OrderDetails::class, cascade: ['persist'], orphanRemoval: true)]
@@ -193,6 +201,18 @@ class Order
     public function setTotalPrice(int $totalPrice): static
     {
         $this->totalPrice = $totalPrice;
+
+        return $this;
+    }
+
+    public function getShippingPrice(): int
+    {
+        return $this->shippingPrice;
+    }
+
+    public function setShippingPrice(int $shippingPrice): static
+    {
+        $this->shippingPrice = $shippingPrice;
 
         return $this;
     }

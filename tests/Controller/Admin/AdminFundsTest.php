@@ -60,10 +60,11 @@ class AdminFundsTest extends WebTestCase
         $this->entityManager()->flush();
 
         $after = $this->funds();
-        self::assertSame(1000, $after->shopRevenue - $before->shopRevenue);
+        // What the buyer paid: the line and the shipping.
+        self::assertSame($order->getTotalPrice(), $after->shopRevenue - $before->shopRevenue);
         self::assertSame(5000, $after->eventSales - $before->eventSales);
         self::assertSame(1200, $after->expenses - $before->expenses);
-        self::assertSame($before->available() + 1000 + 5000 - 1200, $after->available());
+        self::assertSame($before->available() + $order->getTotalPrice() + 5000 - 1200, $after->available());
 
         $crawler = $this->client->request('GET', '/admin');
         self::assertResponseIsSuccessful();

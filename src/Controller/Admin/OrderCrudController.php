@@ -142,6 +142,9 @@ class OrderCrudController extends AbstractCrudController
         yield AssociationField::new('buyer', 'Client');
         yield MoneyField::new('totalPrice', 'Total')
             ->setCurrency('EUR');
+        yield MoneyField::new('shippingPrice', 'Dont livraison')
+            ->setCurrency('EUR')
+            ->hideOnIndex();
         yield FormField::addColumn(6);
         yield ChoiceField::new('status', 'Statut')
             ->setChoices(OrderStatus::cases())

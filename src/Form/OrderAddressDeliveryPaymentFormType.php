@@ -35,6 +35,8 @@ class OrderAddressDeliveryPaymentFormType extends AbstractType
             ->add('transporter', EntityType::class, [
                 'label' => 'Choix du transporteur',
                 'class' => Transporter::class,
+                // The price is added to the order total (free from the shop's threshold).
+                'choice_label' => static fn (Transporter $transporter): string => \sprintf('%s — %s €', $transporter->getName(), number_format((int) $transporter->getPrice() / 100, 2, ',', ' ')),
                 'multiple' => false,
                 'expanded' => true,
                 'required' => true,
