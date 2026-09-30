@@ -14,10 +14,12 @@ use App\Repository\ReleaseRepository;
 use App\Repository\UserCollectionRepository;
 use App\Repository\WishlistRepository;
 use App\Service\BreadcrumbInterface;
+use App\Service\CartInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -41,7 +43,7 @@ class ArticleDetailsController
         path: '/catalog/{support}/{slug}',
         name: 'app_catalog_show',
         requirements: ['support' => new EnumRequirement(SupportType::class)],
-        methods: Request::METHOD_GET
+        methods: [Request::METHOD_GET, Request::METHOD_POST]
     )]
     public function __invoke(
         Environment $twig,
@@ -55,6 +57,7 @@ class ArticleDetailsController
         UrlGeneratorInterface $urlGenerator,
         WishlistRepository $wishlistRepository,
         UserCollectionRepository $userCollectionRepository,
+        CartInterface $cart,
         // Nullable on purpose: this is a public catalog page. A non-nullable argument
         // makes UserValueResolver throw an AccessDeniedException for anonymous visitors,
         // which the firewall turns into a redirect to the login page.
@@ -87,13 +90,25 @@ class ArticleDetailsController
         $addToCartForm = $formInterface->create(AddToCartWithQuantityType::class, $addToCartData);
         $addToCartForm->handleRequest($request);
 
-        if ($addToCartForm->isSubmitted() && $addToCartForm->isValid()) {
-            $url = $urlGenerator->generate('app_cart_add', [
-                'id' => $article->getId(),
-                'quantity' => $addToCartData->quantity,
-            ]);
+        // The form posts its CSRF token here: add to the cart, then back to the article page.
+        // An invalid post redirects too: rendering during a POST would break the breadcrumb,
+        // whose router->match() on the parent GET routes fails with the POST method.
+        if ($addToCartForm->isSubmitted()) {
+            $session = $request->getSession();
+            $valid = $addToCartForm->isValid();
 
-            return new RedirectResponse($url);
+            if ($valid) {
+                $cart->addToCart((int) $article->getId(), $addToCartData->quantity);
+            }
+
+            if ($session instanceof FlashBagAwareSessionInterface) {
+                $session->getFlashBag()->add(
+                    $valid ? 'success' : 'danger',
+                    $valid ? 'article ajouté au panier.' : 'La page a expiré : rechargez-la et recommencez.',
+                );
+            }
+
+            return new RedirectResponse($request->getRequestUri(), Response::HTTP_SEE_OTHER);
         }
 
         $content = $twig->render('catalog/article.html.twig', [

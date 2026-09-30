@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Entity\WishlistItem;
 use App\Repository\WishlistItemRepository;
 use App\Repository\WishlistRepository;
+use App\Security\ActionCsrfToken;
 use App\Service\RefererInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -28,7 +29,7 @@ class AddToWishlistController
         path: '/wishlist/add/{productId}',
         name: 'app_wishlist_add',
         requirements: ['productId' => Requirement::DIGITS],
-        methods: [Request::METHOD_GET]
+        methods: [Request::METHOD_POST]
     )]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function __invoke(
@@ -40,7 +41,12 @@ class AddToWishlistController
         WishlistItemRepository $wishlistItemRepository,
         WishlistRepository $wishlistRepository,
         Request $request,
+        ActionCsrfToken $actionCsrfToken,
     ): RedirectResponse {
+        if (!$actionCsrfToken->isValid($request, ActionCsrfToken::WISHLIST)) {
+            return new RedirectResponse($referer->getReferer());
+        }
+
         // Drafts are invisible in the shop: do not let them in through a guessed id either.
         if (!$article->isPublished()) {
             throw new NotFoundHttpException();

@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Entity\UserCollectionItems;
 use App\Repository\UserCollectionItemsRepository;
 use App\Repository\UserCollectionRepository;
+use App\Security\ActionCsrfToken;
 use App\Service\RefererInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -34,7 +35,7 @@ class AddInCollectionController
         path: '/collection/add/{productId}',
         name: 'app_collection_add',
         requirements: ['productId' => Requirement::DIGITS],
-        methods: [Request::METHOD_GET]
+        methods: [Request::METHOD_POST]
     )]
     public function __invoke(
         #[CurrentUser]
@@ -45,7 +46,12 @@ class AddInCollectionController
         UserCollectionRepository $userCollectionRepository,
         UserCollectionItemsRepository $userCollectionItemsRepository,
         Request $request,
+        ActionCsrfToken $actionCsrfToken,
     ): RedirectResponse {
+        if (!$actionCsrfToken->isValid($request, ActionCsrfToken::COLLECTION)) {
+            return new RedirectResponse($referer->getReferer());
+        }
+
         // Drafts are invisible in the shop: do not let them in through a guessed id either.
         if (!$article->isPublished()) {
             throw new NotFoundHttpException();

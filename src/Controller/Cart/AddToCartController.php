@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Cart;
 
+use App\Security\ActionCsrfToken;
 use App\Service\CartInterface;
 use App\Service\RefererInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -21,21 +22,26 @@ class AddToCartController
         path: '/cart/add/{id}',
         name: 'app_cart_add',
         requirements: ['id' => Requirement::DIGITS],
-        methods: [Request::METHOD_GET]
+        methods: [Request::METHOD_POST]
     )]
     public function __invoke(
         Request $request,
         CartInterface $cart,
         RefererInterface $referer,
         int $id,
+        ActionCsrfToken $actionCsrfToken,
     ): RedirectResponse {
+        if (!$actionCsrfToken->isValid($request, ActionCsrfToken::CART)) {
+            return new RedirectResponse($referer->getReferer());
+        }
+
         /** @var Session $session */
         $session = $request->getSession();
 
         try {
-            $choosenQuantity = $request->query->get('quantity') ?: 1;
+            $choosenQuantity = $request->getPayload()->getInt('quantity') ?: 1;
 
-            $cart->addToCart($id, (int) $choosenQuantity);
+            $cart->addToCart($id, $choosenQuantity);
 
             $session->getFlashBag()->add('success', 'article ajouté au panier.');
         } catch (NotFoundHttpException $exception) {

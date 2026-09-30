@@ -17,7 +17,8 @@
         <tr>
             <th>
                 <div class="d-flex justify-content-center align-items-center">
-                    {% include 'partials/_obfuscation_link.html.twig' with {
+                    {% include 'partials/_post_button.html.twig' with {
+                        token_id: wishlist_route ? 'wishlist' : 'collection',
                         url: remove_action,
                         class: "btn btn-outline-danger btn-sm rounded-circle",
                         icon: "bi-trash "
@@ -27,7 +28,8 @@
             {% if wishlist_route %}
                 <th>
                     <div class="d-flex justify-content-center align-items-center">
-                        {% include 'partials/_obfuscation_link.html.twig' with {
+                        {% include 'partials/_post_button.html.twig' with {
+                            token_id: 'cart',
                             url: path('app_cart_add', {id: item.article.id}),
                             class: "btn btn-outline-success btn-sm rounded-circle",
                             icon: "bi-cart"

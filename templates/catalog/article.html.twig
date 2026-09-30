@@ -69,7 +69,8 @@
                 {% if app.user %}
                     <div class="btn-group mb-3 w-100" role="group">
                         {% if app.user and userWishlist and userWishlist.hasInWishlist(article) %}
-                            {% include 'partials/_obfuscation_link.html.twig' with {
+                            {% include 'partials/_post_button.html.twig' with {
+                                token_id: 'wishlist',
                                 url: path('app_wishlist_remove', {productId: article.id}),
                                 class: 'btn btn-danger',
                                 text_btn: 'Retirer de la wishlist',
@@ -77,7 +78,8 @@
                                 icon_position: 'right'
                             } %}
                         {% else %}
-                            {% include 'partials/_obfuscation_link.html.twig' with {
+                            {% include 'partials/_post_button.html.twig' with {
+                                token_id: 'wishlist',
                                 url: path('app_wishlist_add', {productId: article.id}),
                                 class: 'btn btn-outline-dark',
                                 text_btn: 'Ajouter à la wantlist',
@@ -86,7 +88,8 @@
                             } %}
                         {% endif %}
                         {% if app.user and userCollection and userCollection.hasInCollection(article) %}
-                            {% include 'partials/_obfuscation_link.html.twig' with {
+                            {% include 'partials/_post_button.html.twig' with {
+                                token_id: 'collection',
                                 url: path('app_collection_remove', {productId: article.id}),
                                 class: 'btn btn-danger',
                                 text_btn: 'Supprimer de la collection',
@@ -94,7 +97,8 @@
                                 icon_position: 'right'
                             } %}
                         {% else %}
-                            {% include 'partials/_obfuscation_link.html.twig' with {
+                            {% include 'partials/_post_button.html.twig' with {
+                                token_id: 'collection',
                                 url: path('app_collection_add', {productId: article.id}),
                                 class: 'btn btn-outline-dark',
                                 text_btn: 'Ajouter à la collection',

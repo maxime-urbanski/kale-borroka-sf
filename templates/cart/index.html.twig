@@ -4,7 +4,8 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-center my-5">
             <h2>Mon panier <span class="fw-lighter">({{ cart |length }} éléments)</span></h2>
-            {% include 'partials/_obfuscation_link.html.twig' with {
+            {% include 'partials/_post_button.html.twig' with {
+                token_id: 'cart',
                 url: path('app_cart_empty'),
                 class: 'btn btn-outline-danger btn-sm',
                 icon: 'bi-trash',
