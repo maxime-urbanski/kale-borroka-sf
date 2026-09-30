@@ -24,7 +24,8 @@ readonly class CustomPaginationService implements CustomPaginationInterface
      */
     public function pagination(Query|array $data, string $pageParams = 'page-1', int $productPerPage = self::PRODUCT_PER_PAGE): PaginationInterface
     {
-        $page = (int) explode('-', $pageParams)[1];
+        // The routes accept page-0: KnpPaginator refuses anything below 1.
+        $page = max(1, (int) (explode('-', $pageParams)[1] ?? 1));
 
         return $this->paginator->paginate(
             $data,

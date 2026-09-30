@@ -80,7 +80,7 @@ class AdminActionsTest extends WebTestCase
     public function testPayingAnOrderFromTheBackOfficeTakesTheStock(): void
     {
         [$release] = $this->releasesWithStock(3);
-        $order = $this->placeOrder($this->user('test@test.fr'), [(int) $release->getId() => 2]);
+        $order = $this->placeOrder($this->user('test@test.fr'), [self::idOf($release) => 2]);
 
         $crawler = $this->client->request('GET', \sprintf('/admin/order/%d', $order->getId()));
         self::assertResponseIsSuccessful();
@@ -96,7 +96,7 @@ class AdminActionsTest extends WebTestCase
     public function testPayingWithoutStockShowsAnErrorInsteadOfFailing(): void
     {
         [$release] = $this->releasesWithStock(3);
-        $order = $this->placeOrder($this->user('test@test.fr'), [(int) $release->getId() => 2]);
+        $order = $this->placeOrder($this->user('test@test.fr'), [self::idOf($release) => 2]);
         $this->entityManager()->getConnection()->executeStatement('UPDATE article SET stock = 1 WHERE id = ?', [$release->getId()]);
 
         $crawler = $this->client->request('GET', \sprintf('/admin/order/%d', $order->getId()));
@@ -232,7 +232,8 @@ class AdminActionsTest extends WebTestCase
      */
     private function reload(object $entity): object
     {
-        $reloaded = $this->entityManager()->find($entity::class, $this->entityManager()->getUnitOfWork()->getSingleIdentifierValue($entity));
+        // Composite keys too (WishlistItem, UserCollectionItems).
+        $reloaded = $this->entityManager()->find($entity::class, $this->entityManager()->getClassMetadata($entity::class)->getIdentifierValues($entity));
         self::assertNotNull($reloaded);
 
         return $reloaded;

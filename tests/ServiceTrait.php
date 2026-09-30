@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use PHPUnit\Framework\Assert;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,7 +26,8 @@ trait ServiceTrait
     protected static function service(string $type, ?string $id = null): object
     {
         $service = self::getContainer()->get($id ?? $type);
-        \assert($service instanceof $type);
+        // An assertion, not assert(): checked even with zend.assertions off.
+        Assert::assertInstanceOf($type, $service);
 
         return $service;
     }

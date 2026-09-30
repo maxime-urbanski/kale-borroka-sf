@@ -9,6 +9,7 @@ use App\Tests\Order\OrderTestTrait;
 use Doctrine\Bundle\DoctrineBundle\DataCollector\DoctrineDataCollector;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
 /**
  * The navbar shows the cart on every page, the cart and delivery pages list it: none of
@@ -124,8 +125,7 @@ class CartQueriesTest extends WebTestCase
         $this->client->enableProfiler();
         $this->client->request('GET', $uri);
         $profile = $this->client->getProfile();
-        self::assertNotFalse($profile);
-        self::assertNotNull($profile);
+        self::assertInstanceOf(Profile::class, $profile);
         $collector = $profile->getCollector('db');
         self::assertInstanceOf(DoctrineDataCollector::class, $collector);
 

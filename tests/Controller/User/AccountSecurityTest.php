@@ -185,11 +185,11 @@ class AccountSecurityTest extends WebTestCase
         $session->start();
         $request = new Request();
         $request->setSession($session);
-        $requestStack = self::service(\Symfony\Component\HttpFoundation\RequestStack::class, 'request_stack');
+        $requestStack = self::service(\Symfony\Component\HttpFoundation\RequestStack::class);
         $requestStack->push($request);
 
         try {
-            return self::service(\Symfony\Component\Security\Csrf\CsrfTokenManagerInterface::class, 'security.csrf.token_manager')->getToken($id)->getValue();
+            return self::service(\Symfony\Component\Security\Csrf\CsrfTokenManagerInterface::class)->getToken($id)->getValue();
         } finally {
             $session->save();
             $requestStack->pop();

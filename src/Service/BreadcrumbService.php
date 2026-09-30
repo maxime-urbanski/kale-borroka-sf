@@ -41,7 +41,7 @@ readonly class BreadcrumbService implements BreadcrumbInterface
         }
 
         $breadcrumb = [];
-        $currentPageIsLast = false;
+        $currentPage = end($prefixes);
 
         foreach ($prefixes as $path) {
             $match = $this->pageMatcher->match($path);
@@ -52,21 +52,18 @@ readonly class BreadcrumbService implements BreadcrumbInterface
 
             $route = (string) $match['_route'];
             unset($match['_route']);
-            /* @var array<string, mixed> $match route parameters, by name */
 
+            // Only the current page gets the given name: never a parent left last because
+            // the current path is no page.
             $breadcrumb[] = [
-                'name' => '/' === $path ? 'Home' : basename($path),
+                'name' => match (true) {
+                    null !== $lastItemName && $path === $currentPage => $lastItemName,
+                    '/' === $path => 'Home',
+                    default => basename($path),
+                },
                 'path' => $route,
                 'parameters' => $match,
             ];
-            $currentPageIsLast = $path === end($prefixes);
-        }
-
-        // Only the current page gets the name: never a parent left last because the
-        // current path is no page.
-        if (null !== $lastItemName && $currentPageIsLast && null !== $current = array_pop($breadcrumb)) {
-            $current['name'] = $lastItemName;
-            $breadcrumb[] = $current;
         }
 
         return $breadcrumb;

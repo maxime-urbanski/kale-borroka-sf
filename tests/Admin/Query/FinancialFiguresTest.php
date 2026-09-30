@@ -117,7 +117,7 @@ class FinancialFiguresTest extends KernelTestCase
     private function paidOrder(int $total, string $paidAtUtc, bool $refunded = false): Order
     {
         [$release] = $this->releasesWithStock(10);
-        $order = $this->placeOrder($this->user('test@test.fr'), [(int) $release->getId() => 1]);
+        $order = $this->placeOrder($this->user('test@test.fr'), [self::idOf($release) => 1]);
         $this->bus()->dispatch(new ApplyOrderTransition((int) $order->getId(), OrderTransition::PAY));
 
         if ($refunded) {

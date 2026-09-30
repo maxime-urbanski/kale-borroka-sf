@@ -88,7 +88,6 @@ trait OrderTestTrait
      */
     protected function placeOrder(User $buyer, array $lines, ?int $addressId = null): Order
     {
-        $container = self::getContainer();
         $address = self::service(AddressRepository::class)->findOneBy(['users' => $buyer]);
 
         $reference = $this->bus()->dispatch(new PlaceOrder(
@@ -103,6 +102,17 @@ trait OrderTestTrait
         self::assertInstanceOf(Order::class, $order);
 
         return $order;
+    }
+
+    /**
+     * The id of a saved article, as a cart or order line key: fails the test rather than
+     * turning an unsaved article into id 0.
+     */
+    protected static function idOf(Article $article): int
+    {
+        self::assertNotNull($article->getId(), 'the article is saved');
+
+        return $article->getId();
     }
 
     protected function stockOf(Article $article): int

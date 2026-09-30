@@ -53,7 +53,7 @@ class AdminFundsTest extends WebTestCase
         $before = $this->funds();
 
         [$release] = $this->releasesWithStock(5);
-        $order = $this->placeOrder($this->user('test@test.fr'), [(int) $release->getId() => 1]);
+        $order = $this->placeOrder($this->user('test@test.fr'), [self::idOf($release) => 1]);
         $this->bus()->dispatch(new ApplyOrderTransition((int) $order->getId(), OrderTransition::PAY));
         $this->entityManager()->persist((new EventSale())->setName('Fest')->setStartTime(new \DateTimeImmutable())->setPrice(5000));
         $this->entityManager()->persist((new Expense())->setName('Timbres')->setCategory(ExpenseCategory::SHIPPING)->setPaymentDueDate(new \DateTimeImmutable())->setTotalPaymentDue(1200));

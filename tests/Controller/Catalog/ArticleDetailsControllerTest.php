@@ -86,7 +86,7 @@ class ArticleDetailsControllerTest extends WebTestCase
      */
     private function published(string $class): Article
     {
-        $article = self::service(\Doctrine\Persistence\ManagerRegistry::class, 'doctrine')->getRepository($class)->findOneBy(['published' => true]);
+        $article = self::service(\Doctrine\Persistence\ManagerRegistry::class)->getRepository($class)->findOneBy(['published' => true]);
         self::assertInstanceOf($class, $article, \sprintf('the fixtures should provide a published %s', $class));
 
         return $article;

@@ -39,7 +39,7 @@ class AdminSmokeTest extends WebTestCase
         self::assertNotNull($admin);
         $client->loginUser($admin);
 
-        $client->request('GET', self::service(\Symfony\Component\Routing\RouterInterface::class, 'router')->generate($route));
+        $client->request('GET', self::service(\Symfony\Component\Routing\RouterInterface::class)->generate($route));
 
         self::assertResponseIsSuccessful();
     }
@@ -47,11 +47,10 @@ class AdminSmokeTest extends WebTestCase
     public function testEditPagesRenderForEveryArticleType(): void
     {
         $client = self::createClient();
-        $container = self::getContainer();
         $admin = self::service(UserRepository::class)->findOneBy(['email' => 'maxiloud@gmail.com']);
         self::assertNotNull($admin);
         $client->loginUser($admin);
-        $doctrine = self::service(\Doctrine\Persistence\ManagerRegistry::class, 'doctrine');
+        $doctrine = self::service(\Doctrine\Persistence\ManagerRegistry::class);
 
         foreach ([
             'admin_release_edit' => \App\Entity\Release::class,
@@ -65,12 +64,12 @@ class AdminSmokeTest extends WebTestCase
             $entity = $doctrine->getRepository($class)->findOneBy([]);
             self::assertNotNull($entity);
 
-            $client->request('GET', self::service(\Symfony\Component\Routing\RouterInterface::class, 'router')->generate($route, ['entityId' => $entity->getId()]));
+            $client->request('GET', self::service(\Symfony\Component\Routing\RouterInterface::class)->generate($route, ['entityId' => $entity->getId()]));
             self::assertResponseIsSuccessful($route);
 
             // Detail pages have their own layout (tabs, detail-only fields).
             $detail = str_replace('_edit', '_detail', $route);
-            $client->request('GET', self::service(\Symfony\Component\Routing\RouterInterface::class, 'router')->generate($detail, ['entityId' => $entity->getId()]));
+            $client->request('GET', self::service(\Symfony\Component\Routing\RouterInterface::class)->generate($detail, ['entityId' => $entity->getId()]));
             self::assertResponseIsSuccessful($detail);
         }
     }

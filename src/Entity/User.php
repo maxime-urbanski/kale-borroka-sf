@@ -98,7 +98,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return $this->email ?: throw new \LogicException('A user without an e-mail has no identifier.');
+        // The column is NOT NULL and the forms require it: never empty for a real user.
+        return '' !== (string) $this->email ? (string) $this->email : throw new \LogicException('A user without an e-mail has no identifier.');
     }
 
     /**

@@ -40,7 +40,7 @@ class OrderLifecycleTest extends KernelTestCase
         [$first, $second] = $this->releasesWithStock(5, 1);
 
         // 3 of the second are asked for but only 1 is left: the line is clamped.
-        $order = $this->placeOrder($this->user(self::CUSTOMER), [(int) $first->getId() => 2, (int) $second->getId() => 3]);
+        $order = $this->placeOrder($this->user(self::CUSTOMER), [self::idOf($first) => 2, self::idOf($second) => 3]);
 
         self::assertSame(OrderStatus::PENDING, $order->getStatus());
         self::assertSame(PaymentStatus::AWAITING, $order->getPaymentStatus());
@@ -66,11 +66,11 @@ class OrderLifecycleTest extends KernelTestCase
         self::service(ShopSettingsProviderInterface::class)->get()->setFreeShippingThreshold(2000);
         $this->entityManager()->flush();
 
-        $below = $this->placeOrder($this->user(self::CUSTOMER), [(int) $release->getId() => 1]);
+        $below = $this->placeOrder($this->user(self::CUSTOMER), [self::idOf($release) => 1]);
         self::assertSame(1000 + $below->getShippingPrice(), $below->getTotalPrice());
         self::assertGreaterThan(0, $below->getShippingPrice());
 
-        $atThreshold = $this->placeOrder($this->user(self::CUSTOMER), [(int) $release->getId() => 2]);
+        $atThreshold = $this->placeOrder($this->user(self::CUSTOMER), [self::idOf($release) => 2]);
         self::assertSame(0, $atThreshold->getShippingPrice());
         self::assertSame(2000, $atThreshold->getTotalPrice());
     }
@@ -81,7 +81,7 @@ class OrderLifecycleTest extends KernelTestCase
         $draft = self::service(ArticleRepository::class)->findOneBy(['published' => false]);
         self::assertNotNull($draft);
 
-        $order = $this->placeOrder($this->user(self::CUSTOMER), [(int) $release->getId() => 1, (int) $draft->getId() => 1]);
+        $order = $this->placeOrder($this->user(self::CUSTOMER), [self::idOf($release) => 1, self::idOf($draft) => 1]);
 
         self::assertCount(1, $order->getOrderDetails());
     }
@@ -91,7 +91,7 @@ class OrderLifecycleTest extends KernelTestCase
         [$release] = $this->releasesWithStock(0);
 
         $this->expectException(InvalidOrderException::class);
-        $this->placeOrder($this->user(self::CUSTOMER), [(int) $release->getId() => 1]);
+        $this->placeOrder($this->user(self::CUSTOMER), [self::idOf($release) => 1]);
     }
 
     public function testAnotherCustomersAddressIsRefused(): void
@@ -101,13 +101,13 @@ class OrderLifecycleTest extends KernelTestCase
             ->findOneBy(['users' => $this->user(self::OTHER_CUSTOMER)]);
 
         $this->expectException(InvalidOrderException::class);
-        $this->placeOrder($this->user(self::CUSTOMER), [(int) $release->getId() => 1], (int) $otherAddress?->getId());
+        $this->placeOrder($this->user(self::CUSTOMER), [self::idOf($release) => 1], (int) $otherAddress?->getId());
     }
 
     public function testTheOrderKeepsTheAddressAsItWasAtCheckout(): void
     {
         [$release] = $this->releasesWithStock(5);
-        $order = $this->placeOrder($this->user(self::CUSTOMER), [(int) $release->getId() => 1]);
+        $order = $this->placeOrder($this->user(self::CUSTOMER), [self::idOf($release) => 1]);
         $address = $order->getAddress();
         self::assertNotNull($address);
         $snapshot = (string) $address;
@@ -134,7 +134,7 @@ class OrderLifecycleTest extends KernelTestCase
     public function testPayingTakesTheItemsOutOfStock(): void
     {
         [$first, $second] = $this->releasesWithStock(5, 2);
-        $order = $this->placeOrder($this->user(self::CUSTOMER), [(int) $first->getId() => 2, (int) $second->getId() => 2]);
+        $order = $this->placeOrder($this->user(self::CUSTOMER), [self::idOf($first) => 2, self::idOf($second) => 2]);
 
         $this->bus()->dispatch(new ApplyOrderTransition((int) $order->getId(), OrderTransition::PAY));
 
@@ -152,7 +152,7 @@ class OrderLifecycleTest extends KernelTestCase
     public function testPayingWithoutEnoughStockChangesNothing(): void
     {
         [$first, $second] = $this->releasesWithStock(5, 1);
-        $order = $this->placeOrder($this->user(self::CUSTOMER), [(int) $first->getId() => 2, (int) $second->getId() => 1]);
+        $order = $this->placeOrder($this->user(self::CUSTOMER), [self::idOf($first) => 2, self::idOf($second) => 1]);
         $this->entityManager()->getConnection()->executeStatement('UPDATE article SET stock = 0 WHERE id = ?', [$second->getId()]);
 
         try {
@@ -172,7 +172,7 @@ class OrderLifecycleTest extends KernelTestCase
     public function testCancellingAPaidOrderPutsTheItemsBack(): void
     {
         [$release] = $this->releasesWithStock(5);
-        $order = $this->placeOrder($this->user(self::CUSTOMER), [(int) $release->getId() => 2]);
+        $order = $this->placeOrder($this->user(self::CUSTOMER), [self::idOf($release) => 2]);
         $this->bus()->dispatch(new ApplyOrderTransition((int) $order->getId(), OrderTransition::PAY));
 
         $this->bus()->dispatch(new ApplyOrderTransition((int) $order->getId(), OrderTransition::CANCEL));
@@ -185,7 +185,7 @@ class OrderLifecycleTest extends KernelTestCase
     public function testCancellingAPendingOrderLeavesTheStockAlone(): void
     {
         [$release] = $this->releasesWithStock(5);
-        $order = $this->placeOrder($this->user(self::CUSTOMER), [(int) $release->getId() => 2]);
+        $order = $this->placeOrder($this->user(self::CUSTOMER), [self::idOf($release) => 2]);
 
         $this->bus()->dispatch(new ApplyOrderTransition((int) $order->getId(), OrderTransition::CANCEL));
 
@@ -197,7 +197,7 @@ class OrderLifecycleTest extends KernelTestCase
     public function testAnUnpaidOrderCannotBeShipped(): void
     {
         [$release] = $this->releasesWithStock(5);
-        $order = $this->placeOrder($this->user(self::CUSTOMER), [(int) $release->getId() => 1]);
+        $order = $this->placeOrder($this->user(self::CUSTOMER), [self::idOf($release) => 1]);
 
         $this->expectException(NotEnabledTransitionException::class);
         $this->bus()->dispatch(new ApplyOrderTransition((int) $order->getId(), OrderTransition::SHIP));
@@ -206,7 +206,7 @@ class OrderLifecycleTest extends KernelTestCase
     public function testFullLifecycle(): void
     {
         [$release] = $this->releasesWithStock(5);
-        $order = $this->placeOrder($this->user(self::CUSTOMER), [(int) $release->getId() => 1]);
+        $order = $this->placeOrder($this->user(self::CUSTOMER), [self::idOf($release) => 1]);
 
         foreach ([OrderTransition::PAY, OrderTransition::PREPARE, OrderTransition::SHIP, OrderTransition::DELIVER, OrderTransition::REFUND] as $transition) {
             $this->bus()->dispatch(new ApplyOrderTransition((int) $order->getId(), $transition));

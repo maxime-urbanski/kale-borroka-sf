@@ -110,7 +110,6 @@ class BreadcrumbDuringPostTest extends KernelTestCase
     private function breadcrumbFor(Request $request, ?string $lastItemName = null): array
     {
         self::bootKernel();
-        $container = self::getContainer();
         self::service(RequestStack::class)->push($request);
         self::service(RouterInterface::class)->setContext((new RequestContext())->fromRequest($request));
 
