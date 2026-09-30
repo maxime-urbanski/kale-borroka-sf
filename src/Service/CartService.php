@@ -93,13 +93,26 @@ readonly class CartService implements CartInterface
     }
 
     /**
-     * Sum of the quantities kept in the session, for the navbar: no query. Lines dropped or
-     * capped by getFullCart() (unpublished, sold out) are only corrected once the cart or
-     * delivery page is shown.
+     * Items in the cart as the cart page would show them (unpublished and sold-out articles
+     * left out, quantities capped to the stock), for the navbar on every page: one scalar
+     * query, none for an empty cart. Reads only: the cart page corrects the session.
      */
     public function countItems(): int
     {
-        return array_sum(array_map(intval(...), $this->getSession()->get('cart', [])));
+        $cart = $this->getSession()->get('cart', []);
+
+        if ([] === $cart) {
+            return 0;
+        }
+
+        $stock = $this->articleRepository->stockOfPublished(array_map(intval(...), array_keys($cart)));
+        $count = 0;
+
+        foreach ($cart as $id => $quantity) {
+            $count += min((int) $quantity, max(0, $stock[(int) $id] ?? 0));
+        }
+
+        return $count;
     }
 
     /**

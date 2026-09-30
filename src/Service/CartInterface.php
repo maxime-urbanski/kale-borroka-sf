@@ -38,7 +38,7 @@ interface CartInterface
     public function getFullCart(): array;
 
     /**
-     * Items in the cart as stored, for the navbar: no query.
+     * Items in the cart as the cart page would show them, for the navbar: one scalar query.
      */
     public function countItems(): int;
 

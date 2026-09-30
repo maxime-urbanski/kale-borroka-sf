@@ -80,6 +80,32 @@ class ArticleRepository extends ServiceEntityRepository
         return $articles;
     }
 
+    /**
+     * Stock of the published ones among these articles, by id: one scalar query, no entity
+     * loaded (the navbar counts the cart on every page).
+     *
+     * @param list<int> $ids
+     *
+     * @return array<int, int> id => stock; unpublished and deleted articles are left out
+     */
+    public function stockOfPublished(array $ids): array
+    {
+        if ([] === $ids) {
+            return [];
+        }
+
+        /** @var list<array{id: int, stock: int|null}> $rows */
+        $rows = $this->createQueryBuilder('article')
+            ->select('article.id', 'article.stock')
+            ->where('article.id IN (:ids)')
+            ->andWhere('article.published = true')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_column(array_map(static fn (array $row): array => ['id' => (int) $row['id'], 'stock' => (int) $row['stock']], $rows), 'stock', 'id');
+    }
+
     public function findPublishedBySlug(string $slug): ?Article
     {
         return $this->findOneBy(['slug' => $slug, 'published' => true]);
