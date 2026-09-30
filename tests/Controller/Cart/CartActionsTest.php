@@ -114,6 +114,45 @@ class CartActionsTest extends WebTestCase
         self::assertSame(0, $this->quantityInCart($release), 'sold out: the line is dropped');
     }
 
+    /**
+     * The actions redirect to the page they were posted from. Matching that page used to run
+     * with the POST method, so every GET-only page threw and each click ended on a 500.
+     */
+    public function testEachButtonGoesBackToItsPage(): void
+    {
+        $this->client->loginUser($this->user('test@test.fr'));
+        [$release] = $this->releasesWithStock(5);
+        $article = $this->articleUri($release);
+        $this->addFromTheArticlePage($release, 2);
+
+        foreach (['add_quantity', 'remove_quantity', 'remove'] as $action) {
+            $crawler = $this->client->request('GET', '/cart');
+            $this->client->submit($crawler->filter(\sprintf('form[action="/cart/%s/%d"]', $action, $release->getId()))->form());
+            self::assertResponseRedirects('/cart', null, $action);
+        }
+
+        foreach (['wishlist', 'collection'] as $list) {
+            $crawler = $this->client->request('GET', $article);
+            $this->client->submit($crawler->filter(\sprintf('form[action="/%s/add/%d"]', $list, $release->getId()))->form());
+            self::assertResponseRedirects($article, null, $list.' add');
+
+            $crawler = $this->client->request('GET', $article);
+            $this->client->submit($crawler->filter(\sprintf('form[action="/%s/remove/%d"]', $list, $release->getId()))->form());
+            self::assertResponseRedirects($article, null, $list.' remove');
+        }
+    }
+
+    public function testAnUnknownRefererGoesHome(): void
+    {
+        [$release] = $this->releasesWithStock(5);
+        $this->addFromTheArticlePage($release, 1);
+        $crawler = $this->client->request('GET', '/cart');
+        $token = (string) $crawler->filter(\sprintf('form[action="/cart/add_quantity/%d"] input[name="_token"]', $release->getId()))->attr('value');
+
+        $this->client->request('POST', \sprintf('/cart/add_quantity/%d', $release->getId()), ['_token' => $token], [], ['HTTP_REFERER' => 'https://elsewhere.example/nowhere']);
+        self::assertResponseRedirects('/');
+    }
+
     public function testWishlistNeedsTheToken(): void
     {
         $user = $this->user('test@test.fr');
