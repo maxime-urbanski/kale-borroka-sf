@@ -35,5 +35,8 @@ interface CartInterface
      */
     public function getFullCart(): array;
 
-    public function getTotal(): int;
+    /**
+     * @param array<int, array{product: Article, quantity: int, quantityMaxAvailable: int}>|null $fullCart lines already read with getFullCart(), to spare a query
+     */
+    public function getTotal(?array $fullCart = null): int;
 }

@@ -32,8 +32,8 @@ class CartController
         CartInterface $cartInterface,
     ): Response {
         $content = $twig->render('cart/index.html.twig', [
-            'cart' => $cartInterface->getFullCart(),
-            'total' => $cartInterface->getTotal(),
+            'cart' => $cart = $cartInterface->getFullCart(),
+            'total' => $cartInterface->getTotal($cart),
         ]);
 
         return new Response($content);

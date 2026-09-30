@@ -99,8 +99,15 @@ readonly class CartService implements CartInterface
     {
         $cart = $this->getSession()->get('cart', []);
         $cartWithData = [];
+
+        // One query for every line: the navbar reads the cart on every page.
+        $articles = [];
+        foreach ([] === $cart ? [] : $this->articleRepository->findBy(['id' => array_keys($cart)]) as $article) {
+            $articles[$article->getId()] = $article;
+        }
+
         foreach ($cart as $id => $quantity) {
-            $article = $this->articleRepository->find($id);
+            $article = $articles[$id] ?? null;
 
             // Deleted or unpublished since it was added: drop it from the cart.
             if (!$article?->isPublished()) {
@@ -135,10 +142,10 @@ readonly class CartService implements CartInterface
         return $cartWithData;
     }
 
-    public function getTotal(): int
+    public function getTotal(?array $fullCart = null): int
     {
         $totalPrice = 0;
-        $cart = $this->getFullCart();
+        $cart = $fullCart ?? $this->getFullCart();
 
         foreach ($cart as $item) {
             $totalItem = $item['product']->getPrice() * $item['quantity'];
