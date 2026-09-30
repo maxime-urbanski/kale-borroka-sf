@@ -129,7 +129,7 @@ Being logged in is not enough for an object loaded from the URL: check its owner
 - Private files (expense invoices) live outside `public/` and are only served by an admin route; uploads get their extension from the sniffed MIME type (`SmartUniqueNamer`), and Caddy only runs `index.php`.
 - Uploads: no SVG (it runs scripts on our origin; Caddy sandboxes any old one), `SocialNetwork::$url` is http(s) only. Caddy sends nosniff, `X-Frame-Options: SAMEORIGIN`, referrer and permissions policies (HSTS in prod).
 - HTML pages get a Content-Security-Policy from `App\Security\ContentSecurityPolicy`: scripts from our origin only, no inline script or `on…=""` handler — put behaviour in a Stimulus controller, or give an unavoidable inline `<script>` the page nonce (`nonce="{{ csp_nonce('script') }}"`, what EasyAdmin does). Styles stay `'unsafe-inline'` (style attributes). Nothing external (CDN, fonts, analytics) loads until the policy allows it.
-- Logout is POST with a CSRF token (`enable_csrf`, token id `logout`, field `_token`): render it with `_post_button.html.twig`, never as a link.
+- Logout needs a CSRF token (`enable_csrf`, token id `logout`, field `_token`): render it with `_post_button.html.twig`. The route also accepts GET for EasyAdmin's "Sign out" link, which carries the token in the query string.
 - Secrets: `.env` leaves `APP_SECRET` empty, dev takes it from `.env.dev`, and `compose.prod.yaml` refuses to start without `APP_SECRET` and `POSTGRES_PASSWORD`.
 
 Validation constraints must be built with **named arguments** — Symfony 8 rejects `new NotBlank(['message' => …])` at runtime, and PHPStan does not catch it because the constructors still accept an array.

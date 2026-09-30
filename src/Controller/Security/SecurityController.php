@@ -31,7 +31,11 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/logout', name: 'app_logout', methods: [Request::METHOD_POST])]
+    /**
+     * GET stays allowed for EasyAdmin's "Sign out" link, which carries the token in the query
+     * string (logout_path()): the firewall refuses a logout without a valid token either way.
+     */
+    #[Route(path: '/logout', name: 'app_logout', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');

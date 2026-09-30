@@ -50,6 +50,18 @@ class ContentSecurityPolicyTest extends WebTestCase
         self::assertGreaterThan(0, $crawler->filter(\sprintf('script[nonce="%s"]', $match[1]))->count());
     }
 
+    public function testBackOfficeSignOutLinkWorks(): void
+    {
+        $this->client->loginUser($this->user('maxiloud@gmail.com'));
+        $crawler = $this->client->request('GET', '/admin');
+
+        $link = $crawler->filter('a[href^="/logout?"]');
+        self::assertGreaterThan(0, $link->count(), "EasyAdmin's user menu");
+        $this->client->request('GET', (string) $link->first()->attr('href'));
+        $this->client->request('GET', '/admin');
+        self::assertResponseRedirects('/login');
+    }
+
     public function testNotSentOnFiles(): void
     {
         $this->client->loginUser($this->user('maxiloud@gmail.com'));
@@ -58,14 +70,15 @@ class ContentSecurityPolicyTest extends WebTestCase
         self::assertNull($this->client->getResponse()->headers->get('Content-Security-Policy'));
     }
 
-    public function testLogoutNeedsAPostWithTheToken(): void
+    public function testLogoutNeedsTheToken(): void
     {
         $this->client->loginUser($this->user('test@test.fr'));
 
+        // Without a valid token, neither a link nor a forged form logs out.
         $this->client->request('GET', '/logout');
-        self::assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED);
-
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
         $this->client->request('POST', '/logout', ['_token' => 'forged']);
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
         $this->client->request('GET', '/mon-compte');
         self::assertResponseIsSuccessful('still logged in');
 

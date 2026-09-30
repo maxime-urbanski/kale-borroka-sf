@@ -17,8 +17,9 @@ security:
             lazy: true
             provider: app_user_provider
             custom_authenticator: App\Security\UserAuthenticator
-            # POST with a CSRF token (partials/_post_button.html.twig, token_id 'logout'):
-            # a link or an image on another site must not log the visitor out.
+            # CSRF token required (partials/_post_button.html.twig, token_id 'logout'; EasyAdmin's
+            # link puts it in the query string): a link or an image on another site must not
+            # log the visitor out.
             logout:
                 path: app_logout
                 enable_csrf: true
