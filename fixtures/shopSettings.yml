@@ -3,3 +3,5 @@ App\Entity\ShopSettings:
         lowStockThreshold: 2
         freeShippingThreshold: 8000
         contactEmail: 'contact@kaleborroka.test'
+        openingBalance: 150000
+        openingBalanceDate: '<(new \DateTimeImmutable("-1 year"))>'

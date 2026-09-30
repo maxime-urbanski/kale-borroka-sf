@@ -9,6 +9,7 @@
 /public/bundles/
 /public/upload/*
 /public/media/*
+/private/
 /var/
 /vendor/
 ###< symfony/framework-bundle ###

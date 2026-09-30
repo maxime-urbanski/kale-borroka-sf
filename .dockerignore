@@ -27,6 +27,7 @@ node_modules/
 public/bundles/
 public/media/
 public/upload/
+private/
 tests/
 var/
 vendor/

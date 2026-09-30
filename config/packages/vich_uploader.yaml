@@ -19,6 +19,15 @@ vich_uploader:
             delete_on_update: true
             delete_on_remove: true
 
+        # Label expense invoices: outside public/ on purpose, served by
+        # ExpenseCrudController::invoice() to admins only. uri_prefix is never used.
+        expense_invoice:
+            uri_prefix: /admin/expense
+            upload_destination: '%kernel.project_dir%/private/invoices'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
 # Tests upload for real: keep their files out of public/ (rolled-back transactions do not
 # delete files).
 when@test:
@@ -28,3 +37,5 @@ when@test:
                 upload_destination: '%kernel.project_dir%/var/test-uploads/albums'
             media_object:
                 upload_destination: '%kernel.project_dir%/var/test-uploads/media'
+            expense_invoice:
+                upload_destination: '%kernel.project_dir%/var/test-uploads/invoices'

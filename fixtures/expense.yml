@@ -1,0 +1,17 @@
+# Label expenses and event sales over the last year, for the dashboard funds and the
+# financial summary. Nothing is dated today, and no invoice file is attached.
+App\Entity\Expense:
+    expense_{1..12}:
+        name: '<randomElement(["Pressage 300 LP", "Repress 500 CD", "Sérigraphie 50 t-shirts", "Timbres et enveloppes bulles", "Impression fanzine", "Affiches concert"])>'
+        category: '<(App\Enum\ExpenseCategory::from(["production", "merch", "shipping", "promotion"][$current % 4]))>'
+        provider: '<randomElement(["MPO", "Optimal Media", "Atelier Sérigraphie", "La Poste", "Imprimerie du Coin"])>'
+        totalPaymentDue: '<numberBetween(3000, 90000)>'
+        paymentDueDate: '<(new \DateTimeImmutable(sprintf("-%d days", $current * 29)))>'
+
+App\Entity\EventSale:
+    event_sale_{1..6}:
+        name: '<randomElement(["Concert de soutien", "Fest antifa", "Salon du disque", "Soirée benefit"])>'
+        location: '<city()>'
+        price: '<numberBetween(8000, 60000)>'
+        startTime: '<(new \DateTimeImmutable(sprintf("-%d days", $current * 55)))>'
+        description: 'Stand distro, espèces et carte.'

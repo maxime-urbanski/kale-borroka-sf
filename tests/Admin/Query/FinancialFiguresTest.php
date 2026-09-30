@@ -7,7 +7,10 @@ namespace App\Tests\Admin\Query;
 use App\Admin\Query\DashboardMetricsInterface;
 use App\Admin\Query\FinancialReportInterface;
 use App\Admin\Query\RevenuePeriod;
+use App\Entity\EventSale;
+use App\Entity\Expense;
 use App\Entity\Order;
+use App\Enum\ExpenseCategory;
 use App\Enum\OrderTransition;
 use App\Order\Command\ApplyOrderTransition;
 use App\Tests\Order\OrderTestTrait;
@@ -63,12 +66,20 @@ class FinancialFiguresTest extends KernelTestCase
         $this->paidOrder(4000, '2026-01-20 12:00:00', refunded: true);
         // Other year.
         $this->paidOrder(7000, '2025-12-31 12:00:00');
+        // Event sales and expenses are dated by day: only the test's own count.
+        $connection = $this->entityManager()->getConnection();
+        $connection->executeStatement('DELETE FROM event_sale');
+        $connection->executeStatement('DELETE FROM expense');
+        $this->entityManager()->persist((new EventSale())->setName('Fest')->setStartTime(new \DateTimeImmutable('2026-01-31'))->setPrice(30000));
+        $this->entityManager()->persist((new EventSale())->setName('Réveillon')->setStartTime(new \DateTimeImmutable('2025-12-31'))->setPrice(99900));
+        $this->entityManager()->persist((new Expense())->setName('Pressage')->setCategory(ExpenseCategory::PRODUCTION)->setPaymentDueDate(new \DateTimeImmutable('2026-02-01'))->setTotalPaymentDue(120000));
+        $this->entityManager()->flush();
 
         $months = self::getContainer()->get(FinancialReportInterface::class)->monthly(2026);
 
         self::assertCount(12, $months);
-        self::assertSame(['month' => '2026-01', 'orders' => 1, 'revenue' => 2000, 'refunded' => 4000], self::row($months[0]));
-        self::assertSame(['month' => '2026-02', 'orders' => 1, 'revenue' => 1500, 'refunded' => 0], self::row($months[1]));
+        self::assertSame(['month' => '2026-01', 'orders' => 1, 'revenue' => 2000, 'refunded' => 4000, 'eventSales' => 30000, 'expenses' => 0], self::row($months[0]));
+        self::assertSame(['month' => '2026-02', 'orders' => 1, 'revenue' => 1500, 'refunded' => 0, 'eventSales' => 0, 'expenses' => 120000], self::row($months[1]));
         self::assertSame(0, $months[11]['orders']);
     }
 

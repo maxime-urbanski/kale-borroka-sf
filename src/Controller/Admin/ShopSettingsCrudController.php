@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -80,6 +81,16 @@ class ShopSettingsCrudController extends AbstractCrudController
         yield MoneyField::new('freeShippingThreshold', 'Livraison offerte dès')
             ->setCurrency('EUR')
             ->setHelp('Laisser vide : jamais offerte.')
+            ->setColumns(4);
+        yield FormField::addFieldset('Fonds du label', 'fa fa-piggy-bank')
+            ->setHelp('Les fonds disponibles du tableau de bord partent de ce solde, puis ajoutent les paiements de la boutique et les ventes en événement, et retirent les frais du label, à partir de cette date.');
+        yield MoneyField::new('openingBalance', 'Solde de départ')
+            ->setCurrency('EUR')
+            ->setHelp('Argent du label à la date ci-contre (négatif si le label était à découvert).')
+            ->setFormTypeOption('required', false)
+            ->setColumns(4);
+        yield DateField::new('openingBalanceDate', 'Au')
+            ->setHelp('Début de journée. Laisser vide : tout l\'historique est compté.')
             ->setColumns(4);
         yield FormField::addFieldset('Contact', 'fa fa-envelope');
         yield EmailField::new('contactEmail', 'E-mail de contact')

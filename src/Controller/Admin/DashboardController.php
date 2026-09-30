@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Admin\Query\DashboardMetricsInterface;
 use App\Admin\Query\FinancialReportInterface;
+use App\Admin\Query\FundsBalanceInterface;
 use App\Admin\Query\RevenuePeriod;
 use App\Entity\Article;
 use App\Entity\Book;
@@ -33,6 +34,7 @@ class DashboardController extends AbstractDashboardController
     public function __construct(
         private readonly DashboardMetricsInterface $dashboardMetrics,
         private readonly FinancialReportInterface $financialReport,
+        private readonly FundsBalanceInterface $fundsBalance,
         private readonly ArticleRepository $articleRepository,
         private readonly ShopSettingsProviderInterface $shopSettingsProvider,
         private readonly ClockInterface $clock,
@@ -45,6 +47,7 @@ class DashboardController extends AbstractDashboardController
         $threshold = $this->shopSettingsProvider->get()->getLowStockThreshold();
 
         return $this->render('admin/dashboard.html.twig', [
+            'funds' => $this->fundsBalance->summary(),
             'ordersToProcess' => $this->dashboardMetrics->ordersToProcess(),
             'orderCounts' => $this->dashboardMetrics->countOrdersToProcess(),
             'lowStock' => array_map(fn (Article $article): array => [
@@ -75,6 +78,8 @@ class DashboardController extends AbstractDashboardController
                 'orders' => array_sum(array_column($months, 'orders')),
                 'revenue' => array_sum(array_column($months, 'revenue')),
                 'refunded' => array_sum(array_column($months, 'refunded')),
+                'eventSales' => array_sum(array_column($months, 'eventSales')),
+                'expenses' => array_sum(array_column($months, 'expenses')),
             ],
         ]);
     }
@@ -139,7 +144,12 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::subMenu('Ventes & commandes', 'fas fa-cart-shopping')->setSubItems([
             MenuItem::linkTo(OrderCrudController::class, 'Commandes', 'fas fa-receipt'),
             MenuItem::linkTo(UserCrudController::class, 'Clients', 'fas fa-users'),
+        ]);
+
+        yield MenuItem::subMenu('Fonds du label', 'fas fa-piggy-bank')->setSubItems([
             MenuItem::linkToRoute('Synthèse financière', 'fas fa-chart-column', 'admin_finances'),
+            MenuItem::linkTo(EventSaleCrudController::class, 'Ventes en événement', 'fas fa-people-group'),
+            MenuItem::linkTo(ExpenseCrudController::class, 'Frais du label', 'fas fa-file-invoice-dollar'),
         ]);
 
         yield MenuItem::subMenu('Catalogue musique', 'fas fa-music')->setSubItems([
