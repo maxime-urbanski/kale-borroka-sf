@@ -139,8 +139,17 @@ class Address
         return $this;
     }
 
+    /**
+     * Plain text, one line per part: escape it, then |nl2br, to show it as HTML.
+     */
     public function __toString(): string
     {
-        return $this->name.'<br>'.$this->address.'<br>'.$this->complement_address.'<br>'.$this->zipcode.$this->city.'<br>'.$this->country;
+        return implode("\n", array_filter([
+            $this->name,
+            $this->address,
+            $this->complement_address,
+            trim($this->zipcode.' '.$this->city),
+            $this->country,
+        ], static fn (?string $line): bool => null !== $line && '' !== $line));
     }
 }

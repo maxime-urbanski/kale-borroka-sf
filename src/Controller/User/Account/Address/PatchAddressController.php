@@ -6,6 +6,7 @@ namespace App\Controller\User\Account\Address;
 
 use App\Entity\Address;
 use App\Form\UserAccountAddressFormType;
+use App\Security\Voter\AddressVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -21,6 +22,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class PatchAddressController
 {
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[IsGranted(AddressVoter::EDIT, subject: 'address')]
     #[Route(
         path: '/mon-compte/mes-adresses/update/{id}',
         name: 'app_user_addresses_patch_address',
