@@ -63,6 +63,8 @@ final readonly class PatchUserInformationsController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid() && $this->emailIsFree($userRepository, $user, $form)) {
+            // NotBlank / NotNull on the DTO: a valid form has them all.
+            \assert(null !== $updateUserInformation->lastname && null !== $updateUserInformation->firstname && null !== $updateUserInformation->email && null !== $updateUserInformation->address);
             $user->setLastname($updateUserInformation->lastname);
             $user->setFirstname($updateUserInformation->firstname);
             $user->setEmail($updateUserInformation->email);

@@ -44,7 +44,7 @@ class AlbumRepository extends ServiceEntityRepository
      */
     public function numberOfAlbumsProduced(): int
     {
-        return $this->createQueryBuilder('a')
+        return (int) $this->createQueryBuilder('a')
             ->select('COUNT(a.id)')
             ->where('a.kbrProduction = true')
             ->getQuery()

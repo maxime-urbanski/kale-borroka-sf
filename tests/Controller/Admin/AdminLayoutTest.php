@@ -22,7 +22,7 @@ class AdminLayoutTest extends WebTestCase
 {
     use OrderTestTrait;
 
-    private ?KernelBrowser $client = null;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
@@ -74,7 +74,7 @@ class AdminLayoutTest extends WebTestCase
     public function testOrderAndUserDetailPagesUseTabs(): void
     {
         [$release] = $this->releasesWithStock(3);
-        $order = $this->placeOrder($this->user('test@test.fr'), [$release->getId() => 1]);
+        $order = $this->placeOrder($this->user('test@test.fr'), [(int) $release->getId() => 1]);
 
         self::assertSame(['Commande', 'Articles 1', 'Livraison'], $this->tabs(\sprintf('/admin/order/%d', $order->getId())));
         self::assertSame(['Compte', 'Commandes 1', 'Adresses'], $this->tabs(\sprintf('/admin/user/%d', $this->user('test@test.fr')->getId())));

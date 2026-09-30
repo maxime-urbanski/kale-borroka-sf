@@ -57,11 +57,13 @@ class RegistrationController extends AbstractController
             $userCollectionRepository->save($userCollection, true);
             // do anything else you need here, like send an email
 
+            // Null only when the authenticator answers nothing: the account exists, go log in.
             return $userAuthenticator->authenticateUser(
                 $user,
                 $authenticator,
                 $request
-            );
+            )
+                ?? $this->redirectToRoute('app_login');
         }
 
         return $this->render('registration/register.html.twig', [

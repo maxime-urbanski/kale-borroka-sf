@@ -25,7 +25,7 @@ class AdminMediaTest extends WebTestCase
     /** A valid 1×1 PNG. */
     private const string PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
 
-    private ?KernelBrowser $client = null;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
@@ -77,6 +77,7 @@ class AdminMediaTest extends WebTestCase
         self::assertFileExists($file);
 
         // Submit the edit form without the picture entry.
+        self::assertNotNull($album);
         $form = $this->client->request('GET', \sprintf('/admin/album/%d/edit', $album->getId()))->filter('form[name="Album"]')->form();
         $values = $form->getPhpValues();
         unset($values['Album']['images']);

@@ -21,7 +21,7 @@ class AccountSecurityTest extends WebTestCase
 {
     use OrderTestTrait;
 
-    private ?KernelBrowser $client = null;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
@@ -41,7 +41,9 @@ class AccountSecurityTest extends WebTestCase
     {
         $victim = $this->addressOf('client1@kaleborroka.test');
         $name = $victim->getName();
-        $token = $this->ownAddressForm()['user_account_address_form[_token]']->getValue();
+        $field = $this->ownAddressForm()['user_account_address_form[_token]'];
+        self::assertInstanceOf(\Symfony\Component\DomCrawler\Field\FormField::class, $field);
+        $token = $field->getValue();
 
         $this->client->request('PATCH', \sprintf('/mon-compte/mes-adresses/update/%d', $victim->getId()), ['user_account_address_form' => [
             '_token' => $token,
@@ -151,7 +153,7 @@ class AccountSecurityTest extends WebTestCase
     public function testPasswordChangeRequiresTheCurrentPassword(): void
     {
         $user = $this->user('test@test.fr');
-        $hasher = self::getContainer()->get(UserPasswordHasherInterface::class);
+        $hasher = self::service(UserPasswordHasherInterface::class);
 
         $form = $this->client->request('GET', '/mon-compte/editer-mot-de-passe')->filter('form[name="update_password_form"]')->form();
         $form['update_password_form[current_password]'] = 'mauvais';
@@ -178,19 +180,19 @@ class AccountSecurityTest extends WebTestCase
     private function csrfToken(string $id): string
     {
         $this->client->request('GET', '/mon-compte/mes-adresses');
-        $container = self::getContainer();
-        $session = $container->get('session.factory')->createSession();
+        $session = self::service(\Symfony\Component\HttpFoundation\Session\SessionFactoryInterface::class, 'session.factory')->createSession();
         $session->setId((string) $this->client->getCookieJar()->get($session->getName())?->getValue());
         $session->start();
         $request = new Request();
         $request->setSession($session);
-        $container->get('request_stack')->push($request);
+        $requestStack = self::service(\Symfony\Component\HttpFoundation\RequestStack::class, 'request_stack');
+        $requestStack->push($request);
 
         try {
-            return $container->get('security.csrf.token_manager')->getToken($id)->getValue();
+            return self::service(\Symfony\Component\Security\Csrf\CsrfTokenManagerInterface::class, 'security.csrf.token_manager')->getToken($id)->getValue();
         } finally {
             $session->save();
-            $container->get('request_stack')->pop();
+            $requestStack->pop();
         }
     }
 
@@ -205,7 +207,7 @@ class AccountSecurityTest extends WebTestCase
     private function addressOf(string $email): Address
     {
         // Ordered: an UPDATE moves the row, so an unordered query may return another address.
-        $address = self::getContainer()->get(AddressRepository::class)->findOneBy(['users' => $this->user($email)], ['id' => 'ASC']);
+        $address = self::service(AddressRepository::class)->findOneBy(['users' => $this->user($email)], ['id' => 'ASC']);
         self::assertInstanceOf(Address::class, $address);
 
         return $address;

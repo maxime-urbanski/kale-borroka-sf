@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class SecurityPagesTest extends WebTestCase
 {
-    private ?KernelBrowser $client = null;
+    private KernelBrowser $client;
 
     public function setUp(): void
     {

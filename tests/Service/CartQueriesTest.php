@@ -18,7 +18,7 @@ class CartQueriesTest extends WebTestCase
 {
     use OrderTestTrait;
 
-    private ?KernelBrowser $client = null;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
@@ -123,7 +123,10 @@ class CartQueriesTest extends WebTestCase
         $this->client->request('GET', $uri);
         $this->client->enableProfiler();
         $this->client->request('GET', $uri);
-        $collector = $this->client->getProfile()->getCollector('db');
+        $profile = $this->client->getProfile();
+        self::assertNotFalse($profile);
+        self::assertNotNull($profile);
+        $collector = $profile->getCollector('db');
         self::assertInstanceOf(DoctrineDataCollector::class, $collector);
 
         return $collector->getQueryCount();

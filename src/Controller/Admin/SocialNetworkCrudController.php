@@ -31,7 +31,7 @@ class SocialNetworkCrudController extends AbstractCrudController
             ->setHelp('https://… ou mailto:contact@… pour un e-mail.')
             ->formatValue(function ($value) {
                 if (str_contains((string) $value, 'mailto')) {
-                    $hrefLink = str_replace('http://', '', $value);
+                    $hrefLink = str_replace('http://', '', (string) $value);
                     $textDisplay = str_replace('mailto:', '', $hrefLink);
 
                     return \sprintf('<a href="%s">%s</a>', $hrefLink, $textDisplay);

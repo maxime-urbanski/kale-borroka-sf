@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Service;
 
 use App\Service\BreadcrumbInterface;
+use App\Tests\ServiceTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -18,13 +19,15 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class BreadcrumbDuringPostTest extends KernelTestCase
 {
+    use ServiceTrait;
+
     public function testBuiltWhileHandlingAPost(): void
     {
         $breadcrumb = $this->breadcrumbFor(Request::create('/catalog/lp', 'POST'));
 
         self::assertSame(['Home', 'catalog', 'lp'], array_column($breadcrumb, 'name'));
         self::assertSame(['app_homepage', 'app_catalog', 'app_catalog_list'], array_column($breadcrumb, 'path'));
-        self::assertSame('POST', self::getContainer()->get(RouterInterface::class)->getContext()->getMethod(), 'the router context is left as it was');
+        self::assertSame('POST', self::service(RouterInterface::class)->getContext()->getMethod(), 'the router context is left as it was');
     }
 
     public function testASegmentThatIsNoPageIsSkipped(): void
@@ -108,9 +111,9 @@ class BreadcrumbDuringPostTest extends KernelTestCase
     {
         self::bootKernel();
         $container = self::getContainer();
-        $container->get(RequestStack::class)->push($request);
-        $container->get(RouterInterface::class)->setContext((new RequestContext())->fromRequest($request));
+        self::service(RequestStack::class)->push($request);
+        self::service(RouterInterface::class)->setContext((new RequestContext())->fromRequest($request));
 
-        return $container->get(BreadcrumbInterface::class)->breadcrumb($lastItemName);
+        return self::service(BreadcrumbInterface::class)->breadcrumb($lastItemName);
     }
 }

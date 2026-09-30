@@ -15,7 +15,7 @@ class CheckoutTest extends WebTestCase
 {
     use OrderTestTrait;
 
-    private ?KernelBrowser $client = null;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
@@ -58,8 +58,11 @@ class CheckoutTest extends WebTestCase
         self::assertSelectorTextContains('h3', 'Merci pour votre commande');
 
         $order = $this->entityManager()->getRepository(Order::class)->findOneBy([], ['id' => 'DESC']);
-        self::assertSame(OrderStatus::PENDING, $order?->getStatus());
-        self::assertSame(2, $order->getOrderDetails()->first()->getQuantity());
+        self::assertNotNull($order);
+        self::assertSame(OrderStatus::PENDING, $order->getStatus());
+        $line = $order->getOrderDetails()->first();
+        self::assertNotFalse($line);
+        self::assertSame(2, $line->getQuantity());
         self::assertSame(4, $this->stockOf($release), 'stock is only taken on payment');
     }
 

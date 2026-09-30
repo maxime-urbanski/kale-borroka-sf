@@ -1,6 +1,6 @@
 parameters:
     checkUninitializedProperties: true
-    level: 6
+    level: 8
     paths:
         - bin/
         - config/

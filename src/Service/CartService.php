@@ -31,7 +31,7 @@ readonly class CartService implements CartInterface
             throw new NotFoundHttpException('Ooups une erreur est survenue.');
         }
 
-        $inCart = min(($cart[$articleId] ?? 0) + max(1, $quantity), max(0, (int) $article->getStock()));
+        $inCart = (int) min(($cart[$articleId] ?? 0) + max(1, $quantity), max(0, (int) $article->getStock()));
 
         if ($inCart > 0) {
             $cart[$articleId] = $inCart;
@@ -114,8 +114,8 @@ readonly class CartService implements CartInterface
         }
 
         $articles = [];
-        foreach ($this->articleRepository->findForCart(array_keys($cart)) as $article) {
-            $articles[$article->getId()] = $article;
+        foreach ($this->articleRepository->findForCart(array_map(intval(...), array_keys($cart))) as $article) {
+            $articles[(int) $article->getId()] = $article;
         }
 
         $cartWithData = [];

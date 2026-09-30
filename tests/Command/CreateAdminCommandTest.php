@@ -35,11 +35,11 @@ class CreateAdminCommandTest extends KernelTestCase
 
         self::assertSame(Command::SUCCESS, $tester->execute(['email' => 'New.Admin@kbr.com']));
 
-        $admin = self::getContainer()->get(UserRepository::class)->findOneByEmail('new.admin@kbr.com');
+        $admin = self::service(UserRepository::class)->findOneByEmail('new.admin@kbr.com');
         self::assertNotNull($admin);
         self::assertContains('ROLE_ADMIN', $admin->getRoles());
         self::assertSame('Jane', $admin->getFirstname());
-        self::assertNotNull(self::getContainer()->get(WishlistRepository::class)->findOneBy(['user' => $admin]));
+        self::assertNotNull(self::service(WishlistRepository::class)->findOneBy(['user' => $admin]));
     }
 
     public function testFailedConfirmationsCreateNothing(): void
@@ -48,11 +48,13 @@ class CreateAdminCommandTest extends KernelTestCase
         $tester->setInputs(['un mot de passe solide', 'autre chose', 'trop court', 'trop court']);
 
         self::assertSame(Command::FAILURE, $tester->execute(['email' => 'new.admin@kbr.com']));
-        self::assertNull(self::getContainer()->get(UserRepository::class)->findOneByEmail('new.admin@kbr.com'));
+        self::assertNull(self::service(UserRepository::class)->findOneByEmail('new.admin@kbr.com'));
     }
 
     private function tester(): CommandTester
     {
+        self::assertNotNull(self::$kernel);
+
         return new CommandTester((new Application(self::$kernel))->find('app:create-admin'));
     }
 }

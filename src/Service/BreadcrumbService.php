@@ -52,6 +52,7 @@ readonly class BreadcrumbService implements BreadcrumbInterface
 
             $route = (string) $match['_route'];
             unset($match['_route']);
+            /* @var array<string, mixed> $match route parameters, by name */
 
             $breadcrumb[] = [
                 'name' => '/' === $path ? 'Home' : basename($path),
@@ -63,8 +64,9 @@ readonly class BreadcrumbService implements BreadcrumbInterface
 
         // Only the current page gets the name: never a parent left last because the
         // current path is no page.
-        if (null !== $lastItemName && $currentPageIsLast) {
-            $breadcrumb[\count($breadcrumb) - 1]['name'] = $lastItemName;
+        if (null !== $lastItemName && $currentPageIsLast && null !== $current = array_pop($breadcrumb)) {
+            $current['name'] = $lastItemName;
+            $breadcrumb[] = $current;
         }
 
         return $breadcrumb;

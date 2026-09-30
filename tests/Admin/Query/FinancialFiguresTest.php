@@ -75,7 +75,7 @@ class FinancialFiguresTest extends KernelTestCase
         $this->entityManager()->persist((new Expense())->setName('Pressage')->setCategory(ExpenseCategory::PRODUCTION)->setPaymentDueDate(new \DateTimeImmutable('2026-02-01'))->setTotalPaymentDue(120000));
         $this->entityManager()->flush();
 
-        $months = self::getContainer()->get(FinancialReportInterface::class)->monthly(2026);
+        $months = self::service(FinancialReportInterface::class)->monthly(2026);
 
         self::assertCount(12, $months);
         self::assertSame(['month' => '2026-01', 'orders' => 1, 'revenue' => 2000, 'refunded' => 4000, 'eventSales' => 30000, 'expenses' => 0], self::row($months[0]));
@@ -88,7 +88,7 @@ class FinancialFiguresTest extends KernelTestCase
         // 31 December 2019 23:30 UTC is 1 January 2020 in Paris: 2019 has no payment.
         $this->paidOrder(1500, '2019-12-31 23:30:00');
 
-        $years = self::getContainer()->get(FinancialReportInterface::class)->years(new \DateTimeImmutable('2026-06-15 12:00:00'));
+        $years = self::service(FinancialReportInterface::class)->years(new \DateTimeImmutable('2026-06-15 12:00:00'));
 
         self::assertSame(2026, $years[0]);
         self::assertSame(2020, end($years));
@@ -100,7 +100,7 @@ class FinancialFiguresTest extends KernelTestCase
         $refunded = $this->paidOrder(4000, '2026-03-11 12:00:00', refunded: true);
         $this->paidOrder(1000, '2025-03-10 12:00:00');
 
-        $rows = iterator_to_array(self::getContainer()->get(FinancialReportInterface::class)->payments(2026), false);
+        $rows = iterator_to_array(self::service(FinancialReportInterface::class)->payments(2026), false);
 
         self::assertSame([$paid->getReference(), $refunded->getReference()], array_column($rows, 'reference'));
         self::assertSame('10/03/2026 13:00', $rows[0]['paidAt']->format('d/m/Y H:i'), 'in Paris time');
@@ -108,7 +108,7 @@ class FinancialFiguresTest extends KernelTestCase
 
     private function metrics(): DashboardMetricsInterface
     {
-        return self::getContainer()->get(DashboardMetricsInterface::class);
+        return self::service(DashboardMetricsInterface::class);
     }
 
     /**
@@ -117,7 +117,7 @@ class FinancialFiguresTest extends KernelTestCase
     private function paidOrder(int $total, string $paidAtUtc, bool $refunded = false): Order
     {
         [$release] = $this->releasesWithStock(10);
-        $order = $this->placeOrder($this->user('test@test.fr'), [$release->getId() => 1]);
+        $order = $this->placeOrder($this->user('test@test.fr'), [(int) $release->getId() => 1]);
         $this->bus()->dispatch(new ApplyOrderTransition((int) $order->getId(), OrderTransition::PAY));
 
         if ($refunded) {
@@ -135,9 +135,9 @@ class FinancialFiguresTest extends KernelTestCase
     }
 
     /**
-     * @param array{month: \DateTimeImmutable, orders: int, revenue: int, refunded: int} $row
+     * @param array{month: \DateTimeImmutable, orders: int, revenue: int, refunded: int, eventSales: int, expenses: int} $row
      *
-     * @return array{month: string, orders: int, revenue: int, refunded: int}
+     * @return array{month: string, orders: int, revenue: int, refunded: int, eventSales: int, expenses: int}
      */
     private static function row(array $row): array
     {

@@ -28,7 +28,7 @@ class StockManagerTest extends KernelTestCase
     public function testTakeAndPutBack(): void
     {
         [$release] = $this->releasesWithStock(3);
-        $stockManager = self::getContainer()->get(StockManagerInterface::class);
+        $stockManager = self::service(StockManagerInterface::class);
 
         $stockManager->take($release, 3);
         self::assertSame(0, $this->stockOf($release));
@@ -45,7 +45,7 @@ class StockManagerTest extends KernelTestCase
         $this->expectException(InsufficientStockException::class);
 
         try {
-            self::getContainer()->get(StockManagerInterface::class)->take($release, 2);
+            self::service(StockManagerInterface::class)->take($release, 2);
         } finally {
             self::assertSame(1, $this->stockOf($release));
         }

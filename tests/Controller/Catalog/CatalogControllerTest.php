@@ -6,13 +6,16 @@ namespace App\Tests\Controller\Catalog;
 
 use App\Enum\SupportType;
 use App\Repository\SupportRepository;
+use App\Tests\ServiceTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class CatalogControllerTest extends WebTestCase
 {
-    private ?KernelBrowser $client = null;
+    use ServiceTrait;
+
+    private KernelBrowser $client;
     private const DEFAULT_URI = '/catalog';
     private const ERROR_SUPPORT = '/cdlp';
 
@@ -27,7 +30,7 @@ class CatalogControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', self::DEFAULT_URI);
         self::assertResponseIsSuccessful();
 
-        $supportRepository = self::getContainer()->get(SupportRepository::class);
+        $supportRepository = self::service(SupportRepository::class);
         $supports = $supportRepository->findAll();
 
         $liSupport = $crawler->filter('.list-support');
@@ -36,7 +39,7 @@ class CatalogControllerTest extends WebTestCase
         foreach ($supports as $support) {
             self::assertSelectorTextSame(
                 '.catalog-'.$support,
-                strtoupper($support->getname())
+                strtoupper((string) $support->getName())
             );
         }
     }
@@ -89,7 +92,7 @@ class CatalogControllerTest extends WebTestCase
      */
     public function testEverySupportTypeHasAReachableCatalogPage(): void
     {
-        $supportRepository = self::getContainer()->get(SupportRepository::class);
+        $supportRepository = self::service(SupportRepository::class);
 
         foreach (SupportType::cases() as $supportType) {
             self::assertNotNull(

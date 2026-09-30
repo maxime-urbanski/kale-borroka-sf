@@ -6,6 +6,7 @@ namespace App\Tests\Entity;
 
 use App\Entity\MediaObject;
 use App\Entity\SocialNetwork;
+use App\Tests\ServiceTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\File\File;
@@ -16,6 +17,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class AdminUploadsValidationTest extends KernelTestCase
 {
+    use ServiceTrait;
+
     /**
      * @return iterable<string, array{string, bool}>
      */
@@ -51,6 +54,6 @@ class AdminUploadsValidationTest extends KernelTestCase
 
     private function validator(): ValidatorInterface
     {
-        return self::getContainer()->get(ValidatorInterface::class);
+        return self::service(ValidatorInterface::class);
     }
 }

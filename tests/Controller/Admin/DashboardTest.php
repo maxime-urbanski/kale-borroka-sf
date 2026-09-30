@@ -14,7 +14,7 @@ class DashboardTest extends WebTestCase
 {
     use OrderTestTrait;
 
-    private ?KernelBrowser $client = null;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
@@ -33,8 +33,8 @@ class DashboardTest extends WebTestCase
     public function testDashboardShowsOrdersToProcessStockAlertsAndRevenue(): void
     {
         [$release, $lowStock] = $this->releasesWithStock(5, 0);
-        $pending = $this->placeOrder($this->user('test@test.fr'), [$release->getId() => 1]);
-        $paid = $this->placeOrder($this->user('test@test.fr'), [$release->getId() => 1]);
+        $pending = $this->placeOrder($this->user('test@test.fr'), [(int) $release->getId() => 1]);
+        $paid = $this->placeOrder($this->user('test@test.fr'), [(int) $release->getId() => 1]);
         $this->bus()->dispatch(new ApplyOrderTransition((int) $paid->getId(), OrderTransition::PAY));
 
         $crawler = $this->client->request('GET', '/admin');
@@ -51,7 +51,7 @@ class DashboardTest extends WebTestCase
     public function testFinancesPageAndExport(): void
     {
         [$release] = $this->releasesWithStock(5);
-        $order = $this->placeOrder($this->user('test@test.fr'), [$release->getId() => 1]);
+        $order = $this->placeOrder($this->user('test@test.fr'), [(int) $release->getId() => 1]);
         $this->bus()->dispatch(new ApplyOrderTransition((int) $order->getId(), OrderTransition::PAY));
         $year = (new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')))->format('Y');
 

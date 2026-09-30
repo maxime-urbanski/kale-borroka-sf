@@ -15,6 +15,7 @@ use App\Repository\PaymentRepository;
 use App\Repository\ReleaseRepository;
 use App\Repository\TransporterRepository;
 use App\Repository\UserRepository;
+use App\Tests\ServiceTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -24,6 +25,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 trait OrderTestTrait
 {
+    use ServiceTrait;
+
     abstract protected static function getContainer(): ContainerInterface;
 
     protected function beginIsolation(): void
@@ -42,7 +45,7 @@ trait OrderTestTrait
 
     protected function entityManager(): EntityManagerInterface
     {
-        return self::getContainer()->get(EntityManagerInterface::class);
+        return self::service(EntityManagerInterface::class);
     }
 
     /**
@@ -50,12 +53,12 @@ trait OrderTestTrait
      */
     protected function bus(): CommandBusInterface
     {
-        return new CommandBus(self::getContainer()->get('command.bus'));
+        return new CommandBus(self::service(\Symfony\Component\Messenger\MessageBusInterface::class, 'command.bus'));
     }
 
     protected function user(string $email): User
     {
-        $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
+        $user = self::service(UserRepository::class)->findOneBy(['email' => $email]);
         self::assertInstanceOf(User::class, $user);
 
         return $user;
@@ -68,7 +71,7 @@ trait OrderTestTrait
      */
     protected function releasesWithStock(int ...$stocks): array
     {
-        $releases = self::getContainer()->get(ReleaseRepository::class)
+        $releases = self::service(ReleaseRepository::class)
             ->findBy(['published' => true], ['id' => 'ASC'], \count($stocks));
         self::assertCount(\count($stocks), $releases);
 
@@ -86,13 +89,13 @@ trait OrderTestTrait
     protected function placeOrder(User $buyer, array $lines, ?int $addressId = null): Order
     {
         $container = self::getContainer();
-        $address = $container->get(AddressRepository::class)->findOneBy(['users' => $buyer]);
+        $address = self::service(AddressRepository::class)->findOneBy(['users' => $buyer]);
 
         $reference = $this->bus()->dispatch(new PlaceOrder(
             buyerId: (int) $buyer->getId(),
             addressId: $addressId ?? (int) $address?->getId(),
-            transporterId: (int) $container->get(TransporterRepository::class)->findOneBy([])?->getId(),
-            paymentId: (int) $container->get(PaymentRepository::class)->findOneBy([])?->getId(),
+            transporterId: (int) self::service(TransporterRepository::class)->findOneBy([])?->getId(),
+            paymentId: (int) self::service(PaymentRepository::class)->findOneBy([])?->getId(),
             lines: $lines,
         ));
 

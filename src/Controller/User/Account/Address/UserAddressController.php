@@ -45,7 +45,7 @@ class UserAddressController
 
         foreach ($userAddresses as $address) {
             $formAddresses = $form->create(UserAccountAddressFormType::class, $address);
-            $forms[$address->getId()] = $formAddresses->createView();
+            $forms[(int) $address->getId()] = $formAddresses->createView();
         }
 
         $formAddNewAddress = $form->create(UserAccountAddressFormType::class);
