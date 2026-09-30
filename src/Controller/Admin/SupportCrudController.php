@@ -22,10 +22,13 @@ class SupportCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('name', 'Segment d\'URL')
-            ->setHelp('Doit rester égal au code : c\'est lui qui apparaît dans /catalog/…');
         yield ChoiceField::new('code', 'Rayon')
-            ->setChoices(SupportType::cases());
-        yield TextField::new('icon', 'Icône');
+            ->setChoices(SupportType::cases())
+            ->setColumns(4);
+        yield TextField::new('name', 'Segment d\'URL')
+            ->setHelp('Doit rester égal au code : c\'est lui qui apparaît dans /catalog/…')
+            ->setColumns(4);
+        yield TextField::new('icon', 'Icône')
+            ->setColumns(4);
     }
 }

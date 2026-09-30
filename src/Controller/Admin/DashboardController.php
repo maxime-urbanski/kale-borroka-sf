@@ -162,7 +162,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::subMenu('Contenu', 'fas fa-file-lines')->setSubItems([
             MenuItem::linkTo(PageCrudController::class, 'Pages', 'fas fa-file-lines'),
             MenuItem::linkTo(SocialNetworkCrudController::class, 'Réseaux sociaux', 'fas fa-share-nodes'),
-            MenuItem::linkTo(ImageCrudController::class, 'Visuels', 'fas fa-image'),
+            MenuItem::linkTo(ImageCrudController::class, 'Visuels des albums', 'fas fa-image'),
+            MenuItem::linkTo(MediaObjectCrudController::class, 'Médiathèque', 'fas fa-photo-film'),
         ]);
 
         yield MenuItem::subMenu('Configuration', 'fas fa-gear')->setSubItems([

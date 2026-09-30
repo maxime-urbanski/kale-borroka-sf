@@ -86,8 +86,9 @@ abstract class Article
      *
      * @var Collection<int, Image>
      */
-    #[ORM\ManyToMany(targetEntity: Image::class)]
+    #[ORM\ManyToMany(targetEntity: Image::class, cascade: ['persist'])]
     #[ORM\JoinTable(name: 'article_image')]
+    #[Assert\Valid]
     protected Collection $images;
 
     /** @var Collection<int, OrderDetails> */
@@ -126,7 +127,7 @@ abstract class Article
 
     public function getCoverImage(): ?Image
     {
-        return $this->images->first() ?: ($this->getParentImages()->first() ?: null);
+        return Image::first($this->images) ?? Image::first($this->getParentImages());
     }
 
     public function getCoverImageName(): ?string

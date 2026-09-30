@@ -53,8 +53,9 @@ class Merch
     private Collection $variants;
 
     /** @var Collection<int, Image> */
-    #[ORM\ManyToMany(targetEntity: Image::class)]
+    #[ORM\ManyToMany(targetEntity: Image::class, cascade: ['persist'])]
     #[ORM\JoinTable(name: 'merch_image')]
+    #[Assert\Valid]
     private Collection $images;
 
     public function __construct()

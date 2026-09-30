@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ArtistRepository::class)]
 class Artist
@@ -34,11 +35,12 @@ class Artist
     private ?string $country = null;
 
     /**
-     * Official pages (schema.org: sameAs), keyed by site: ['bandcamp' => 'https://…', 'instagram' => 'https://…'].
+     * Official pages — Bandcamp, Instagram, website… (schema.org: sameAs).
      *
-     * @var array<string, string>
+     * @var list<string>
      */
-    #[ORM\Column(type: Types::JSON, options: ['default' => '{}'])]
+    #[ORM\Column(type: Types::JSON, options: ['default' => '[]'])]
+    #[Assert\All([new Assert\Url(message: 'Adresse invalide : elle doit commencer par https://', requireTld: true)])]
     private array $links = [];
 
     /** @var Collection<int, Album> */
@@ -97,7 +99,7 @@ class Artist
     }
 
     /**
-     * @return array<string, string>
+     * @return list<string>
      */
     public function getLinks(): array
     {
@@ -105,11 +107,11 @@ class Artist
     }
 
     /**
-     * @param array<string, string> $links
+     * @param array<string> $links
      */
     public function setLinks(array $links): static
     {
-        $this->links = $links;
+        $this->links = array_values(array_filter(array_map('trim', $links), static fn (string $link): bool => '' !== $link));
 
         return $this;
     }

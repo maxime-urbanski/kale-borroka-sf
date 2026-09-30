@@ -1,0 +1,12 @@
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+<div class="row g-3">
+    {% for address in field.value %}
+        <div class="col-md-6">
+            <div class="border rounded p-3 h-100">
+                {% include 'admin/field/_address.html.twig' with {address: address} only %}
+            </div>
+        </div>
+    {% else %}
+        <p class="text-muted">Aucune adresse enregistrée.</p>
+    {% endfor %}
+</div>

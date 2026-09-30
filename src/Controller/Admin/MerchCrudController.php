@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Controller\Admin\Trait\RemovesOrphanImagesTrait;
 use App\Entity\Artist;
 use App\Entity\Merch;
 use App\Enum\MerchSize;
+use App\Repository\ImageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -17,6 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -28,6 +31,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class MerchCrudController extends AbstractCrudController
 {
+    use RemovesOrphanImagesTrait;
+
     /** Sizes created by "Générer les tailles". */
     private const array STANDARD_SIZES = [MerchSize::S, MerchSize::M, MerchSize::L, MerchSize::XL, MerchSize::XXL];
 
@@ -94,21 +99,56 @@ class MerchCrudController extends AbstractCrudController
             ->generateUrl());
     }
 
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $removed = $this->removedImages($entityInstance->getImages());
+        parent::updateEntity($entityManager, $entityInstance);
+        $this->deleteOrphanImages($entityManager, $removed);
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(parent::getSubscribedServices(), [ImageRepository::class]);
+    }
+
     public function configureFields(string $pageName): iterable
     {
+        yield FormField::addTab('Produit', 'fa fa-shirt');
         yield TextField::new('name', 'Nom')
+            ->setHelp('« T-shirt Quartier Maudit » : les tailles et couleurs se gèrent dans l\'onglet suivant.')
             ->setColumns(6);
         yield AssociationField::new('artist', 'Groupe')
             ->autocomplete()
             ->setFormTypeOption('create_missing', static fn (string $name): Artist => (new Artist())->setName($name))
+            ->setHelp('Vide pour le merch du label.')
             ->setColumns(3);
         yield AssociationField::new('category', 'Catégorie')
             ->setColumns(3);
         yield TextareaField::new('description', 'Description')
+            ->setColumns(9)
             ->hideOnIndex();
+        yield BooleanField::new('published', 'Publié')
+            ->setHelp('Chaque taille a aussi sa propre publication.')
+            ->setColumns(3);
+
+        yield FormField::addTab('Tailles & stock', 'fa fa-ruler')
+            ->setBadge(static fn (?Merch $merch): ?int => $merch?->getVariants()->count() ?: null);
         yield CollectionField::new('variants', 'Tailles & couleurs')
-            ->useEntryCrudForm(MerchVariantCrudController::class)
-            ->setFormTypeOption('by_reference', false);
-        yield BooleanField::new('published', 'Publié');
+            ->setLabel(false)
+            ->setHelp('Une ligne par taille et couleur, chacune avec son stock. « Générer les tailles S→XXL » crée d\'un coup les tailles manquantes.')
+            ->useEntryCrudForm(MerchVariantCrudController::class, MerchVariantCrudController::PAGE_IN_MERCH_NEW, MerchVariantCrudController::PAGE_IN_MERCH_EDIT)
+            ->setFormTypeOption('by_reference', false)
+            ->setColumns(12);
+
+        yield FormField::addTab('Visuels', 'fa fa-image')
+            ->setBadge(static fn (?Merch $merch): ?int => $merch?->getImages()->count() ?: null)
+            ->onlyOnForms();
+        yield CollectionField::new('images')
+            ->setLabel(false)
+            ->setHelp('La plus petite position sert de visuel principal, pour toutes les tailles.')
+            ->useEntryCrudForm(ImageCrudController::class, ImageCrudController::PAGE_EMBEDDED_NEW, ImageCrudController::PAGE_EMBEDDED_EDIT)
+            ->setFormTypeOption('by_reference', false)
+            ->setColumns(12)
+            ->onlyOnForms();
     }
 }

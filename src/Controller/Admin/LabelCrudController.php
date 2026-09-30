@@ -39,9 +39,12 @@ class LabelCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('name')->setLabel('Nom du label');
-        yield BooleanField::new('isDistro')->setLabel('Distro');
-        yield UrlField::new('website')->setLabel('Site')->hideOnIndex();
+        yield TextField::new('name')->setLabel('Nom du label')->setColumns(6);
+        yield UrlField::new('website')->setLabel('Site')->setColumns(6)->hideOnIndex();
+        yield BooleanField::new('isDistro')
+            ->setLabel('Distro')
+            ->setHelp('Label tiers dont nous distribuons les disques.')
+            ->setColumns(6);
         yield AssociationField::new('albums')->setLabel('Albums')->hideOnForm();
     }
 }

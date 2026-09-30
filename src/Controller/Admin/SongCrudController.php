@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Song;
+use App\Form\Type\DurationType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -23,24 +25,23 @@ class SongCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInPlural('Tracklists')
-            ->setEntityLabelInSingular('Tracklist')
+            ->setEntityLabelInPlural('Morceaux')
+            ->setEntityLabelInSingular('Morceau')
         ;
     }
 
+    /**
+     * One row per track: it is typed in bulk from the album form.
+     */
     public function configureFields(string $pageName): iterable
     {
-        yield IntegerField::new('track')
-            ->setLabel('track')
-            ->setColumns(3)
-        ;
-        yield TextField::new('name')
-            ->setLabel('Titre')
-            ->setColumns(6)
-        ;
-        yield IntegerField::new('duration')
-            ->setLabel('Durée (s)')
-            ->setColumns(3)
-        ;
+        yield IntegerField::new('track', 'N°')
+            ->setColumns(2);
+        yield TextField::new('name', 'Titre')
+            ->setColumns(7);
+        yield Field::new('duration', 'Durée')
+            ->setFormType(DurationType::class)
+            ->formatValue(static fn (?int $seconds): string => null === $seconds ? '' : DurationType::format($seconds))
+            ->setColumns(3);
     }
 }

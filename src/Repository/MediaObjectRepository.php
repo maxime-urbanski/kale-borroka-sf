@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\MediaObject;
+use App\Entity\SocialNetwork;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -32,5 +35,18 @@ class MediaObjectRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * Names of the social networks using this file as their icon.
+     *
+     * @return string[]
+     */
+    public function findUsages(MediaObject $mediaObject): array
+    {
+        return array_map(
+            static fn (SocialNetwork $socialNetwork): string => (string) $socialNetwork->getName(),
+            $this->getEntityManager()->getRepository(SocialNetwork::class)->findBy(['file' => $mediaObject]),
+        );
     }
 }

@@ -10,16 +10,20 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
- * Entry form of the variants collection in MerchCrudController. Its own list only
- * exists to find a variant by SKU: variants are created from their merch.
+ * Entry form of the variants collection in MerchCrudController (page names below). Its
+ * own list only exists to find a variant by SKU: variants are created from their merch.
  *
  * @extends AbstractArticleCrudController<MerchVariant>
  */
 class MerchVariantCrudController extends AbstractArticleCrudController
 {
+    public const string PAGE_IN_MERCH_NEW = 'merch_variant_new';
+    public const string PAGE_IN_MERCH_EDIT = 'merch_variant_edit';
+
     public static function getEntityFqcn(): string
     {
         return MerchVariant::class;
@@ -38,25 +42,46 @@ class MerchVariantCrudController extends AbstractArticleCrudController
             ->disable(Action::NEW, 'duplicate');
     }
 
-    public function configureFields(string $pageName): iterable
+    protected function isEmbedded(string $pageName): bool
     {
-        foreach (parent::configureFields($pageName) as $field) {
-            // The name is derived from the design, size and colour.
-            if ($field instanceof TextField && 'name' === $field->getAsDto()->getProperty()) {
-                $field->hideOnForm();
-            }
+        return \in_array($pageName, [self::PAGE_IN_MERCH_NEW, self::PAGE_IN_MERCH_EDIT], true);
+    }
 
-            yield $field;
-        }
+    protected function fallbackPicturesLabel(): string
+    {
+        return 'Sans photo propre, les visuels du merch sont affichés.';
     }
 
     protected function configureSpecificFields(string $pageName): iterable
     {
-        yield ChoiceField::new('size', 'Taille')
+        yield FormField::addFieldset('Variante', 'fa fa-shirt');
+        // Derived from the design, size and colour.
+        yield $this->nameField()->hideOnForm();
+        yield $this->sizeField()->setColumns(3);
+        yield $this->colorField()->setColumns(3);
+    }
+
+    /**
+     * One row per size in the merch form.
+     */
+    protected function configureEmbeddedFields(string $pageName): iterable
+    {
+        yield $this->sizeField()->setColumns(2);
+        yield $this->colorField()->setColumns(3);
+        yield $this->priceField()->setColumns(2);
+        yield $this->stockField()->setColumns(2);
+        yield $this->publishedField($pageName)->setHelp('')->setColumns(3);
+    }
+
+    private function sizeField(): ChoiceField
+    {
+        return ChoiceField::new('size', 'Taille')
             ->setChoices(MerchSize::cases())
-            ->setFormTypeOption('choice_label', static fn (MerchSize $size): string => $size->label())
-            ->setColumns(3);
-        yield TextField::new('color', 'Couleur')
-            ->setColumns(3);
+            ->setFormTypeOption('choice_label', static fn (MerchSize $size): string => $size->label());
+    }
+
+    private function colorField(): TextField
+    {
+        return TextField::new('color', 'Couleur')->setFormTypeOption('attr.placeholder', 'noir, écru…');
     }
 }

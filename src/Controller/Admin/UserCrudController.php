@@ -11,8 +11,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
@@ -47,20 +49,43 @@ class UserCrudController extends AbstractCrudController
             ->add(Crud::PAGE_INDEX, Action::DETAIL);
     }
 
+    /**
+     * Editing is short (identity, access): fieldsets. The detail page adds what the account
+     * holds — orders, addresses — in tabs.
+     */
     public function configureFields(string $pageName): iterable
     {
-        yield EmailField::new('email', 'E-mail');
-        yield TextField::new('firstname', 'Prénom');
-        yield TextField::new('lastname', 'Nom');
+        $detail = Crud::PAGE_DETAIL === $pageName;
+
+        yield $detail ? FormField::addTab('Compte', 'fa fa-user') : FormField::addFieldset('Identité', 'fa fa-user');
+        yield TextField::new('firstname', 'Prénom')->setColumns(6);
+        yield TextField::new('lastname', 'Nom')->setColumns(6);
+        yield EmailField::new('email', 'E-mail')->setColumns(6);
+        yield DateTimeField::new('created_at', 'Inscrit le')
+            ->hideOnForm();
+
+        if (!$detail) {
+            yield FormField::addFieldset('Accès', 'fa fa-key');
+        }
         yield ChoiceField::new('roles', 'Rôles')
             ->setChoices(['Client' => 'ROLE_USER', 'Administrateur' => 'ROLE_ADMIN'])
             ->allowMultipleChoices()
             ->renderExpanded()
             ->renderAsBadges(['ROLE_ADMIN' => 'danger', 'ROLE_USER' => 'secondary'])
-            ->setHelp('Un administrateur a accès à tout le back office.');
-        yield DateTimeField::new('created_at', 'Inscrit le')
-            ->hideOnForm();
+            ->setHelp('Un administrateur a accès à tout le back office. Le mot de passe se change uniquement via « Mot de passe oublié ».')
+            ->setColumns(6);
+
+        if ($detail) {
+            yield FormField::addTab('Commandes', 'fa fa-receipt')
+                ->setBadge(static fn (?User $user): ?int => $user?->getOrders()->count() ?: null);
+        }
         yield AssociationField::new('orders', 'Commandes')
             ->hideOnForm();
+
+        if ($detail) {
+            yield FormField::addTab('Adresses', 'fa fa-location-dot');
+            yield CollectionField::new('addresses', false)
+                ->setTemplatePath('admin/field/addresses.html.twig');
+        }
     }
 }

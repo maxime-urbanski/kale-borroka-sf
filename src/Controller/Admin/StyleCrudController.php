@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Entity\Style;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
@@ -28,6 +29,11 @@ class StyleCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('name')->setLabel('Style');
+        yield TextField::new('name')
+            ->setLabel('Style')
+            ->setHelp('Punk, Oi!, Street punk… Un style peut aussi se créer depuis le formulaire album.')
+            ->setColumns(6);
+        yield AssociationField::new('albums', 'Albums')
+            ->hideOnForm();
     }
 }
