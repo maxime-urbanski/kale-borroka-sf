@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Catalog\Command\DuplicateArticle;
+use App\Controller\Admin\Trait\RemovesOrphanImagesTrait;
 use App\Entity\Article;
 use App\Enum\ItemCondition;
 use App\Messenger\CommandBusInterface;
+use App\Repository\ImageRepository;
 use App\Service\ShopSettingsProviderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
@@ -20,6 +22,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
@@ -31,8 +35,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * What every sellable article shares in the back office: thumbnail, stock badge, price,
- * the "Dupliquer" action, and protection against deleting an article that has been ordered.
+ * What every sellable article shares in the back office: the Fiche / Vente / Visuels tabs,
+ * thumbnail and stock badge in lists, the "Dupliquer" action, and protection against
+ * deleting an article that has been ordered.
  *
  * @template TArticle of Article
  *
@@ -40,17 +45,48 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class AbstractArticleCrudController extends AbstractCrudController
 {
+    use RemovesOrphanImagesTrait;
+
     public function __construct(
         private readonly ShopSettingsProviderInterface $shopSettingsProvider,
     ) {
     }
 
     /**
-     * Fields specific to the subclass, shown between the name and the SKU.
+     * Content of the "Fiche" tab: what the article is (name included, see nameField()).
      *
      * @return iterable<FieldInterface>
      */
     abstract protected function configureSpecificFields(string $pageName): iterable;
+
+    /**
+     * Compact rows used when the article is an entry of another form (releases in an
+     * album, variants in a merch). Nested tabs would be unusable there.
+     *
+     * @return iterable<FieldInterface>
+     */
+    protected function configureEmbeddedFields(string $pageName): iterable
+    {
+        return $this->configureSpecificFields($pageName);
+    }
+
+    protected function isEmbedded(string $pageName): bool
+    {
+        return false;
+    }
+
+    /**
+     * Shown in the "Visuels" tab: where the pictures come from when the article has none.
+     */
+    protected function fallbackPicturesLabel(): string
+    {
+        return 'Sans photo propre, aucun visuel n\'est affiché.';
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(parent::getSubscribedServices(), [ImageRepository::class]);
+    }
 
     public function configureCrud(Crud $crud): Crud
     {
@@ -86,38 +122,94 @@ abstract class AbstractArticleCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        if ($this->isEmbedded($pageName)) {
+            yield from $this->configureEmbeddedFields($pageName);
+
+            return;
+        }
+
+        // List only.
         yield ImageField::new('coverImageName', 'Visuel')
             ->setBasePath('/upload/albums')
             ->setSortable(false)
             ->onlyOnIndex();
-        yield TextField::new('name', 'Nom')
-            ->setColumns(6);
 
+        yield FormField::addTab('Fiche', 'fa fa-tag');
         yield from $this->configureSpecificFields($pageName);
 
-        yield ChoiceField::new('itemCondition', 'État')
-            ->setChoices(ItemCondition::cases())
-            ->setFormTypeOption('choice_label', static fn (ItemCondition $condition): string => $condition->label())
-            ->setColumns(3)
-            ->hideOnIndex();
-        yield TextField::new('sku', 'SKU')
-            ->setHelp('Laisser vide pour le générer.')
-            ->setRequired(false)
-            ->setColumns(3)
-            ->hideOnIndex();
-        yield TextField::new('gtin', 'EAN / UPC')
-            ->setColumns(3)
-            ->hideOnIndex();
-        yield IntegerField::new('stock', 'Stock')
+        yield FormField::addTab('Vente', 'fa fa-euro-sign');
+        yield FormField::addFieldset('Prix & stock', 'fa fa-coins');
+        yield $this->priceField()->setColumns(3);
+        yield $this->stockField()->setColumns(3);
+        yield $this->conditionField()->setColumns(3)->hideOnIndex();
+        yield $this->publishedField($pageName)->setColumns(3);
+        yield FormField::addFieldset('Références', 'fa fa-barcode')
+            ->setHelp('Utiles pour la caisse, l\'inventaire et les moteurs de recherche.');
+        yield $this->skuField()->setColumns(6)->hideOnIndex();
+        yield $this->gtinField()->setColumns(6)->hideOnIndex();
+
+        yield FormField::addTab('Visuels', 'fa fa-image')
+            ->setBadge(static fn (?Article $article): ?int => $article?->getImages()->count() ?: null)
+            ->onlyOnForms();
+        yield CollectionField::new('images')
+            ->setLabel(false)
+            ->setHelp('Photos propres à cet article, la plus petite position en premier. '.$this->fallbackPicturesLabel())
+            ->useEntryCrudForm(ImageCrudController::class, ImageCrudController::PAGE_EMBEDDED_NEW, ImageCrudController::PAGE_EMBEDDED_EDIT)
+            ->setFormTypeOption('by_reference', false)
+            ->setColumns(12)
+            ->onlyOnForms();
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $removed = $this->removedImages($entityInstance->getImages());
+        parent::updateEntity($entityManager, $entityInstance);
+        $this->deleteOrphanImages($entityManager, $removed);
+    }
+
+    protected function nameField(): TextField
+    {
+        return TextField::new('name', 'Nom');
+    }
+
+    protected function priceField(): MoneyField
+    {
+        return MoneyField::new('price', 'Prix')->setCurrency('EUR');
+    }
+
+    protected function stockField(): IntegerField
+    {
+        return IntegerField::new('stock', 'Stock')
             ->setTemplatePath('admin/field/stock_badge.html.twig')
             // Read once per request here rather than once per row in the template.
-            ->setCustomOption('lowStockThreshold', $this->shopSettingsProvider->get()->getLowStockThreshold())
-            ->setColumns(3);
-        yield MoneyField::new('price', 'Prix')
-            ->setCurrency('EUR')
-            ->setColumns(3);
-        yield BooleanField::new('published', 'Publié')
-            ->renderAsSwitch(Crud::PAGE_INDEX !== $pageName);
+            ->setCustomOption('lowStockThreshold', $this->shopSettingsProvider->get()->getLowStockThreshold());
+    }
+
+    protected function conditionField(): ChoiceField
+    {
+        return ChoiceField::new('itemCondition', 'État')
+            ->setChoices(ItemCondition::cases())
+            ->setFormTypeOption('choice_label', static fn (ItemCondition $condition): string => $condition->label());
+    }
+
+    protected function publishedField(string $pageName): BooleanField
+    {
+        return BooleanField::new('published', 'Publié')
+            ->renderAsSwitch(Crud::PAGE_INDEX !== $pageName)
+            ->setHelp(Crud::PAGE_INDEX === $pageName ? '' : 'Non publié : invisible sur le site.');
+    }
+
+    protected function skuField(): TextField
+    {
+        return TextField::new('sku', 'SKU')
+            ->setHelp('Référence interne. Laisser vide pour la générer.')
+            ->setRequired(false);
+    }
+
+    protected function gtinField(): TextField
+    {
+        return TextField::new('gtin', 'Code-barres (EAN / UPC)')
+            ->setHelp('Les chiffres sous le code-barres, 8 à 14.');
     }
 
     /**

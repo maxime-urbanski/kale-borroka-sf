@@ -70,8 +70,14 @@ class Album
     #[Assert\Valid]
     private Collection $releases;
 
-    /** @var Collection<int, Image> */
-    #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'album')]
+    /**
+     * Uploaded from the album form ("Visuels" tab), hence the cascade. The first is the cover.
+     *
+     * @var Collection<int, Image>
+     */
+    #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'album', cascade: ['persist'])]
+    #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
+    #[Assert\Valid]
     private Collection $images;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -326,7 +332,7 @@ class Album
 
     public function getCoverImageName(): ?string
     {
-        return ($this->images->first() ?: null)?->getImageName();
+        return Image::first($this->images)?->getImageName();
     }
 
     public function getKbrProductionId(): ?string

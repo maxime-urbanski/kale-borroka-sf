@@ -1,0 +1,8 @@
+<address class="mb-0">
+    <strong>{{ address.name }}</strong>
+    {% if address.isMainAddress %}<span class="badge badge-success ms-1">Principale</span>{% endif %}<br>
+    {{ address.address }}<br>
+    {% if address.complementAddress %}{{ address.complementAddress }}<br>{% endif %}
+    {{ address.zipcode }} {{ address.city }}<br>
+    {{ address.country }}
+</address>

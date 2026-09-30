@@ -30,7 +30,7 @@
                         {% for social in socialNetworks %}
                                 <div class="d-flex flex-column align-items-center {% if not loop.first %}ms-3{% endif %}">
                                     <a href="{{ social.url }}" target="_blank">
-                                        <img src="{{ asset(social.file ) }}" alt="{{ social.name }}" width="40"
+                                        <img src="{{ social.file ? vich_uploader_asset(social.file) }}" alt="{{ social.name }}" width="40"
                                              class="rounded-circle social-icon">
                                     </a>
                                     <p class="mb-0 fs-6">

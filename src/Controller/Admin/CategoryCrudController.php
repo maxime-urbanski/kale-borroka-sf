@@ -29,7 +29,9 @@ class CategoryCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('name', 'Nom');
-        yield AssociationField::new('parent', 'Catégorie parente');
+        yield TextField::new('name', 'Nom')->setColumns(6);
+        yield AssociationField::new('parent', 'Catégorie parente')
+            ->setHelp('Vide pour une catégorie principale : « Textile », puis « T-shirts » dedans.')
+            ->setColumns(6);
     }
 }

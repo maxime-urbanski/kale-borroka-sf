@@ -22,6 +22,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
@@ -127,11 +128,20 @@ class OrderCrudController extends AbstractCrudController
             ->add(DateTimeFilter::new('created_at', 'Passée le'));
     }
 
+    /**
+     * Detail page in three tabs: the order and its status, what was bought, where it goes.
+     * The list only shows what is needed to pick an order.
+     */
     public function configureFields(string $pageName): iterable
     {
+        yield FormField::addTab('Commande', 'fa fa-receipt');
+        yield FormField::addColumn(6);
         yield TextField::new('reference', 'Référence');
         yield DateTimeField::new('created_at', 'Passée le');
         yield AssociationField::new('buyer', 'Client');
+        yield MoneyField::new('totalPrice', 'Total')
+            ->setCurrency('EUR');
+        yield FormField::addColumn(6);
         yield ChoiceField::new('status', 'Statut')
             ->setChoices(OrderStatus::cases())
             ->setFormTypeOption('choice_label', static fn (OrderStatus $status): string => $status->label())
@@ -146,20 +156,30 @@ class OrderCrudController extends AbstractCrudController
             ]);
         yield ChoiceField::new('paymentStatus', 'Paiement')
             ->setChoices(PaymentStatus::cases())
-            ->setFormTypeOption('choice_label', static fn (PaymentStatus $status): string => $status->label());
-        yield MoneyField::new('totalPrice', 'Total')
-            ->setCurrency('EUR');
-        yield AssociationField::new('delivery', 'Livraison')
-            ->hideOnIndex();
+            ->setFormTypeOption('choice_label', static fn (PaymentStatus $status): string => $status->label())
+            ->renderAsBadges([
+                PaymentStatus::AWAITING->value => 'warning',
+                PaymentStatus::PAID->value => 'success',
+                PaymentStatus::FAILED->value => 'danger',
+                PaymentStatus::REFUNDED->value => 'secondary',
+            ]);
         yield AssociationField::new('payment', 'Mode de paiement')
-            ->hideOnIndex();
-        yield AssociationField::new('address', 'Adresse')
             ->hideOnIndex();
         yield DateTimeField::new('paidAt', 'Payée le')
             ->hideOnIndex();
-        yield CollectionField::new('orderDetails', 'Articles')
+
+        yield FormField::addTab('Articles', 'fa fa-box')
+            ->setBadge(static fn (?Order $order): ?int => $order?->getOrderDetails()->count() ?: null);
+        yield CollectionField::new('orderDetails', false)
             ->setTemplatePath('admin/field/order_lines.html.twig')
             ->onlyOnDetail();
+
+        yield FormField::addTab('Livraison', 'fa fa-truck');
+        yield AssociationField::new('delivery', 'Transporteur')
+            ->hideOnIndex();
+        yield AssociationField::new('address', 'Adresse')
+            ->setTemplatePath('admin/field/address.html.twig')
+            ->hideOnIndex();
     }
 
     /**

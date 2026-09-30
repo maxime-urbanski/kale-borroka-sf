@@ -54,12 +54,19 @@ class AdminSmokeTest extends WebTestCase
             'admin_merch_edit' => \App\Entity\Merch::class,
             'admin_album_edit' => \App\Entity\Album::class,
             'admin_user_edit' => \App\Entity\User::class,
+            'admin_artist_edit' => \App\Entity\Artist::class,
+            'admin_label_edit' => \App\Entity\Label::class,
         ] as $route => $class) {
             $entity = $doctrine->getRepository($class)->findOneBy([]);
             self::assertNotNull($entity);
 
             $client->request('GET', $container->get('router')->generate($route, ['entityId' => $entity->getId()]));
             self::assertResponseIsSuccessful($route);
+
+            // Detail pages have their own layout (tabs, detail-only fields).
+            $detail = str_replace('_edit', '_detail', $route);
+            $client->request('GET', $container->get('router')->generate($detail, ['entityId' => $entity->getId()]));
+            self::assertResponseIsSuccessful($detail);
         }
     }
 }

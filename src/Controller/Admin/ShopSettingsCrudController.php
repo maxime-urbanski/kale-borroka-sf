@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -71,11 +72,17 @@ class ShopSettingsCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        yield FormField::addFieldset('Stock', 'fa fa-boxes-stacked');
         yield IntegerField::new('lowStockThreshold', 'Seuil de stock critique')
-            ->setHelp('À ce stock ou en dessous, un article est signalé en orange dans les listes et le tableau de bord.');
+            ->setHelp('À ce stock ou en dessous, un article est signalé en orange dans les listes et le tableau de bord.')
+            ->setColumns(4);
+        yield FormField::addFieldset('Livraison', 'fa fa-truck');
         yield MoneyField::new('freeShippingThreshold', 'Livraison offerte dès')
             ->setCurrency('EUR')
-            ->setHelp('Laisser vide : jamais offerte.');
-        yield EmailField::new('contactEmail', 'E-mail de contact');
+            ->setHelp('Laisser vide : jamais offerte.')
+            ->setColumns(4);
+        yield FormField::addFieldset('Contact', 'fa fa-envelope');
+        yield EmailField::new('contactEmail', 'E-mail de contact')
+            ->setColumns(6);
     }
 }
