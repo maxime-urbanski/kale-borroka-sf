@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
+use App\Routing\PageMatcher;
 use App\Service\BreadcrumbService;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\Stub;
@@ -49,7 +50,7 @@ class BreadcrumbServiceTest extends KernelTestCase
         $requestStack = self::mockRequestStack(self::BREADCRUMB_URI);
         $router = self::mockRouterMatch();
 
-        $breadcrumbService = new BreadcrumbService($requestStack, $router);
+        $breadcrumbService = new BreadcrumbService($requestStack, new PageMatcher($router));
         $breadcrumbWithLastNameItem = $breadcrumbService->breadcrumb(
             self::BREADCRUMB_LAST_ITEM_NAME
         );
@@ -65,7 +66,7 @@ class BreadcrumbServiceTest extends KernelTestCase
         $requestStack = self::mockRequestStack(self::BREADCRUMB_URI);
         $router = self::mockRouterMatch();
 
-        $breadcrumbService = new BreadcrumbService($requestStack, $router);
+        $breadcrumbService = new BreadcrumbService($requestStack, new PageMatcher($router));
         $breadcrumbWithLastNameItem = $breadcrumbService->breadcrumb();
 
         self::assertNotSame(
@@ -126,7 +127,7 @@ class BreadcrumbServiceTest extends KernelTestCase
         $requestStack = self::mockRequestStack($uri);
         $router = self::mockRouterMatch();
 
-        $breadcrumbService = new BreadcrumbService($requestStack, $router);
+        $breadcrumbService = new BreadcrumbService($requestStack, new PageMatcher($router));
 
         self::assertNotEmpty($breadcrumbService->breadcrumb());
         self::assertCount(

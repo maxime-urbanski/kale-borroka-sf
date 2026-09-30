@@ -91,8 +91,7 @@ class ArticleDetailsController
         $addToCartForm->handleRequest($request);
 
         // The form posts its CSRF token here: add to the cart, then back to the article page.
-        // An invalid post redirects too: rendering during a POST would break the breadcrumb,
-        // whose router->match() on the parent GET routes fails with the POST method.
+        // An invalid post redirects too (post/redirect/get): a reload never posts again.
         if ($addToCartForm->isSubmitted()) {
             $session = $request->getSession();
             $valid = $addToCartForm->isValid();

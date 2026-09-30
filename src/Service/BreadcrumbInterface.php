@@ -5,7 +5,7 @@ namespace App\Service;
 interface BreadcrumbInterface
 {
     /**
-     * @return array<int, array{name: string, path: string, paramater: array<mixed>}>
+     * @return list<array{name: string, path: string, parameters: array<string, mixed>}>
      */
     public function breadcrumb(?string $lastItemName = null): array;
 }
