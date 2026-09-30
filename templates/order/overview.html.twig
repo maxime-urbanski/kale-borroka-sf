@@ -11,6 +11,11 @@
                 <li>{{ line.quantity }} × {{ line.productName }} — {{ (line.price / 100)|format_currency('EUR') }}</li>
             {% endfor %}
         </ul>
+        {% if order.shippingAddress %}
+            <h5>Livraison</h5>
+            <address>{{ order.shippingAddress|nl2br }}</address>
+        {% endif %}
+        <p class="mb-1">Livraison : {{ order.shippingPrice ? (order.shippingPrice / 100)|format_currency('EUR') : 'offerte' }}</p>
         <p class="fw-bolder">Total : {{ (order.totalPrice / 100)|format_currency('EUR') }}</p>
     </div>
 {% endblock %}

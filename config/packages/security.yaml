@@ -6,9 +6,9 @@ security:
     providers:
         # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
+            # No `property`: UserRepository::loadUserByIdentifier() normalises the e-mail.
             entity:
                 class: App\Entity\User
-                property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/

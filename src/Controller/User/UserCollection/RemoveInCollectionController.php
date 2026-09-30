@@ -8,6 +8,7 @@ use App\Entity\Article;
 use App\Entity\User;
 use App\Repository\UserCollectionItemsRepository;
 use App\Repository\UserCollectionRepository;
+use App\Security\ActionCsrfToken;
 use App\Service\RefererInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
@@ -33,7 +34,7 @@ class RemoveInCollectionController
         path: '/collection/remove/{productId}',
         name: 'app_collection_remove',
         requirements: ['productId' => Requirement::DIGITS],
-        methods: [Request::METHOD_GET]
+        methods: [Request::METHOD_POST]
     )]
     public function __invoke(
         #[CurrentUser]
@@ -45,7 +46,12 @@ class RemoveInCollectionController
         UserCollectionRepository $userCollectionRepository,
         UserCollectionItemsRepository $userCollectionItemsRepository,
         Request $request,
+        ActionCsrfToken $actionCsrfToken,
     ): RedirectResponse {
+        if (!$actionCsrfToken->isValid($request, ActionCsrfToken::COLLECTION)) {
+            return new RedirectResponse($referer->getReferer());
+        }
+
         $currentUserCollection = $userCollectionRepository->getUserCollection($user)->getOneOrNullResult();
 
         $currentItemToRemove = $userCollectionItemsRepository->getUserCollectionItem($article, $currentUserCollection);

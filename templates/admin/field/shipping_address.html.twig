@@ -1,6 +1,6 @@
 {# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
 {% if field.value %}
-    {% include 'admin/field/_address.html.twig' with {address: field.value} only %}
+    <address class="mb-0">{{ field.value|nl2br }}</address>
 {% else %}
     <span class="badge badge-secondary">Aucune</span>
 {% endif %}

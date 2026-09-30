@@ -12,6 +12,7 @@ use App\Order\Exception\InsufficientStockException;
 use App\Order\Exception\InvalidOrderException;
 use App\Repository\AddressRepository;
 use App\Repository\ArticleRepository;
+use App\Service\ShopSettingsProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Workflow\Exception\NotEnabledTransitionException;
 
@@ -43,7 +44,10 @@ class OrderLifecycleTest extends KernelTestCase
 
         self::assertSame(OrderStatus::PENDING, $order->getStatus());
         self::assertSame(PaymentStatus::AWAITING, $order->getPaymentStatus());
-        self::assertSame(3000, $order->getTotalPrice());
+        $shipping = (int) $order->getDelivery()?->getPrice();
+        self::assertGreaterThan(0, $shipping, 'the fixture transporters charge shipping');
+        self::assertSame($shipping, $order->getShippingPrice());
+        self::assertSame(3000 + $shipping, $order->getTotalPrice());
         self::assertSame([2, 1], $order->getOrderDetails()->map(fn ($line) => $line->getQuantity())->getValues());
 
         $line = $order->getOrderDetails()->first();
@@ -53,6 +57,21 @@ class OrderLifecycleTest extends KernelTestCase
 
         self::assertSame(5, $this->stockOf($first));
         self::assertSame(1, $this->stockOf($second));
+    }
+
+    public function testShippingIsFreeFromTheThreshold(): void
+    {
+        [$release] = $this->releasesWithStock(5);
+        self::getContainer()->get(ShopSettingsProviderInterface::class)->get()->setFreeShippingThreshold(2000);
+        $this->entityManager()->flush();
+
+        $below = $this->placeOrder($this->user(self::CUSTOMER), [$release->getId() => 1]);
+        self::assertSame(1000 + $below->getShippingPrice(), $below->getTotalPrice());
+        self::assertGreaterThan(0, $below->getShippingPrice());
+
+        $atThreshold = $this->placeOrder($this->user(self::CUSTOMER), [$release->getId() => 2]);
+        self::assertSame(0, $atThreshold->getShippingPrice());
+        self::assertSame(2000, $atThreshold->getTotalPrice());
     }
 
     public function testUnpublishedArticlesAreLeftOut(): void
@@ -82,6 +101,33 @@ class OrderLifecycleTest extends KernelTestCase
 
         $this->expectException(InvalidOrderException::class);
         $this->placeOrder($this->user(self::CUSTOMER), [$release->getId() => 1], (int) $otherAddress?->getId());
+    }
+
+    public function testTheOrderKeepsTheAddressAsItWasAtCheckout(): void
+    {
+        [$release] = $this->releasesWithStock(5);
+        $order = $this->placeOrder($this->user(self::CUSTOMER), [$release->getId() => 1]);
+        $address = $order->getAddress();
+        self::assertNotNull($address);
+        $snapshot = (string) $address;
+        self::assertSame($snapshot, $order->getShippingAddress());
+
+        $address->setCity('Ailleurs');
+        $this->entityManager()->flush();
+        $this->entityManager()->refresh($order);
+        self::assertSame($snapshot, $order->getShippingAddress());
+
+        // Deleting an address used by an order no longer fails on the foreign key
+        // (DeleteUserAddressController unsets the default address first, as here).
+        $buyer = $this->user(self::CUSTOMER);
+        if ($buyer->getDefaultAddress() === $address) {
+            $buyer->setDefaultAddress(null);
+        }
+        $this->entityManager()->remove($address);
+        $this->entityManager()->flush();
+        $this->entityManager()->refresh($order);
+        self::assertNull($order->getAddress());
+        self::assertSame($snapshot, $order->getShippingAddress());
     }
 
     public function testPayingTakesTheItemsOutOfStock(): void

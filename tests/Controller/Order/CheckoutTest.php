@@ -35,7 +35,10 @@ class CheckoutTest extends WebTestCase
         [$release] = $this->releasesWithStock(4);
         $this->client->loginUser($this->user('test@test.fr'));
 
-        $this->client->request('GET', \sprintf('/cart/add/%d?quantity=2', $release->getId()));
+        $crawler = $this->client->request('GET', \sprintf('/catalog/%s/%s', $release->getSupportType()?->value, $release->getSlug()));
+        $this->client->submit($crawler->filter('form[name="add_to_cart_with_quantity"]')->form([
+            'add_to_cart_with_quantity[quantity]' => '2',
+        ]));
         $crawler = $this->client->request('GET', '/order/delivery');
         self::assertResponseIsSuccessful();
 

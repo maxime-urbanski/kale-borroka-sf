@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
 use App\Entity\User;
+use App\Entity\UserCollection;
+use App\Entity\Wishlist;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -19,9 +23,12 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 )]
 class CreateAdminCommand extends Command
 {
+    private const int MIN_PASSWORD_LENGTH = 12;
+    private const int PASSWORD_ATTEMPTS = 2;
+
     public function __construct(
         private readonly UserRepository $userRepository,
-        private UserPasswordHasherInterface $passwordHasher,
+        private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
@@ -36,66 +43,77 @@ class CreateAdminCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $email = $input->getArgument('email');
+        $email = (string) ($input->getArgument('email') ?: $io->ask('Merci de renseigner l\'adresse email.', 'admin@kbr.com'));
 
-        if (!$email) {
-            $emailValue = $io->ask('Merci de renseigner l\'adresse email.', 'admin@kbr.com');
-            $input->setArgument('email', $emailValue);
+        $existingUser = $this->userRepository->findOneByEmail($email);
+
+        if (null === $existingUser) {
+            return $this->createAdmin($io, $email);
         }
 
-        $finalEmail = $input->getArgument('email');
+        if (\in_array('ROLE_ADMIN', $existingUser->getRoles(), true)) {
+            $io->success('L\'utilisateur '.$existingUser->getEmail().' est déjà un administrateur.');
 
-        $existingUser = $this->userRepository->findOneBy(['email' => $finalEmail]);
-
-        if (!$existingUser) {
-            $newUser = new User();
-            $password = $this->getValidPassword($io);
-            $newUser->setEmail($finalEmail);
-            $newUser->setPassword(
-                $this->passwordHasher->hashPassword($newUser, $password)
-            );
-            $newUser->setRoles(['ROLE_ADMIN']);
-
-            $this->entityManager->persist($newUser);
-
-            $io->success('Administrateur créé. Vous pouvez utiliser l\'email et le mot de passe pour vous connecter.');
-        } else {
-            $existingUserRole = $existingUser->getRoles();
-
-            if (!in_array('ROLE_ADMIN', $existingUserRole)) {
-                $addAdminRole = $io->ask('Passer l\'utilisateur '.$existingUser->getEmail().' en tant qu\'administrateur ?', 'yes');
-                if ('no' === $addAdminRole) {
-                    $io->warning('Rôle inchangé !');
-
-                    return Command::FAILURE;
-                }
-                $existingUser->setRoles(['ROLE_ADMIN']);
-                $this->entityManager->persist($existingUser);
-                $io->success('L\'utilisateur '.$existingUser->getEmail().' est maintenant un administrateur.');
-            } else {
-                $io->success('L\'utilisateur '.$existingUser->getEmail().' est déjà un administrateur.');
-            }
+            return Command::SUCCESS;
         }
 
+        if (!$io->confirm('Passer l\'utilisateur '.$existingUser->getEmail().' en tant qu\'administrateur ?')) {
+            $io->warning('Rôle inchangé !');
+
+            return Command::FAILURE;
+        }
+
+        $existingUser->setRoles(['ROLE_ADMIN']);
         $this->entityManager->flush();
+        $io->success('L\'utilisateur '.$existingUser->getEmail().' est maintenant un administrateur.');
 
         return Command::SUCCESS;
     }
 
-    private function getValidPassword(SymfonyStyle $io): string|int
+    private function createAdmin(SymfonyStyle $io, string $email): int
     {
-        for ($attempt = 1; $attempt <= 2; ++$attempt) {
-            $password = $io->ask('Créer un mot de passe.');
-            $confirmPassword = $io->ask('Confirmer le mot de passe.');
+        $password = $this->askPassword($io);
 
-            if ($password === $confirmPassword && !empty($password)) {
-                return $password;
-            }
-            $io->error('Les mots de passe sont différents ou vides. Réessai '.$attempt.'/'. 2);
+        if (null === $password) {
+            $io->error('Trop de tentatives infructueuses. Abandon : aucun compte créé.');
+
+            return Command::FAILURE;
         }
 
-        $io->error('Trop de tentatives infructueuses. Abandon.');
+        $user = (new User())
+            ->setEmail($email)
+            ->setFirstname((string) $io->ask('Prénom', 'Admin'))
+            ->setLastname((string) $io->ask('Nom', 'Kale Borroka'))
+            ->setRoles(['ROLE_ADMIN']);
+        $user->setPassword($this->passwordHasher->hashPassword($user, $password));
 
-        return Command::FAILURE;
+        // Same as RegistrationController: every account has a wishlist and a collection.
+        $this->entityManager->persist($user);
+        $this->entityManager->persist((new Wishlist())->setUser($user));
+        $this->entityManager->persist((new UserCollection())->setUser($user));
+        $this->entityManager->flush();
+
+        $io->success('Administrateur créé. Vous pouvez utiliser l\'email et le mot de passe pour vous connecter.');
+
+        return Command::SUCCESS;
+    }
+
+    /**
+     * Null when every attempt failed: the caller must stop, never fall back to a default.
+     */
+    private function askPassword(SymfonyStyle $io): ?string
+    {
+        for ($attempt = 1; $attempt <= self::PASSWORD_ATTEMPTS; ++$attempt) {
+            $password = (string) $io->askHidden('Créer un mot de passe ('.self::MIN_PASSWORD_LENGTH.' caractères minimum).');
+            $confirmPassword = (string) $io->askHidden('Confirmer le mot de passe.');
+
+            if ($password === $confirmPassword && mb_strlen($password) >= self::MIN_PASSWORD_LENGTH) {
+                return $password;
+            }
+
+            $io->error(\sprintf('Les mots de passe sont différents ou trop courts. Essai %d/%d.', $attempt, self::PASSWORD_ATTEMPTS));
+        }
+
+        return null;
     }
 }

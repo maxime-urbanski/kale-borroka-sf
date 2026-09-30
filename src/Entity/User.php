@@ -77,9 +77,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setEmail(string $email): static
     {
-        $this->email = $email;
+        $this->email = self::normalizeEmail($email);
 
         return $this;
+    }
+
+    /**
+     * E-mails are stored lowercased and trimmed, so that `Victim@x` cannot open a second
+     * account next to `victim@x`: look users up with UserRepository::findOneByEmail().
+     */
+    public static function normalizeEmail(string $email): string
+    {
+        return mb_strtolower(trim($email));
     }
 
     /**

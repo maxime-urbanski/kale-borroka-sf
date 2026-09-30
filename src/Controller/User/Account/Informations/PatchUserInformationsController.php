@@ -92,7 +92,7 @@ final readonly class PatchUserInformationsController
      */
     private function emailIsFree(UserRepository $userRepository, User $user, FormInterface $form): bool
     {
-        $owner = $userRepository->findOneBy(['email' => $form->getData()?->email]);
+        $owner = $userRepository->findOneByEmail((string) $form->getData()?->email);
 
         if (null === $owner || $owner === $user) {
             return true;

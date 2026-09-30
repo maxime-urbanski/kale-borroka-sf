@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\SocialNetworkRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: SocialNetworkRepository::class)]
@@ -18,7 +19,9 @@ class SocialNetwork
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    /** Rendered as a footer link: http(s) only, a `javascript:` URL would run on click. */
     #[ORM\Column(length: 255)]
+    #[Assert\Url(protocols: ['http', 'https'], requireTld: true)]
     private ?string $url = null;
 
     #[ORM\Column]

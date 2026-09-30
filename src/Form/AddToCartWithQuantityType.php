@@ -49,8 +49,8 @@ class AddToCartWithQuantityType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => AddToCartWithQuantity::class,
-            'method' => 'GET',
-            'csrf_protection' => false,
+            // Changes the cart: POST with the form's CSRF token, never a link another site can trigger.
+            'method' => 'POST',
         ]);
     }
 }

@@ -44,7 +44,8 @@ class DashboardTest extends WebTestCase
         self::assertStringContainsString((string) $pending->getReference(), $orders);
         self::assertStringContainsString((string) $paid->getReference(), $orders);
         self::assertStringContainsString((string) $lowStock->getName(), $crawler->filter('[data-test="low-stock"]')->text());
-        self::assertStringContainsString('10,00', $crawler->filter('[data-test="revenue-day"]')->text());
+        // What the buyer paid: the line and the shipping.
+        self::assertStringContainsString(self::euros((int) $paid->getTotalPrice()), $crawler->filter('[data-test="revenue-day"]')->text());
     }
 
     public function testFinancesPageAndExport(): void
@@ -66,7 +67,7 @@ class DashboardTest extends WebTestCase
         $csv = (string) $this->client->getInternalResponse()->getContent();
         self::assertStringStartsWith("\u{FEFF}\"Date de paiement\";", $csv);
         self::assertStringContainsString($order->getReference().';test@test.fr;', $csv);
-        self::assertStringContainsString(';10,00', $csv);
+        self::assertStringContainsString(';'.self::euros((int) $order->getTotalPrice()), $csv);
     }
 
     public function testUnknownYearFallsBackToTheCurrentOne(): void
@@ -75,5 +76,10 @@ class DashboardTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
         self::assertStringContainsString((new \DateTimeImmutable())->format('Y'), $crawler->filter('h1')->text());
+    }
+
+    private static function euros(int $cents): string
+    {
+        return number_format($cents / 100, 2, ',', '');
     }
 }

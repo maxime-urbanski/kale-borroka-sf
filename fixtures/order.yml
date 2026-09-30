@@ -3,7 +3,8 @@
 #
 # Everything mirrors what PlaceOrderHandler and the `order` workflow would have produced:
 # - lines copy the article name, SKU and price, and line price = unit price × quantity;
-# - the total is the sum of the lines (shipping is not included);
+# - no shipping cost (shippingPrice stays 0, as for orders placed before it was charged):
+#   the total is the sum of the lines;
 # - the buyer is always the address owner;
 # - status, payment status and payment date are consistent with OrderWorkflowSubscriber.
 #
@@ -43,6 +44,7 @@ App\Entity\Order:
     order_template (template):
         buyer: '@user_customer_<(($current - 1) % 8 + 1)>'
         address: '@address_customer_<(($current - 1) % 8 + 1)>'
+        shippingAddress: '<((string) $address)>'
         delivery: '50%? @colissimo : @mondial_relay'
         payment: '70%? @stripe : @paypal'
         # Orders 1..7 date from the last week, the others are spread over ~13 months.

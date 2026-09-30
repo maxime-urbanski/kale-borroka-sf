@@ -204,7 +204,8 @@ class AccountSecurityTest extends WebTestCase
 
     private function addressOf(string $email): Address
     {
-        $address = self::getContainer()->get(AddressRepository::class)->findOneBy(['users' => $this->user($email)]);
+        // Ordered: an UPDATE moves the row, so an unordered query may return another address.
+        $address = self::getContainer()->get(AddressRepository::class)->findOneBy(['users' => $this->user($email)], ['id' => 'ASC']);
         self::assertInstanceOf(Address::class, $address);
 
         return $address;

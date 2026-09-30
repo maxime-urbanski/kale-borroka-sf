@@ -27,7 +27,8 @@ class MediaObject
     private ?int $id = null;
 
     #[Vich\UploadableField(mapping: 'media_object', fileNameProperty: 'filename')]
-    #[Assert\File(maxSize: '8M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'image/gif'], mimeTypesMessage: 'Image uniquement (JPEG, PNG, WebP, SVG, GIF).')]
+    // No SVG: it can carry scripts, and /media is served from the shop's own origin.
+    #[Assert\File(maxSize: '8M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'], mimeTypesMessage: 'Image uniquement (JPEG, PNG, WebP, GIF).')]
     private ?File $file = null;
 
     #[ORM\Column(length: 255)]

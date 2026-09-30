@@ -8,6 +8,7 @@ use App\Entity\Article;
 use App\Entity\User;
 use App\Repository\WishlistItemRepository;
 use App\Repository\WishlistRepository;
+use App\Security\ActionCsrfToken;
 use App\Service\RefererInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -31,7 +32,7 @@ class RemoveToWishlistController
         path: '/wishlist/remove/{productId}',
         name: 'app_wishlist_remove',
         requirements: ['productId' => Requirement::DIGITS],
-        methods: [Request::METHOD_GET]
+        methods: [Request::METHOD_POST]
     )]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function __invoke(
@@ -43,7 +44,12 @@ class RemoveToWishlistController
         WishlistRepository $wishlistRepository,
         WishlistItemRepository $wishlistItemRepository,
         Request $request,
+        ActionCsrfToken $actionCsrfToken,
     ): RedirectResponse {
+        if (!$actionCsrfToken->isValid($request, ActionCsrfToken::WISHLIST)) {
+            return new RedirectResponse($referer->getReferer());
+        }
+
         /** @var Session $session */
         $session = $request->getSession();
 

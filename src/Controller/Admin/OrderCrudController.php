@@ -24,6 +24,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
@@ -141,6 +142,9 @@ class OrderCrudController extends AbstractCrudController
         yield AssociationField::new('buyer', 'Client');
         yield MoneyField::new('totalPrice', 'Total')
             ->setCurrency('EUR');
+        yield MoneyField::new('shippingPrice', 'Dont livraison')
+            ->setCurrency('EUR')
+            ->hideOnIndex();
         yield FormField::addColumn(6);
         yield ChoiceField::new('status', 'Statut')
             ->setChoices(OrderStatus::cases())
@@ -177,8 +181,8 @@ class OrderCrudController extends AbstractCrudController
         yield FormField::addTab('Livraison', 'fa fa-truck');
         yield AssociationField::new('delivery', 'Transporteur')
             ->hideOnIndex();
-        yield AssociationField::new('address', 'Adresse')
-            ->setTemplatePath('admin/field/address.html.twig')
+        yield TextareaField::new('shippingAddress', 'Adresse de livraison')
+            ->setTemplatePath('admin/field/shipping_address.html.twig')
             ->hideOnIndex();
     }
 

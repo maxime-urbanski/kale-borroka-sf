@@ -15,7 +15,8 @@
             {% for article in cart %}
                 <tr>
                     <th>
-                        {% include 'partials/_obfuscation_link.html.twig' with {
+                        {% include 'partials/_post_button.html.twig' with {
+                            token_id: 'cart',
                             url: path('app_cart_remove', {id: article.product.id}),
                             class: "btn btn-outline-danger btn-sm rounded-circle",
                             icon: " bi-trash"
@@ -43,7 +44,8 @@
                     <th class="text-center  fw-light">{{ (article.product.price / 100) |format_currency('EUR') }}</th>
                     <th class="text-center fw-light">
                         <div class="input-group justify-content-center">
-                            {% include 'partials/_obfuscation_link.html.twig' with {
+                            {% include 'partials/_post_button.html.twig' with {
+                                token_id: 'cart',
                                 url: path('app_cart_remove_quantity', {id: article.product.id}),
                                 class: "btn btn-outline-danger",
                                 icon: " bi-dash-lg"
@@ -52,7 +54,8 @@
                                 <input type="text" class="form-control flex-grow-0" value="{{ article.quantity }}"
                                        style="width: 50px">
                             </label>
-                            {% include 'partials/_obfuscation_link.html.twig' with {
+                            {% include 'partials/_post_button.html.twig' with {
+                                token_id: 'cart',
                                 url: path('app_cart_add_quantity', {id: article.product.id}),
                                 class: "btn btn-outline-success",
                                 icon: " bi-plus-lg"

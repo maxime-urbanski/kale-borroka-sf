@@ -12,10 +12,14 @@ use App\Repository\ArticleRepository;
 use App\Repository\PaymentRepository;
 use App\Repository\TransporterRepository;
 use App\Repository\UserRepository;
+use App\Service\ShopSettingsProviderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
+ * The total includes shipping: the transporter's price, or nothing from the free shipping
+ * threshold of the shop settings.
+ *
  * Stock is not taken here but when the order is paid (OrderWorkflowSubscriber): a pending
  * order only records what the customer asked for, clamped to what was available.
  */
@@ -29,6 +33,7 @@ readonly class PlaceOrderHandler
         private TransporterRepository $transporterRepository,
         private PaymentRepository $paymentRepository,
         private ArticleRepository $articleRepository,
+        private ShopSettingsProviderInterface $shopSettings,
     ) {
     }
 
@@ -48,6 +53,7 @@ readonly class PlaceOrderHandler
             ->setBuyer($buyer)
             ->setCreatedAt(new \DateTimeImmutable())
             ->setAddress($address)
+            ->setShippingAddress((string) $address)
             ->setDelivery($this->transporterRepository->find($command->transporterId)
                 ?? throw new InvalidOrderException('Mode de livraison invalide.'))
             ->setPayment($this->paymentRepository->find($command->paymentId)
@@ -79,7 +85,13 @@ readonly class PlaceOrderHandler
             throw new InvalidOrderException('Aucun article de votre panier n\'est disponible.');
         }
 
-        $order->setTotalPrice($total);
+        // Free shipping from the threshold of the shop settings, on the lines' total.
+        $freeShippingThreshold = $this->shopSettings->get()->getFreeShippingThreshold();
+        $shipping = null !== $freeShippingThreshold && $total >= $freeShippingThreshold
+            ? 0
+            : (int) $order->getDelivery()?->getPrice();
+
+        $order->setShippingPrice($shipping)->setTotalPrice($total + $shipping);
         $this->entityManager->persist($order);
 
         return (string) $order->getReference();
