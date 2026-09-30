@@ -8,13 +8,19 @@
 {% endblock %}
 
 {% block form %}
+    {# Outside the login form: forms cannot be nested. #}
+    {% if app.user %}
+        <div class="mb-3">
+            Connecté en tant que {{ app.user.userIdentifier }},
+            {% include 'partials/_post_button.html.twig' with {
+                url: path('app_logout'),
+                token_id: 'logout',
+                class: 'btn btn-link p-0 align-baseline',
+                text_btn: 'se déconnecter'
+            } %}
+        </div>
+    {% endif %}
     <form method="post">
-        {% if app.user %}
-            <div class="mb-3">
-                You are logged in as {{ app.user.userIdentifier }}, <a
-                    href="{{ path('app_logout') }}">Logout</a>
-            </div>
-        {% endif %}
 
         <div class="form-floating mb-3">
             <input type="email" value="{{ last_username }}" name="email" id="inputEmail"
