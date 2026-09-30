@@ -18,6 +18,7 @@ readonly class RefererService implements RefererInterface
     public function __construct(
         private RequestStack $requestStack,
         private RouterInterface $router,
+        private PageMatcher $pageMatcher,
     ) {
     }
 
@@ -28,7 +29,7 @@ readonly class RefererService implements RefererInterface
 
         // The actions calling this are POST: PageMatcher matches the page as the GET it was.
         // A path that is none of our pages goes home.
-        $routeMatch = (new PageMatcher($this->router))->match($refererPathInfo);
+        $routeMatch = $this->pageMatcher->match($refererPathInfo);
 
         if (null === $routeMatch) {
             return $this->router->generate('app_homepage');
@@ -36,7 +37,7 @@ readonly class RefererService implements RefererInterface
 
         $routeName = $routeMatch['_route'] ?? 'app_homepage';
 
-        unset($routeMatch['_route'], $routeMatch['_controller']);
+        unset($routeMatch['_route']);
 
         return $this->router->generate($routeName, $routeMatch);
     }

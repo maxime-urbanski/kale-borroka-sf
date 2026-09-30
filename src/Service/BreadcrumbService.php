@@ -6,58 +6,65 @@ namespace App\Service;
 
 use App\Routing\PageMatcher;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\RouterInterface;
 
+/**
+ * Builds the breadcrumb from the current path: one entry per prefix that is a page, the
+ * page-N segments of the pagination skipped. A prefix that is no page is left out.
+ */
 readonly class BreadcrumbService implements BreadcrumbInterface
 {
     public function __construct(
         private RequestStack $requestStack,
-        private RouterInterface $router,
+        private PageMatcher $pageMatcher,
     ) {
     }
 
     /**
-     * @return array<int, array{name: string, path: string, paramater: array<mixed>}>
+     * @param string|null $lastItemName name of the current page (an article's title), if it is in the trail
+     *
+     * @return list<array{name: string, path: string, parameters: array<string, mixed>}>
      */
     public function breadcrumb(?string $lastItemName = null): array
     {
-        /** @var array<int, array{name: string, path: string, paramater: array<mixed>}> $breadcrumb */
-        $breadcrumb = [];
-        $url = $this->requestStack->getMainRequest()?->getRequestUri();
-        $splitUrl = \explode('/', $url);
-        $uri = '';
+        // The path only: a "/" in the query string is no segment.
+        $pathInfo = (string) $this->requestStack->getMainRequest()?->getPathInfo();
 
-        foreach ($splitUrl as $value) {
-            if (!str_starts_with($value, 'page-')) {
-                $uri .= $value.'/';
-                $uriWithoutLastSlash = strlen($uri) > 1 ? rtrim($uri, '/') : $uri;
-
-                if (str_contains($uriWithoutLastSlash, '?')) {
-                    $uri = \explode('?', $uriWithoutLastSlash);
-                    $uriWithoutLastSlash = $uri[0];
-                }
-
-                // As a GET, whatever the current request's method; a prefix that is no page
-                // (e.g. a segment of a longer route) is skipped.
-                $match = (new PageMatcher($this->router))->match($uriWithoutLastSlash);
-
-                if (null !== $match) {
-                    unset($match['_controller']);
-                    $routeName = $match['_route'];
-                    unset($match['_route']);
-                    $uriExplode = \explode('/', $uriWithoutLastSlash);
-                    $breadcrumb[] = [
-                        'name' => '' === \end($uriExplode) ? 'Home' : \end($uriExplode),
-                        'path' => $routeName,
-                        'parameters' => $match,
-                    ];
-                }
+        $prefixes = ['/'];
+        $prefix = '';
+        foreach (explode('/', $pathInfo) as $segment) {
+            if ('' === $segment || str_starts_with($segment, 'page-')) {
+                continue;
             }
+
+            $prefix .= '/'.$segment;
+            $prefixes[] = $prefix;
         }
 
-        if ($lastItemName) {
-            $totalItem = \count($breadcrumb);
-            $breadcrumb[$totalItem - 1]['name'] = $lastItemName;
+        $breadcrumb = [];
+        $currentPageIsLast = false;
+
+        foreach ($prefixes as $path) {
+            $match = $this->pageMatcher->match($path);
+
+            if (null === $match) {
+                continue;
+            }
+
+            $route = (string) $match['_route'];
+            unset($match['_route']);
+
+            $breadcrumb[] = [
+                'name' => '/' === $path ? 'Home' : basename($path),
+                'path' => $route,
+                'parameters' => $match,
+            ];
+            $currentPageIsLast = $path === end($prefixes);
+        }
+
+        // Only the current page gets the name: never a parent left last because the
+        // current path is no page.
+        if (null !== $lastItemName && $currentPageIsLast) {
+            $breadcrumb[\count($breadcrumb) - 1]['name'] = $lastItemName;
         }
 
         return $breadcrumb;
