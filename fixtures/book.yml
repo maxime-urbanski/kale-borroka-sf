@@ -1,6 +1,7 @@
 App\Entity\Book:
     book_{1..6}:
         name: '<sentence(3)>'
+        sku: 'KBR-BOOK-<current()>'
         bookType: '<(App\Enum\BookType::cases()[$current % 2])>'
         author: '<name()>'
         numberOfPages: '<numberBetween(20,300)>'

@@ -1,29 +1,39 @@
+# Each user has exactly one main address (isMainAddress), which is also its
+# User::$defaultAddress.
 App\Entity\Address:
-    
     home:
         name: Ma maison
         address: 10 rue AFA
         complement_address: ETG 3
         city: Baiona
-        zipcode: 64161
+        zipcode: 64100
         country: Euskal Herria
         is_main_address: true
         users: '@user_admin'
-    
+
     work:
         name: Coworking
         address: 100 rue Floride
         city: Baiona
-        zipcode: 64161
+        zipcode: 64100
         country: Euskal Herria
         is_main_address: false
         users: '@user_admin'
-    
+
+    home_user:
+        name: Chez moi
+        address: 5 rue des Tonneliers
+        city: Donostia
+        zipcode: 20003
+        country: Euskal Herria
+        is_main_address: true
+        users: '@user_user'
+
     work_user:
         name: Coworking234
         address: 100 rue Floride
         city: Baiona
-        zipcode: 64161
+        zipcode: 64100
         country: Euskal Herria
         is_main_address: false
         users: '@user_user'

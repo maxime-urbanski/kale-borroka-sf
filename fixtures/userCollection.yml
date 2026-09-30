@@ -1,0 +1,23 @@
+App\Entity\UserCollection:
+    admin_collection:
+        user: '@user_admin'
+
+    user_collection:
+        user: '@user_user'
+
+# Composite primary key (collection, article): an article appears at most once per collection.
+App\Entity\UserCollectionItems:
+    admin_collection_item_qm:
+        collection: '@admin_collection'
+        article: '@release_QuartierMaudit'
+        added_at: '<(new \DateTimeImmutable(sprintf("-%d days", random_int(0, 730))))>'
+
+    admin_collection_item_{1..3}:
+        collection: '@admin_collection'
+        article: '@release_<current()>'
+        added_at: '<(new \DateTimeImmutable(sprintf("-%d days", random_int(0, 730))))>'
+
+    user_collection_item_{1..2}:
+        collection: '@user_collection'
+        article: '@release_<(20 + $current)>'
+        added_at: '<(new \DateTimeImmutable(sprintf("-%d days", random_int(0, 730))))>'

@@ -7,11 +7,13 @@ App\Entity\Merch:
 
     merch_kbr_tote:
         name: 'Tote bag Kale Borroka'
+        category: '@category_textile'
         published: true
 
 App\Entity\MerchVariant:
     merch_brixton_tee_{s, m, l, xl}:
         merch: '@merch_brixton_tee'
+        sku: 'KBR-TEE-BC-<(strtoupper($current))>'
         size: '<(App\Enum\MerchSize::from($current))>'
         color: 'noir'
         stock: '<numberBetween(0,10)>'
@@ -20,6 +22,7 @@ App\Entity\MerchVariant:
 
     merch_kbr_tote_one:
         merch: '@merch_kbr_tote'
+        sku: 'KBR-TOTE'
         size: '<(App\Enum\MerchSize::ONE_SIZE)>'
         color: 'écru'
         stock: 25

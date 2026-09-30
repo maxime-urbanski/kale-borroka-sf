@@ -1,19 +1,29 @@
+# Generated albums, releases and songs are linked by index so that every link stays
+# consistent: album_N belongs to artist_((N - 1) % 25 + 1), is pressed as release_N
+# and has songs song_((N - 1) * 10 + 1) to song_(N * 10), credited to the same artist.
 App\Entity\Album:
     album_template (template):
-        artist: '@artist_*'
-        name: '<name()>'
-        note: '<paragraph(150)>'
-        kbr_production: '<boolean()>'
-        date_release: '<datetimeBetween("-20 days", "now")>'
-        styles: ['@style_*']
-        labels: ['@label_*']
-    
+        name: '<catchPhrase()>'
+        note: '<paragraph(15)>'
+        kbr_production: false
+        date_release: '<datetimeBetween("-20 years", "now")>'
+        styles: '<numberBetween(1, 2)>x @style_*'
+
     Quartier_Maudit (extends album_template):
         artist: '@Brixton_Cats'
         name: 'Quartier Maudit'
-        kbr_production: false
         styles: ['@style_punk', '@style_streetpunk']
         labels: ['@FireAndFlames', '@RudysBack']
 
-    album_{1..50} (extends album_template):
+    # KBR productions: pressed by Kale Borroka, numbered like AlbumEventSubscriber does.
+    album_{1..10} (extends album_template):
+        artist: '@artist_<(($current - 1) % 25 + 1)>'
         releaseType: '<(App\Enum\AlbumReleaseType::cases()[$current % 6])>'
+        kbr_production: true
+        kbrProductionId: 'KBR#<(sprintf("%03d", $current))>'
+        labels: ['@KaleBorroka']
+
+    album_{11..50} (extends album_template):
+        artist: '@artist_<(($current - 1) % 25 + 1)>'
+        releaseType: '<(App\Enum\AlbumReleaseType::cases()[$current % 6])>'
+        labels: ['@label_<current()>']
