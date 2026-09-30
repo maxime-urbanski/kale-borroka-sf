@@ -1,0 +1,19 @@
+# One row of each so that their back-office detail and edit pages are rendered by
+# EveryPageRendersTest. No file behind the names: kept out of the footer and off the
+# albums, so the shop shows no broken image.
+App\Entity\MediaObject:
+    media_instagram:
+        filename: instagram.png
+
+App\Entity\SocialNetwork:
+    social_instagram:
+        name: Instagram
+        url: https://www.instagram.com/kaleborroka
+        isPublish: true
+        inFooter: false
+        file: '@media_instagram'
+
+App\Entity\Image:
+    image_unused:
+        imageName: pochette.jpg
+        position: 0
