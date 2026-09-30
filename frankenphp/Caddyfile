@@ -20,6 +20,16 @@
 
 	{$CADDY_SERVER_EXTRA_DIRECTIVES}
 
+	# Security headers for every response. No Content-Security-Policy for pages yet: the
+	# templates and EasyAdmin still use inline scripts and styles.
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options SAMEORIGIN
+		Referrer-Policy strict-origin-when-cross-origin
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+		-Server
+	}
+
 	# Uploaded SVGs (older than the upload rule refusing them) must not run scripts when
 	# opened directly: they are served from the shop's own origin.
 	@uploadedSvg path_regexp (?i)^/(upload|media)/.*\.svg$

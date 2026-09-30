@@ -7,7 +7,9 @@ services:
       context: .
       target: frankenphp_prod
     environment:
-      APP_SECRET: ${APP_SECRET}
+      # Required: no fallback in prod. `docker compose up` stops if they are not set.
+      APP_SECRET: ${APP_SECRET:?APP_SECRET must be set in production}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in production}@database:5432/${POSTGRES_DB:-app}?serverVersion=${POSTGRES_VERSION:-15}&charset=${POSTGRES_CHARSET:-utf8}
       # Browser cache for static files, see frankenphp/Caddyfile. Only files that exist on
       # disk: a 404 falling through to PHP must not be cached. HTML pages keep Symfony's
       # headers (private as soon as the session starts, which the cart and navbar do).
@@ -26,12 +28,18 @@ services:
           file
         }
         header @uploads Cache-Control "public, max-age=604800"
+        # HTTPS only from now on (prod only: it would pin localhost in dev).
+        header Strict-Transport-Security "max-age=31536000"
     volumes:
       # VichUploader destinations, see config/packages/vich_uploader.yaml.
       # Without these, uploaded files are lost when the container is replaced.
       - uploads:/app/public/upload
       - media:/app/public/media
       - invoices:/app/private/invoices
+
+  database:
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in production}
 
 volumes:
   uploads:
