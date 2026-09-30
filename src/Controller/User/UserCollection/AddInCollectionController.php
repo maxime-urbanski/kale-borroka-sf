@@ -61,21 +61,24 @@ class AddInCollectionController
         /** @var Session $session */
         $session = $request->getSession();
 
-        try {
-            $userCollectionItems = new UserCollectionItems();
-            $userCollectionItems->setCollection($userCollection);
-            $userCollectionItems->setArticle($article);
-            $userCollectionItems->setAddedAt(
-                new \DateTimeImmutable('now',
-                    new \DateTimeZone('Europe/Paris')
-                )
-            );
+        // Already added from another tab: the composite key would refuse a second row.
+        if (null !== $userCollection && null !== $userCollectionItemsRepository->getUserCollectionItem($article, $userCollection)) {
+            $session->getFlashbag()->add('danger', 'Cet article est déjà dans ta collection.');
 
-            $userCollectionItemsRepository->save($userCollectionItems, true);
-            $session->getFlashbag()->add('success', $article->getName().' a bien été ajouté à ta collection');
-        } catch (NotFoundHttpException $exception) {
-            $session->getFlashbag()->add('danger', $exception);
+            return new RedirectResponse($referer->getReferer());
         }
+
+        $userCollectionItems = new UserCollectionItems();
+        $userCollectionItems->setCollection($userCollection);
+        $userCollectionItems->setArticle($article);
+        $userCollectionItems->setAddedAt(
+            new \DateTimeImmutable('now',
+                new \DateTimeZone('Europe/Paris')
+            )
+        );
+
+        $userCollectionItemsRepository->save($userCollectionItems, true);
+        $session->getFlashbag()->add('success', $article->getName().' a bien été ajouté à ta collection');
 
         return new RedirectResponse($referer->getReferer());
     }

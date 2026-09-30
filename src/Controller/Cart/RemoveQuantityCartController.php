@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
@@ -38,12 +37,8 @@ class RemoveQuantityCartController
         /** @var Session $session */
         $session = $request->getSession();
 
-        try {
-            $cart->removeQuantity($id);
-            $session->getFlashBag()->add('success', 'Quantité mise à jour');
-        } catch (NotFoundHttpException $exception) {
-            $session->getFlashBag()->add('danger', $exception);
-        }
+        $cart->removeQuantity($id);
+        $session->getFlashBag()->add('success', 'Quantité mise à jour');
 
         return new RedirectResponse($referer->getReferer());
     }

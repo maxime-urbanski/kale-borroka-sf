@@ -42,7 +42,7 @@ class UserCollectionItemsRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function getUserCollectionItem(Article $article, UserCollection $userCollection): UserCollectionItems
+    public function getUserCollectionItem(Article $article, UserCollection $userCollection): ?UserCollectionItems
     {
         return $this->createQueryBuilder('uci')
             ->where('uci.article = :article')

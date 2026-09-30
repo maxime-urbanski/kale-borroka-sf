@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -53,29 +52,23 @@ class RemoveToWishlistController
         /** @var Session $session */
         $session = $request->getSession();
 
-        try {
-            $userWishlist = $wishlistRepository->getUserWishlist($user);
+        $wishlistItem = $wishlistItemRepository->findOneBy([
+            'wishlist' => $wishlistRepository->getUserWishlist($user)->getOneOrNullResult(),
+            'article' => $article,
+        ]);
 
-            $wishlistItem = $wishlistItemRepository->findOneBy([
-                'wishlist' => $userWishlist->getOneOrNullResult(),
-                'article' => $article,
-            ]);
+        // Already removed from another tab.
+        if (null === $wishlistItem) {
+            $session->getFlashBag()->add('danger', 'Cet article n\'est pas dans ta wantlist.');
 
-            if (null === $wishlistItem) {
-                throw new NotFoundHttpException();
-            }
-
-            $wishlistItemRepository->remove($wishlistItem, true);
-            $session->getFlashBag()->add(
-                'success',
-                $article->getName().' à bien été supprimé de la wantlist'
-            );
-        } catch (NotFoundHttpException $exception) {
-            $session->getFlashBag()->add(
-                'danger',
-                $exception
-            );
+            return new RedirectResponse($referer->getReferer());
         }
+
+        $wishlistItemRepository->remove($wishlistItem, true);
+        $session->getFlashBag()->add(
+            'success',
+            $article->getName().' à bien été supprimé de la wantlist'
+        );
 
         return new RedirectResponse($referer->getReferer());
     }

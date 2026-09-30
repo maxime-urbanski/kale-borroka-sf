@@ -44,8 +44,9 @@ class AddToCartController
             $cart->addToCart($id, $choosenQuantity);
 
             $session->getFlashBag()->add('success', 'article ajouté au panier.');
-        } catch (NotFoundHttpException $exception) {
-            $session->getFlashBag()->add('error', $exception);
+        } catch (NotFoundHttpException) {
+            // Unpublished or deleted since the page was shown.
+            $session->getFlashBag()->add('danger', 'Cet article n\'est plus disponible.');
         }
 
         return new RedirectResponse($referer->getReferer());

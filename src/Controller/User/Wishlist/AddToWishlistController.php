@@ -55,28 +55,29 @@ class AddToWishlistController
         /** @var Session $session */
         $session = $request->getSession();
 
-        try {
-            $wishlistItem = new WishlistItem();
-            $wishlist = $wishlistRepository->findOneBy(['user' => $user]);
-            $wishlistItem->setWishlist($wishlist);
-            $wishlistItem->setArticle($article);
-            $wishlistItem->setAddedAt(
-                new \DateTimeImmutable('now',
-                    new \DateTimeZone('Europe/Paris'))
-            );
+        $wishlist = $wishlistRepository->findOneBy(['user' => $user]);
 
-            $wishlistItemRepository->save($wishlistItem, true);
+        // Already added from another tab: the composite key would refuse a second row.
+        if (null !== $wishlistItemRepository->findOneBy(['wishlist' => $wishlist, 'article' => $article])) {
+            $session->getFlashBag()->add('danger', 'Cet article est déjà dans ta wantlist.');
 
-            $session->getFlashBag()->add(
-                'success',
-                $article->getName().' à bien été ajouté à la wantlist'
-            );
-        } catch (NotFoundHttpException $exception) {
-            $session->getFlashBag()->add(
-                'danger',
-                $exception
-            );
+            return new RedirectResponse($referer->getReferer());
         }
+
+        $wishlistItem = new WishlistItem();
+        $wishlistItem->setWishlist($wishlist);
+        $wishlistItem->setArticle($article);
+        $wishlistItem->setAddedAt(
+            new \DateTimeImmutable('now',
+                new \DateTimeZone('Europe/Paris'))
+        );
+
+        $wishlistItemRepository->save($wishlistItem, true);
+
+        $session->getFlashBag()->add(
+            'success',
+            $article->getName().' à bien été ajouté à la wantlist'
+        );
 
         return new RedirectResponse($referer->getReferer());
     }

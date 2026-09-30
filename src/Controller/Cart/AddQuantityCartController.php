@@ -40,8 +40,9 @@ class AddQuantityCartController
         try {
             $cart->addQuantity($id);
             $session->getFlashBag()->add('success', 'Quantité mise à jour');
-        } catch (NotFoundHttpException $exception) {
-            $session->getFlashBag()->add('danger', $exception);
+        } catch (NotFoundHttpException) {
+            // Unpublished or deleted since the page was shown.
+            $session->getFlashBag()->add('danger', 'Cet article n\'est plus disponible.');
         }
 
         return new RedirectResponse($referer->getReferer());
