@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Cache;
 
+use App\Cache\EntityCacheInvalidator;
+use App\Entity\Image;
+use App\Entity\MediaObject;
+use App\Entity\Order;
 use App\Entity\Page;
 use App\Entity\Release;
 use App\Entity\Style;
@@ -66,6 +70,57 @@ class EntityCacheInvalidatorTest extends KernelTestCase
         $this->entityManager()->flush();
 
         self::assertFalse($this->isCached('album_fragment'));
+    }
+
+    public function testReplacingAPictureInvalidatesTheEntitiesShowingIt(): void
+    {
+        $image = (new Image())->setImageName('pochette.jpg');
+        $icon = (new MediaObject())->setFilename('icone.png');
+        $this->entityManager()->persist($image);
+        $this->entityManager()->persist($icon);
+        $this->entityManager()->flush();
+
+        // Only the Image row changes, as when an admin uploads a new cover.
+        $this->warm(['card_fragment' => 'article', 'album_fragment' => 'album', 'footer_fragment' => 'social_network']);
+        $image->setImageName('nouvelle-pochette.jpg');
+        $this->entityManager()->flush();
+
+        self::assertFalse($this->isCached('card_fragment'), 'Article::$images');
+        self::assertFalse($this->isCached('album_fragment'), 'Album::$images');
+        self::assertTrue($this->isCached('footer_fragment'));
+
+        $icon->setFilename('nouvelle-icone.png');
+        $this->entityManager()->flush();
+
+        self::assertFalse($this->isCached('footer_fragment'), 'SocialNetwork::$file');
+    }
+
+    public function testTagsNoFragmentUsesAreNotWritten(): void
+    {
+        $this->warm(['order_fragment' => 'order']);
+
+        $order = $this->entityManager()->getRepository(Order::class)->findOneBy([]);
+        self::assertInstanceOf(Order::class, $order);
+        $order->setReference('TEST-REF');
+        $this->entityManager()->flush();
+
+        self::assertTrue($this->isCached('order_fragment'));
+    }
+
+    public function testFlushInsideATransactionInvalidatesAgainOnTerminate(): void
+    {
+        // setUp() opened a transaction: the commit comes after the flush.
+        $page = $this->entityManager()->getRepository(Page::class)->findOneBy([]);
+        self::assertInstanceOf(Page::class, $page);
+        $page->setTitle('Nouveau titre');
+        $this->entityManager()->flush();
+
+        // A concurrent request caches the old page before the commit.
+        $this->warm(['page_fragment' => 'page']);
+
+        self::getContainer()->get(EntityCacheInvalidator::class)->onTerminate();
+
+        self::assertFalse($this->isCached('page_fragment'));
     }
 
     /**
