@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Smoke;
 
+use App\Entity\Article;
 use App\Entity\Order;
 use App\Entity\Page;
 use App\Entity\Release;
+use App\Enum\SupportType;
 use App\Tests\Order\OrderTestTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\Routing\Exception\ExceptionInterface as RoutingException;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -20,6 +24,9 @@ use Symfony\Component\Routing\RouterInterface;
  * of the shop pages. Each route parameter must be resolvable from the fixtures below: a
  * new route with a new parameter fails here until it is taught how to reach it, or
  * excluded with a reason.
+ *
+ * Every GET runs in its own savepoint, rolled back after it: one SQL error cannot abort
+ * the shared transaction and fail every page after it.
  */
 class EveryPageRendersTest extends WebTestCase
 {
@@ -29,12 +36,16 @@ class EveryPageRendersTest extends WebTestCase
     private const array EXCLUDED = [
         'app_logout' => 'logs the admin out halfway through (covered by ContentSecurityPolicyTest)',
         'app_reset_password' => 'needs a reset token (covered by the reset password flow)',
+        'admin_expense_invoice' => 'serves a stored file, 404 without one (covered by AdminFundsTest)',
     ];
 
     /** Route name suffixes not requested, with the reason. */
     private const array EXCLUDED_SUFFIXES = [
         '_autocomplete' => "EasyAdmin's JS endpoint: without the context it sends, EasyAdmin itself throws",
     ];
+
+    /** Flash shown when an action refused its CSRF token (ActionCsrfToken). */
+    private const string EXPIRED = 'La page a expiré';
 
     private ?KernelBrowser $client = null;
 
@@ -64,43 +75,71 @@ class EveryPageRendersTest extends WebTestCase
     }
 
     /**
-     * The action runs, then redirects back: a 500 there (#110) saved the change and still
-     * showed an error page.
+     * Each button runs with the article in the cart, then its redirect is followed: a 500
+     * there (#110) saved the change and still showed an error page. Buttons revealed by an
+     * earlier one ("Retirer de la wishlist" after "Ajouter") are submitted too.
      */
     public function testNoOneClickButtonFails(): void
     {
         $this->client->loginUser($this->user('test@test.fr'));
         [$release] = $this->releasesWithStock(5);
-        $article = \sprintf('/catalog/%s/%s', $release->getSupportType()?->value, $release->getSlug());
-        $this->client->submit($this->client->request('GET', $article)->filter('form[name="add_to_cart_with_quantity"]')->form());
+        $router = self::getContainer()->get(RouterInterface::class);
+        $article = $this->articleUri($release);
+        $pages = [$article, $router->generate('app_cart_index'), $router->generate('app_user_wishlist'), $router->generate('app_user_collection')];
 
         $errors = [];
-        $submitted = 0;
+        $done = [$router->generate('app_logout') => true];
 
-        foreach ([$article, '/cart', '/mon-compte/wishlist', '/mon-compte/collection', '/mon-compte/mes-adresses'] as $page) {
-            $crawler = $this->client->request('GET', $page);
+        foreach ($pages as $page) {
+            while (null !== $form = $this->nextButton($release, $page, array_keys($done))) {
+                $action = (string) parse_url($form->getUri(), \PHP_URL_PATH);
+                $done[$action] = true;
 
-            foreach ($crawler->filter('form[method="post"]')->each(static fn ($form) => $form) as $form) {
-                $action = (string) $form->attr('action');
-                $onlyToken = 0 === $form->filter('input:not([type="hidden"]), select, textarea')->count();
-
-                if ('' === $action || '/logout' === $action || !$onlyToken) {
-                    continue;
-                }
-
-                $this->client->request('GET', $page);
-                $this->client->submit($form->form());
-                ++$submitted;
+                $this->client->submit($form);
                 $status = $this->client->getResponse()->getStatusCode();
 
-                if ($status >= 500) {
-                    $errors[] = \sprintf('%s from %s: HTTP %d', $action, $page, $status);
+                if ($status >= 300 && $status < 400) {
+                    $this->client->followRedirect();
+                }
+
+                $final = $this->client->getResponse();
+
+                if ($status >= 500 || $final->getStatusCode() >= 500) {
+                    $errors[] = \sprintf('%s from %s: HTTP %d, then %d', $action, $page, $status, $final->getStatusCode());
+                } elseif (str_contains((string) $final->getContent(), self::EXPIRED)) {
+                    $errors[] = \sprintf('%s from %s: token refused', $action, $page);
                 }
             }
         }
 
-        self::assertGreaterThan(5, $submitted, 'the pages show one-click buttons');
+        // cart +, −, remove, empty; wishlist and collection add then remove.
+        self::assertGreaterThanOrEqual(8, \count($done) - 1, 'buttons submitted: '.implode(', ', array_keys($done)));
         self::assertSame([], $errors);
+    }
+
+    /**
+     * The first one-click button of the page not submitted yet, rendered with the article
+     * back in the cart so that each button acts on something.
+     *
+     * @param list<string> $done paths of the actions already submitted, or never to submit
+     */
+    private function nextButton(Release $release, string $page, array $done): ?Form
+    {
+        $this->client->submit($this->client->request('GET', $this->articleUri($release))->filter('form[name="add_to_cart_with_quantity"]')->form());
+        self::assertResponseRedirects();
+
+        $crawler = $this->client->request('GET', $page);
+
+        foreach ($crawler->filter('form[method="post"]')->each(static fn ($form) => $form) as $node) {
+            $action = (string) $node->attr('action');
+            $onlyToken = 0 === $node->filter('input:not([type="hidden"]), select, textarea')->count();
+
+            if ('' !== $action && $onlyToken && !\in_array($action, $done, true)) {
+                return $node->form();
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -109,17 +148,25 @@ class EveryPageRendersTest extends WebTestCase
     private function serverErrors(): array
     {
         $errors = [];
+        $connection = $this->entityManager()->getConnection();
 
         foreach ($this->getRoutes() as $name => $route) {
             try {
                 $uri = $this->uriOf($name, $route);
-            } catch (\LogicException $exception) {
+            } catch (\LogicException|RoutingException $exception) {
                 $errors[] = \sprintf('%s: %s', $name, $exception->getMessage());
 
                 continue;
             }
 
-            $this->client->request('GET', $uri);
+            $connection->createSavepoint('smoke');
+
+            try {
+                $this->client->request('GET', $uri);
+            } finally {
+                $connection->rollbackSavepoint('smoke');
+            }
+
             $status = $this->client->getResponse()->getStatusCode();
 
             if ($status >= 500) {
@@ -168,10 +215,12 @@ class EveryPageRendersTest extends WebTestCase
         return match (true) {
             'page' === $variable => 'page-1',
             'support' === $variable && 'app_catalog_show' === $routeName => (string) $this->release()->getSupportType()?->value,
-            'support' === $variable => 'lp',
+            'support' === $variable => SupportType::LP->value,
             'slug' === $variable && 'app_catalog_show' === $routeName => (string) $this->release()->getSlug(),
-            'slug' === $variable && 'app_page_show' === $routeName => (string) $this->entityManager()->getRepository(Page::class)->findOneBy(['published' => true])?->getSlug(),
-            'orderReference' === $variable => (string) $this->entityManager()->getRepository(Order::class)->findOneBy([])?->getReference(),
+            'slug' === $variable && 'app_page_show' === $routeName => (string) ($this->entityManager()->getRepository(Page::class)->findOneBy(['published' => true])?->getSlug()
+                ?? throw new \LogicException('no published Page in the fixtures')),
+            'orderReference' === $variable => (string) ($this->entityManager()->getRepository(Order::class)->findOneBy([])?->getReference()
+                ?? throw new \LogicException('no Order in the fixtures')),
             'entityId' === $variable => $this->firstIdOf($route),
             default => throw new \LogicException(\sprintf('no value for {%s}: add one to %s::valueOf() or exclude the route', $variable, self::class)),
         };
@@ -179,25 +228,34 @@ class EveryPageRendersTest extends WebTestCase
 
     private function release(): Release
     {
-        $release = $this->entityManager()->getRepository(Release::class)->findOneBy(['published' => true]);
-        self::assertInstanceOf(Release::class, $release);
+        return $this->entityManager()->getRepository(Release::class)->findOneBy(['published' => true])
+            ?? throw new \LogicException('no published Release in the fixtures');
+    }
 
-        return $release;
+    private function articleUri(Article $article): string
+    {
+        return self::getContainer()->get(RouterInterface::class)->generate('app_catalog_show', [
+            'support' => $article->getSupportType()?->value,
+            'slug' => $article->getSlug(),
+        ]);
     }
 
     /**
-     * EasyAdmin routes: the first row of the CRUD controller's entity, or a missing id.
+     * EasyAdmin routes: the first row of the CRUD controller's entity. An empty table
+     * fails: its detail and edit pages would otherwise answer 404 without being rendered.
      */
     private function firstIdOf(Route $route): int
     {
-        $crudController = explode('::', (string) $route->getDefault('_controller'))[0];
+        $crudController = (string) $route->getDefault('crudControllerFqcn');
 
         if (!is_a($crudController, CrudControllerInterface::class, true)) {
-            throw new \LogicException(\sprintf('{entityId} on %s, which is not a CRUD controller', $crudController));
+            throw new \LogicException(\sprintf('{entityId} on "%s", which is not a CRUD controller', $crudController));
         }
 
-        $entity = $this->entityManager()->getRepository($crudController::getEntityFqcn())->findOneBy([]);
+        $entityClass = $crudController::getEntityFqcn();
+        $entity = $this->entityManager()->getRepository($entityClass)->findOneBy([])
+            ?? throw new \LogicException(\sprintf('no %s in the fixtures: add one, its admin pages cannot be rendered', $entityClass));
 
-        return null === $entity ? 0 : (int) $this->entityManager()->getUnitOfWork()->getSingleIdentifierValue($entity);
+        return (int) $this->entityManager()->getUnitOfWork()->getSingleIdentifierValue($entity);
     }
 }
