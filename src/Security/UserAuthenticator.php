@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security;
 
+use App\Entity\User;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,7 +31,8 @@ class UserAuthenticator extends AbstractLoginFormAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $email = $request->request->get('email', '');
+        // Same form as stored (User::normalizeEmail()), also shown back as the last username.
+        $email = User::normalizeEmail((string) $request->request->get('email', ''));
 
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
 

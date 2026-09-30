@@ -17,6 +17,20 @@ security:
             lazy: true
             provider: app_user_provider
             custom_authenticator: App\Security\UserAuthenticator
+            # 5 failures per account and address within 15 minutes, then even the right
+            # password is refused until the window passes (and 25 per address, all
+            # accounts together). Symfony's limiter lowercases the username, so changing the
+            # case of the e-mail does not reset the count (LoginThrottlingTest). A successful
+            # login does not reset it either (Symfony's choice: otherwise logging into one's
+            # own account would wipe the per-address count), so failures stay counted until
+            # the window passes. The lock serialises parallel attempts, which could otherwise
+            # all read the count before any of them updates it. The client address is
+            # REMOTE_ADDR: behind a proxy, set SYMFONY_TRUSTED_PROXIES or every visitor shares
+            # the proxy's address.
+            login_throttling:
+                max_attempts: 5
+                interval: '15 minutes'
+                lock_factory: lock.factory
             # CSRF token required (partials/_post_button.html.twig, token_id 'logout'; EasyAdmin's
             # link puts it in the query string): a link or an image on another site must not
             # log the visitor out.
