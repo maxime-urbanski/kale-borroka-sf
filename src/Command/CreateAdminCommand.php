@@ -45,7 +45,7 @@ class CreateAdminCommand extends Command
 
         $finalEmail = $input->getArgument('email');
 
-        $existingUser = $this->userRepository->findOneBy(['email' => $finalEmail]);
+        $existingUser = $this->userRepository->findOneByEmail((string) $finalEmail);
 
         if (!$existingUser) {
             $newUser = new User();
