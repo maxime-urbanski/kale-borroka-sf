@@ -20,8 +20,8 @@
 
 	{$CADDY_SERVER_EXTRA_DIRECTIVES}
 
-	# Security headers for every response. No Content-Security-Policy for pages yet: the
-	# templates and EasyAdmin still use inline scripts and styles.
+	# Security headers for every response. The pages' Content-Security-Policy comes from
+	# Symfony (App\Security\ContentSecurityPolicy), which knows each page's script nonce.
 	header {
 		X-Content-Type-Options nosniff
 		X-Frame-Options SAMEORIGIN
