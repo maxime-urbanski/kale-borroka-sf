@@ -80,6 +80,40 @@ class CartActionsTest extends WebTestCase
         self::assertSame(0, $this->quantityInCart($release));
     }
 
+    public function testQuantityStaysBetweenOneAndTheStock(): void
+    {
+        [$release] = $this->releasesWithStock(5);
+
+        // Refused by the form: nothing in the cart.
+        foreach (['0', '-5'] as $quantity) {
+            $this->addFromTheArticlePage($release, (int) $quantity);
+            self::assertSame(0, $this->quantityInCart($release), $quantity);
+        }
+
+        $this->addFromTheArticlePage($release, 99);
+        self::assertSame(5, $this->quantityInCart($release), 'capped to the stock');
+
+        // Even straight to the cart action, which skips the form's validation.
+        $crawler = $this->client->request('GET', '/cart');
+        $token = (string) $crawler->filter(\sprintf('form[action="/cart/add_quantity/%d"] input[name="_token"]', $release->getId()))->attr('value');
+        $this->client->request('POST', \sprintf('/cart/remove/%d', $release->getId()), ['_token' => $token]);
+        $this->client->request('POST', \sprintf('/cart/add/%d', $release->getId()), ['_token' => $token, 'quantity' => '-5']);
+        self::assertSame(1, $this->quantityInCart($release));
+    }
+
+    public function testCartIsCappedWhenTheStockDrops(): void
+    {
+        [$release] = $this->releasesWithStock(5);
+        $this->addFromTheArticlePage($release, 4);
+
+        // Stock changes through SQL, as when StockManager takes it for a paid order.
+        $this->setStock($release, 2);
+        self::assertSame(2, $this->quantityInCart($release));
+
+        $this->setStock($release, 0);
+        self::assertSame(0, $this->quantityInCart($release), 'sold out: the line is dropped');
+    }
+
     public function testWishlistNeedsTheToken(): void
     {
         $user = $this->user('test@test.fr');
@@ -104,6 +138,11 @@ class CartActionsTest extends WebTestCase
         ]);
         $this->client->submit($form);
         self::assertResponseRedirects($this->articleUri($article), Response::HTTP_SEE_OTHER);
+    }
+
+    private function setStock(Article $article, int $stock): void
+    {
+        $this->entityManager()->getConnection()->executeStatement('UPDATE article SET stock = ? WHERE id = ?', [$stock, $article->getId()]);
     }
 
     private function quantityInCart(Article $article): int

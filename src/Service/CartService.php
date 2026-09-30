@@ -18,24 +18,28 @@ readonly class CartService implements CartInterface
     ) {
     }
 
+    /**
+     * Adds at least one item, never more than the stock: the quantity comes from the
+     * visitor and can be anything (0, negative, above the stock).
+     */
     public function addToCart(int $articleId, int $quantity = 1): void
     {
         $cart = $this->getSession()->get('cart', []);
         $article = $this->articleRepository->find($articleId);
 
-        if ($article?->isPublished()) {
-            if (empty($cart[$articleId])) {
-                $cart[$articleId] = $quantity;
-            } elseif ($article->getStock() > $cart[$articleId]) {
-                ++$cart[$articleId];
-            } else {
-                $cart[$articleId] = $article->getStock();
-            }
-
-            $this->getSession()->set('cart', $cart);
-        } else {
+        if (!$article?->isPublished()) {
             throw new NotFoundHttpException('Ooups une erreur est survenue.');
         }
+
+        $inCart = min(($cart[$articleId] ?? 0) + max(1, $quantity), max(0, (int) $article->getStock()));
+
+        if ($inCart > 0) {
+            $cart[$articleId] = $inCart;
+        } else {
+            unset($cart[$articleId]);
+        }
+
+        $this->getSession()->set('cart', $cart);
     }
 
     public function addQuantity(int $id): void
@@ -46,9 +50,14 @@ readonly class CartService implements CartInterface
     public function removeQuantity(int $id): void
     {
         $cart = $this->getSession()->get('cart', []);
+
+        if (!isset($cart[$id])) {
+            return;
+        }
+
         --$cart[$id];
 
-        if (0 === $cart[$id]) {
+        if ($cart[$id] <= 0) {
             unset($cart[$id]);
         }
 
@@ -89,9 +98,24 @@ readonly class CartService implements CartInterface
                 continue;
             }
 
+            // Sold since it was added: never more than the stock, and no empty line.
+            $available = min($quantity, max(0, (int) $article->getStock()));
+
+            if ($available <= 0) {
+                unset($cart[$id]);
+                $this->getSession()->set('cart', $cart);
+
+                continue;
+            }
+
+            if ($available !== $quantity) {
+                $cart[$id] = $available;
+                $this->getSession()->set('cart', $cart);
+            }
+
             $cartWithData[] = [
                 'product' => $article,
-                'quantity' => $quantity,
+                'quantity' => $available,
                 'quantityMaxAvailable' => $article->getStock(),
             ];
         }

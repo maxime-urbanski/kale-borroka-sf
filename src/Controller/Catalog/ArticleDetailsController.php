@@ -104,7 +104,7 @@ class ArticleDetailsController
             if ($session instanceof FlashBagAwareSessionInterface) {
                 $session->getFlashBag()->add(
                     $valid ? 'success' : 'danger',
-                    $valid ? 'article ajouté au panier.' : 'La page a expiré : rechargez-la et recommencez.',
+                    $valid ? 'article ajouté au panier.' : 'Article non ajouté : vérifiez la quantité, ou rechargez la page.',
                 );
             }
 
