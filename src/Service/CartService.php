@@ -93,56 +93,74 @@ readonly class CartService implements CartInterface
     }
 
     /**
+     * Sum of the quantities kept in the session, for the navbar: no query. Lines dropped or
+     * capped by getFullCart() (unpublished, sold out) are only corrected once the cart or
+     * delivery page is shown.
+     */
+    public function countItems(): int
+    {
+        return array_sum(array_map(intval(...), $this->getSession()->get('cart', [])));
+    }
+
+    /**
      * @return array<int, array{product: Article, quantity: int, quantityMaxAvailable: int}>
      */
     public function getFullCart(): array
     {
         $cart = $this->getSession()->get('cart', []);
+
+        if ([] === $cart) {
+            return [];
+        }
+
+        $articles = [];
+        foreach ($this->articleRepository->findForCart(array_keys($cart)) as $article) {
+            $articles[$article->getId()] = $article;
+        }
+
         $cartWithData = [];
+        $changed = false;
+
         foreach ($cart as $id => $quantity) {
-            $article = $this->articleRepository->find($id);
-
-            // Deleted or unpublished since it was added: drop it from the cart.
-            if (!$article?->isPublished()) {
-                unset($cart[$id]);
-                $this->getSession()->set('cart', $cart);
-
-                continue;
-            }
-
-            // Sold since it was added: never more than the stock, and no empty line.
-            $available = min($quantity, max(0, (int) $article->getStock()));
-
-            if ($available <= 0) {
-                unset($cart[$id]);
-                $this->getSession()->set('cart', $cart);
-
-                continue;
-            }
+            $article = $articles[$id] ?? null;
+            // Deleted, unpublished or sold since it was added: never more than the stock,
+            // and no empty line.
+            $available = $article?->isPublished() ? min($quantity, max(0, (int) $article->getStock())) : 0;
 
             if ($available !== $quantity) {
-                $cart[$id] = $available;
-                $this->getSession()->set('cart', $cart);
+                $changed = true;
             }
 
+            if (null === $article || $available <= 0) {
+                unset($cart[$id]);
+
+                continue;
+            }
+
+            $cart[$id] = $available;
             $cartWithData[] = [
                 'product' => $article,
                 'quantity' => $available,
-                'quantityMaxAvailable' => $article->getStock(),
+                'quantityMaxAvailable' => (int) $article->getStock(),
             ];
+        }
+
+        if ($changed) {
+            $this->getSession()->set('cart', $cart);
         }
 
         return $cartWithData;
     }
 
-    public function getTotal(): int
+    /**
+     * @param array<int, array{product: Article, quantity: int, quantityMaxAvailable: int}> $fullCart the lines of getFullCart(), whose prices come from the database
+     */
+    public function getTotal(array $fullCart): int
     {
         $totalPrice = 0;
-        $cart = $this->getFullCart();
 
-        foreach ($cart as $item) {
-            $totalItem = $item['product']->getPrice() * $item['quantity'];
-            $totalPrice += $totalItem;
+        foreach ($fullCart as $item) {
+            $totalPrice += (int) $item['product']->getPrice() * $item['quantity'];
         }
 
         return $totalPrice;

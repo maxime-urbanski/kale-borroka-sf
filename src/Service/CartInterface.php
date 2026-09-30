@@ -35,5 +35,13 @@ interface CartInterface
      */
     public function getFullCart(): array;
 
-    public function getTotal(): int;
+    /**
+     * Items in the cart as stored, for the navbar: no query.
+     */
+    public function countItems(): int;
+
+    /**
+     * @param array<int, array{product: Article, quantity: int, quantityMaxAvailable: int}> $fullCart the lines of getFullCart(), whose prices come from the database
+     */
+    public function getTotal(array $fullCart): int;
 }

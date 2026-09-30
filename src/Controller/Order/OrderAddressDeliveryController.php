@@ -31,11 +31,12 @@ class OrderAddressDeliveryController extends AbstractController
         $orderDeliveryDto = new OrderDeliveryDto();
         $form = $this->createForm(OrderAddressDeliveryPaymentFormType::class, $orderDeliveryDto, []);
         $form->handleRequest($request);
+        $cart = $cartService->getFullCart();
 
         if ($form->isSubmitted() && $form->isValid()) {
             $lines = [];
 
-            foreach ($cartService->getFullCart() as $item) {
+            foreach ($cart as $item) {
                 $lines[(int) $item['product']->getId()] = $item['quantity'];
             }
 
@@ -59,7 +60,7 @@ class OrderAddressDeliveryController extends AbstractController
         }
 
         return $this->render('order/delivery.html.twig', [
-            'cart' => $cartService->getFullCart(),
+            'cart' => $cart,
             'form' => $form->createView(),
         ]);
     }
