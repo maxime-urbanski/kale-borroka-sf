@@ -20,6 +20,11 @@
 
 	{$CADDY_SERVER_EXTRA_DIRECTIVES}
 
+	# Uploaded SVGs (older than the upload rule refusing them) must not run scripts when
+	# opened directly: they are served from the shop's own origin.
+	@uploadedSvg path_regexp (?i)^/(upload|media)/.*\.svg$
+	header @uploadedSvg Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; sandbox"
+
 	@phpRoute {
 		not file {path}
 	}
