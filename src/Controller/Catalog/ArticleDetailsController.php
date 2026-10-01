@@ -11,6 +11,7 @@ use App\Enum\SupportType;
 use App\Form\AddToCartWithQuantityType;
 use App\Repository\ArticleRepository;
 use App\Repository\ReleaseRepository;
+use App\Repository\SongRepository;
 use App\Repository\UserCollectionRepository;
 use App\Repository\WishlistRepository;
 use App\Service\BreadcrumbInterface;
@@ -52,6 +53,7 @@ class ArticleDetailsController
         string $slug,
         ArticleRepository $articleRepository,
         ReleaseRepository $releaseRepository,
+        SongRepository $songRepository,
         FormFactoryInterface $formInterface,
         Request $request,
         UrlGeneratorInterface $urlGenerator,
@@ -82,6 +84,8 @@ class ArticleDetailsController
         // Left unexecuted: the template caches the related sections and only runs them on a miss.
         $artistArticle = $article instanceof Release ? $releaseRepository->getReleasesWithSameArtist($article) : null;
         $articleWithSameStyle = $article instanceof Release ? $releaseRepository->getReleasesWithSameStyle($article) : null;
+        $album = $article instanceof Release ? $article->getAlbum() : null;
+        $tracklist = null === $album ? null : $songRepository->tracklistQuery($album);
 
         $userWishlist = null === $user ? null : $wishlistRepository->getUserWishlist($user)->getOneOrNullResult();
         $userCollection = null === $user ? null : $userCollectionRepository->getUserCollection($user)->getOneOrNullResult();
@@ -95,12 +99,15 @@ class ArticleDetailsController
         if ($addToCartForm->isSubmitted()) {
             $session = $request->getSession();
             $valid = $addToCartForm->isValid();
+            $before = $cart->quantityOf((int) $article->getId());
             $inCart = $valid ? $cart->addToCart((int) $article->getId(), $addToCartData->quantity) : 0;
 
             if ($session instanceof FlashBagAwareSessionInterface) {
                 [$type, $message] = match (true) {
                     !$valid => ['danger', 'Article non ajouté : vérifiez la quantité, ou rechargez la page.'],
                     0 === $inCart => ['danger', 'Cet article est épuisé.'],
+                    // Capped to the stock: the cart already held all of it.
+                    $inCart <= $before => ['warning', 'Tout le stock disponible est déjà dans votre panier.'],
                     default => ['success', 'Article ajouté au panier.'],
                 };
                 $session->getFlashBag()->add($type, $message);
@@ -114,6 +121,7 @@ class ArticleDetailsController
             'breadcrumb' => $breadcrumb->breadcrumb(lastItemName: $article->getName()),
             'articleByArtist' => $artistArticle,
             'articleSameStyle' => $articleWithSameStyle,
+            'tracklist' => $tracklist,
             'form' => $addToCartForm->createView(),
             'userWishlist' => $userWishlist,
             'userCollection' => $userCollection,

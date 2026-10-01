@@ -205,6 +205,14 @@ abstract class Article
         return $this->stock;
     }
 
+    /**
+     * Nothing left to sell: the cart caps every line to the stock (CartService::addToCart()).
+     */
+    public function isSoldOut(): bool
+    {
+        return ($this->stock ?? 0) <= 0;
+    }
+
     public function setStock(int $stock): static
     {
         $this->stock = $stock;

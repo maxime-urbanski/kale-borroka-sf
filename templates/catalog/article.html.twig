@@ -51,7 +51,7 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col">
-                        {% if article.stock <= 0 %}
+                        {% if article.soldOut %}
                             {# Adding it would fail anyway (« Cet article est épuisé. »): no button to press. #}
                             <p class="mb-0">
                                 <span class="d-inline-block text-bg-secondary fw-bolder px-3 py-2">Épuisé</span>
@@ -123,12 +123,13 @@
                 </div>
             </div>
         </div>
-        {% if article is release %}
+        {% if tracklist %}
             {# Shared by every pressing of the album. A song or an artist written clears `album` too. #}
             {% cache 'album_tracklist_' ~ article.album.id tags(['album']) %}
-                {% if article.album.tracklists is not empty %}
+                {% set tracks = tracklist.result %}
+                {% if tracks is not empty %}
                     {% include 'layout/article/_section.html.twig' with {
-                        tracklist: article.album.tracklists,
+                        tracklist: tracks,
                         album_artist: article.album.artist,
                         title: 'Tracklist',
                         title_mb: 'mb-4'

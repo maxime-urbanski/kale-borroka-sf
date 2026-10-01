@@ -9,8 +9,10 @@ use App\Entity\Release;
 use App\Entity\Song;
 use App\Repository\ReleaseRepository;
 use App\Tests\Order\OrderTestTrait;
+use Doctrine\Bundle\DoctrineBundle\DataCollector\DoctrineDataCollector;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
 /**
  * What the article page shows of a release: whether it can be bought, and its tracklist.
@@ -70,23 +72,65 @@ class ArticlePageContentTest extends WebTestCase
         $tracks = $crawler->filter('section ol li');
         self::assertCount(10, $tracks);
         self::assertSame('1 - Pour les braves 2:34', preg_replace('/\s+/', ' ', trim($tracks->first()->text())));
-        self::assertStringNotContainsString('Brixton Cats', $tracks->text(), 'The album artist is not repeated on each track.');
+        self::assertStringNotContainsString('Brixton Cats', $crawler->filter('section ol')->text(), 'The album artist is not repeated on each track.');
     }
 
-    public function testATrackByAnotherBandIsCreditedToIt(): void
+    public function testATrackByOtherBandsIsCreditedToEachOfThem(): void
     {
         $release = $this->quartierMaudit();
-        $guest = $this->entityManager()->getRepository(Artist::class)->findOneBy(['name' => 'Moscow Death Brigade']);
-        self::assertNotNull($guest);
         $song = $release->getAlbum()?->getTracklists()->get(1);
         self::assertNotNull($song);
-        $song->getArtist()->clear();
-        $song->addArtist($guest);
+        // Credited to the album artist and two guests: only the guests are named.
+        foreach (['Moscow Death Brigade', 'Krav Boca'] as $name) {
+            $guest = $this->entityManager()->getRepository(Artist::class)->findOneBy(['name' => $name]);
+            self::assertNotNull($guest);
+            $song->addArtist($guest);
+        }
+        $song->setDuration(3725);
         $this->entityManager()->flush();
+        // As a real request would: the page loads the tracklist afresh, not the collections above.
+        $this->entityManager()->clear();
 
         $crawler = $this->client->request('GET', $this->uriOf($release));
 
-        self::assertStringContainsString('(Moscow Death Brigade)', $crawler->filter('section ol li')->eq(1)->text());
+        $track = preg_replace('/\s+/', ' ', trim($crawler->filter('section ol li')->eq(1)->text()));
+        self::assertSame('2 - Religion (Krav Boca, Moscow Death Brigade) 1:02:05', $track);
+    }
+
+    /**
+     * A cache miss loads the songs and their artists at once, not one query per track.
+     */
+    public function testTheTracklistTakesASingleQuery(): void
+    {
+        $this->client->enableProfiler();
+        $this->client->request('GET', $this->uriOf($this->quartierMaudit()));
+
+        $profile = $this->client->getProfile();
+        self::assertInstanceOf(Profile::class, $profile);
+        $collector = $profile->getCollector('db');
+        self::assertInstanceOf(DoctrineDataCollector::class, $collector);
+        $songQueries = array_filter(
+            array_merge(...array_values($collector->getQueries())),
+            static fn (array $query): bool => str_contains((string) $query['sql'], 'song'),
+        );
+
+        self::assertCount(1, $songQueries);
+    }
+
+    public function testAddingMoreThanTheStockSaysSo(): void
+    {
+        $release = $this->quartierMaudit()->setStock(1);
+        $this->entityManager()->flush();
+
+        $this->client->request('GET', $this->uriOf($release));
+        $this->client->submitForm('Ajouter au panier');
+        $this->client->followRedirect();
+        self::assertSelectorTextContains('body', 'Article ajouté au panier.');
+
+        $this->client->submitForm('Ajouter au panier');
+        $this->client->followRedirect();
+        self::assertSelectorTextContains('body', 'Tout le stock disponible est déjà dans votre panier.');
+        self::assertSelectorTextNotContains('body', 'Article ajouté au panier.');
     }
 
     private function quartierMaudit(): Release
