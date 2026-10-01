@@ -1,0 +1,64 @@
+// Error pages: « Affiche arrachée » (404), « La photocopieuse a calé » (5xx).
+.kb-error {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 720px;
+    padding: 36px;
+    border: 3px solid $kb-noir;
+
+    &__code {
+        font-family: $kb-font-display;
+        font-size: clamp(5rem, 10vw, 7.5rem);
+        line-height: .85;
+    }
+
+    &__title {
+        margin: 0;
+        font-size: clamp(1.75rem, 2vw + 1rem, 2.125rem);
+        line-height: 1.1;
+    }
+
+    &__text {
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    &--404 {
+        background-color: $kb-noir;
+        color: $kb-papier;
+
+        .kb-error__text {
+            color: $kb-papier-3;
+        }
+    }
+
+    &--500 {
+        background-color: $kb-papier-2;
+
+        .kb-error__code {
+            align-self: flex-start;
+            padding: 0 8px;
+            background: $kb-papier;
+        }
+
+        .kb-error__title {
+            align-self: flex-start;
+            padding: 2px 10px;
+            background: $kb-noir;
+            color: $kb-papier;
+        }
+
+        .kb-error__text {
+            padding: 8px 10px;
+            background: $kb-papier;
+        }
+    }
+}

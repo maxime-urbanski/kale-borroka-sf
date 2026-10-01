@@ -1,32 +1,28 @@
+// Kale Borroka design system: tokens, then Bootstrap restyled, then our own components.
+@import "variables";
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-icons';
 
-@import "articles";
-@import "article";
+@import "tokens";
+@import "base";
+@import "textures";
+
+@import "components/buttons";
+@import "components/forms";
+@import "components/badges";
+@import "components/alerts";
+@import "components/navigation";
+@import "components/signs";
+@import "components/card";
+@import "components/controls";
+@import "components/error";
+
+@import "layout/header";
 @import "layout/footer";
-@import "layout/breadcrumb";
-@import "layout/overlay";
 @import "layout/active-filter";
 
 .cursor-pointer {
     cursor: pointer;
-}
-
-.badge-toast {
-    width: 10px;
-    height: 10px;
-}
-
-.badge-toast.toast-success {
-    background-color: $success;
-}
-
-.badge-toast.toast-danger {
-    background-color: $danger;
-}
-
-.badge-toast.toast-warning {
-    background-color: $warning;
 }
 
 .w-content {

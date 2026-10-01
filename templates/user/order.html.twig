@@ -2,7 +2,7 @@
 
 {% block content %}
     {% for order in orders %}
-        <div class="row my-5 mx-3 bg-white rounded">
+        <div class="row my-5 mx-3 bg-body rounded">
             <div class="col border-bottom">
                 <h5 class="text-center fw-bolder mt-3">
                     Commande du {{ order.createdAt|date("m/d/Y", "Europe/Paris") }}

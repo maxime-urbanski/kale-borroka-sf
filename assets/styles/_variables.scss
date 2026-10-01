@@ -1,0 +1,265 @@
+// Kale Borroka design system (« Mini design system », v1, octobre 2026).
+// Three inks, like a screen print: black, paper, red. Red is for buying and stamps, never
+// for running text nor as the only signal; the ikurriña green only shows as a decorative rule.
+// Imported before Bootstrap: these values replace Bootstrap's defaults.
+
+// Palette
+$kb-noir: #111010;          // text, structure, strong backgrounds
+$kb-papier: #f3eee4;        // main background
+$kb-papier-2: #e8e1d3;      // kraft: section backgrounds, panels
+$kb-papier-3: #d8d1c4;      // disabled backgrounds, skeletons, light text on black
+$kb-rouge: #c4161c;         // buying, stamps, cart counter
+$kb-rouge-fonce: #9e1116;   // hover, error text
+$kb-gris: #5b5750;          // secondary text (6.4:1 on paper)
+$kb-gris-clair: #b9b2a6;    // disabled, rules
+$kb-gris-filet: #8a857c;    // 1px list separators
+$kb-encre-2: #3a3734;       // secondary text, separators on black
+$kb-vert: #00843d;          // ikurriña rule only
+
+// Type
+$kb-font-display: "Anton", Impact, sans-serif;               // titles, prices, numbers — always uppercase
+$kb-font-body: "Archivo", system-ui, sans-serif;             // running text, buttons, forms
+$kb-font-mono: "IBM Plex Mono", ui-monospace, monospace;     // metadata: ref., pressing, statuses, counters
+
+// Depth: a solid, offset shadow without blur. Radius 0 everywhere.
+$kb-shadow: 6px 6px 0 $kb-noir;
+$kb-shadow-rouge: 6px 6px 0 $kb-rouge;
+
+// Spacing, base 4
+$kb-spaces: (1: 4px, 2: 8px, 3: 12px, 4: 16px, 5: 24px, 6: 32px, 7: 48px, 8: 72px);
+
+// Bootstrap 5 mapping (« 07 · Correspondance Bootstrap 5 »)
+$black: $kb-noir;
+$dark: $kb-noir;
+$light: $kb-papier;
+$primary: $kb-rouge;
+$danger: $kb-rouge;
+$secondary: $kb-gris;
+$success: $kb-noir;       // no green: confirmations are black
+$info: $kb-papier-2;
+$warning: $kb-papier-2;
+
+$body-bg: $kb-papier;
+$body-color: $kb-noir;
+$body-secondary-color: $kb-gris;
+$color-contrast-dark: $kb-noir;
+$color-contrast-light: $kb-papier;
+
+$link-color: $kb-noir;
+$link-hover-color: $kb-rouge;
+$link-underline-offset: .15em;
+
+$enable-rounded: false;
+$enable-shadows: false;
+$enable-gradients: false;
+$enable-rfs: false;       // headings scale with clamp() in _base.scss
+$border-radius: 0;
+$border-radius-sm: 0;
+$border-radius-lg: 0;
+$border-radius-xl: 0;
+$border-radius-xxl: 0;
+$border-radius-pill: 0;
+$border-width: 2px;
+$border-color: $kb-noir;
+
+$font-family-sans-serif: $kb-font-body;
+$font-family-monospace: $kb-font-mono;
+$font-size-base: 1rem;
+$line-height-base: 1.5;
+$headings-font-family: $kb-font-display;
+$headings-font-weight: 400;
+$headings-line-height: 1.05;
+$h1-font-size: 5.5rem;     // 88 (mobile 52)
+$h2-font-size: 3.5rem;     // 56 (mobile 34)
+$h3-font-size: 2.5rem;     // 40 (mobile 28)
+$h4-font-size: 1.75rem;
+$h5-font-size: 1.375rem;
+$h6-font-size: 1.125rem;
+$lead-font-size: 1.1875rem; // 19
+$lead-font-weight: 400;
+$small-font-size: .875rem;
+
+$spacer: 1rem;
+$spacers: (
+    0: 0,
+    1: $spacer * .25,
+    2: $spacer * .5,
+    3: $spacer,
+    4: $spacer * 1.5,
+    5: $spacer * 3,
+    6: $spacer * 4.5,      // 72px
+);
+
+$box-shadow: $kb-shadow;
+$box-shadow-sm: 3px 3px 0 $kb-noir;
+$box-shadow-lg: 8px 8px 0 $kb-noir;
+
+$hr-color: $kb-noir;
+$hr-opacity: 1;
+$hr-border-width: 2px;
+
+// Focus: 3px black outline offset by 3px, plus a paper ring so it reads on black too
+// (the outline itself is set in _base.scss).
+$focus-ring-width: 3px;
+$focus-ring-color: $kb-noir;
+$focus-ring-opacity: 1;
+$focus-ring-blur: 0;
+$input-btn-focus-width: 3px;
+$input-btn-focus-color: $kb-papier;
+$input-btn-focus-blur: 0;
+$input-btn-focus-box-shadow: 0 0 0 3px $kb-papier;
+
+// Buttons: 48px standard, 56px for buying (.btn-lg), 44px compact (.btn-sm)
+$btn-padding-y: .6875rem;
+$btn-padding-x: 1.5rem;
+$btn-font-size: .9375rem;
+$btn-font-weight: 800;
+$btn-line-height: 1.5;
+$btn-padding-y-lg: .9375rem;
+$btn-padding-x-lg: 1.625rem;
+$btn-font-size-lg: .9375rem;
+$btn-padding-y-sm: .5625rem;
+$btn-padding-x-sm: 1rem;
+$btn-font-size-sm: .8125rem;
+$btn-disabled-opacity: 1;
+$btn-focus-box-shadow: 0 0 0 3px $kb-papier;
+
+// Forms
+$input-height: 3rem;
+$input-padding-x: .875rem;
+$input-bg: $kb-papier;
+$input-color: $kb-noir;
+$input-border-color: $kb-noir;
+$input-border-width: 2px;
+$input-focus-bg: $kb-papier;
+$input-focus-border-color: $kb-noir;
+$input-focus-box-shadow: 0 0 0 3px $kb-papier;
+$input-placeholder-color: $kb-gris;
+$input-disabled-bg: $kb-papier-3;
+$input-disabled-border-color: $kb-gris-clair;
+$form-label-font-size: .875rem;
+$form-label-font-weight: 700;
+$form-text-color: $kb-gris;
+$form-feedback-invalid-color: $kb-rouge-fonce;
+$form-feedback-icon-invalid: none;
+$form-feedback-icon-valid: none;
+$form-check-input-width: 1.375em;   // 22px
+$form-check-min-height: 2.5rem;     // 40px
+$form-check-padding-start: $form-check-input-width + .75em;
+$form-check-input-bg: $kb-papier;
+$form-check-input-border: 2px solid $kb-noir;
+$form-check-input-border-radius: 0;
+$form-check-input-checked-bg-color: $kb-noir;
+$form-check-input-checked-border-color: $kb-noir;
+$form-check-input-focus-border: $kb-noir;
+$form-check-input-focus-box-shadow: 0 0 0 3px $kb-papier;
+$form-select-border-radius: 0;
+$form-select-focus-box-shadow: 0 0 0 3px $kb-papier;
+$form-select-indicator-color: $kb-noir;
+
+// Components
+$pagination-color: $kb-noir;
+$pagination-bg: transparent;
+$pagination-border-width: 2px;
+$pagination-border-color: $kb-noir;
+$pagination-margin-start: .375rem;
+$pagination-hover-color: $kb-papier;
+$pagination-hover-bg: $kb-noir;
+$pagination-hover-border-color: $kb-noir;
+$pagination-focus-bg: transparent;
+$pagination-focus-color: $kb-noir;
+$pagination-focus-box-shadow: 0 0 0 3px $kb-papier;
+$pagination-active-color: $kb-papier;
+$pagination-active-bg: $kb-noir;
+$pagination-active-border-color: $kb-noir;
+$pagination-disabled-color: $kb-gris-filet;
+$pagination-disabled-bg: transparent;
+$pagination-disabled-border-color: $kb-gris-clair;
+
+$breadcrumb-font-size: .8125rem;
+$breadcrumb-divider: "/";
+$breadcrumb-divider-color: $kb-noir;
+$breadcrumb-active-color: $kb-noir;
+$breadcrumb-item-padding-x: .625rem;
+$breadcrumb-margin-bottom: 0;
+
+$badge-font-size: .75rem;
+$badge-font-weight: 600;
+$badge-padding-y: .25rem;
+$badge-padding-x: .625rem;
+
+$accordion-border-width: 0;   // 2px rules are custom
+$accordion-bg: transparent;
+$accordion-button-active-bg: transparent;
+$accordion-button-active-color: $kb-noir;
+$accordion-button-focus-box-shadow: 0 0 0 3px $kb-papier;
+
+$offcanvas-horizontal-width: min(340px, 88vw);
+$offcanvas-bg-color: $kb-papier;
+$offcanvas-color: $kb-noir;
+$offcanvas-border-width: 3px;
+$offcanvas-border-color: $kb-noir;
+$offcanvas-backdrop-bg: $kb-noir;
+$offcanvas-backdrop-opacity: .6;
+
+$dropdown-bg: $kb-noir;
+$dropdown-color: $kb-papier;
+$dropdown-border-width: 0;
+$dropdown-link-color: $kb-papier;
+$dropdown-link-hover-color: $kb-papier;
+$dropdown-link-hover-bg: $kb-encre-2;
+$dropdown-link-active-color: $kb-papier;
+$dropdown-link-active-bg: $kb-rouge;
+$dropdown-divider-bg: $kb-encre-2;
+
+$table-bg: transparent;
+$table-color: $kb-noir;
+$table-border-color: $kb-gris-filet;
+$table-border-width: 1px;
+$table-th-font-weight: 500;
+$table-cell-padding-y: .625rem;
+$table-cell-padding-x: .875rem;
+$table-striped-bg: rgba(17, 16, 16, .04);
+$table-hover-bg: rgba(17, 16, 16, .06);
+
+$nav-link-color: $kb-noir;
+$nav-link-hover-color: $kb-rouge;
+$nav-link-font-weight: 800;
+$nav-tabs-border-width: 2px;
+$nav-tabs-border-color: $kb-noir;
+$nav-tabs-link-hover-border-color: $kb-noir;
+$nav-tabs-link-active-color: $kb-papier;
+$nav-tabs-link-active-bg: $kb-noir;
+$nav-tabs-link-active-border-color: $kb-noir;
+
+$toast-max-width: 380px;
+$toast-padding-x: 1rem;
+$toast-padding-y: .875rem;
+$toast-font-size: .9375rem;
+$toast-background-color: $kb-papier;
+$toast-border-width: 2px;
+$toast-border-color: $kb-noir;
+$toast-box-shadow: $kb-shadow;
+$toast-header-background-color: $kb-noir;
+$toast-header-color: $kb-papier;
+$toast-header-border-color: $kb-noir;
+
+$card-bg: $kb-papier;
+$card-border-color: $kb-noir;
+$card-cap-bg: $kb-papier-2;
+
+$progress-height: .75rem;
+$progress-bg: $kb-papier-2;
+$progress-bar-bg: $kb-noir;
+
+$placeholder-opacity-max: 1;
+$placeholder-opacity-min: .6;
+
+$modal-content-bg: $kb-papier;
+$modal-content-border-width: 3px;
+$modal-content-border-color: $kb-noir;
+$modal-backdrop-bg: $kb-noir;
+
+$btn-close-color: $kb-noir;
+$btn-close-opacity: 1;
+$btn-close-focus-shadow: 0 0 0 3px $kb-papier;

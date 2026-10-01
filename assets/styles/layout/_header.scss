@@ -1,0 +1,278 @@
+// Shop header (KbrHeader): black strip, logo, main nav with the catalogue mega-menu, account, cart.
+.kb-header {
+    position: relative;
+    z-index: 1030;
+    background: $kb-papier;
+    color: $kb-noir;
+    border-bottom: 3px solid $kb-noir;
+
+    &__strip {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 8px 40px;
+        background: $kb-noir;
+        color: $kb-papier;
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+}
+
+.kb-navbar {
+    --bs-navbar-padding-y: 6px;
+    --bs-navbar-padding-x: 8px;
+    --bs-navbar-brand-padding-y: 0;
+    --bs-navbar-brand-margin-end: 0;
+    gap: 4px;
+    min-height: 64px;
+    padding-left: 14px;
+    flex-wrap: nowrap;
+
+    @include media-breakpoint-up(lg) {
+        --bs-navbar-padding-y: 10px;
+        gap: 28px;
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+
+    &__logo {
+        display: block;
+        width: auto;
+        height: 52px;
+        mix-blend-mode: multiply;
+
+        @include media-breakpoint-up(lg) {
+            height: 72px;
+        }
+    }
+
+    // On mobile the offcanvas is the menu; from lg up it lays out inline.
+    .offcanvas {
+        @include media-breakpoint-up(lg) {
+            flex-grow: 0;
+        }
+    }
+
+    .navbar-nav {
+        gap: 4px;
+
+        @include media-breakpoint-down(lg) {
+            border-top: 3px solid $kb-noir;
+        }
+    }
+
+    &__link,
+    .navbar-nav .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 48px;
+        padding: 0 14px;
+        border: 0;
+        border-bottom: 4px solid transparent;
+        background: none;
+        color: $kb-noir;
+        font-weight: 800;
+        font-size: .9375rem;
+        letter-spacing: .05em;
+        text-decoration: none;
+        text-transform: uppercase;
+
+        &:hover,
+        &:focus,
+        &.show {
+            color: $kb-noir;
+        }
+
+        &.active {
+            border-bottom-color: $kb-rouge;
+        }
+
+        @include media-breakpoint-down(lg) {
+            border-bottom: 1px solid $kb-gris-filet;
+
+            &.active {
+                border-bottom: 4px solid $kb-rouge;
+            }
+        }
+    }
+
+    .dropdown-toggle::after {
+        content: "\f282"; // bi-chevron-down
+        border: 0;
+        margin-left: 0;
+        font-family: bootstrap-icons;
+        font-size: .75rem;
+        font-weight: normal;
+        vertical-align: 0;
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-left: auto;
+    }
+
+    &__account {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 44px;
+        height: 48px;
+        padding: 0 12px;
+        color: $kb-noir;
+        font-weight: 700;
+        font-size: .9375rem;
+        text-decoration: none;
+
+        .bi {
+            font-size: 1.25rem;
+        }
+
+        &:hover {
+            color: $kb-rouge;
+        }
+    }
+
+    &__cart {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        height: 48px;
+        padding: 0 16px;
+        background: $kb-noir;
+        color: $kb-papier;
+        font-weight: 800;
+        font-size: .875rem;
+        letter-spacing: .05em;
+        text-decoration: none;
+        text-transform: uppercase;
+
+        .bi {
+            font-size: 1.125rem;
+        }
+
+        &:hover {
+            background: $kb-rouge;
+            color: $kb-papier;
+
+            .kb-cart-count {
+                background: $kb-noir;
+            }
+        }
+
+        // Mobile: a 44px icon, the counter pinned on its corner.
+        @include media-breakpoint-down(lg) {
+            width: 44px;
+            height: 44px;
+            justify-content: center;
+            padding: 0;
+            background: none;
+            color: $kb-noir;
+            font-size: 1.25rem;
+
+            .kb-cart-count {
+                position: absolute;
+                top: 4px;
+                right: 2px;
+                min-width: 18px;
+                height: 18px;
+                padding: 0 4px;
+                font-size: .6875rem;
+            }
+
+            &:hover {
+                background: none;
+                color: $kb-rouge;
+            }
+        }
+    }
+
+    .navbar-toggler {
+        display: none;
+
+        @include media-breakpoint-down(lg) {
+            display: grid;
+        }
+
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border: 0;
+        background: $kb-noir;
+        color: $kb-papier;
+        font-size: 1.375rem;
+
+        &:focus {
+            box-shadow: 0 0 0 3px $kb-papier;
+        }
+    }
+}
+
+// Catalogue mega-menu: two columns of supports in Anton, black, red offset shadow.
+.kb-mega {
+    @include media-breakpoint-up(lg) {
+        &.dropdown-menu {
+            width: 620px;
+            margin-top: 13px !important;
+            padding: 24px 28px;
+        }
+
+        &.show {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 32px;
+        }
+    }
+
+    @include media-breakpoint-down(lg) {
+        &.dropdown-menu {
+            position: static;
+            padding: 8px 16px;
+            box-shadow: none;
+        }
+    }
+
+    .dropdown-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        min-height: 48px;
+        padding: 0;
+        border-bottom: 1px solid $kb-encre-2;
+        font-family: $kb-font-display;
+        font-size: 1.375rem;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+
+        &:hover,
+        &:focus {
+            background: none;
+            color: $kb-papier;
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+        }
+    }
+
+    &__all.dropdown-item {
+        justify-content: flex-start;
+        gap: 8px;
+        border-bottom: 0;
+        font-family: $kb-font-body;
+        font-weight: 700;
+        font-size: .875rem;
+        letter-spacing: .06em;
+    }
+}
+
+// Account and cart labels: visible from lg up, read by screen readers everywhere.
+.kb-navbar__label {
+    @include media-breakpoint-down(lg) {
+        @include visually-hidden;
+    }
+}

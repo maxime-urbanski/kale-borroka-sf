@@ -1,16 +1,16 @@
 {% if pageCount > 1 %}
-    <nav class="py-5" id="nav-pagination">
+    <nav class="py-5" id="nav-pagination" aria-label="Pagination">
         {% set classAlign = (align is not defined) ? '' : align=='center' ? ' justify-content-center' : (align=='right' ? ' justify-content-end' : '') %}
         {% set classSize = (size is not defined) ? '' : size=='large' ? ' pagination-lg' : (size=='small' ? ' pagination-sm' : '') %}
         <ul class="pagination justify-content-center">
             {% if previous is defined %}
                 <li class="page-item">
                     <a class="page-link" rel="prev"
-                       href="{{ path(route, query|merge({(pageParameterName): 'page-'~previous})) }}">&laquo;&nbsp;{{ 'label_previous'|trans({}, 'KnpPaginatorBundle') }}</a>
+                       href="{{ path(route, query|merge({(pageParameterName): 'page-'~previous})) }}">{{ _self.arrow('left', 'label_previous') }}</a>
                 </li>
             {% else %}
                 <li class="page-item disabled">
-                    <span class="page-link">&laquo;&nbsp;{{ 'label_previous'|trans({}, 'KnpPaginatorBundle') }}</span>
+                    <span class="page-link">{{ _self.arrow('left', 'label_previous') }}</span>
                 </li>
             {% endif %}
 
@@ -25,7 +25,7 @@
                     </li>
                 {% elseif startPage != 2 %}
                     <li class="page-item disabled">
-                        <span class="page-link">&hellip;</span>
+                        <span class="page-link kb-page-ellipsis">&hellip;</span>
                     </li>
                 {% endif %}
             {% endif %}
@@ -38,7 +38,7 @@
                     </li>
                 {% else %}
                     <li class="page-item active">
-                        <span class="page-link">{{ page }}</span>
+                        <span class="page-link" aria-current="page">{{ page }}</span>
                     </li>
                 {% endif %}
 
@@ -48,7 +48,7 @@
                 {% if pageCount > (endPage + 1) %}
                     {% if pageCount > (endPage + 2) %}
                         <li class="page-item disabled">
-                            <span class="page-link">&hellip;</span>
+                            <span class="page-link kb-page-ellipsis">&hellip;</span>
                         </li>
                     {% else %}
                         <li class="page-item">
@@ -66,14 +66,18 @@
             {% if next is defined %}
                 <li class="page-item">
                     <a class="page-link" rel="next"
-                       href="{{ path(route, query|merge({(pageParameterName): 'page-'~next})) }}">{{ 'label_next'|trans({}, 'KnpPaginatorBundle') }}
-                        &nbsp;&raquo;</a>
+                       href="{{ path(route, query|merge({(pageParameterName): 'page-'~next})) }}">{{ _self.arrow('right', 'label_next') }}</a>
                 </li>
             {% else %}
                 <li class="page-item disabled">
-                    <span class="page-link">{{ 'label_next'|trans({}, 'KnpPaginatorBundle') }}&nbsp;&raquo;</span>
+                    <span class="page-link">{{ _self.arrow('right', 'label_next') }}</span>
                 </li>
             {% endif %}
         </ul>
     </nav>
 {% endif %}
+
+{% macro arrow(direction, label) %}
+    <i class="bi bi-arrow-{{ direction }}" aria-hidden="true"></i>
+    <span class="visually-hidden">{{ label|trans({}, 'KnpPaginatorBundle') }}</span>
+{% endmacro %}

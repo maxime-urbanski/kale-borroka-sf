@@ -1,0 +1,37 @@
+// Textures (tiled SVGs) and the rules that use them. Every url() lives in this file, next to
+// the images directory, so that it resolves the same whatever the loader.
+// Never behind running text under 18px.
+
+.kb-tex-grain {
+    background-image: url("../images/textures/grain.svg");
+}
+
+.kb-tex-halftone {
+    background-image: url("../images/textures/halftone.svg");
+}
+
+// Torn edge under a black block (the shop header, a poster).
+.kb-torn {
+    height: 18px;
+    background: url("../images/textures/torn.svg") repeat-x;
+    background-size: 200px 18px;
+}
+
+// Burnt edge on top of the footer.
+.kb-burnt {
+    height: 48px;
+    margin-bottom: -1px;
+    background: url("../images/textures/burnt.svg") repeat-x bottom;
+    background-size: 600px 48px;
+}
+
+.kb-footer__main,
+.kb-error--404 {
+    background-image: url("../images/textures/grain.svg");
+}
+
+.kb-cover-missing,
+.kb-skeleton__cover,
+.kb-error--500 {
+    background-image: url("../images/textures/halftone.svg");
+}

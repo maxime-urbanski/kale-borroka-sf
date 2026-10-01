@@ -1,0 +1,24 @@
+{% extends 'layout/_error.html.twig' %}
+
+{% block title %}{{ status_code >= 500 ? 'Erreur du serveur' : status_text }}{% endblock %}
+
+{% block body %}
+    {% if status_code >= 500 %}
+        <div class="kb-error kb-error--500">
+            <span class="kb-error__code" aria-hidden="true">{{ status_code }}</span>
+            <h1 class="kb-error__title">La photocopieuse a calé.</h1>
+            <p class="kb-error__text">Erreur de notre côté. Ton panier est sauvegardé ; réessaie dans quelques minutes.</p>
+            <a href="{{ app.request ? app.request.requestUri : path('app_homepage') }}" class="btn btn-dark align-self-start">Réessayer</a>
+        </div>
+    {% else %}
+        <div class="kb-error kb-error--404">
+            <span class="kb-error__code" aria-hidden="true">{{ status_code }}</span>
+            <h1 class="kb-error__title">{{ status_text }}</h1>
+            <p class="kb-error__text">Cette page n'est pas accessible.</p>
+            <div class="kb-error__actions">
+                <a href="{{ path('app_homepage') }}" class="btn btn-light">Accueil</a>
+                <a href="{{ path('app_catalog') }}" class="btn btn-outline-light">Catalogue</a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

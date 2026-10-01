@@ -1,0 +1,76 @@
+// Every field has a visible label; errors carry an icon, the « Erreur : » prefix and a 3px border.
+.form-label,
+.col-form-label {
+    font-size: .875rem;
+    font-weight: 700;
+}
+
+.form-control,
+.form-select {
+    min-height: 48px;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid,
+.was-validated .form-control:invalid {
+    border-width: 3px;
+    border-color: $kb-rouge;
+    padding-right: $input-padding-x;
+}
+
+.invalid-feedback {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .875rem;
+    font-weight: 600;
+
+    &::before {
+        content: "\f336"; // bi-exclamation-octagon-fill
+        font-family: bootstrap-icons;
+        font-weight: normal;
+    }
+}
+
+// Real inputs, styled: 22px boxes, check in paper on black.
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-left: 0;
+
+    .form-check-input {
+        float: none;
+        flex: none;
+        margin: 0;
+    }
+
+    .form-check-label {
+        cursor: pointer;
+    }
+}
+
+.form-check-input {
+    cursor: pointer;
+
+    &:checked + .form-check-label {
+        font-weight: 700;
+    }
+}
+
+.form-check-input[type="radio"] {
+    border-radius: 50%;
+}
+
+.form-switch {
+    padding-left: 0;
+
+    .form-check-input {
+        width: 2.75em;
+        border-radius: 2em;
+    }
+}
+
+.input-group > .btn {
+    min-height: 0;
+}

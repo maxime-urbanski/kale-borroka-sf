@@ -1,0 +1,90 @@
+// Badges and statuses. Every state has an icon and a label: colour never carries it alone.
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 2px solid $kb-noir;
+    font-family: $kb-font-mono;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.kb-badge {
+    --kb-badge-bg: #{$kb-noir};
+    --kb-badge-color: #{$kb-papier};
+    --kb-badge-border-style: solid;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 2px var(--kb-badge-border-style) $kb-noir;
+    background: var(--kb-badge-bg);
+    color: var(--kb-badge-color);
+    font-family: $kb-font-mono;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    // Supports, limited editions, shipped: black (default).
+    // Sold out, new: red.
+    &--rouge { --kb-badge-bg: #{$kb-rouge}; }
+    // Used copy: paper.
+    &--papier { --kb-badge-bg: #{$kb-papier}; --kb-badge-color: #{$kb-noir}; }
+    // Being prepared: kraft.
+    &--kraft { --kb-badge-bg: #{$kb-papier-2}; --kb-badge-color: #{$kb-noir}; }
+    // Order statuses: paid (solid), pending (dashed), refunded (dotted), cancelled (dark red text).
+    &--outline { --kb-badge-bg: transparent; --kb-badge-color: #{$kb-noir}; }
+    &--pending { --kb-badge-bg: transparent; --kb-badge-color: #{$kb-noir}; --kb-badge-border-style: dashed; }
+    &--refunded { --kb-badge-bg: transparent; --kb-badge-color: #{$kb-noir}; --kb-badge-border-style: dotted; }
+    &--cancelled { --kb-badge-bg: transparent; --kb-badge-color: #{$kb-rouge-fonce}; }
+
+    &--sm {
+        padding: 4px 7px;
+        border-width: 1.5px;
+        letter-spacing: .06em;
+    }
+}
+
+// Cart counter: paper on red.
+.kb-cart-count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 6px;
+    border: 0;
+    background: $kb-rouge;
+    color: $kb-papier;
+    font-family: $kb-font-mono;
+    font-size: .8125rem;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+// Active filter chip: 44px, removes its filter.
+.kb-chip {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 10px;
+    height: 44px;
+    padding: 0 10px 0 16px;
+    border: 0;
+    background: $kb-noir;
+    color: $kb-papier;
+    font-weight: 700;
+    font-size: .875rem;
+    white-space: nowrap;
+    cursor: pointer;
+
+    .bi {
+        font-size: .75rem;
+    }
+
+    &:hover {
+        background: $kb-rouge;
+    }
+}

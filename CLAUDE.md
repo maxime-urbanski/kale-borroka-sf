@@ -145,7 +145,16 @@ Validation constraints must be built with **named arguments** — Symfony 8 reje
 
 ### Frontend
 
-Single Encore entry `assets/app.js`; SCSS in `assets/styles` (`app.scss` + partials, Bootstrap 5). Stimulus controllers in `assets/controllers/` registered through `assets/controllers.json` — used for cart quantity, address selection, filter accordion, obfuscated links, scrollbar.
+Single Encore entry `assets/app.js`; SCSS in `assets/styles` (`global.scss` + partials, Bootstrap 5). Stimulus controllers in `assets/controllers/` registered through `assets/controllers.json` — used for cart quantity, address selection, filter accordion, obfuscated links, scrollbar.
+
+Design system (« Mini design system Kale Borroka », Claude Design handoff): three inks — `$kb-noir` #111010, `$kb-papier` #f3eee4, `$kb-rouge` #c4161c (buying and stamps only, never running text nor the only signal) — Anton (titles, prices, always uppercase), Archivo (text), IBM Plex Mono (metadata), radius 0, solid offset shadows (`6px 6px 0`).
+
+- `_variables.scss` holds the tokens and maps them onto Bootstrap's variables; it is imported **before** Bootstrap. `_tokens.scss` exposes them as `--kb-*` custom properties. Restyle Bootstrap through its variables first, then in `components/*`; our own components are `.kb-*` (BEM: `.kb-card__cover`, `.kb-badge--rouge`).
+- `$success` is black (no green: the ikurriña green is a decorative rule only), so `.btn-success`/`.alert-success` render black; buying buttons are `.btn-primary .btn-lg` (56px).
+- Fonts are self-hosted through `@fontsource/*` (`assets/styles/fonts.js`, Latin + Latin Extended): the CSP allows no font from elsewhere.
+- Textures are tiled SVGs in `assets/images/textures`; every `url()` to them lives in `_textures.scss`, next to the images directory, so it resolves whatever the loader. The header logo is `public/images/logo-kbr.jpg` (400px, the 2000px original is `logo.jpg`).
+- Accessibility (RGAA 4.1 / WCAG 2.2 AA): `<html lang="fr">`, skip link to `main#contenu`, focus ring `3px solid noir` offset 3px + paper ring, 44px minimum targets, icons `aria-hidden` and icon buttons with an `aria-label`, state never carried by colour alone (icon + label + border style), `prefers-reduced-motion` honoured.
+- Error pages (`templates/bundles/TwigBundle/Exception`) extend `layout/_error.html.twig`, which renders no sub-request and runs no query: they must still work when the database is down.
 
 ## Conventions
 

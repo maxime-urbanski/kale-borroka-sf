@@ -20,29 +20,31 @@ class AddToCartWithQuantityType extends AbstractType
 
         $builder
             ->add('less', ButtonType::class, [
-                'label' => '<i class="bi bi-dash-lg"></i>',
+                'label' => '<i class="bi bi-dash-lg" aria-hidden="true"></i>',
                 'label_html' => true,
                 'attr' => [
-                    'class' => 'btn btn-outline-danger',
+                    'class' => 'btn',
+                    'aria-label' => 'Diminuer la quantité',
                     'data-action' => 'click->add-to-cart#less',
                 ],
             ])
             ->add('quantity', NumberType::class, [
                 'attr' => [
-                    'class' => 'form-control flex-grow-0 rounded-0 text-center',
+                    'class' => 'form-control',
+                    'aria-label' => 'Quantité',
                     'data-add-to-cart-target' => 'input',
-                    'style' => 'width: 50px',
                     'value' => 1,
                     'max' => $data->quantityAvailable,
                 ],
                 'label' => 'Quantité',
             ])
             ->add('more', ButtonType::class, [
-                'label' => '<i class="bi bi-plus-lg"></i>',
+                'label' => '<i class="bi bi-plus-lg" aria-hidden="true"></i>',
                 'label_html' => true,
                 'attr' => [
-                    'class' => 'btn btn-outline-success',
-                    'data-action' => 'click->add-to-cart#more ',
+                    'class' => 'btn',
+                    'aria-label' => 'Augmenter la quantité',
+                    'data-action' => 'click->add-to-cart#more',
                 ],
             ]);
     }

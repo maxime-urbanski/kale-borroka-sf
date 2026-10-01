@@ -1,60 +1,78 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary py-3">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="{{ path('app_homepage') }}">Kale Borroka Records</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                {% for link in links %}
+<div class="kb-header__strip d-none d-lg-flex">
+    <span>Label &amp; distro antifasciste depuis 2019</span>
+    <span>Punk · antifa · DIY</span>
+</div>
+<nav class="navbar navbar-expand-lg kb-navbar" aria-label="Navigation principale">
+    <a class="navbar-brand" href="{{ path('app_homepage') }}">
+        <img src="{{ asset('images/logo-kbr.jpg') }}" alt="Kale Borroka Riot Records — accueil"
+             class="kb-navbar__logo" width="398" height="400">
+    </a>
+    {# Below lg the links live in an offcanvas panel: focus trapped, Escape closes it. #}
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="menu-mobile" aria-labelledby="menu-mobile-title">
+        <div class="offcanvas-header">
+            <p class="offcanvas-title h4 mb-0" id="menu-mobile-title">Menu</p>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fermer le menu"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="navbar-nav">
+                {% for key, link in links %}
+                    {% set is_active = active == key %}
                     {% if link.child is defined %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                               aria-expanded="false">
-                                Le Shop
-                            </a>
-                            <ul class="dropdown-menu">
+                            <button type="button"
+                                    class="nav-link dropdown-toggle{{ is_active ? ' active' }}"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    aria-controls="menu-catalogue">
+                                {{ link.name }}
+                            </button>
+                            <ul class="dropdown-menu kb-mega" id="menu-catalogue">
+                                {% for child in link.child %}
+                                    <li>
+                                        <a class="dropdown-item" href="{{ path('app_catalog_list', {support: child.name}) }}">{{ child.name }}</a>
+                                    </li>
+                                {% endfor %}
                                 <li>
-                                    <a class="dropdown-item" href="{{ path(link.link) }}">{{ link.name }}</a>
-                                    <ul>
-                                        {% for child in link.child %}
-                                            <li><a class="dropdown-item"
-                                                   href="{{ path('app_catalog_list', { support: child.name,}) }}">{{ child.name|upper }}</a>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
+                                    <a class="dropdown-item kb-mega__all" href="{{ path(link.link) }}">
+                                        Tout le catalogue <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                                    </a>
                                 </li>
                             </ul>
                         </li>
                     {% else %}
-                        <li class=" nav-item">
-                            <a class="nav-link" href="{{ path(link.link) }}">{{ link.name }}</a>
+                        <li class="nav-item">
+                            <a class="nav-link{{ is_active ? ' active' }}" href="{{ path(link.link) }}"
+                               {%- if is_active %} aria-current="page"{% endif %}>{{ link.name }}</a>
                         </li>
                     {% endif %}
                 {% endfor %}
             </ul>
         </div>
+    </div>
+    <div class="kb-navbar__actions">
         {% if app.user %}
-            <a href="{{ path('app_user_informations') }}" class="btn btn-outline-danger fs-5 me-4">
-                <i class="bi-person-check"></i>
+            <a href="{{ path('app_user_informations') }}" class="kb-navbar__account">
+                <i class="bi bi-person-check" aria-hidden="true"></i>
+                <span class="kb-navbar__label">Mon compte</span>
             </a>
         {% else %}
-            <a href="{{ path('app_login') }}" class="btn btn-outline-danger fs-5 me-4">
-                <i class="bi-person"></i>
+            <a href="{{ path('app_login') }}" class="kb-navbar__account">
+                <i class="bi bi-person" aria-hidden="true"></i>
+                <span class="kb-navbar__label">Connexion</span>
             </a>
         {% endif %}
-        {% if itemsInCart %}
-            <a href="{{ path('app_cart_index') }}" class="btn btn-outline-success fs-5 me-4 position-relative">
-                <i class="bi bi-cart"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    {{ itemsInCart }}
-              </span>
-            </a>
-        {% else %}
-            <a href="{{ path('app_cart_index') }}" class="btn btn-outline-success fs-5 me-4">
-                <i class="bi bi-cart"></i>
-            </a>
-        {% endif %}
+        <a href="{{ path('app_cart_index') }}" class="kb-navbar__cart"
+           aria-label="{{ itemsInCart ? 'Panier, ' ~ itemsInCart ~ ' articles' : 'Panier, vide' }}">
+            <i class="bi bi-bag" aria-hidden="true"></i>
+            <span class="kb-navbar__label">Panier</span>
+            {% if itemsInCart %}
+                <span class="badge kb-cart-count">{{ itemsInCart }}</span>
+            {% endif %}
+        </a>
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="offcanvas" data-bs-target="#menu-mobile"
+                aria-controls="menu-mobile" aria-expanded="false" aria-label="Ouvrir le menu">
+            <i class="bi bi-list" aria-hidden="true"></i>
+        </button>
     </div>
 </nav>

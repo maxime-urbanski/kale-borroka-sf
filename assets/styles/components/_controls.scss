@@ -1,0 +1,88 @@
+// Quantity: − / input / +, 48px, Plex Mono figure.
+.kb-quantity {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    width: auto;
+    height: 48px;
+    border: 2px solid $kb-noir;
+
+    > .btn,
+    > button {
+        width: 48px;
+        min-height: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: $kb-noir;
+
+        &:hover {
+            background: $kb-noir;
+            color: $kb-papier;
+        }
+    }
+
+    > input,
+    > .form-control {
+        width: 52px;
+        min-height: 0;
+        height: 100%;
+        padding: 0;
+        border-width: 0 2px;
+        text-align: center;
+        font-family: $kb-font-mono;
+        font-weight: 600;
+        -moz-appearance: textfield;
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    }
+}
+
+// Size picker: real radios, 48px tiles.
+.kb-size-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    label {
+        display: grid;
+        place-items: center;
+        min-width: 48px;
+        height: 48px;
+        padding: 0 12px;
+        border: 2px solid $kb-noir;
+        font-family: $kb-font-mono;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    input:checked + label {
+        background: $kb-noir;
+        color: $kb-papier;
+    }
+
+    input:focus-visible + label {
+        outline: 3px solid $kb-noir;
+        outline-offset: 3px;
+        box-shadow: 0 0 0 3px $kb-papier;
+    }
+
+    input:disabled + label {
+        border-color: $kb-gris-clair;
+        color: $kb-gris;
+        text-decoration: line-through;
+        cursor: not-allowed;
+    }
+}

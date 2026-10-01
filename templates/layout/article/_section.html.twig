@@ -1,6 +1,6 @@
-<section class="mb-5">
-    <h2 class="fs-3 text-center text-decoration-underline red w-content mx-auto {{ title_mb | default('mb-5') }}">
-        {{ title | upper }}
+<section class="mb-5 pb-4 d-flex flex-column">
+    <h2 class="kb-banner{{ loop_index|default(0) is odd ? ' kb-banner--right' }} {{ title_mb | default('mb-5') }}">
+        {{ title }}
     </h2>
     {% if articles is defined %}
         {% include 'layout/article/_article-grid.html.twig' with {
@@ -12,28 +12,27 @@
         } %}
     {% endif %}
     {% if tracklist is defined %}
-        <div class="row">
-            <div class="col">
-                <ol class="list-unstyled fs-5 text-start w-content mb-0 mx-auto">
-                    {% for track in tracklist %}
-                        {# Compilations and splits credit each track to its own bands. #}
-                        {% set guests = track.artist|filter(artist => artist.id != album_artist.id)|map(artist => artist.name) %}
-                        {% set duration = track.duration %}
-                        <li>
-                            <span class="text-success">{{ track.track }}</span> - {{ track.name }}
-                            {% if guests is not empty %}
-                                <span class="text-secondary">({{ guests|join(', ') }})</span>
-                            {% endif %}
-                            {% if duration %}
-                                <span class="text-secondary ms-2">
-                                    {{- duration >= 3600 ? (duration // 3600) ~ ':' ~ '%02d'|format(duration // 60 % 60) : duration // 60 -}}
-                                    :{{- '%02d'|format(duration % 60) -}}
-                                </span>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ol>
-            </div>
-        </div>
+        <ol class="kb-tracklist list-unstyled mb-0">
+            {% for track in tracklist %}
+                {# Compilations and splits credit each track to its own bands. #}
+                {% set guests = track.artist|filter(artist => artist.id != album_artist.id)|map(artist => artist.name) %}
+                {% set duration = track.duration %}
+                <li>
+                    <span class="kb-tracklist__number">{{ track.track }}</span><span class="visually-hidden"> -</span>
+                    <span class="kb-tracklist__name">
+                        {{ track.name }}
+                        {% if guests is not empty %}
+                            <span class="text-kb-gris">({{ guests|join(', ') }})</span>
+                        {% endif %}
+                    </span>
+                    {% if duration %}
+                        <time class="kb-tracklist__duration" datetime="PT{{ duration >= 3600 ? (duration // 3600) ~ 'H' }}{{ duration // 60 % 60 }}M{{ duration % 60 }}S">
+                            {{- duration >= 3600 ? (duration // 3600) ~ ':' ~ '%02d'|format(duration // 60 % 60) : duration // 60 -}}
+                            :{{- '%02d'|format(duration % 60) -}}
+                        </time>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ol>
     {% endif %}
 </section>
