@@ -14,11 +14,21 @@
     {% if tracklist is defined %}
         <div class="row">
             <div class="col">
-                <p class="fs-5 text-start w-content mb-0 mx-auto">
+                <ol class="list-unstyled fs-5 text-start w-content mb-0 mx-auto">
                     {% for track in tracklist %}
-                        <span class="text-success">{{ track.track }}</span> - {{ track.name }} <br>
+                        {# Compilations and splits credit each track to its own band. #}
+                        {% set performer = track.artist|first %}
+                        <li>
+                            <span class="text-success">{{ track.track }}</span> - {{ track.name }}
+                            {% if performer and album_artist is defined and performer.id != album_artist.id %}
+                                <span class="text-secondary">({{ performer.name }})</span>
+                            {% endif %}
+                            {% if track.duration %}
+                                <span class="text-secondary ms-2">{{ track.duration // 60 }}:{{ '%02d'|format(track.duration % 60) }}</span>
+                            {% endif %}
+                        </li>
                     {% endfor %}
-                </p>
+                </ol>
             </div>
         </div>
     {% endif %}

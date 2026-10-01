@@ -51,19 +51,26 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col">
-                        {{ form_start(form) }}
-                        <div class="d-flex justify-content-between justify-content-md-start">
-                            <div class="input-group w-content" data-controller='add-to-cart'>
-                                {{ form_widget(form.less) }}
-                                {{ form_widget(form.quantity) }}
-                                {{ form_widget(form.more) }}
+                        {% if article.stock <= 0 %}
+                            {# Adding it would fail anyway (« Cet article est épuisé. »): no button to press. #}
+                            <p class="mb-0">
+                                <span class="d-inline-block text-bg-secondary fw-bolder px-3 py-2">Épuisé</span>
+                            </p>
+                        {% else %}
+                            {{ form_start(form) }}
+                            <div class="d-flex justify-content-between justify-content-md-start">
+                                <div class="input-group w-content" data-controller='add-to-cart'>
+                                    {{ form_widget(form.less) }}
+                                    {{ form_widget(form.quantity) }}
+                                    {{ form_widget(form.more) }}
+                                </div>
+                                <button class="ms-md-3 btn btn-success rounded-0">
+                                    Ajouter au panier
+                                    <i class="bi bi-minecart d-none d-md-inline ms-1"></i>
+                                </button>
                             </div>
-                            <button class="ms-md-3 btn btn-success rounded-0">
-                                Ajouter au panier
-                                <i class="bi bi-minecart d-none d-md-inline ms-1"></i>
-                            </button>
-                        </div>
-                        {{ form_end(form) }}
+                            {{ form_end(form) }}
+                        {% endif %}
                     </div>
                 </div>
                 {% if app.user %}
@@ -116,11 +123,19 @@
                 </div>
             </div>
         </div>
-        {# {% include 'layout/article/_section.html.twig' with {
-            tracklist: article.album.tracklists,
-            title: 'Tracklist',
-            title_mb: 'mb-4'
-        } %} #}
+        {% if article is release %}
+            {# Shared by every pressing of the album. A song or an artist written clears `album` too. #}
+            {% cache 'album_tracklist_' ~ article.album.id tags(['album']) %}
+                {% if article.album.tracklists is not empty %}
+                    {% include 'layout/article/_section.html.twig' with {
+                        tracklist: article.album.tracklists,
+                        album_artist: article.album.artist,
+                        title: 'Tracklist',
+                        title_mb: 'mb-4'
+                    } %}
+                {% endif %}
+            {% endcache %}
+        {% endif %}
         {# The same for every visitor, unlike the rest of the page (stock, wishlist, cart form). #}
         {% cache 'article_related_' ~ article.id tags(['article', 'album', 'style']) %}
             {% set byArtist = articleByArtist ? articleByArtist.result : [] %}
