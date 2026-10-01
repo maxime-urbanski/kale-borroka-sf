@@ -165,8 +165,6 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkTo(BookCrudController::class, 'Fanzines & livres', 'fas fa-book'),
             MenuItem::linkTo(MerchCrudController::class, 'Merch & textiles', 'fas fa-shirt'),
             MenuItem::linkTo(CategoryCrudController::class, 'Catégories', 'fas fa-folder-tree'),
-            MenuItem::linkTo(LabelCrudController::class, 'Labels tiers (distro)', 'fas fa-handshake')
-                ->setQueryParameter('filters', ['isDistro' => 1]),
         ]);
 
         yield MenuItem::subMenu('Contenu', 'fas fa-file-lines')->setSubItems([

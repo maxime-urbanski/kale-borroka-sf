@@ -11,6 +11,7 @@ use App\Entity\Label;
 use App\Entity\Style;
 use App\Enum\AlbumReleaseType;
 use App\Repository\ImageRepository;
+use App\Service\ShopSettingsProviderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -33,6 +34,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 class AlbumCrudController extends AbstractCrudController
 {
     use RemovesOrphanImagesTrait;
+
+    public function __construct(
+        private readonly ShopSettingsProviderInterface $shopSettingsProvider,
+    ) {
+    }
 
     public static function getEntityFqcn(): string
     {
@@ -60,6 +66,7 @@ class AlbumCrudController extends AbstractCrudController
         return $actions
             ->add(Crud::PAGE_INDEX, $addRelease)
             ->add(Crud::PAGE_EDIT, $addRelease)
+            ->add(Crud::PAGE_DETAIL, $addRelease)
             ->add(Crud::PAGE_INDEX, Action::DETAIL);
     }
 
@@ -138,6 +145,8 @@ class AlbumCrudController extends AbstractCrudController
         yield CollectionField::new('tracklists')
             ->setLabel(false)
             ->useEntryCrudForm(SongCrudController::class)
+            // The detail page would join every track on one line.
+            ->setTemplatePath('admin/field/tracklist.html.twig')
             ->setColumns(12)
             ->hideOnIndex();
 
@@ -153,6 +162,12 @@ class AlbumCrudController extends AbstractCrudController
         yield AssociationField::new('releases')
             ->setLabel('Pressages')
             ->onlyOnIndex();
+        yield CollectionField::new('releases')
+            ->setLabel(false)
+            ->setTemplatePath('admin/field/pressings.html.twig')
+            // Same badges as the stock column of « Exemplaires & pressages ».
+            ->setCustomOption('lowStockThreshold', Crud::PAGE_DETAIL === $pageName ? $this->shopSettingsProvider->get()->getLowStockThreshold() : null)
+            ->onlyOnDetail();
 
         yield FormField::addTab('Visuels', 'fa fa-image')
             ->setBadge(static fn (?Album $album): ?int => $album?->getImages()->count() ?: null);

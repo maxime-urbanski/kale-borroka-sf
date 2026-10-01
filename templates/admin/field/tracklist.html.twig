@@ -1,0 +1,16 @@
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{% if field.value is empty %}
+    <span class="text-secondary">Aucun morceau.</span>
+{% else %}
+    <ol class="admin-tracklist list-unstyled mb-0">
+        {% for track in field.value %}
+            <li>
+                <span class="text-secondary me-1">{{ track.track }}.</span>
+                {{ track.name }}
+                {% if track.duration %}
+                    <span class="text-secondary ms-2">{{ track.duration // 60 }}:{{ '%02d'|format(track.duration % 60) }}</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ol>
+{% endif %}

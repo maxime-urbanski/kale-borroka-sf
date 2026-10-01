@@ -114,6 +114,64 @@ class AdminLayoutTest extends WebTestCase
         self::assertSame(['https://brixtoncats.bandcamp.com', 'https://instagram.com/brixtoncats'], $artist?->getLinks());
     }
 
+    public function testAlbumDetailListsOneTrackPerLine(): void
+    {
+        $crawler = $this->client->request('GET', \sprintf('/admin/album/%d', $this->quartierMaudit()->getId()));
+
+        self::assertResponseIsSuccessful();
+        $tracks = $crawler->filter('ol.admin-tracklist > li');
+        self::assertCount(10, $tracks);
+        self::assertStringContainsString('Pour les braves', $tracks->first()->text());
+        self::assertStringContainsString('Quartier Maudit', $tracks->last()->text());
+    }
+
+    public function testAlbumDetailListsEachPressingWithTheStockBadgeOfTheList(): void
+    {
+        $crawler = $this->client->request('GET', \sprintf('/admin/album/%d', $this->quartierMaudit()->getId()));
+
+        self::assertResponseIsSuccessful();
+        $rows = $crawler->filter('table.admin-pressings tbody tr');
+        self::assertCount(2, $rows);
+        self::assertStringContainsString('KBR-QM-LP-BLK', $rows->eq(0)->text());
+        self::assertStringContainsString('rouge', $rows->eq(1)->text());
+        self::assertCount(2, $rows->filter('a[href*="/admin/release/"]'), 'each row opens the pressing');
+        // Stock 1 and 2, threshold 2 in the fixtures: critical, as in « Exemplaires & pressages ».
+        self::assertCount(2, $rows->filter('.badge.text-bg-warning'));
+    }
+
+    public function testAnAlbumWithoutPressingOffersToAddOne(): void
+    {
+        $album = (new Album())
+            ->setName('Album sans pressage')
+            ->setArtist($this->quartierMaudit()->getArtist())
+            ->setKbrProduction(false);
+        $this->entityManager()->persist($album);
+        $this->entityManager()->flush();
+
+        $crawler = $this->client->request('GET', \sprintf('/admin/album/%d', $album->getId()));
+
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('Aucun pressage', $crawler->filter('body')->text());
+        self::assertCount(1, $crawler->filter('a.action-addRelease'), 'the « Pressage » button the message points to');
+    }
+
+    public function testThirdPartyLabelsAreNoLongerInTheShopMenu(): void
+    {
+        $crawler = $this->client->request('GET', '/admin');
+
+        self::assertStringNotContainsString('Labels tiers', $crawler->filter('#main-menu')->text());
+        $labelLinks = $crawler->filter('#main-menu a')->reduce(static fn (Crawler $link): bool => 'Labels' === trim($link->text()));
+        self::assertCount(1, $labelLinks, 'Labels stays under « Catalogue musique ».');
+    }
+
+    private function quartierMaudit(): Album
+    {
+        $album = $this->entityManager()->getRepository(Album::class)->findOneBy(['name' => 'Quartier Maudit']);
+        self::assertInstanceOf(Album::class, $album);
+
+        return $album;
+    }
+
     /**
      * @return list<string>
      */

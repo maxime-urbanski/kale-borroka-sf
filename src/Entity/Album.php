@@ -67,6 +67,7 @@ class Album
      * @var Collection<int, Release>
      */
     #[ORM\OneToMany(mappedBy: 'album', targetEntity: Release::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['id' => 'ASC'])]
     #[Assert\Valid]
     private Collection $releases;
 
