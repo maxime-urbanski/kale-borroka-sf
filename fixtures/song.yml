@@ -6,60 +6,70 @@ App\Entity\Song:
     Pour_Les_Braves (extends song_template):
         name: 'Pour les braves'
         track: 1
+        position: A1
         albums: ['@Quartier_Maudit']
         artist: ['@Brixton_Cats']
 
     Religion (extends song_template):
         name: 'Religion'
         track: 2
+        position: A2
         albums: ['@Quartier_Maudit']
         artist: ['@Brixton_Cats']
 
     Il_est_temps (extends song_template):
         name: 'Il est temps'
         track: 3
+        position: A3
         albums: ['@Quartier_Maudit']
         artist: ['@Brixton_Cats']
 
     Roll_Roll (extends song_template):
         name: 'Roll Roll'
         track: 4
+        position: A4
         albums: ['@Quartier_Maudit']
         artist: ['@Brixton_Cats']
 
     Tranchee (extends song_template):
         name: 'Tranchée'
         track: 5
+        position: A5
         albums: ['@Quartier_Maudit']
         artist: ['@Brixton_Cats']
 
     Choisir_sa_vie (extends song_template):
         name: 'Choisir sa vie'
         track: 6
+        position: B1
         albums: ['@Quartier_Maudit']
         artist: ['@Brixton_Cats']
 
     Crevards (extends song_template):
         name: 'Crevards'
         track: 7
+        position: B2
         albums: ['@Quartier_Maudit']
         artist: ['@Brixton_Cats']
 
     Far_Est (extends song_template):
         name: 'Far Est'
         track: 8
+        position: B3
         albums: ['@Quartier_Maudit']
         artist: ['@Brixton_Cats']
 
     One_Life (extends song_template):
         name: 'One Life'
         track: 9
+        position: B4
         albums: ['@Quartier_Maudit']
         artist: ['@Brixton_Cats']
 
     Quartier_Maudit_song (extends song_template):
         name: 'Quartier Maudit'
         track: 10
+        position: B5
         albums: ['@Quartier_Maudit']
         artist: ['@Brixton_Cats']
 
