@@ -36,9 +36,12 @@ class SongCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield IntegerField::new('track', 'N°')
+            ->setColumns(1);
+        yield TextField::new('position', 'Face')
+            ->setHelp('A1, B3… vide sur un CD')
             ->setColumns(2);
         yield TextField::new('name', 'Titre')
-            ->setColumns(7);
+            ->setColumns(6);
         yield Field::new('duration', 'Durée')
             ->setFormType(DurationType::class)
             ->formatValue(static fn (?int $seconds): string => null === $seconds ? '' : DurationType::format($seconds))

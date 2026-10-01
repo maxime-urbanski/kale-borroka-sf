@@ -12,28 +12,31 @@
         } %}
     {% endif %}
     {% if tracklist is defined %}
-        <div class="row">
-            <div class="col">
-                <ol class="list-unstyled fs-5 text-start w-content mb-0 mx-auto">
-                    {% for track in tracklist %}
-                        {# Compilations and splits credit each track to its own bands. #}
-                        {% set guests = track.artist|filter(artist => artist.id != album_artist.id)|map(artist => artist.name) %}
-                        {% set duration = track.duration %}
-                        <li>
-                            <span class="text-success">{{ track.track }}</span> - {{ track.name }}
-                            {% if guests is not empty %}
-                                <span class="text-secondary">({{ guests|join(', ') }})</span>
-                            {% endif %}
-                            {% if duration %}
-                                <span class="text-secondary ms-2">
-                                    {{- duration >= 3600 ? (duration // 3600) ~ ':' ~ '%02d'|format(duration // 60 % 60) : duration // 60 -}}
-                                    :{{- '%02d'|format(duration % 60) -}}
-                                </span>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ol>
+        {# tracklist: TracklistSide list (tracklist_sides()): a title per side, none on a CD. #}
+        {% for side in tracklist %}
+            <div class="row">
+                <div class="col">
+                    {% if side.side %}
+                        <h3 class="fs-5 fw-bolder text-start w-content mx-auto mt-3 mb-2">{{ side.label }}</h3>
+                    {% endif %}
+                    <ol class="list-unstyled fs-5 text-start w-content mb-0 mx-auto">
+                        {% for track in side.tracks %}
+                            {# Compilations and splits credit each track to its own bands. #}
+                            {% set guests = track.artist|filter(artist => artist.id != album_artist.id)|map(artist => artist.name) %}
+                            {% set duration = track.duration %}
+                            <li>
+                                <span class="text-success">{{ side.side ? track.position : track.track }}</span> - {{ track.name }}
+                                {% if guests is not empty %}
+                                    <span class="text-secondary">({{ guests|join(', ') }})</span>
+                                {% endif %}
+                                {% if duration %}
+                                    <span class="text-secondary ms-2">{{ duration|duration }}</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
             </div>
-        </div>
+        {% endfor %}
     {% endif %}
 </section>

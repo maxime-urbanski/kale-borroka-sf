@@ -1,16 +1,22 @@
 {# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# By side when every track has a position, whatever the album's pressings (TracklistLayout). #}
 {% if field.value is empty %}
     <span class="text-secondary">Aucun morceau.</span>
 {% else %}
-    <ol class="admin-tracklist list-unstyled mb-0">
-        {% for track in field.value %}
-            <li>
-                <span class="text-secondary me-1">{{ track.track }}.</span>
-                {{ track.name }}
-                {% if track.duration %}
-                    <span class="text-secondary ms-2">{{ track.duration // 60 }}:{{ '%02d'|format(track.duration % 60) }}</span>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ol>
+    {% for side in tracklist_sides(field.value, null) %}
+        {% if side.side %}
+            <h6 class="admin-tracklist-side fw-bold mt-2 mb-1">{{ side.label }}</h6>
+        {% endif %}
+        <ol class="admin-tracklist list-unstyled mb-0">
+            {% for track in side.tracks %}
+                <li>
+                    <span class="text-secondary me-1">{{ side.side ? track.position : track.track ~ '.' }}</span>
+                    {{ track.name }}
+                    {% if track.duration %}
+                        <span class="text-secondary ms-2">{{ track.duration|duration }}</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    {% endfor %}
 {% endif %}

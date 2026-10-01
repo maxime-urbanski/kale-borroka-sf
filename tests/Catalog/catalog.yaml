@@ -24,8 +24,8 @@ albums:
       labels: [kbr, test_label]
       note: Un album pour les tests.
       tracks:
-          - { title: Ouverture, duration: '2:34' }
-          - { title: Final, duration: 61 }
+          - { position: A1, title: Ouverture, duration: '2:34' }
+          - { position: B1, title: Final, duration: 61 }
       releases:
           - { sku: TEST-PE-LP, format: vinyl_12, stock: 3, color: noir, catalogNumber: 'KBR#042', label: kbr, pressingYear: 2021 }
           - { sku: TEST-PE-LP-RED, format: vinyl_12, stock: 1, price: 2500, color: rouge, edition: édition limitée, limitedTo: 100 }
