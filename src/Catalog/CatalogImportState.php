@@ -26,7 +26,7 @@ final class CatalogImportState
     /** @var array<string, Artist|null> lowercased name => artist, null when not in the database */
     public array $artistsByName = [];
 
-    /** @var array<string, Style> lowercased name => style */
+    /** @var array<string, Style|null> lowercased name => style, null when not an official one */
     public array $styles = [];
 
     /** @var array<string, true> */

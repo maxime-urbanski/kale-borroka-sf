@@ -25,7 +25,9 @@ class AdminSmokeTest extends WebTestCase
         foreach (['release', 'book', 'merch', 'merch_variant', 'category', 'page', 'album', 'artist', 'label', 'support', 'order', 'user', 'song', 'style', 'payment', 'transporter', 'image', 'social_network', 'expense', 'event_sale'] as $crud) {
             yield $crud.' index' => ['admin_'.$crud.'_index'];
 
-            if (!\in_array($crud, ['merch_variant', 'order', 'user'], true)) {
+            // No creation screen: variants come from their merch, orders from the shop, users
+            // from registration, styles from the official list (OfficialStylesTest).
+            if (!\in_array($crud, ['merch_variant', 'order', 'user', 'style'], true)) {
                 yield $crud.' new' => ['admin_'.$crud.'_new'];
             }
         }

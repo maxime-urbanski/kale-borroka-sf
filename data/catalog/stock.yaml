@@ -379,7 +379,7 @@ albums:
       name: "Rockin' Class"
       type: album
       date: "2013-02"
-      styles: ["Rockabilly", "Rock'n'Roll"]
+      styles: ["Rockabilly", "Rock & Roll"]
       labels: [the_midnight_rovers_productions, general_strike, appel_aux_luttes]
       note: "Deuxième album des Midnight Rovers, enregistré, mixé et masterisé au studio Luna Rosa à Paris, avec un rockabilly plus marqué et plus direct que sur le premier disque. Dix titres. Le vinyle 160 g est accompagné du CD de l'album (pochette carton) et d'une sous-pochette imprimée."
       tracks:
@@ -415,7 +415,7 @@ albums:
       name: "Tiempos muertos, ritmos inmortales"
       type: album
       date: "2017-06-14"
-      styles: ["Oi!"]
+      styles: ["Oi"]
       labels: [crom_records]
       note: "Deuxième album de Knock Out, après « Sin vergüenza » (2015). Neuf titres de Rock & Oi! chantés en espagnol, sortis en vinyle blanc chez Crom Records."
       tracks:
@@ -532,7 +532,7 @@ albums:
       name: "A World To Win"
       type: album
       date: "2018-05-19"
-      styles: ["Streetpunk", "Oi!"]
+      styles: ["Street Punk", "Oi"]
       labels: [fire_and_flames_music, casual_records]
       note: "Troisième album d'Enraged Minority : douze titres de « classwar streetpunk » qui mêlent Oi!, punk-rock et hardcore avec des influences ska et rock'n'roll, sur des textes de solidarité contre la guerre, la menace fasciste et l'exploitation. Coédité par Fire and Flames Music (FFM057) et Casual Records (CR48)."
       tracks:
@@ -571,7 +571,7 @@ albums:
       name: "Common Angst"
       type: album
       date: "2016-10-01"
-      styles: ["Punk", "Streetpunk"]
+      styles: ["Punk", "Street Punk"]
       labels: [fire_and_flames_music, plastic_bomb_records]
       note: "Deuxième album des Stumbling Pins, douze titres sur la folie de la société capitaliste, le racisme, la pauvreté, l'oppression et la peur qui en découle. Enregistré fin 2015 à Die Tonmeisterei (Oldenburg), voix enregistrées au Melloton Studio de Hambourg, avec Flicke (No Weather Talks) en invité sur « The Beauty In Imperfection ». Coédité par Fire and Flames Music et Plastic Bomb Records ; le vinyle 180 g est livré avec code de téléchargement, poster, autocollant et sous-pochette imprimée."
       tracks:
@@ -624,7 +624,7 @@ albums:
       name: "This Sound's For Us"
       type: album
       date: "2019-08-23"
-      styles: ["Oi!", "Streetpunk"]
+      styles: ["Oi", "Street Punk"]
       labels: [rockers_records]
       note: "Premier album des Snob City Boys : dix titres d'Oi! mélodique et militante, dont « Revolution », seul titre chanté en allemand. Paru d'abord en CD et en numérique en 2019, puis remasterisé pour le vinyle sorti chez Rockers Records le 31 juillet 2020 (300 premiers exemplaires en vinyle blanc, les suivants en noir, avec feuille de paroles)."
       tracks:
@@ -711,7 +711,7 @@ albums:
       name: "Unter dem Deckmantel des Antifaschismus"
       type: compilation
       date: "2020-05-12"
-      styles: ["Punk", "Oi!", "Streetpunk", "Hardcore"]
+      styles: ["Punk", "Oi", "Street Punk", "Hardcore"]
       labels: [riot_bike_records, fire_and_flames_music, sm_musik, troihand, save_the_scene_records]
       note: "Compilation de douze groupes saxons classés « d'extrême gauche » par l'Office de protection de la Constitution de Saxe (Landesamt für Verfassungsschutz) ; le titre reprend un extrait de son rapport 2018. Quatre groupes visés avaient obtenu devant le tribunal administratif de Dresde que leurs noms soient retirés de ces publications. Du punk allemand au hardcore, en passant par l'Oi!, le streetpunk et l'électro-punk ; vinyle accompagné d'un livret de 4 pages (contexte, paroles, notes)."
       tracks:
@@ -827,7 +827,7 @@ albums:
       name: "Oi! In Head, Punk In Heart"
       type: compilation
       date: "2017-05-24"
-      styles: ["Oi!", "Punk"]
+      styles: ["Oi", "Punk"]
       labels: [gremlins_records, crom_records, tough_ain_t_enough, nation_on_fire_records]
       note: "Compilation espagnole parue en 2017 : onze groupes oi! de la péninsule reprennent chacun un classique du punk ibérique (RIP, Desorden, La Polla, Eskorbuto, Kortatu, Siniestro Total…). Elle se termine par une reprise de « If The Kids Are United » de Sham 69. Édition limitée à 500 exemplaires, coéditée par Gremlins, Crom, Tough Ain't Enough et Nation On Fire."
       tracks:
@@ -864,7 +864,7 @@ albums:
       name: "Trouble From The Streets"
       type: album
       date: "2018-09-14"
-      styles: ["Oi!", "Rock'n'Roll"]
+      styles: ["Oi", "Rock & Roll"]
       labels: [fire_and_flames_music, general_strike]
       note: "Premier album de Sharp Cut, sorti en septembre 2018 chez Fire and Flames Music. Sept titres en anglais, dédiés aux militants antifascistes de la bataille de Cable Street (Londres, 1936), qu'illustre la pochette. Le 12\" (45 tours) est livré avec une sous-pochette imprimée avec les paroles et un code de téléchargement."
       tracks:
@@ -900,7 +900,7 @@ albums:
       name: "Hoods Up"
       type: ep
       date: "2014"
-      styles: ["Rap", "Hardcore", "Punk"]
+      styles: ["Hip Hop", "Hardcore", "Punk"]
       labels: [fire_and_flames_music]
       note: "Premier vinyle de Moscow Death Brigade, paru en 2014 chez Fire and Flames Music. Le 12\" 45 tours réunit l'EP de cinq titres « Hoods Up » (face A) et trois titres bonus (face B), dont deux inédits. Il a été repressé plusieurs fois (2015, 2020, 2022) en noir et en couleurs."
       tracks:
@@ -934,7 +934,7 @@ albums:
       name: "Boltcutter"
       type: album
       date: "2018-01-26"
-      styles: ["Rap", "Hardcore", "Punk"]
+      styles: ["Hip Hop", "Hardcore", "Punk"]
       labels: [fire_and_flames_music, rebel_sound_records]
       note: "Premier album de Moscow Death Brigade, sorti le 26 janvier 2018 chez Fire and Flames Music et Rebel Sound Records. Il mêle punk, hardcore et rap à la drum'n'bass, au dancehall, à la techno et au grime, contre le racisme, le fascisme, le sexisme et l'intolérance. Le LP contient deux titres bonus et une sous-pochette imprimée."
       tracks:
@@ -971,7 +971,7 @@ albums:
       name: "Bad Accent Anthems"
       type: album
       date: "2020-04-10"
-      styles: ["Rap", "Hardcore", "Punk"]
+      styles: ["Hip Hop", "Hardcore", "Punk"]
       labels: [fire_and_flames_music, rebel_sound_records]
       note: "Album de Moscow Death Brigade sorti en avril 2020 chez Fire and Flames Music. Onze titres qui mêlent punk rock, hardcore, guitares metal, drum'n'bass et techno, rappés en anglais sur des sujets sociaux mais aussi le graffiti et la tournée. Selon le groupe, le « bad accent » est celui de ceux qui voyagent et militent. Le LP est livré avec une sous-pochette imprimée."
       tracks:
@@ -1087,7 +1087,7 @@ albums:
       name: "City Hackers"
       type: album
       date: "2020-05-01"
-      styles: ["Rap", "Punk"]
+      styles: ["Hip Hop", "Punk"]
       labels: [rumagna_sgroza, mass_productions, fire_and_flames_music, general_strike, guerilla_vinyl, blackout_brigade, brigada_caoz, maloka, keponteam, up_the_punx, subversive_ways, punti_scena_records]
       note: "Album de Krav Boca publié le 1er mai 2020, d'abord offert en téléchargement libre et dédié aux soignants, caissières, livreurs, éboueurs, gilets jaunes et à tous ceux en première ligne pendant la pandémie. Neuf titres mêlant rap, punk et metal, avec de nombreux invités (Chata Flores, My Own Voice, Matrak Attakk, Speira, Zafina, Al Nasser, Aeon). Le LP est une coproduction DIY d'une douzaine de labels."
       tracks:
@@ -1126,7 +1126,7 @@ albums:
       type: album
       date: "2021-02-14"
       production: "KBR#003"
-      styles: ["Rap", "Punk"]
+      styles: ["Hip Hop", "Punk"]
       labels: [boca_records, fire_and_flames_music, guerilla_vinyl, maloka, urgence_disk_records, rumagna_sgroza, rebel_time_records, machete_records, deviance, up_the_punx, alternative_international_movement_roma, kale_borroka_records, nothing_to_harvest_records, dure_realite, keponteam, anfibio_records, subversive_ways, santa_diabla]
       note: "Album de Krav Boca sorti en numérique en février 2021, puis en LP vinyle blanc en mai 2021. Le collectif y revendique son droit d'exister face aux restrictions imposées à la culture pendant la pandémie, avec de nombreux invités (Sponty, Sara, Skalpel, HPS, A. Atak Tos, Call The Cops, Brigada Flores Magon). Le vinyle, tiré à 1000 exemplaires, est une coproduction DIY d'une vingtaine de labels de plusieurs pays, dont Kale Borroka Records (sa 3e production)."
       tracks:
@@ -1165,7 +1165,7 @@ albums:
       type: album
       date: "2025-12-01"
       production: "KBR#005"
-      styles: ["Oi!", "Streetpunk"]
+      styles: ["Oi", "Street Punk"]
       labels: [fire_and_flames_music, kanal_hysterik, discos_machete, rumagna_sgroza, kale_borroka_records]
       note: "Premier album de Saccage, sorti en numérique le 1er décembre 2025 puis en LP en 2026. Neuf titres d'oi! antifasciste, combatifs, fédérateurs ou mélancoliques, avec quelques passages de saxophone et Coratge en invité sur « Cœur d'acier ». Enregistré, mixé et masterisé au Disvlar Studio, illustrations d'Axel. Le vinyle est coproduit par Kanal Hysterik, Fire and Flames, Discos Machete, Rumagna Sgroza et Kale Borroka Records (sa 5e production)."
       tracks:
@@ -1197,7 +1197,7 @@ albums:
       name: "On A Journey"
       type: ep
       date: "2020-01-20"
-      styles: ["Streetpunk", "Oi!"]
+      styles: ["Street Punk", "Oi"]
       labels: [rude_reckless_productions]
       note: "Deuxième sortie des Harbour Rebels : un EP de six titres en anglais, paru en 10\" 33 tours avec code de téléchargement chez Rude & Reckless Productions."
       tracks:
@@ -1233,7 +1233,7 @@ albums:
       name: "The Chaos Brotherhood"
       type: split
       date: "2018-10"
-      styles: ["Oi!", "Streetpunk"]
+      styles: ["Oi", "Street Punk"]
       labels: [casual_records, fire_and_flames_music, motorcity_produzioni, panda_artist_management]
       note: "« Torino meets Madriz » : split 10\" où Non Servium et Bull Brigade reprennent chacun deux morceaux de l'autre groupe dans leur propre style. Pressé sur vinyle blanc avec code de téléchargement, en coproduction entre Casual Records, Fire and Flames, Motorcity Produzioni et Panda Artist."
       tracks:
@@ -1263,7 +1263,7 @@ albums:
       name: "Tribute To Runnin Riot (We're Here For A Good Time, Not A Long Time...)"
       type: compilation
       date: "2015"
-      styles: ["Oi!", "Streetpunk"]
+      styles: ["Oi", "Street Punk"]
       labels: [still_burning_records, crom_records]
       note: "Hommage à Colin McQuilla, chanteur du groupe Oi! antifasciste de Belfast Runnin' Riot, décédé en 2014. Quatre groupes (KnockOut, Gonna Get Yours, Bull Brigade, Hawkins Thugs) y reprennent chacun un morceau de Runnin' Riot. 45 tours avec insert, coédité par Still Burning Records et Crom Records."
       tracks:
@@ -1292,7 +1292,7 @@ albums:
       name: "Working Class Pride EP"
       type: ep
       date: "2017"
-      styles: ["Oi!", "Streetpunk"]
+      styles: ["Oi", "Street Punk"]
       labels: [crom_records, spirit_of_the_streets_records, crowd_control_media]
       note: "Premier 45 tours d'Union Blood : quatre titres coédités par Crom Records, Spirit Of The Streets et Crowd Control Media. Pressé à 400 exemplaires sur vinyle jaune et 100 sur vinyle noir."
       tracks:
@@ -1324,7 +1324,7 @@ albums:
       name: "Remembering Means Fighting"
       type: ep
       date: "2011"
-      styles: ["Hardcore", "Oi!"]
+      styles: ["Hardcore", "Oi"]
       labels: [fire_and_flames_music]
       note: "EP quatre titres dédié à Georg Elser (1903-1945), ouvrier souabe auteur de l'attentat manqué contre Hitler au Bürgerbräukeller de Munich en novembre 1939. Le groupe y rappelle son geste et appelle à la résistance active contre le fascisme. Paru chez Fire and Flames Music."
       tracks:
@@ -1354,7 +1354,7 @@ albums:
       name: "Anni Buttati"
       type: ep
       date: "2020-02-15"
-      styles: ["Oi!", "Streetpunk"]
+      styles: ["Oi", "Street Punk"]
       labels: [fire_and_flames_music, timebomb_records, radio_punk]
       note: "Quatre titres streetpunk/Oi! enregistrés entre décembre 2019 et janvier 2020 au Mobsound de Milan, quatre ans après le premier album. Le 45 tours est sorti en vinyle jaune et noir, en coédition entre Fire and Flames Music, Timebomb Records et Radio Punk."
       tracks:
@@ -1412,7 +1412,7 @@ albums:
       name: "Red Skins Over Leipzig – 10 Jahre RASH LE"
       type: compilation
       date: "2018"
-      styles: ["Oi!", "Streetpunk"]
+      styles: ["Oi", "Street Punk"]
       labels: [fire_and_flames_music]
       note: "Compilation pour les dix ans de la section RASH (Red and Anarchist Skinheads) de Leipzig, avec un titre de chacun des groupes locaux Fontanelle, Flag Smasher, The Spartanics et Sharp Cut : Oi!, punk hardcore, streetpunk et skinhead rock'n'roll. Tirage limité à 500 exemplaires numérotés à la main (250 noirs, 250 orange), avec code de téléchargement."
       tracks:
@@ -1442,7 +1442,7 @@ albums:
       name: "Cenizas"
       type: ep
       date: "2020-05-29"
-      styles: ["Oi!"]
+      styles: ["Oi"]
       labels: [crom_records, radikal_1977_records, tough_ain_t_enough, the_firm_records]
       note: "EP quatre titres de La Cruz, coédité par Crom Records, Radikal 1977 Records, Tough Ain't Enough et The Firm Records. Pressage limité à 500 exemplaires."
       tracks:
@@ -1483,7 +1483,7 @@ albums:
       name: "Rock'n'Roll Skinhead"
       type: ep
       date: "2019-11-22"
-      styles: ["Oi!", "Rock'n'Roll"]
+      styles: ["Oi", "Rock & Roll"]
       labels: [crom_records]
       note: "EP quatre titres de KnockOut paru chez Crom Records et pressé par GZ Media. Tirage numéroté à la main : 218 exemplaires en vinyle doré sous pochette noire et 218 sous pochette blanche, plus 100 exemplaires à pochette faite main."
       tracks:
@@ -1530,7 +1530,7 @@ albums:
       type: ep
       date: "2020-07-04"
       production: "KBR#001"
-      styles: ["Oi!", "Punk", "Folk"]
+      styles: ["Oi", "Punk", "Folk"]
       labels: [kale_borroka_records, fire_and_flames_music, dure_realite, rebel_time_records, rudy_s_back, discos_machete, boite_a_musique_ca_bam]
       note: "Deuxième sortie et premier EP des Union Thugs : une intro suivie de six chants ouvriers et révolutionnaires (Anne Feeney, The Almanac Singers, Leonard Cohen, Molodoï…) repris entre folk et punk-rock, en français et en anglais. Le CD est livré avec un fanzine de 16 pages contenant les paroles et des notes historiques bilingues sur chaque chanson. Coproduction internationale entre Fire and Flames, Dure Réalité, Rebel Time Records, Kale Borroka, Discos Machete et Rudy's Back : c'est la première production de Kale Borroka Records (KBR01)."
       tracks:
@@ -1561,7 +1561,7 @@ albums:
       name: "Leinen los"
       type: album
       date: "2018-11-03"
-      styles: ["Streetpunk", "Oi!"]
+      styles: ["Street Punk", "Oi"]
       labels: [rude_reckless]
       note: "Premier album des Harbour Rebels, 11 titres de streetpunk chantés en allemand. Enregistré au studio Mastertone (Sülfeld), mixé et masterisé à l'Off Ya Tree Studio. CD autoproduit par le groupe en 2018."
       tracks:
@@ -1597,7 +1597,7 @@ albums:
       name: "Des hauts et des bars"
       type: album
       date: "2017-03-24"
-      styles: ["Streetpunk", "Oi!", "Punk"]
+      styles: ["Street Punk", "Oi", "Punk"]
       labels: [appel_aux_luttes]
       note: "Troisième album de Tulamort, sorti pour les dix ans du groupe : 11 titres de punk des rues entre oi!, punk-hardcore et ska. CD en digipack."
       tracks:
@@ -1710,7 +1710,7 @@ albums:
       name: "Toujours debout"
       type: album
       date: "2004-09"
-      styles: ["Ska", "Punk", "Oi!"]
+      styles: ["Ska", "Punk", "Oi"]
       labels: [twisted_chords, maloka]
       note: "Album de Ya Basta ! sorti en septembre 2004, enregistré et mixé au Lokal à Vincennes. Le CD autoproduit compte 15 titres, dont une version dub de « Que la peur change de camp » ; l'édition vinyle est sortie chez Twisted Chords (LP limité à 1500 exemplaires, 14 titres)."
       tracks:
@@ -1749,7 +1749,7 @@ albums:
       name: "La nostra vita"
       type: album
       date: "2010"
-      styles: ["Oi!", "Streetpunk"]
+      styles: ["Oi", "Street Punk"]
       note: "Album de huit titres, sorti en 2010 grâce à la collaboration de plusieurs labels dans le respect de l'éthique DIY. Les textes parlent d'antifascisme militant, critiquent les pratiques journalistiques et rendent hommage au quartier romain de San Lorenzo (« Skinhead San Lorenzo »)."
       tracks:
           - { title: "Il giuramento" }
@@ -1779,7 +1779,7 @@ albums:
       name: "Valstar Revenge"
       type: ep
       date: "2012"
-      styles: ["Streetpunk", "Oi!"]
+      styles: ["Street Punk", "Oi"]
       note: "Premier disque de HVB : six titres de street-punk sortis en 2012."
       tracks:
           - { title: "Temps des rêves", duration: "4:01" }
@@ -1810,7 +1810,7 @@ albums:
       name: "Les Trois Huit"
       type: album
       date: "2015-11-23"
-      styles: ["Oi!", "Punk"]
+      styles: ["Oi", "Punk"]
       labels: [rusty_knife_records, fire_and_flames_music, dure_realite, general_strike, ffc_productions]
       note: "Premier album de Les Trois Huit, groupe de oi! antifasciste de Grenoble : 13 titres, chantés en français et en italien. On y trouve des reprises de Bull Brigade (« Birra ») et des Partisans (« Pas de quartier »). Le CD est une coproduction Rusty Knife (RKR 060A), Fire and Flames (FFM040), Dure Réalité (DR002), General Strike et FFC Productions ; une version LP 45 tours a suivi en 2016."
       tracks:
@@ -1894,7 +1894,7 @@ albums:
       name: "Block H / No Leader"
       type: split
       date: "2006"
-      styles: ["Punk", "Oi!"]
+      styles: ["Punk", "Oi"]
       labels: [punk_s_shadow]
       note: "Split CD sorti en 2006 chez Punk's Shadow (PKS 07), label associatif de Couterne (Orne). Cinq titres de Block H (punk rock engagé), puis cinq de No Leader, de la oi! à boîte à rythmes de Vitré."
       tracks:
@@ -1971,7 +1971,7 @@ albums:
       name: "Suburb Rock'n'Roll"
       type: album
       date: "2010"
-      styles: ["Rockabilly", "Rock'n'Roll"]
+      styles: ["Rockabilly", "Rock & Roll"]
       labels: [appel_aux_luttes, general_strike]
       note: "Premier album des Midnight Rovers, avec Marylou au chant : 11 titres entre rockabilly électrique et rock alternatif de banlieue. Il a été enregistré en mai 2009 dans l'ancienne gare d'Anneville-sur-Mer (Manche) et sort en 2010 en digipack, en autoproduction, distribué par Appel aux luttes et General Strike. « Yasmina » est une reprise de LSD."
       tracks:
@@ -2132,7 +2132,7 @@ albums:
       name: "Generation Tranquilized"
       type: album
       date: "2014-11-25"
-      styles: ["Punk", "Streetpunk"]
+      styles: ["Punk", "Street Punk"]
       labels: [pirates_press_records, burning_heart_records]
       note: "Quatrième album de Bombshell Rocks, le premier depuis plus de dix ans avec le line-up d'origine. Enregistré aux Sound Lab Studios avec le producteur Mathias Färm (Millencolin), il compte douze titres. Coédité par Pirates Press Records et Burning Heart Records."
       tracks:
@@ -2170,7 +2170,7 @@ albums:
       name: "Modern Attack"
       type: album
       date: "2008"
-      styles: ["Ska", "Oi!"]
+      styles: ["Ska", "Oi"]
       labels: [siempre_contra, diffidati_records]
       note: "Album de dix titres de The Last Minute, sorti en CD en 2008 chez Siempre Contra et Diffidati Records."
       tracks:
@@ -2204,7 +2204,7 @@ albums:
       name: "Binouze Metamphe Gang"
       type: album
       date: "2010"
-      styles: ["Punk", "Oi!"]
+      styles: ["Punk", "Oi"]
       labels: [rusty_knife_records, general_strike, appel_aux_luttes]
       note: "Premier album sans titre du groupe, dix morceaux punk oi! chantés en français. Sorti en CD digipack en 2010 chez Rusty Knife Records (RKR015), en coédition avec General Strike et Appel Aux Luttes."
       tracks:
@@ -2277,7 +2277,7 @@ albums:
       name: "Humanity"
       type: album
       date: "2008"
-      styles: ["Punk", "Streetpunk"]
+      styles: ["Punk", "Street Punk"]
       labels: [dead_records, active_distribution]
       note: "Deuxième album de Left For Dead, sorti en CD en 2008 chez Dead Records et Active Distribution. La pochette est signée Kieran (The Restarts). Réédité pour la première fois en vinyle en 2020 par Emergency Records et Bomb-All Records."
       tracks:
@@ -2344,7 +2344,7 @@ albums:
       name: "Antitude"
       type: album
       date: "2014-02-21"
-      styles: ["Streetpunk", "Oi!", "Hardcore"]
+      styles: ["Street Punk", "Oi", "Hardcore"]
       labels: [mad_butcher_records, casual_records, redstar73_records]
       note: "Deuxième album d'Enraged Minority, sorti en 2014 après plus d'une centaine de concerts à travers l'Europe. Douze titres streetpunk, édités par Mad Butcher Records avec Casual Records et Redstar73 Records."
       tracks:
@@ -2382,7 +2382,7 @@ albums:
       type: ep
       date: "2021-02-14"
       production: "KBR#002"
-      styles: ["Oi!", "Streetpunk", "Hardcore"]
+      styles: ["Oi", "Street Punk", "Hardcore"]
       labels: [dure_realite, rebel_time_records, kale_borroka_records, discos_machete, la_distro_elle_a_mauvaise_haleine]
       note: "Premier EP d'Asbestos, cinq titres en français dont une reprise de PomPom Beretta (« Esprit d'bande »). Enregistré et mixé au Studio BAF, masterisé chez Mammoth Sound Mastering. Sorti le 14 février 2021 en cassette limitée à 150 exemplaires, coproduite par Dure Réalité, Rebel Time Records, Discos Machete, Kale Borroka Records (KBR#02) et La Distro Elle A Mauvaise Haleine."
       tracks:
@@ -2412,7 +2412,7 @@ albums:
       type: album
       date: "2022-08-05"
       production: "KBR#004"
-      styles: ["Streetpunk", "Oi!"]
+      styles: ["Street Punk", "Oi"]
       labels: [kale_borroka_records, el_lokal, rat_produccions, mulisec_records, rumagna_sgroza, general_strike, fire_and_flames_music]
       note: "Deuxième album de Revenja, coproduit par Kale Borroka Records (KBR#04) avec El Lokal, Rat Produccions, Mulisec Records, Rumagna Sgroza, General Strike et Fire and Flames."
       tracks:

@@ -20,7 +20,7 @@ albums:
       type: album
       date: 2021-03
       production: 'KBR#042'
-      styles: [Punk, Style De Test]
+      styles: [Punk, Street Punk]
       labels: [kbr, test_label]
       note: Un album pour les tests.
       tracks:
@@ -34,7 +34,7 @@ albums:
       name: Compilation De Test
       type: compilation
       date: 2020
-      styles: [Oi!]
+      styles: [Oi]
       tracks:
           - { title: Hymne, artist: les_testeurs }
           - { title: Chanson, artist: Groupe Invité }

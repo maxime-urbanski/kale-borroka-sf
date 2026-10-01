@@ -1,25 +1,44 @@
+# The official list of Style::OFFICIAL, as the migration seeds it (OfficialStylesTest).
 App\Entity\Style:
-    style_template (template):
-        name: '<name()>'
-    
-    
-    style_punk (extends style_template):
+    style_punk:
         name: 'Punk'
-    
-    style_streetpunk (extends style_template):
-        name: 'Streetpunk'
-    
-    style_ska (extends style_template):
-        name: 'Ska'
-    
-    style_rap (extends style_template):
-        name: 'Rap'
-    
-    style_oi (extends style_template):
-        name: 'Oi!'
-    
-    style_rocksteady (extends style_template):
-        name: 'Rocksteady'
-    
-    style_hardcore (extends style_template):
+    style_oi:
+        name: 'Oi'
+    style_streetpunk:
+        name: 'Street Punk'
+    style_hardcore:
         name: 'Hardcore'
+    style_crust:
+        name: 'Crust'
+    style_anarchopunk:
+        name: 'Anarcho-Punk'
+    style_celticpunk:
+        name: 'Celtic Punk'
+    style_ska:
+        name: 'Ska'
+    style_skapunk:
+        name: 'Ska Punk'
+    style_twotone:
+        name: 'Two Tone'
+    style_rocksteady:
+        name: 'Rocksteady'
+    style_reggae:
+        name: 'Reggae'
+    style_dub:
+        name: 'Dub'
+    style_rockroll:
+        name: 'Rock & Roll'
+    style_rockabilly:
+        name: 'Rockabilly'
+    style_psychobilly:
+        name: 'Psychobilly'
+    style_garagerock:
+        name: 'Garage Rock'
+    style_folk:
+        name: 'Folk'
+    style_folkpunk:
+        name: 'Folk Punk'
+    style_chanson:
+        name: 'Chanson'
+    style_hiphop:
+        name: 'Hip Hop'

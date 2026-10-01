@@ -26,8 +26,8 @@ use Symfony\Component\Yaml\Yaml;
  * Loads the label's stock from a YAML file (data/catalog/stock.yaml) into the catalogue: this is
  * how the production database gets its records, Alice fixtures being dev/test only.
  *
- * Create-only, hence safe to run again: catalogue sections are matched by code, labels, styles
- * and artists by name, albums by artist and name, releases by SKU, and whatever already exists is
+ * Create-only, hence safe to run again: catalogue sections are matched by code, labels and
+ * artists by name, styles by name among the official ones (an unknown style is an error), albums by artist and name, releases by SKU, and whatever already exists is
  * left untouched — in particular the stock, which sales have changed since. Every new entity is
  * validated before anything is written, and the whole file goes in one transaction.
  */
@@ -296,8 +296,8 @@ final readonly class CatalogImporter
             ->setKbrProductionId($production)
             ->setNote($node->optionalString('note'));
 
-        foreach ($node->strings('styles') as $styleName) {
-            $album->addStyle($this->style($styleName, $state, $report));
+        foreach ($node->strings('styles') as $index => $styleName) {
+            $album->addStyle($this->style($styleName, $state) ?? throw $node->error(\sprintf('style « %s » absent de la liste officielle', $styleName), \sprintf('styles[%d]', $index)));
         }
 
         foreach ($node->strings('labels') as $index => $labelKey) {
@@ -420,23 +420,23 @@ final readonly class CatalogImporter
         return $artist;
     }
 
-    private function style(string $name, CatalogImportState $state, CatalogImportReport $report): Style
+    /**
+     * One of the official styles (Style::OFFICIAL, seeded by a migration): never created here.
+     */
+    private function style(string $name, CatalogImportState $state): ?Style
     {
         $key = mb_strtolower($name);
 
-        if (isset($state->styles[$key])) {
-            return $state->styles[$key];
+        // The list in the code decides, whatever rows a database not migrated yet still has.
+        if (!\in_array($key, array_map(mb_strtolower(...), Style::OFFICIAL), true)) {
+            return null;
         }
 
-        $style = $this->findByName(Style::class, $name);
-
-        if (null === $style) {
-            $style = (new Style())->setName($name);
-            $this->entityManager->persist($style);
-            $report->created('style');
+        if (!\array_key_exists($key, $state->styles)) {
+            $state->styles[$key] = $this->findByName(Style::class, $name);
         }
 
-        return $state->styles[$key] = $style;
+        return $state->styles[$key];
     }
 
     /**

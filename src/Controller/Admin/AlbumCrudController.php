@@ -8,11 +8,11 @@ use App\Controller\Admin\Trait\RemovesOrphanImagesTrait;
 use App\Entity\Album;
 use App\Entity\Artist;
 use App\Entity\Label;
-use App\Entity\Style;
 use App\Enum\AlbumReleaseType;
 use App\Repository\ImageRepository;
 use App\Service\ShopSettingsProviderInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -123,8 +123,8 @@ class AlbumCrudController extends AbstractCrudController
         yield FormField::addFieldset('Classement', 'fa fa-tags')
             ->setHelp('Utilisés par les filtres du catalogue et les suggestions « dans le même style ».');
         yield AssociationField::new('styles')
-            ->autocomplete()
-            ->setFormTypeOption('create_missing', static fn (string $name): Style => (new Style())->setName($name))
+            ->setQueryBuilder(static fn (QueryBuilder $query): QueryBuilder => $query->orderBy('entity.name', 'ASC'))
+            ->setHelp('Liste officielle de styles : pour en ajouter un, demandez-le au développeur du site.')
             ->setColumns(6)
             ->hideOnIndex();
         yield AssociationField::new('labels')

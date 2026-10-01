@@ -57,9 +57,7 @@ class ImportCatalogCommandTest extends KernelTestCase
         self::assertSame(['Ouverture', 'Final'], $album->getTracklists()->map(static fn ($song) => $song->getName())->getValues());
         self::assertSame([154, 61], $album->getTracklists()->map(static fn ($song) => $song->getDuration())->getValues());
         self::assertCount(2, $album->getLabels());
-        // An existing style is reused, a new one created.
-        self::assertCount(1, $this->entityManager()->getRepository(Style::class)->findBy(['name' => 'Punk']));
-        self::assertNotNull($this->entityManager()->getRepository(Style::class)->findOneBy(['name' => 'Style De Test']));
+        self::assertSame(['Punk', 'Street Punk'], $album->getStyles()->map(static fn (Style $style) => $style->getName())->getValues());
 
         $black = $this->release('TEST-PE-LP');
         self::assertSame('Les Testeurs - Premier Essai', $black->getName());
@@ -131,8 +129,8 @@ class ImportCatalogCommandTest extends KernelTestCase
     public function testNamesAreMatchedWhateverTheirCase(): void
     {
         $file = $this->catalogWith(static function (array $catalog): array {
-            $catalog['albums'][0]['styles'] = ['punk', 'STYLE DE TEST'];
-            $catalog['albums'][1]['styles'] = ['Style de test'];
+            $catalog['albums'][0]['styles'] = ['punk', 'STREET PUNK'];
+            $catalog['albums'][1]['styles'] = ['street punk'];
             $catalog['labels']['same_label'] = ['name' => 'kale borroka records'];
             $catalog['albums'][1]['labels'] = ['same_label'];
 
@@ -141,9 +139,10 @@ class ImportCatalogCommandTest extends KernelTestCase
 
         self::assertSame(Command::SUCCESS, $this->tester()->execute(['file' => $file]));
 
-        self::assertCount(0, $this->entityManager()->getRepository(Style::class)->findBy(['name' => 'punk']));
-        self::assertCount(1, $this->entityManager()->getRepository(Style::class)->findBy(['name' => 'STYLE DE TEST']));
-        self::assertNull($this->entityManager()->getRepository(Style::class)->findOneBy(['name' => 'Style de test']));
+        self::assertSame(\count(Style::OFFICIAL), $this->entityManager()->getRepository(Style::class)->count([]), 'no style created');
+        $compilation = $this->release('TEST-CDT-7')->getAlbum();
+        self::assertNotNull($compilation);
+        self::assertSame(['Street Punk'], $compilation->getStyles()->map(static fn (Style $style) => $style->getName())->getValues());
         self::assertSame(
             $this->release('TEST-PE-LP')->getLabel(),
             $this->release('TEST-CDT-7')->getAlbum()?->getLabels()->first(),
@@ -240,6 +239,18 @@ class ImportCatalogCommandTest extends KernelTestCase
             return $catalog;
         }, 'catalogNumber : nombre à virgule'];
 
+        yield 'style outside the official list' => [static function (array $catalog): array {
+            $catalog['albums'][0]['styles'] = ['Punk', 'Vaporwave'];
+
+            return $catalog;
+        }, 'albums[0].styles[1] : style « Vaporwave » absent de la liste officielle'];
+
+        yield 'style in the database but not official' => [static function (array $catalog): array {
+            $catalog['albums'][0]['styles'] = ['Rap'];
+
+            return $catalog;
+        }, 'albums[0].styles[0] : style « Rap » absent de la liste officielle'];
+
         yield 'invalid barcode' => [static function (array $catalog): array {
             $catalog['albums'][0]['releases'][0]['gtin'] = '12AB';
 
@@ -253,6 +264,9 @@ class ImportCatalogCommandTest extends KernelTestCase
     #[DataProvider('invalidCatalogs')]
     public function testAnInvalidCatalogImportsNothing(\Closure $break, string $error): void
     {
+        // A style row left over outside the list (a database not migrated yet, say).
+        $this->entityManager()->getConnection()->executeStatement("INSERT INTO style (id, name) VALUES (nextval('style_id_seq'), 'Rap')");
+
         $tester = $this->tester();
 
         self::assertSame(Command::FAILURE, $tester->execute(['file' => $this->catalogWith($break)]));

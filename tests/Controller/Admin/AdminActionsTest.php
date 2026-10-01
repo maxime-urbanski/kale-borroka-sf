@@ -131,7 +131,8 @@ class AdminActionsTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', '/admin/album/new');
 
-        foreach (['artist', 'labels', 'styles'] as $field) {
+        // Styles are an official list, picked rather than typed (OfficialStylesTest).
+        foreach (['artist', 'labels'] as $field) {
             self::assertCount(1, $crawler->filter(\sprintf('select[name^="Album[%s][autocomplete]"][data-kbr-autocomplete-create="true"]', $field)), $field);
         }
 
