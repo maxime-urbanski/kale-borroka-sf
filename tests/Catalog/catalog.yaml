@@ -1,0 +1,42 @@
+prices:
+    vinyl_12: 2000
+    vinyl_7: 600
+
+labels:
+    kbr: { name: Kale Borroka Records }
+    test_label: { name: Label De Test, website: 'https://label-de-test.example.org', distro: true }
+
+artists:
+    les_testeurs:
+        name: Les Testeurs
+        country: FR
+        links: ['https://lestesteurs.bandcamp.com']
+        description: Groupe imaginaire des tests.
+    various: { name: Various Artists }
+
+albums:
+    - artist: les_testeurs
+      name: Premier Essai
+      type: album
+      date: 2021-03
+      production: 'KBR#042'
+      styles: [Punk, Style De Test]
+      labels: [kbr, test_label]
+      note: Un album pour les tests.
+      tracks:
+          - { title: Ouverture, duration: '2:34' }
+          - { title: Final, duration: 61 }
+      releases:
+          - { sku: TEST-PE-LP, format: vinyl_12, stock: 3, color: noir, catalogNumber: 'KBR#042', label: kbr, pressingYear: 2021 }
+          - { sku: TEST-PE-LP-RED, format: vinyl_12, stock: 1, price: 2500, color: rouge, edition: édition limitée, limitedTo: 100 }
+
+    - artist: various
+      name: Compilation De Test
+      type: compilation
+      date: 2020
+      styles: [Oi!]
+      tracks:
+          - { title: Hymne, artist: les_testeurs }
+          - { title: Chanson, artist: Groupe Invité }
+      releases:
+          - { sku: TEST-CDT-7, format: vinyl_7, stock: 2, label: test_label }

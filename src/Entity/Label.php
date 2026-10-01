@@ -8,6 +8,7 @@ use App\Repository\LabelRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LabelRepository::class)]
 class Label
@@ -25,6 +26,7 @@ class Label
     private bool $isDistro = false;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Url(message: 'Adresse invalide : elle doit commencer par https://', requireTld: true)]
     private ?string $website = null;
 
     #[ORM\Column(length: 255, nullable: true)]

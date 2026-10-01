@@ -1,0 +1,2435 @@
+# Stock de Kale Borroka Records, chargé en base par `bin/console app:catalog:import`
+# (ajouter --dry-run pour tout valider sans rien enregistrer).
+#
+# L'import crée ce qui manque et ne touche jamais à l'existant : labels, styles et artistes
+# sont retrouvés par nom, albums par artiste + nom, disques par SKU. Un disque déjà importé
+# garde donc son stock et son prix : corriger ce fichier après coup ne change rien en base,
+# passer par l'admin. Ajouter un pressage (nouveau SKU) à un album existant fonctionne.
+#
+# Données recherchées sur Discogs / Bandcamp le 2026-10-01 ; chaque album indique ses sources
+# et ce qui reste à vérifier (couleur exacte du pressage en stock, notamment).
+#
+# albums[].type      album, ep, single, split, compilation, live
+# albums[].date      AAAA-MM-JJ, AAAA-MM ou AAAA
+# albums[].production  numéro KBR#001 des productions du label
+# tracks[].duration  m:ss ou secondes ; tracks[].artist (compilations, splits) : clé de artists ou nom
+# releases[].format  vinyl_12, vinyl_10, vinyl_7, cd, cassette
+# releases[].price   en centimes, sinon le prix par défaut du format ci-dessous
+
+# Prix par défaut, en centimes.
+prices:
+    vinyl_12: 2000
+    vinyl_10: 1500
+    vinyl_7: 600
+    cd: 1000
+    cassette: 800
+
+labels:
+    acontrario_records: { name: "Acontrario Records", website: "https://acontrario.bandcamp.com" }
+    active_distribution: { name: "Active Distribution", distro: true }
+    alternative_international_movement_roma: { name: "Alternative International Movement Roma" }
+    anfibio_records: { name: "Anfibio Records" }
+    appel_aux_luttes: { name: "Appel aux luttes", website: "https://appelauxluttes.bandcamp.com", distro: true }
+    association_stygmate: { name: "Association Stygmate" }
+    audiolith: { name: "Audiolith", website: "https://audiolith.net" }
+    blackout_brigade: { name: "Blackout Brigade" }
+    boca_records: { name: "Boca Records" }
+    boite_a_musique_ca_bam: { name: "BOITE A MUSIQUE.ca (BAM)", website: "https://boutique.boiteamusique.ca", distro: true }
+    brigada_caoz: { name: "Brigada Caoz" }
+    burning_heart_records: { name: "Burning Heart Records" }
+    casual_records: { name: "Casual Records" }
+    crom_records: { name: "Crom Records", website: "https://cromrecords.bandcamp.com" }
+    crowd_control_media: { name: "Crowd Control Media", website: "https://crowdcontrolmedia.bandcamp.com" }
+    dead_records: { name: "Dead Records" }
+    deviance: { name: "Deviance", website: "https://deviancerecords.com" }
+    diffidati_records: { name: "Diffidati Records" }
+    discos_machete: { name: "Discos Machete", website: "https://discosmachete.bandcamp.com" }
+    dure_realite: { name: "Dure Réalité", website: "https://durerealite.bandcamp.com" }
+    efc_studio: { name: "EFC Studio" }
+    el_lokal: { name: "El Lokal" }
+    entre_chien_et_loup: { name: "Entre Chien et Loup" }
+    ffc_productions: { name: "FFC Productions" }
+    fire_and_flames_music: { name: "Fire and Flames Music", website: "https://www.fireandflames.com" }
+    general_strike: { name: "General Strike" }
+    gremlins_records: { name: "Gremlins Records" }
+    grover_records: { name: "Grover Records" }
+    guerilla_vinyl: { name: "Guerilla Vinyl" }
+    kale_borroka_records: { name: "Kale Borroka Records", website: "https://kale-borroka-records.com" }
+    kanal_hysterik: { name: "Kanal Hysterik", website: "https://kanalhysterik.bandcamp.com" }
+    karameikos: { name: "Karameikos" }
+    keponteam: { name: "Keponteam" }
+    krampouezh_team: { name: "Krampouezh Team" }
+    la_distro_elle_a_mauvaise_haleine: { name: "La Distro Elle A Mauvaise Haleine", distro: true }
+    les_graillouteurs: { name: "Les Graillouteurs" }
+    machete_records: { name: "Machete Records" }
+    mad_butcher_records: { name: "Mad Butcher Records", website: "https://commerce.madbutcher.de" }
+    maloka: { name: "Maloka" }
+    mass_productions: { name: "Mass Productions", website: "https://www.massprod.com" }
+    motorcity_produzioni: { name: "Motorcity Produzioni", website: "https://www.motorcityproduzioni.com" }
+    mulisec_records: { name: "Mulisec Records" }
+    nation_on_fire_records: { name: "Nation On Fire Records" }
+    nothing_to_harvest_records: { name: "Nothing To Harvest Records", website: "https://nothingtoharvestrecords.bandcamp.com" }
+    panda_artist_management: { name: "Panda Artist Management" }
+    pirates_press_records: { name: "Pirates Press Records", website: "https://shop.piratespressrecords.com" }
+    plastic_bomb_records: { name: "Plastic Bomb Records", website: "https://www.plasticbombshop.de" }
+    productions_impossible_records: { name: "Productions Impossible Records", website: "https://productionsimpossiblerecords.bandcamp.com" }
+    punk_s_shadow: { name: "Punk's Shadow" }
+    punti_scena_records: { name: "Punti Scena Records" }
+    radikal_1977_records: { name: "Radikal 1977 Records" }
+    radio_punk: { name: "Radio Punk" }
+    rat_produccions: { name: "Rat Produccions" }
+    ravin_bleu: { name: "Ravin Bleu" }
+    rebel_s_united: { name: "Rebel's United" }
+    rebel_sound_records: { name: "Rebel Sound Records" }
+    rebel_time_records: { name: "Rebel Time Records", website: "https://rebeltime.ca" }
+    red_head_man: { name: "Red Head Man" }
+    redstar73_records: { name: "Redstar73 Records", website: "https://redstar73.com" }
+    riot_bike_records: { name: "Riot Bike Records", website: "https://riotbikerecords.bandcamp.com" }
+    rockers_records: { name: "Rockers Records", website: "https://rockers.de" }
+    rude_reckless: { name: "Rude & Reckless", website: "https://rudeandreckless.de", distro: true }
+    rude_reckless_productions: { name: "Rude & Reckless Productions", website: "https://rudeandreckless.de" }
+    rudy_s_back: { name: "Rudy's Back" }
+    rumagna_sgroza: { name: "Rumagna Sgroza" }
+    rural_muzik: { name: "Rural Muzik" }
+    rusty_knife_records: { name: "Rusty Knife Records", website: "https://rustyknife.bandcamp.com" }
+    santa_diabla: { name: "Santa Diabla" }
+    save_the_scene_records: { name: "Save The Scene Records" }
+    sheekiz_records: { name: "Sheekiz Records" }
+    siempre_contra: { name: "Siempre Contra" }
+    skuds_prod: { name: "Skuds Prod" }
+    sm_musik: { name: "SM Musik", website: "https://www.sm-musik.de" }
+    spirit_of_the_streets_records: { name: "Spirit Of The Streets Records", website: "https://sots-records.de" }
+    still_burning_records: { name: "Still Burning Records" }
+    subversive_ways: { name: "Subversive Ways", website: "https://subversiveways.bandcamp.com" }
+    talion_productions: { name: "Talion Productions" }
+    the_firm_records: { name: "The Firm Records" }
+    the_midnight_rovers_productions: { name: "The Midnight Rovers Productions" }
+    timebomb_records: { name: "Timebomb Records" }
+    tough_ain_t_enough: { name: "Tough Ain't Enough", website: "https://taerecords.bandcamp.com" }
+    trauma_social: { name: "Trauma Social" }
+    troihand: { name: "Troihand" }
+    twisted_chords: { name: "Twisted Chords" }
+    une_vie_pour_rien: { name: "Une Vie Pour Rien ?", website: "https://uneviepourrienvinyles.bandcamp.com" }
+    up_the_punx: { name: "Up The Punx" }
+    urgence_disk_records: { name: "Urgence Disk Records" }
+    zone_onze_records: { name: "Zone Onze Records" }
+
+artists:
+    65_mines_street:
+        name: "65 Mines Street"
+        country: FR
+        links: ["https://65minesstreet.bandcamp.com"]
+        description: "65 Mines Street est un groupe d'Audincourt (Doubs), formé en 2009, qui joue un ska et un reggae teintés de rock'n'roll, de garage et de surf. Ses cinq membres viennent de groupes de la scène ska française comme Two Tone Club, Bobby Sixkiller et Taste in Vibes. Le groupe a publié ensuite Fix the Clock! (2013) et Sick & Bitchin' (2015)."
+    86_crew:
+        name: "8°6 Crew"
+        country: FR
+        links: ["https://fr.wikipedia.org/wiki/8%C2%B06_Crew"]
+        description: "8°6 Crew est un groupe de ska et de reggae skinhead de Paris et de sa banlieue, formé en 1995. D'abord mêlé de streetpunk et de oi!, le groupe s'en éloigne en intégrant une section de cuivres. Ses albums incluent « Bad Bad Reggae » (1999), « Menil'Express » (2001), « Old Reggae Friends » (2010) et « Working Class Reggae » (2016)."
+    all_this_mess:
+        name: "All This Mess"
+        country: FR
+        links: ["https://allthismess.bandcamp.com"]
+        description: "All This Mess est un groupe punk parisien formé en 2015. Il joue un punk-rock aux accents anarcho-punk des années 80."
+    asbestos:
+        name: "Asbestos"
+        country: CA
+        links: ["https://asbestosmtl.bandcamp.com"]
+        description: "Groupe oi! francophone de Montréal (Québec), aux influences post-punk et hardcore. Line-up du premier EP : Jeeps (chant), Sansan (guitare solo, chœurs), Franx (guitare rythmique), Éric Sédition (basse, chœurs) et Mathieu UT (batterie)."
+    binouze_metamphe_gang:
+        name: "Binouze Metamphe Gang"
+        country: FR
+        links: ["https://soundcloud.com/bmgsound"]
+        description: "Groupe punk oi! français, actif sur la scène parisienne au début des années 2010."
+    block_h_no_leader:
+        name: "Block H / No Leader"
+        country: FR
+        description: "Split CD entre deux groupes français : Block H, punk rock engagé, et No Leader, groupe punk oi! de Vitré (Ille-et-Vilaine) qui joue avec une boîte à rythmes. Chaque groupe y joue cinq titres."
+    bombshell_rocks:
+        name: "Bombshell Rocks"
+        country: SE
+        links: ["https://en.wikipedia.org/wiki/Bombshell_Rocks", "https://shop.piratespressrecords.com/pages/bombshell-rocks"]
+        description: "Groupe punk rock suédois fondé en 1995 à Västerås. Generation Tranquilized marque le retour du chanteur d'origine Mårten Cedergran."
+    cartouche:
+        name: "Cartouche"
+        country: FR
+        links: ["https://www.cartouche.punkrock.fr/en/albums/2014-bread-and-roses/", "https://appelauxluttes.bandcamp.com/album/cartouche-bread-roses"]
+        description: "Cartouche est un groupe punk rock mélodique français, présenté par Discogs comme venant de Paris et d'Agen. Après « À corps perdu » (2009), il sort « Bread & Roses » en 2014 puis « À venir » en 2017, avec des textes en français, en anglais et en allemand."
+    death_or_glory:
+        name: "Death Or Glory"
+        country: FR
+        links: ["https://deathorglory1.bandcamp.com"]
+        description: "Death Or Glory est un trio punk-rock de Rennes formé en 2010 par Giole (chant, guitare) et Tony (basse), tous deux anciens de Skuds and Panic People, avec Tommy Gun (batterie, ex-Dead City Walkers). Influencé par The Clash, The Ruts, les Redskins ou Gang of Four, le groupe a beaucoup tourné dans la scène DIY en France, en Belgique, en Suisse et en Allemagne. Deuxième album : « Fearless » (2016)."
+    enraged_minority:
+        name: "Enraged Minority"
+        country: DE
+        links: ["https://www.fireandflames.com/en/label/bands/enraged-minority/", "https://enragedminority.bandcamp.com"]
+        description: "Enraged Minority est un groupe de streetpunk de Fribourg-en-Brisgau (Allemagne), fondé à l'automne 2007 à Rheinfelden. Sa musique mêle streetpunk, hardcore punk, ska et rock'n'roll, sur des textes de lutte des classes. Discographie : un premier album en 2010, « Antitude » (2014, Mad Butcher Records) puis « A World To Win » (2018)."
+    gilbert_et_ses_problemes:
+        name: "Gilbert et ses Problèmes"
+        country: FR
+        links: ["https://gilbertetsesproblemes.bandcamp.com"]
+        description: "Groupe ska-punk de Montpellier. Sur En Transit, le line-up compte Lolo (chant), Fofo et Jiv (guitares), Drik (basse), Beavis (batterie) et Dim (saxophone)."
+    harbour_rebels:
+        name: "Harbour Rebels"
+        country: DE
+        links: ["https://harbourrebels.bandcamp.com", "https://harbourrebels.com/", "https://harbourrebels.com"]
+        description: "Groupe de streetpunk de Hambourg fondé à l'été 2017, mêlant streetpunk, ska, Oi! et hardcore, avec un positionnement ouvertement antiraciste. Premier album « Leinen los » en 2018, suivi de l'EP « On A Journey » (2020) puis de l'album « Rebels Are Back » (2022)."
+    helem:
+        name: "Helem"
+        country: IL
+        links: ["https://helem.bandcamp.com"]
+        description: "Helem (חלם) est un groupe de punk rock antifasciste de Tel Aviv-Jaffa, qui chante en hébreu. Le groupe est formé de Ran Deri (chant), Ran Weizman (guitare), Arcadi Maidanik (basse) et Arik Baraz (batterie). Ses textes dénoncent les discriminations et appellent à la paix au Proche-Orient."
+    hvb:
+        name: "HVB"
+        country: FR
+        links: ["https://hvbmusic.bandcamp.com"]
+        description: "HVB (Hooligans Valstar Band) est un groupe de street-punk/oi! formé en janvier 2009 à Saint-Aubin-de-Baubigné, dans les Deux-Sèvres, troisième groupe « sur les terres » de l'Antifa Saint Aub' Crew. Ses textes parlent de vécu, de mélancolie et de questions sociales comme la prison, la jeunesse ou la vie à la rue. En mai 2012, Arn'oi (ex-Yuka) a remplacé Chris dans le groupe."
+    kabal_la_revolte:
+        name: "Kabal...La Révolte"
+        country: FR
+        description: "Kabal...La Révolte est un groupe de punk-rock chanté en français, originaire du sud du Finistère (pays bigouden, Quimper), actif de juillet 2008 à 2012. Ses textes abordent surtout les problèmes sociaux en France, l'écologie, les guerres et la bêtise humaine. Le groupe est apparu sur la compilation Breizh Disorder vol. 7 de Mass Productions et a joué des Côtes-d'Armor à la Normandie en passant par Paris."
+    knock_out:
+        name: "Knock Out"
+        country: ES
+        links: ["https://knockoutmadrid.bandcamp.com"]
+        description: "Knock Out (aussi écrit Knockout) est un groupe de Rock & Oi! de Madrid formé en 2013 par des membres de plusieurs groupes punk madrilènes. Il revendique l'influence de l'Oi! anglaise classique, de l'Oi! française des années 80 et du streetpunk canadien."
+    krav_boca:
+        name: "Krav Boca"
+        country: FR
+        links: ["https://kravboca.com", "https://kravboca.bandcamp.com"]
+        description: "Krav Boca est un collectif punk-rap franco-gréco-marocain formé à Toulouse en 2014. Le groupe mêle rap, punk, metal et mandoline, avec des textes en français et en grec, et fonctionne en DIY avec un large réseau de labels indépendants à travers le monde."
+    la_cruz:
+        name: "La Cruz"
+        country: ES
+        links: ["https://lacruz.bandcamp.com"]
+        description: "Groupe Oi! de Madrid formé en 2017, influencé par la Oi! anglaise des années 80. Le groupe chante en espagnol."
+    left_for_dead:
+        name: "Left For Dead"
+        country: GB
+        links: ["https://leftfordead3.bandcamp.com"]
+        description: "Groupe punk de Hackney (Londres) formé en 1996. Malgré de nombreux changements de line-up, il joue un punk rock old school DIY et antifasciste, mélodique et rageur."
+    les_gueules_noires:
+        name: "Les Gueules Noires"
+        country: FR
+        links: ["https://lesgueulesnoires.bandcamp.com"]
+        description: "Groupe ska-punk du Nord de la France, présenté comme originaire de Valenciennes (Discogs) et basé à Lille (Bandcamp)."
+    les_trois_huit:
+        name: "Les Trois Huit"
+        country: FR
+        links: ["https://durerealite.bandcamp.com/album/les-trois-huit"]
+        description: "Les Trois Huit est un groupe de oi! antifasciste de Grenoble. Son premier album, sans titre, sort en 2015 en coproduction entre plusieurs labels de la scène (Rusty Knife, Fire and Flames, Dure Réalité, General Strike, FFC Productions), suivi en 2016 de « Assigné.es à résistance »."
+    messed_up:
+        name: "Messed Up"
+        country: BY
+        links: ["https://messedupgrlzzz.bandcamp.com"]
+        description: "Messed Up est un groupe punk féminin fondé en 2015 à Grodno, en Biélorussie, présenté comme le premier groupe punk entièrement féminin du pays. Ses textes, en russe, parlent de racisme, d'homophobie et d'ignorance sociale. Contraintes de quitter la Biélorussie après la répression de 2020, les musiciennes se sont installées à Varsovie ; le groupe s'est séparé en mai 2025."
+    moscow_death_brigade:
+        name: "Moscow Death Brigade"
+        country: RU
+        links: ["https://moscowdeathbrigade.com", "https://moscowdeathbrigade.bandcamp.com"]
+        description: "Moscow Death Brigade est un groupe russe fondé en 2007, qui mêle hip-hop hardcore, punk et musique électronique sous l'étiquette « Circle Pit Hip-Hop ». Ses trois membres masqués (les rappeurs Vlad Boltcutter et Ski Mask G, et DJ Solid Seb) sont issus de la scène graffiti et des mouvements sociaux DIY. Leurs textes, en anglais, sont antifascistes et contre le racisme, le sexisme et la guerre."
+    non_servium_bull_brigade:
+        name: "Non Servium / Bull Brigade"
+        links: ["https://bullbrigade.bandcamp.com"]
+        description: "Split entre deux piliers antifascistes de la scène Oi!/streetpunk : Non Servium, groupe Oi! de Móstoles (Madrid) formé en 1997, et Bull Brigade, groupe de streetpunk de Turin formé en 2006 sur les cendres de Banda del Rione et Youngang."
+    resaka_sonora:
+        name: "Resaka Sonora"
+        country: FR
+        links: ["https://resakasonora.bandcamp.com"]
+        description: "Resaka Sonora est un groupe de ska-punk de Bordeaux, fondé en 2011 par une bande d'amis. Cette formation de neuf musiciens se revendique « combat ska » et chante en français, en espagnol et en italien des textes politiques et internationalistes. Premier album, Buenaventura, en 2015."
+    revenja:
+        name: "Revenja"
+        country: ES
+        description: "Groupe streetpunk/oi! antifasciste de Barcelone, qui chante en catalan."
+    s_molest:
+        name: "S-Molest"
+        country: IT
+        description: "S-Molest est un groupe oi! de Rome, apparu en 2007 et issu du quartier de San Lorenzo. Le groupe a joué sur de nombreuses scènes italiennes et étrangères, notamment aux côtés de The Oppressed et des Angelic Upstarts. Il est connu pour son titre « Sbronza Molesta »."
+    saccage:
+        name: "Saccage"
+        country: FR
+        links: ["https://saccageoi.bandcamp.com"]
+        description: "Saccage est un groupe d'oi! antifasciste parisien, issu de la nouvelle génération de la scène redskin. Il a sorti une première démo de quatre titres en octobre 2023, enregistrée au Disvlar Studio."
+    sempre_peggio:
+        name: "Sempre Peggio"
+        country: IT
+        links: ["https://semprepeggio.bandcamp.com"]
+        description: "Groupe Oi! de Milan actif depuis 2015, ouvertement antifasciste. Premier album « Sempre Peggio » en 2016 chez Anfibio Records."
+    sharp_cut:
+        name: "Sharp Cut"
+        country: DE
+        links: ["https://sharpxcut.bandcamp.com"]
+        description: "Sharp Cut est un groupe d'oi! anarchiste de Leipzig, formé à l'été 2016. Le groupe joue un skinhead rock'n'roll rugueux et mélodique, à l'attitude strictement antifasciste et de classe, et dénonce le sexisme, l'homophobie, la transphobie et le racisme dans la scène punk."
+    skuds_and_panic_people:
+        name: "Skuds and Panic People"
+        country: FR
+        description: "Skuds and Panic People est un groupe de Rennes qui mêlait punk-rock et ska, avec des touches de hardcore et des textes politiques. Deux de ses membres, Giole et Tony, ont ensuite fondé Death Or Glory en 2010."
+    snob_city_boys:
+        name: "Snob City Boys"
+        country: DE
+        links: ["https://snobcityboys.bandcamp.com"]
+        description: "Snob City Boys est un groupe d'Oi! antifasciste de Wiesbaden, capitale de la Hesse, fondé à l'automne 2017 autour du chanteur Mighty Maik. Il s'inspire de l'Oi! britannique de la fin des années 70, avec des refrains à reprendre en chœur et des textes contre l'exclusion, la marchandisation et l'oppression."
+    stumbling_pins:
+        name: "Stumbling Pins"
+        country: DE
+        links: ["https://stumblingpins.bandcamp.com"]
+        description: "Stumbling Pins est un groupe punk de Kiel (Allemagne), qui joue un streetpunk mélodique aux textes directs et engagés. Après un premier album, « Aged Colours And Behaviours » (2011), et l'EP acoustique « Lifetime Crisis » (2014), le groupe a tourné en Lituanie, en Estonie, en Ukraine et en Russie."
+    t_killas:
+        name: "T-Killas"
+        country: DE
+        links: ["https://t-killas.bandcamp.com"]
+        description: "Les T-Killas sont un groupe de ska d'Aschaffenburg (Bavière), actif depuis 2003. Inspirés par The Clash, The Specials et les Redskins, ils mélangent ska, mod et punk avec orgue et saxophone. Leur premier album est sorti en 2014."
+    the_last_minute:
+        name: "The Last Minute"
+        country: HU
+        description: "Groupe de ska 2-tone teinté d'oi! formé à Budapest (Hongrie) en 2005, avec l'ambition de réveiller la scène ska underground hongroise."
+    the_midnight_rovers:
+        name: "The Midnight Rovers"
+        country: FR
+        links: ["https://themidnightrovers.bandcamp.com"]
+        description: "The Midnight Rovers est un groupe de rockabilly de la banlieue sud de Paris, formé fin 2006. Le groupe mêle le rockabilly des années 50-60 et le rock français des années 80, avec des textes engagés sur la vie et la violence sociale en banlieue. Marylou chante sur le premier album, Nico lui succède sur « Rockin' Class »."
+    tulamort:
+        name: "Tulamort"
+        country: FR
+        links: ["https://tulamort.bandcamp.com"]
+        description: "Tulamort est un groupe de punk des rues parisien formé début 2006, en pleine mobilisation contre les mesures antisociales du gouvernement, par d'anciens membres de Ya Basta!, Cartouche et Travailleurs de la Nuit. Sa musique navigue entre oi!, punk-hardcore et ska, avec des textes politiques. Discographie : un EP et un live en 2008, Main d'œuvre internationale (2013) puis Des hauts et des bars (2017)."
+    union_blood:
+        name: "Union Blood"
+        country: ES
+        links: ["https://unionblood.bandcamp.com"]
+        description: "Groupe streetpunk/Oi! de La Corogne (Galice), formé à l'été 2016. Le groupe revendique l'influence de Cock Sparrer, Evil Conduct, Vanilla Muffins ou The Business, avec des textes sur la fraternité, le football et la lutte."
+    union_thugs:
+        name: "Union Thugs"
+        country: CA
+        links: ["https://unionthugs.bandcamp.com"]
+        description: "Union Thugs est un groupe de Montréal (Québec) qui joue un mélange de folk et d'oi!, porté par l'accordéon, autour des chants ouvriers et révolutionnaires. Ses membres sont passés par des groupes comme Action Sedition, Riot Porn ou Mayday et militent à l'IWW, au COBP (Collectif opposé à la brutalité policière) et chez les RASH. Le groupe se présente comme « d'abord des travailleurs, ensuite des musiciens »."
+    various_artists:
+        name: "Various Artists"
+    wasted_youth:
+        name: "Wasted Youth"
+        country: DE
+        links: ["https://www.facebook.com/wastedyouthsghc"]
+        description: "Groupe hardcore punk de Schwäbisch Gmünd (Bade-Wurtemberg), formé en 2008, au positionnement ouvertement de gauche et antifasciste. Premier album « Stay Free » fin 2010 chez Diffidati Records / Casual Records."
+    ya_basta:
+        name: "Ya Basta !"
+        country: FR
+        links: ["https://yabasta.bandcamp.com"]
+        description: "Ya Basta ! est un groupe militant de la banlieue parisienne, formé en 1993 par Ol et Cidou, qui mêle ska, punk, oi! et rocksteady avec des textes libertaires. Ol écrivait l'essentiel des paroles et Cidou composait la musique ; la dernière formation comptait deux chanteurs et des cuivres (trombone, saxophone). Discographie : split avec Action Directe (1999), Lucha y fiesta (2002), Toujours debout (2004) et Sans retour (2006)."
+    yuka:
+        name: "Yuka"
+        country: FR
+        links: ["https://rustyknife.bandcamp.com/album/rkr-007-yuka-quenfin-souffle-le-vent-de-la-contestation"]
+        description: "Yuka est un groupe punk français aux textes engagés (antifascisme, sans-papiers, anticléricalisme). Son album « Qu'enfin souffle le vent de la contestation » est sorti en 2010 et porte la référence RKR 007 chez Rusty Knife Records."
+
+albums:
+
+    # All This Mess - ST x 3 LP — identification high, pressage medium
+    # À vérifier : La liste dit « ST » : l'album n'a pas d'autre titre que le nom du groupe, mais
+    #   Discogs et la bio du groupe l'appellent « ATM » (Bandcamp : « ALL THIS MESS ») — choisir le nom
+    #   affiché sur la pochette. Un seul pressage vinyle connu (Discogs 14035340, pressé par GZ Media,
+    #   sans couleur indiquée : noir supposé). Discogs date le vinyle de 2019, la bio du groupe parle
+    #   d'une sortie « mi-2018 » et Bandcamp du 8 mai 2018 : pressingYear 2018 retenu, à vérifier. Le
+    #   titre A4 s'appelle « Gender Weirdness » sur le vinyle (Discogs) et « Gender » sur Bandcamp.
+    #   Durées issues de Bandcamp.
+    # Source : https://allthismess.bandcamp.com/album/all-this-mess
+    # Source : https://www.discogs.com/release/14035340-All-This-Mess-ATM
+    - artist: all_this_mess
+      name: "ATM"
+      type: album
+      date: "2018-05-08"
+      styles: ["Punk"]
+      labels: [sheekiz_records, kanal_hysterik, general_strike]
+      note: "Premier album d'All This Mess, enregistré en 2017 au studio Malambo, mixé et masterisé par Laurent Noise. Dix titres de punk-rock aux accents anarcho-punk des années 80. Coproduit en vinyle par Sheekiz Records, Kanal Hysterik et General Strike, avec un insert 12\" (paroles et crédits)."
+      tracks:
+          - { title: "Phobia", duration: "2:21" }
+          - { title: "Prayer", duration: "3:18" }
+          - { title: "Bruises", duration: "3:25" }
+          - { title: "Gender Weirdness", duration: "2:16" }
+          - { title: "Lives To Blow", duration: "2:03" }
+          - { title: "Tant Pis", duration: "2:36" }
+          - { title: "Screen Head", duration: "2:48" }
+          - { title: "Come On, Ellen", duration: "3:25" }
+          - { title: "Mess", duration: "2:29" }
+          - { title: "The Way They Go", duration: "3:52" }
+      releases:
+          - sku: ALL-THIS-MESS-ATM-LP
+            format: vinyl_12
+            stock: 3
+            color: "noir"
+            pressingYear: 2018
+            catalogNumber: "K.H #047"
+            label: kanal_hysterik
+
+    # The Midnight Rovers - Rockin' Class x 2 LP — identification high, pressage high
+    # À vérifier : Un seul pressage connu : LP 160 g + CD, premier tirage de 500 exemplaires (non
+    #   mentionné sur le disque, selon Discogs) ; couleur non indiquée, noir supposé. Durées issues de
+    #   Discogs (elles ne figurent pas sur le disque). Mois de sortie (février 2013) d'après une
+    #   interview (letempsdesarticule.fr). Le CD « Suburb Rock'n'Roll » que le label a aussi en stock
+    #   n'est PAS le même album : c'est le premier album du groupe (CD digipack, 11 titres, avec Marylou
+    #   au chant : Ennui juvénile, Rock'n roll angel, Ma banlieue, Elle, Way of life, Rien à foutre, The
+    #   midnight rovers, Yasmina (LSD), One summer night, Sombre nuit, Differently alike) ; seul « Elle
+    #   » est commun aux deux disques. Discogs date ce CD de 2010, autoproduit (release 2870756). Le
+    #   titre « Suburb Rock'n'Roll Class » de l'inventaire mélange vraisemblablement les deux titres.
+    #   Appel aux luttes (qui vend les deux disques) est noté comme distributeur d'après Discogs ; Fire
+    #   and Flames l'indique comme label.
+    # Source : https://www.discogs.com/release/4988617-The-Midnight-Rovers-Rockin-Class
+    # Source : https://appelauxluttes.bandcamp.com/album/the-midnight-rovers-rockin-class
+    # Source : https://appelauxluttes.bandcamp.com/album/the-midnight-rovers-suburb-rockn-roll
+    - artist: the_midnight_rovers
+      name: "Rockin' Class"
+      type: album
+      date: "2013-02"
+      styles: ["Rockabilly", "Rock'n'Roll"]
+      labels: [the_midnight_rovers_productions, general_strike, appel_aux_luttes]
+      note: "Deuxième album des Midnight Rovers, enregistré, mixé et masterisé au studio Luna Rosa à Paris, avec un rockabilly plus marqué et plus direct que sur le premier disque. Dix titres. Le vinyle 160 g est accompagné du CD de l'album (pochette carton) et d'une sous-pochette imprimée."
+      tracks:
+          - { title: "Jungle Rockabilly (Instrumental)", duration: "2:20" }
+          - { title: "Lost Soldier", duration: "2:43" }
+          - { title: "A Man In Harmony", duration: "3:19" }
+          - { title: "Honey Don't", duration: "2:40" }
+          - { title: "Elle", duration: "2:16" }
+          - { title: "Be A Good Girl", duration: "3:10" }
+          - { title: "Cruel Life", duration: "2:40" }
+          - { title: "Tattoos", duration: "2:02" }
+          - { title: "Suburb Of Pain", duration: "2:47" }
+          - { title: "Blvd Vincent Auriol", duration: "3:15" }
+      releases:
+          - sku: THE-MIDNIGHT-ROVERS-ROCKIN-CLASS-LP
+            format: vinyl_12
+            stock: 2
+            color: "noir"
+            edition: "LP + CD"
+            limitedTo: 500
+            pressingYear: 2013
+            catalogNumber: "TMR LP02"
+            label: the_midnight_rovers_productions
+
+    # Knock Out - Tiempos muertos, Ritmos inmortales x 1 LP — identification high, pressage high
+    # À vérifier : Un seul pressage vinyle connu (Discogs 10464304, vinyle blanc, Crom Records CR011,
+    #   Espagne). Date du 14 juin 2017 d'après Bandcamp. Durées issues de Bandcamp. Le groupe signe «
+    #   Knockout » sur Bandcamp et « Knock Out » sur Discogs.
+    # Source : https://www.discogs.com/release/10464304-Knock-Out-9-Tiempos-Muertos-Ritmos-Inmortales
+    # Source : https://knockoutmadrid.bandcamp.com/album/tiempos-muertos-ritmos-inmortales
+    # Source : http://therealoi.blogspot.com/2014/07/knock-out.html
+    - artist: knock_out
+      name: "Tiempos muertos, ritmos inmortales"
+      type: album
+      date: "2017-06-14"
+      styles: ["Oi!"]
+      labels: [crom_records]
+      note: "Deuxième album de Knock Out, après « Sin vergüenza » (2015). Neuf titres de Rock & Oi! chantés en espagnol, sortis en vinyle blanc chez Crom Records."
+      tracks:
+          - { title: "Himno de taberna", duration: "3:34" }
+          - { title: "Siempre adelante", duration: "3:34" }
+          - { title: "Corazón salvaje", duration: "3:33" }
+          - { title: "Llanto de perdedor", duration: "3:19" }
+          - { title: "En las sombras", duration: "4:52" }
+          - { title: "Tiempos muertos", duration: "3:48" }
+          - { title: "Tardes de gloria", duration: "3:00" }
+          - { title: "Mercancía", duration: "3:05" }
+          - { title: "Enemigos de la humanidad", duration: "3:43" }
+      releases:
+          - sku: KNOCK-OUT-TIEMPOS-MUERTOS-RITMOS-LP
+            format: vinyl_12
+            stock: 1
+            color: "blanc"
+            pressingYear: 2017
+            catalogNumber: "CR011"
+            label: crom_records
+
+    # Death Or Glory - Can't Stop Me x 2 LP — identification high, pressage medium
+    # À vérifier : Deux fiches Discogs pour le même tirage de 2013 : LP + CD (4963151, retenue) et LP
+    #   seul (14994437, sans doute une copie sans le CD ou une fiche en double). Tirage de 500 vinyles
+    #   d'après rockmadeinfrance ; couleur non indiquée, noir supposé. Vérifier si les exemplaires en
+    #   stock contiennent le CD. Durées issues du Bandcamp du groupe, qui ne propose pas « Jamy » (durée
+    #   inconnue) mais ajoute « Bomb Song » (bonus, 1:36) — d'après Appel aux luttes, « Bomb Song »
+    #   n'est que sur le CD, il est donc exclu de la tracklist du vinyle. Formation : 2010 selon Discogs
+    #   et la bio Bandcamp, 2009 selon rockmadeinfrance. Le Bandcamp du groupe date l'album du 19 juin
+    #   2014 (mise en ligne) ; la sortie physique est d'avril 2013.
+    # Source : https://www.discogs.com/release/4963151
+    # Source : https://www.discogs.com/release/14994437
+    # Source : https://deathorglory1.bandcamp.com/album/cant-stop-me
+    - artist: death_or_glory
+      name: "Can't Stop Me"
+      type: album
+      date: "2013-04"
+      styles: ["Punk"]
+      labels: [appel_aux_luttes, skuds_prod, general_strike, red_head_man, rudy_s_back, entre_chien_et_loup]
+      note: "Premier album de Death Or Glory, sorti en avril 2013 en vinyle (500 exemplaires) accompagné du CD, coproduit par six labels DIY (Appel aux luttes, Skuds Prod, General Strike, Red Head Man, Rudy's Back, Entre Chien et Loup). Dix titres de punk-rock aux influences anglaises et post-punk ; le CD ajoute un titre bonus, « Bomb Song »."
+      tracks:
+          - { title: "Shades of Pain", duration: "2:29" }
+          - { title: "Can't Stop Me", duration: "2:34" }
+          - { title: "Lost", duration: "3:14" }
+          - { title: "Streets of Gold", duration: "2:30" }
+          - { title: "Homely", duration: "2:23" }
+          - { title: "Unemployment", duration: "2:16" }
+          - { title: "The Syndicate", duration: "2:39" }
+          - { title: "Dei Vinti Memoria", duration: "2:25" }
+          - { title: "Jamy" }
+          - { title: "Adelante !", duration: "2:28" }
+      releases:
+          - sku: DEATH-OR-GLORY-CAN-T-STOP-ME-LP
+            format: vinyl_12
+            stock: 2
+            color: "noir"
+            edition: "LP + CD"
+            limitedTo: 500
+            pressingYear: 2013
+            catalogNumber: "GS048"
+            label: general_strike
+
+    # Skuds and Panic People - Lachez les bombes x1 LP — identification high, pressage high
+    # À vérifier : Un seul pressage vinyle connu (Discogs 4106520, autoproduit, SKUDS 0309, couleur
+    #   non indiquée : noir supposé) ; le CD est coédité par Skuds Prod et General Strike. Durées
+    #   introuvables (Discogs n'en donne pas, Bandcamp n'a qu'un extrait : « Des hommes nouveaux »,
+    #   2:07) : null. Orthographe des titres : Discogs écrit « Des Hommes Nouveau », « Machette Ou
+    #   Kalash », « Lachez Les Bombes » ; Appel aux luttes écrit « Des hommes nouveaux », « Machete ou
+    #   kalash » — vérifier sur la pochette ; toutes les sources écrivent « Lachez » sans accent (gardé
+    #   tel quel). Aucun site propre au groupe trouvé.
+    # Source : https://www.discogs.com/release/4106520-Skuds-And-Panic-People-Lachez-Les-Bombes
+    # Source : https://www.discogs.com/release/3509135
+    # Source : https://appelauxluttes.bandcamp.com/album/skuds-and-panic-people-lachez-les-bombes
+    - artist: skuds_and_panic_people
+      name: "Lachez les bombes"
+      type: album
+      date: "2009"
+      styles: ["Punk", "Ska"]
+      labels: [skuds_prod, general_strike]
+      note: "Dernier album du groupe rennais, douze titres entre punk-rock et ska, avec des touches de hardcore, des textes politiques et déjà les influences britanniques que l'on retrouvera chez Death Or Glory. Sorti en 2009 en vinyle autoproduit et en CD (Skuds Prod / General Strike)."
+      tracks:
+          - { title: "City Lights" }
+          - { title: "Ma religion" }
+          - { title: "Lachez les bombes" }
+          - { title: "Partisan" }
+          - { title: "Des hommes nouveaux" }
+          - { title: "Entre les lignes" }
+          - { title: "Machette ou kalash" }
+          - { title: "Dernier train" }
+          - { title: "Pour nos frères" }
+          - { title: "Skin and Brain" }
+          - { title: "Burn the Flag Down" }
+          - { title: "Béton armé" }
+      releases:
+          - sku: SKUDS-AND-PANIC-LACHEZ-LES-BOMBES-LP
+            format: vinyl_12
+            stock: 1
+            color: "noir"
+            pressingYear: 2009
+            catalogNumber: "SKUDS 0309"
+
+    # Enraged Minority - A World To Win x1 LP — identification high, pressage medium
+    # À vérifier : Deux pressages vinyle : standard (Discogs 12019515, couleur non indiquée, noir
+    #   supposé) et rouge limité à 161 exemplaires, vendu seulement par les labels et le groupe
+    #   (12019537) : vérifier la couleur du disque en stock. Date (19 mai 2018) et durées issues de
+    #   Deezer (A1 est une intro de 42 s) ; le découpage des faces vient de Fire and Flames / Discogs.
+    #   Le code UPC Deezer (193483897035) est celui de l'édition numérique, pas du vinyle : non repris.
+    #   Pas de Bandcamp trouvé ; pochette prise sur Deezer (la pochette Discogs nécessite une
+    #   connexion).
+    # Source : https://www.discogs.com/release/12019515
+    # Source : https://www.discogs.com/release/12019537
+    # Source : https://www.fireandflames.com/en/product/enraged-minority-a-world-to-win-lp/
+    - artist: enraged_minority
+      name: "A World To Win"
+      type: album
+      date: "2018-05-19"
+      styles: ["Streetpunk", "Oi!"]
+      labels: [fire_and_flames_music, casual_records]
+      note: "Troisième album d'Enraged Minority : douze titres de « classwar streetpunk » qui mêlent Oi!, punk-rock et hardcore avec des influences ska et rock'n'roll, sur des textes de solidarité contre la guerre, la menace fasciste et l'exploitation. Coédité par Fire and Flames Music (FFM057) et Casual Records (CR48)."
+      tracks:
+          - { title: "A World To Win", duration: "0:42" }
+          - { title: "Go Out On The Piss", duration: "4:13" }
+          - { title: "Misfit", duration: "3:06" }
+          - { title: "By My Side", duration: "2:57" }
+          - { title: "Go Down Swinging", duration: "3:41" }
+          - { title: "It Is You", duration: "2:23" }
+          - { title: "Through The Desert", duration: "1:55" }
+          - { title: "The Spirits You Called", duration: "3:22" }
+          - { title: "Classwar Rock'n'Roll", duration: "3:21" }
+          - { title: "One Man Army", duration: "3:57" }
+          - { title: "Biji Berxwedan", duration: "4:51" }
+          - { title: "Unity Song", duration: "4:07" }
+      releases:
+          - sku: ENRAGED-MINORITY-A-WORLD-TO-WIN-LP
+            format: vinyl_12
+            stock: 1
+            color: "noir"
+            pressingYear: 2018
+            catalogNumber: "FFM057"
+            label: fire_and_flames_music
+
+    # Stumblig Pins - Common Angst x1 LP — identification high, pressage low
+    # À vérifier : Nom correct : « Stumbling Pins » (faute dans l'inventaire). Trois pressages vinyle
+    #   : standard (Discogs 9230162, couleur non indiquée, noir supposé), orange limité vendu seulement
+    #   par Fire and Flames, Plastic Bomb et le groupe (9166147, tirage non précisé), et 40 exemplaires
+    #   numérotés à la main avec pochette sérigraphiée (9307692). Le noir est retenu par défaut mais, si
+    #   le disque vient de Fire and Flames, l'orange est probable : vérifier la couleur. Durées issues
+    #   de Bandcamp.
+    # Source : https://www.discogs.com/master/1077515-Stumbling-Pins-Common-Angst
+    # Source : https://stumblingpins.bandcamp.com/album/common-angst
+    # Source : https://www.fireandflames.com/en/product/stumbling-pins-common-angst-lp-2/
+    - artist: stumbling_pins
+      name: "Common Angst"
+      type: album
+      date: "2016-10-01"
+      styles: ["Punk", "Streetpunk"]
+      labels: [fire_and_flames_music, plastic_bomb_records]
+      note: "Deuxième album des Stumbling Pins, douze titres sur la folie de la société capitaliste, le racisme, la pauvreté, l'oppression et la peur qui en découle. Enregistré fin 2015 à Die Tonmeisterei (Oldenburg), voix enregistrées au Melloton Studio de Hambourg, avec Flicke (No Weather Talks) en invité sur « The Beauty In Imperfection ». Coédité par Fire and Flames Music et Plastic Bomb Records ; le vinyle 180 g est livré avec code de téléchargement, poster, autocollant et sous-pochette imprimée."
+      tracks:
+          - { title: "Words", duration: "2:50" }
+          - { title: "Know Too Much / Feel Too Little", duration: "2:20" }
+          - { title: "The Beauty In Imperfection", duration: "3:23" }
+          - { title: "Shiver Alone", duration: "2:38" }
+          - { title: "Ode To Joy", duration: "3:24" }
+          - { title: "Gentrifucks", duration: "3:31" }
+          - { title: "Save Somebody Else", duration: "2:34" }
+          - { title: "From Rags To Riches", duration: "3:05" }
+          - { title: "I Hate My Brain", duration: "2:20" }
+          - { title: "Off The Beaten Track", duration: "3:53" }
+          - { title: "The Fuckit List", duration: "2:43" }
+          - { title: "Empty Pockets", duration: "3:45" }
+      releases:
+          - sku: STUMBLING-PINS-COMMON-ANGST-LP
+            format: vinyl_12
+            stock: 1
+            color: "noir"
+            pressingYear: 2016
+            catalogNumber: "FFM044"
+            label: fire_and_flames_music
+
+    # Snob City Boys - This Sound's For Us x2 LP — identification high, pressage medium
+    # À vérifier : Le CD (2019) écrit le titre « This Sounds For Us » sans apostrophe, le vinyle
+    #   (2020) « This Sound's For Us ». date_release = sortie numérique/CD (23 août 2019 sur Deezer) ;
+    #   le vinyle est sorti le 31 juillet 2020. Vinyle : 300 premiers exemplaires blancs (Discogs
+    #   15567588), puis noir (15567299, seul à avoir le code-barres 4270001086105 sur Discogs) — le noir
+    #   est retenu par défaut, vérifier la couleur des 2 exemplaires (ils peuvent différer). CD :
+    #   digipak autoproduit selon Discogs (24284858, sans code-barres) ; Fire and Flames l'attribue à «
+    #   Aufruhr Produktionen » : pour la fiche CD, catalogNumber null, à vérifier sur le disque. Durées
+    #   issues de Bandcamp (identiques au CD). Titre A2 écrit « Skinhead Girrrls » (Bandcamp, CD) ou «
+    #   Skinhead Girrls » (vinyle sur Discogs).
+    # Source : https://www.discogs.com/master/1766052-Snob-City-Boys-This-Sounds-For-Us
+    # Source : https://www.discogs.com/release/15567299-Snob-City-Boys-This-Sounds-For-Us
+    # Source : https://www.discogs.com/release/15567588
+    # Snob City Boys - This Sound's For Us x2 CD — identification high, pressage high
+    # À vérifier : The CD (2019, self-released digipak, Discogs 24284858) predates the Rockers Records
+    #   LP (2020-07-31). The CD is titled 'This Sounds For Us' (no apostrophe) on the CD/Bandcamp, 'This
+    #   Sound's For Us' on the LP; album name uses the LP spelling, change it if you prefer the CD's.
+    #   Fire and Flames lists the CD label as 'Aufruhr Produktionen' (not on Discogs): check the back of
+    #   the CD. Track 2 is 'Skinhead Girrrls' on the CD, 'Skinhead Girrls' on the LP. Durations from
+    #   Bandcamp (the Bandcamp page was re-uploaded in 2026, its date is meaningless). The 'remastered
+    #   for vinyl' and 'first 300 white' details come from the shop description of the LP.
+    # Source : https://www.discogs.com/master/1766052
+    # Source : https://www.discogs.com/release/24284858
+    # Source : https://www.discogs.com/release/15567588
+    - artist: snob_city_boys
+      name: "This Sound's For Us"
+      type: album
+      date: "2019-08-23"
+      styles: ["Oi!", "Streetpunk"]
+      labels: [rockers_records]
+      note: "Premier album des Snob City Boys : dix titres d'Oi! mélodique et militante, dont « Revolution », seul titre chanté en allemand. Paru d'abord en CD et en numérique en 2019, puis remasterisé pour le vinyle sorti chez Rockers Records le 31 juillet 2020 (300 premiers exemplaires en vinyle blanc, les suivants en noir, avec feuille de paroles)."
+      tracks:
+          - { title: "A Fighter's Heart", duration: "3:02" }
+          - { title: "Skinhead Girrrls", duration: "2:43" }
+          - { title: "Remember October 4th 1936", duration: "3:18" }
+          - { title: "Weekend Offender", duration: "3:40" }
+          - { title: "Revolution", duration: "4:27" }
+          - { title: "This Sound's For Us", duration: "4:36" }
+          - { title: "Dying Everyday", duration: "3:13" }
+          - { title: "Road To Nowhere", duration: "2:40" }
+          - { title: "Like Family", duration: "2:54" }
+          - { title: "We Pay the Price", duration: "3:14" }
+      releases:
+          - sku: SNOB-CITY-BOYS-THIS-SOUND-S-FOR-US-LP
+            format: vinyl_12
+            stock: 2
+            color: "noir"
+            pressingYear: 2020
+            catalogNumber: "ROCKET 11"
+            label: rockers_records
+            gtin: "4270001086105"
+          - sku: SNOB-CITY-BOYS-THIS-SOUND-S-FOR-US-CD
+            format: cd
+            stock: 2
+            edition: "digipack"
+            pressingYear: 2019
+
+    # Messed Up x1 LP — identification medium, pressage high
+    # À vérifier : Titre absent de l'inventaire. Le groupe biélorusse Messed Up (Grodno) n'a sorti
+    #   qu'un album, « Всё во что ты веришь / Everything You Believe In » (2019), et un seul pressage
+    #   vinyle (Discogs 14421523) ; il est coédité par Fire and Flames Music, comme plusieurs autres
+    #   disques de ce lot (Enraged Minority, Stumbling Pins, T-Killas, compilation VA), d'où ce choix.
+    #   Le reste de sa discographie est une démo de 2016 (Wikipedia mentionne aussi un 7" 4 titres,
+    #   absent de Discogs) ; d'autres groupes s'appellent aussi Messed Up : vérifier la pochette.
+    #   Découpage des faces non publié : positions laissées à null (pistes 1 à 11) ; durées issues de
+    #   Bandcamp. Couleur non indiquée par Discogs, noir supposé.
+    # Source : https://www.discogs.com/release/14421523
+    # Source : https://www.discogs.com/master/1639651
+    # Source : https://www.discogs.com/artist/7404464-Messed-Up-2
+    - artist: messed_up
+      name: "Всё во что ты веришь / Everything You Believe In"
+      type: album
+      date: "2019-11-01"
+      styles: ["Punk"]
+      labels: [audiolith, fire_and_flames_music]
+      note: "Premier et seul album de Messed Up : onze titres de punk-rock mélodique chantés en russe, dont une relecture de « I Wanna Be Your Dog » des Stooges rebaptisée « You Wanna Be My Dog ». Enregistré et mixé par Vitaliy Zamana (Street Beat Records), masterisé par Marek Dulewicz (Embryo Nagrania). Coédité par Audiolith (AL300) et Fire and Flames Music (FFM066)."
+      tracks:
+          - { title: "Вокруг меня / Around Me", duration: "2:28" }
+          - { title: "Всё во что ты веришь / Everything You Believe In", duration: "3:10" }
+          - { title: "Чужие слёзы и боль / Someone's Tears And Pain", duration: "3:04" }
+          - { title: "Без души / Have No Heart", duration: "3:12" }
+          - { title: "Хочу побыть одна / Leave Me Alone", duration: "3:46" }
+          - { title: "Я не буду / I Won't", duration: "3:32" }
+          - { title: "Внутри пустой / Empty Inside", duration: "2:32" }
+          - { title: "Это мой мир / This Is My World", duration: "2:40" }
+          - { title: "Слепая вера / Blind Faith", duration: "2:46" }
+          - { title: "Кто тебе дал право / Who Gave You The Right To", duration: "2:48" }
+          - { title: "You Wanna Be My Dog", duration: "3:30" }
+      releases:
+          - sku: MESSED-UP-EVERYTHING-YOU-BELIEVE-LP
+            format: vinyl_12
+            stock: 1
+            color: "noir"
+            pressingYear: 2019
+            catalogNumber: "AL300"
+            label: audiolith
+            gtin: "4250137218977"
+
+    # VA - Unter Dem Deckmantel Des Antifaschismu x1 LP — identification high, pressage high
+    # À vérifier : Titre complet : « Unter dem Deckmantel des Antifaschismus » (le « s » final manque
+    #   dans l'inventaire). Un seul pressage connu, coédité par cinq labels, chacun avec son numéro
+    #   (RBR032, FFM071, THR001, STSR008, SM077 selon Discogs — parocktikum donne SM 079 pour SM Musik)
+    #   ; FFM071 retenu en catalogNumber, à adapter selon le label par lequel le disque est arrivé.
+    #   Vinyle décrit « Red Black Splatter » par Discogs et « marbré rouge et noir » par d'autres
+    #   sources. Durées issues du Bandcamp de Riot Bike Records (sortie numérique du 12 mai 2020). Un
+    #   des titres (A1) s'écrit « Grüszen » avec « sz » sur toutes les sources.
+    # Source : https://www.discogs.com/release/15136996-Various-Unter-Dem-Deckmantel-Des-
+    #   Antifaschismus
+    # Source : https://riotbikerecords.bandcamp.com/album/v-a-unter-dem-deckmantel-des-antifaschismus-
+    #   rbr032
+    # Source : https://parocktikum.de/wiki/index.php/Sampler_-_Unter_dem_Deckmantel_des_Antifaschismus
+    - artist: various_artists
+      name: "Unter dem Deckmantel des Antifaschismus"
+      type: compilation
+      date: "2020-05-12"
+      styles: ["Punk", "Oi!", "Streetpunk", "Hardcore"]
+      labels: [riot_bike_records, fire_and_flames_music, sm_musik, troihand, save_the_scene_records]
+      note: "Compilation de douze groupes saxons classés « d'extrême gauche » par l'Office de protection de la Constitution de Saxe (Landesamt für Verfassungsschutz) ; le titre reprend un extrait de son rapport 2018. Quatre groupes visés avaient obtenu devant le tribunal administratif de Dresde que leurs noms soient retirés de ces publications. Du punk allemand au hardcore, en passant par l'Oi!, le streetpunk et l'électro-punk ; vinyle accompagné d'un livret de 4 pages (contexte, paroles, notes)."
+      tracks:
+          - { title: "Mit freundlichen Grüszen", duration: "3:01", artist: "Sozialer Fehltritt" }
+          - { title: "Trouble From The Streets", duration: "2:45", artist: "Sharp Cut" }
+          - { title: "Tell Me What You Know", duration: "2:20", artist: "The Spartanics" }
+          - { title: "Wer ist die Gefahr?", duration: "3:09", artist: "One Step Ahead" }
+          - { title: "Oi! gegen Oi!", duration: "2:43", artist: "Fontanelle" }
+          - { title: "Keine Wahl", duration: "2:16", artist: "Kommando Kronstadt" }
+          - { title: "Im Osten nichts Neues", duration: "2:46", artist: "Dr. Ulrich Undeutsch" }
+          - { title: "Was kostet die Welt", duration: "1:24", artist: "Selbstjustiz" }
+          - { title: "Deutsche Publizisten", duration: "3:45", artist: "Hoi!erswerda" }
+          - { title: "Feindbild", duration: "3:03", artist: "Endstation Chaos" }
+          - { title: "The Hate You Give", duration: "2:27", artist: "Social Enemies" }
+          - { title: "Oi! It's Class War", duration: "2:14", artist: "Flag Smasher" }
+      releases:
+          - sku: VA-UNTER-DEM-DECKMANTEL-DES-LP
+            format: vinyl_12
+            stock: 1
+            color: "splatter rouge/noir"
+            edition: "livret 4 pages"
+            pressingYear: 2020
+            catalogNumber: "FFM071"
+            label: fire_and_flames_music
+
+    # T-KILLAS - Awareness x1 LP — identification high, pressage medium
+    # À vérifier : Deux pressages vinyle : noir (standard) et rouge limité à 100 exemplaires, vendu
+    #   seulement par les labels et le groupe. Le noir est retenu par défaut : vérifier la couleur du
+    #   disque en stock. Le code-barres 4026763121406 est listé par Discogs sur le pressage rouge et par
+    #   imusic.dk sur le LP sans précision de couleur ; il figure probablement sur les deux (même
+    #   pochette), à contrôler. Discogs écrit « Comming Home » (A5) ; Bandcamp « Coming Home ». Durées
+    #   de Discogs (identiques à Bandcamp à la seconde près).
+    # Source : https://www.discogs.com/release/15113806-T-Killas-Awareness
+    # Source : https://www.discogs.com/release/33823890
+    # Source : https://t-killas.bandcamp.com/album/awareness
+    - artist: t_killas
+      name: "Awareness"
+      type: album
+      date: "2020-03-28"
+      styles: ["Ska"]
+      labels: [fire_and_flames_music, grover_records]
+      note: "Deuxième album des T-Killas, dix titres entre ska two-tone, reggae, soul, mod et punk-rock, avec des textes engagés. Coédité par Fire and Flames Music et Grover Records ; le vinyle a une pochette retournée (« inside-out »), une sous-pochette imprimée avec les paroles et un code de téléchargement."
+      tracks:
+          - { title: "Kowalski", duration: "2:03" }
+          - { title: "Dandy and Rude", duration: "3:44" }
+          - { title: "Lonely Hearts", duration: "3:28" }
+          - { title: "Running", duration: "4:36" }
+          - { title: "Coming Home", duration: "4:30" }
+          - { title: "Do You Eat", duration: "3:16" }
+          - { title: "Rudie's Struggle", duration: "2:45" }
+          - { title: "Calling for Stars", duration: "4:05" }
+          - { title: "Gonna Go", duration: "3:13" }
+          - { title: "Riot Ground", duration: "3:15" }
+      releases:
+          - sku: T-KILLAS-AWARENESS-LP
+            format: vinyl_12
+            stock: 1
+            color: "noir"
+            pressingYear: 2020
+            catalogNumber: "FFM076"
+            label: fire_and_flames_music
+            gtin: "4026763121406"
+
+    # Resaka Sonora - Frekuenzia x1 LP — identification high, pressage high
+    # À vérifier : Un seul pressage vinyle connu sur Discogs (sans couleur indiquée, probablement
+    #   noir). Durées issues de Qobuz (version numérique). Discogs écrit « Invide The City » (faute) ;
+    #   Qobuz/Black Mosquito « Invade the city ». Titre B4 orthographié « Un seul héroes le peuple »
+    #   chez Qobuz, « Un Seul Héros, Le Peuple » sur Discogs : forme Discogs retenue. Black Mosquito
+    #   donne aussi un n° 03-023-080 (référence distributeur). Pochette : image Deezer (pas de page
+    #   Bandcamp pour cet album).
+    # Source : https://www.discogs.com/release/15535118
+    # Source : https://black-mosquito.org/de/resaka-sonora-frekuenzia-lp.html
+    # Source : https://www.qobuz.com/fr-fr/album/frekuenzia-resaka-sonora/mu6i6nfja6vqa
+    - artist: resaka_sonora
+      name: "Frekuenzia"
+      type: album
+      date: "2020-05-29"
+      styles: ["Ska", "Punk"]
+      labels: [fire_and_flames_music, dure_realite, general_strike]
+      note: "Deuxième album de Resaka Sonora, sorti en mai 2020 chez Fire and Flames Music, Dure Réalité et General Strike. Douze titres entre ska, reggae, punk, oi! et une touche de dancehall, chantés en plusieurs langues. Les textes évoquent des luttes historiques et actuelles, de Kronstadt (1921) au Rojava, avec Los Tres Puntos et Juantxo Skalari en invités."
+      tracks:
+          - { title: "1000 Voces", duration: "2:13" }
+          - { title: "Ey Raquib", duration: "3:10" }
+          - { title: "Silencio", duration: "3:28" }
+          - { title: "Seguir Adelante", duration: "3:03" }
+          - { title: "Comme un cœur qui bat", duration: "4:38" }
+          - { title: "Invade the City", duration: "4:06" }
+          - { title: "202.0 Mhz", duration: "4:24" }
+          - { title: "Clandestin", duration: "2:45" }
+          - { title: "K-1921", duration: "3:45" }
+          - { title: "Un seul héros, le peuple", duration: "3:30" }
+          - { title: "Dall'alba della storia", duration: "3:23" }
+          - { title: "À l'assaut des ondes", duration: "3:36" }
+      releases:
+          - sku: RESAKA-SONORA-FREKUENZIA-LP
+            format: vinyl_12
+            stock: 1
+            pressingYear: 2020
+            catalogNumber: "FFM075"
+            label: fire_and_flames_music
+
+    # VA - Oi! in Head, Punk in Hearth x2 LP — identification high, pressage high
+    # À vérifier : Titre corrigé : « Heart » (pas « Hearth »). Un seul pressage connu, 500 ex.,
+    #   couleur non indiquée. Le dernier titre est une reprise de Sham 69 créditée « Various » sur
+    #   Discogs (probablement interprétée collectivement) : artiste mis à « Various ». Catno : 4
+    #   références selon le label (GRRS-001 retenue car premier label listé sur Discogs). Durées issues
+    #   du Bandcamp de Tough Ain't Enough. Groupe A4 crédité « The Crusaders » sur Discogs, « Crusaders
+    #   » sur Bandcamp.
+    # Source : https://www.discogs.com/release/10364210
+    # Source : https://taerecords.bandcamp.com/album/vv-aa-oi-in-head-punk-in-heart
+    # Source : https://cromrecords.bandcamp.com/album/cr-010-oi-in-head-punk-in-heart
+    - artist: various_artists
+      name: "Oi! In Head, Punk In Heart"
+      type: compilation
+      date: "2017-05-24"
+      styles: ["Oi!", "Punk"]
+      labels: [gremlins_records, crom_records, tough_ain_t_enough, nation_on_fire_records]
+      note: "Compilation espagnole parue en 2017 : onze groupes oi! de la péninsule reprennent chacun un classique du punk ibérique (RIP, Desorden, La Polla, Eskorbuto, Kortatu, Siniestro Total…). Elle se termine par une reprise de « If The Kids Are United » de Sham 69. Édition limitée à 500 exemplaires, coéditée par Gremlins, Crom, Tough Ain't Enough et Nation On Fire."
+      tracks:
+          - { title: "Odio a mi patria", duration: "1:58", artist: "Arkada Social" }
+          - { title: "Destruye", duration: "2:07", artist: "Fred & The Perrys" }
+          - { title: "Botes de humo", duration: "2:39", artist: "Instinto Agresivo" }
+          - { title: "Y ahora qué?", duration: "2:17", artist: "Crusaders" }
+          - { title: "Envenenado", duration: "2:22", artist: "Against You" }
+          - { title: "Historia triste", duration: "4:50", artist: "Rude Pride" }
+          - { title: "Todo por nada", duration: "3:48", artist: "Up Yours" }
+          - { title: "Cuando yo reviente", duration: "4:11", artist: "knock_out" }
+          - { title: "Hotel Monbar", duration: "3:38", artist: "Shock Waves" }
+          - { title: "Ké buen Dios", duration: "2:36", artist: "Bogavantes Con Tirantes" }
+          - { title: "Luna sobre Marín", duration: "3:12", artist: "Keltoi!" }
+          - { title: "If The Kids Are United", duration: "3:43", artist: "Various" }
+      releases:
+          - sku: VA-OI-IN-HEAD-PUNK-IN-HEART-LP
+            format: vinyl_12
+            stock: 2
+            limitedTo: 500
+            pressingYear: 2017
+            catalogNumber: "GRRS-001"
+            label: gremlins_records
+
+    # Sharp Cut - Trouble From The Street x1 LP — identification high, pressage medium
+    # À vérifier : Titre corrigé : « Streets » (pluriel). Deux pressages : 300 noirs et 200 jaunes (le
+    #   jaune était réservé à Fire and Flames, General Strike et au groupe) ; noir retenu par défaut, à
+    #   vérifier sur l'exemplaire. Fire and Flames note la réf. FFM062LP, Discogs FFM062. Année du
+    #   vinyle 2019 sur Discogs, album sorti en 2018 (CD/numérique).
+    # Source : https://www.discogs.com/release/13312057
+    # Source : https://www.discogs.com/release/13311921
+    # Source : https://sharpxcut.bandcamp.com/album/trouble-from-the-streets-2
+    - artist: sharp_cut
+      name: "Trouble From The Streets"
+      type: album
+      date: "2018-09-14"
+      styles: ["Oi!", "Rock'n'Roll"]
+      labels: [fire_and_flames_music, general_strike]
+      note: "Premier album de Sharp Cut, sorti en septembre 2018 chez Fire and Flames Music. Sept titres en anglais, dédiés aux militants antifascistes de la bataille de Cable Street (Londres, 1936), qu'illustre la pochette. Le 12\" (45 tours) est livré avec une sous-pochette imprimée avec les paroles et un code de téléchargement."
+      tracks:
+          - { title: "Trouble From The Streets", duration: "2:45" }
+          - { title: "Working Class", duration: "2:50" }
+          - { title: "Still Here", duration: "2:41" }
+          - { title: "Barking Dogs", duration: "2:30" }
+          - { title: "Hands In Chains", duration: "3:14" }
+          - { title: "I'm Quite Alright", duration: "3:06" }
+          - { title: "RASH'n'Roll", duration: "2:46" }
+      releases:
+          - sku: SHARP-CUT-TROUBLE-FROM-THE-STREETS-LP
+            format: vinyl_12
+            stock: 1
+            color: "noir"
+            edition: "45 tours"
+            limitedTo: 300
+            pressingYear: 2019
+            catalogNumber: "FFM062"
+            label: fire_and_flames_music
+
+    # MOSCOW DEATH BRIGADE - Hoods UP x1 LP — identification high, pressage low
+    # À vérifier : Sept pressages vinyle (2014 à 2022) : impossible de savoir lequel est en stock.
+    #   Choix par défaut : le repress noir 2022 à pochette grise, celui vendu aujourd'hui par Fire and
+    #   Flames (le rose 2022 est une exclusivité Fire and Flames). Vérifier couleur du disque et de la
+    #   pochette. Discogs donne pour le pressage 2014 d'autres titres bonus en face B (Anne Frank Army,
+    #   Forgotten Heroes, Straight Outta Moscow) : la tracklist retenue est celle des represses 2015+
+    #   (Your Anthem, The Truth, Heroes). Durées : Deezer / Fire and Flames.
+    # Source : https://www.discogs.com/master/747376
+    # Source : https://www.fireandflames.com/en/product/moscow-death-brigade-hoods-up-12/
+    # Source : https://www.deezer.com/album/12013874
+    - artist: moscow_death_brigade
+      name: "Hoods Up"
+      type: ep
+      date: "2014"
+      styles: ["Rap", "Hardcore", "Punk"]
+      labels: [fire_and_flames_music]
+      note: "Premier vinyle de Moscow Death Brigade, paru en 2014 chez Fire and Flames Music. Le 12\" 45 tours réunit l'EP de cinq titres « Hoods Up » (face A) et trois titres bonus (face B), dont deux inédits. Il a été repressé plusieurs fois (2015, 2020, 2022) en noir et en couleurs."
+      tracks:
+          - { title: "Ghettoblaster", duration: "2:42" }
+          - { title: "It's Us", duration: "3:13" }
+          - { title: "Cut Off Your Tongue", duration: "3:05" }
+          - { title: "Viking's Life", duration: "2:46" }
+          - { title: "Prove Them Wrong", duration: "3:13" }
+          - { title: "Your Anthem", duration: "3:02" }
+          - { title: "The Truth", duration: "2:54" }
+          - { title: "Heroes", duration: "3:46" }
+      releases:
+          - sku: MOSCOW-DEATH-BRIGADE-HOODS-UP-LP
+            format: vinyl_12
+            stock: 1
+            color: "noir"
+            edition: "repress 2022, pochette grise"
+            pressingYear: 2022
+            catalogNumber: "FFM037LP"
+            label: fire_and_flames_music
+
+    # MOSCOW DEATH BRIGADE - Boltcutter x1 LP — identification high, pressage low
+    # À vérifier : Quatre pressages vinyle : noir 2018, vert 2018 (500 ex.), rouge transparent/noir
+    #   2018, bleu 2022 (3e pressage, celui actuellement vendu par Fire and Flames, réf. FFM055LP sur
+    #   leur site). Bleu retenu par défaut car c'est le pressage en vente aujourd'hui ; à vérifier sur
+    #   l'exemplaire. Fire and Flames le présente comme « debut album » (Hoods Up étant un EP).
+    # Source : https://www.discogs.com/master/1298394
+    # Source : https://www.discogs.com/release/11415341
+    # Source : https://www.discogs.com/release/25247593
+    - artist: moscow_death_brigade
+      name: "Boltcutter"
+      type: album
+      date: "2018-01-26"
+      styles: ["Rap", "Hardcore", "Punk"]
+      labels: [fire_and_flames_music, rebel_sound_records]
+      note: "Premier album de Moscow Death Brigade, sorti le 26 janvier 2018 chez Fire and Flames Music et Rebel Sound Records. Il mêle punk, hardcore et rap à la drum'n'bass, au dancehall, à la techno et au grime, contre le racisme, le fascisme, le sexisme et l'intolérance. Le LP contient deux titres bonus et une sous-pochette imprimée."
+      tracks:
+          - { title: "Renegade Stomp", duration: "2:55" }
+          - { title: "What We Do", duration: "2:46" }
+          - { title: "Anne Frank Army, Pt. II", duration: "3:43" }
+          - { title: "Boltcutter", duration: "3:48" }
+          - { title: "All for One", duration: "3:28" }
+          - { title: "Straight Outta Moscow, Pt. II", duration: "3:00" }
+          - { title: "Collateral Murder", duration: "3:14" }
+          - { title: "Brother & Sisterhood", duration: "2:45" }
+          - { title: "Rudegirl Warrior", duration: "2:55" }
+          - { title: "Crocodile Style", duration: "3:07" }
+          - { title: "One for the Ski Mask", duration: "2:54" }
+          - { title: "Papers Please!", duration: "2:50" }
+      releases:
+          - sku: MOSCOW-DEATH-BRIGADE-BOLTCUTTER-LP
+            format: vinyl_12
+            stock: 1
+            color: "bleu"
+            edition: "3e pressage"
+            pressingYear: 2022
+            catalogNumber: "FFM055"
+            label: fire_and_flames_music
+
+    # MOSCOW DEATH BRIGADE - Bad Accent Anthems x1 LP — identification high, pressage medium
+    # À vérifier : Trois pressages : noir 2020, or 2020 (500 ex.), jaune 2022 (2e pressage, 250 ex.,
+    #   exclusivité Fire and Flames). Noir retenu par défaut ; vérifier la couleur. Même code-barres sur
+    #   les trois (678247989671). Durées : Deezer.
+    # Source : https://www.discogs.com/master/1725109
+    # Source : https://www.discogs.com/release/15185025
+    # Source : https://www.fireandflames.com/en/product/moscow-death-brigade-bad-accent-anthems-lp/
+    - artist: moscow_death_brigade
+      name: "Bad Accent Anthems"
+      type: album
+      date: "2020-04-10"
+      styles: ["Rap", "Hardcore", "Punk"]
+      labels: [fire_and_flames_music, rebel_sound_records]
+      note: "Album de Moscow Death Brigade sorti en avril 2020 chez Fire and Flames Music. Onze titres qui mêlent punk rock, hardcore, guitares metal, drum'n'bass et techno, rappés en anglais sur des sujets sociaux mais aussi le graffiti et la tournée. Selon le groupe, le « bad accent » est celui de ceux qui voyagent et militent. Le LP est livré avec une sous-pochette imprimée."
+      tracks:
+          - { title: "Out the Basement", duration: "3:03" }
+          - { title: "Feed the Crocodiles", duration: "3:34" }
+          - { title: "Bad Accent", duration: "3:29" }
+          - { title: "Break the Mold", duration: "3:03" }
+          - { title: "Sound of Sirens", duration: "3:11" }
+          - { title: "Megaphone", duration: "3:08" }
+          - { title: "Whack-a-Mole", duration: "2:44" }
+          - { title: "Shy Kidz 2020", duration: "2:06" }
+          - { title: "Throw Ya Canz 2020", duration: "3:19" }
+          - { title: "Dirty White Sneakers", duration: "3:37" }
+          - { title: "Never Walk Alone", duration: "3:17" }
+      releases:
+          - sku: MOSCOW-DEATH-BRIGADE-BAD-ACCENT-ANTHEMS-LP
+            format: vinyl_12
+            stock: 1
+            color: "noir"
+            pressingYear: 2020
+            catalogNumber: "FFM079"
+            label: fire_and_flames_music
+            gtin: "678247989671"
+
+    # Helem - Habgida Hagdola x1 LP — identification high, pressage medium
+    # À vérifier : Un seul pressage (2020, 500 ex. numérotés au total, d'après Fire and Flames)
+    #   réparti en trois couleurs : rouge, blanc, noir. Noir retenu par défaut : vérifier la couleur de
+    #   l'exemplaire. Titres : hébreu + traduction anglaise de Discogs (Bandcamp traduit A1 « The Great
+    #   Betrayal », A6 « Wolves », B4 « Against the Wall »). Durées des deux titres live inconnues
+    #   (absents du numérique). Date de l'album = sortie numérique Bandcamp (10/04/2019) ; vinyle 2020.
+    # Source : https://www.discogs.com/master/2133196
+    # Source : https://www.discogs.com/release/15554418
+    # Source : https://helem.bandcamp.com/album/habgida-hagdola
+    - artist: helem
+      name: "Habgida Hagdola"
+      type: album
+      date: "2019-04-10"
+      styles: ["Punk"]
+      labels: [fire_and_flames_music, brigada_caoz]
+      note: "Premier album de Helem (« La grande trahison »), enregistré début 2019 avec Arie Aranovich et publié en numérique en avril 2019. Le LP, coédité en 2020 par Fire and Flames Music et Brigada Caoz, ajoute aux dix titres en hébreu deux morceaux live inédits. Numéroté à la main et limité à 500 exemplaires en vinyle rouge, blanc ou noir, avec insert de paroles en hébreu et en anglais."
+      tracks:
+          - { title: "הבגידה הגדולה (The Big Betrayal)", duration: "2:39" }
+          - { title: "אנטיסוציאלי (Antisocial)", duration: "2:36" }
+          - { title: "אופיום (Opium)", duration: "2:44" }
+          - { title: "יום יבוא (A Day Will Come)", duration: "2:45" }
+          - { title: "חלם (Helem)", duration: "3:06" }
+          - { title: "זאבים (Wolves)", duration: "3:00" }
+          - { title: "הכפתור האדום (The Red Button)", duration: "2:25" }
+          - { title: "אפס סובלנות (Zero Tolerance)", duration: "3:10" }
+          - { title: "הפרד ומשול (Divide & Conquer)", duration: "2:51" }
+          - { title: "עם הפנים לקיר (Faces To The Wall)", duration: "2:41" }
+          - { title: "כל הגיבורים שלי חלאות (All My Heroes Are Scums) (Live)" }
+          - { title: "יום יבוא (A Day Will Come) (Live)" }
+      releases:
+          - sku: HELEM-HABGIDA-HAGDOLA-LP
+            format: vinyl_12
+            stock: 1
+            color: "noir"
+            edition: "numéroté à la main"
+            limitedTo: 500
+            pressingYear: 2020
+            catalogNumber: "FFM068"
+            label: fire_and_flames_music
+
+    # 65 Mines Street - ST x1 LP — identification high, pressage low
+    # À vérifier : « ST » = album éponyme. D'après le label : 500 premiers LP avec CD, 500 suivants
+    #   avec CD à pochette aux couleurs inversées, puis une version sans CD (repress). Vérifier si
+    #   l'exemplaire contient le CD et ajuster editionLabel (« LP + CD », « LP + CD pochette inversée »
+    #   ou rien). Date : Discogs donne 2010 (année du vinyle) ; le Bandcamp du groupe indique une sortie
+    #   le 15/09/2011. Durées issues de Bandcamp (même enregistrement).
+    # Source : https://www.discogs.com/master/1081736
+    # Source : https://www.discogs.com/release/3356565
+    # Source : https://www.discogs.com/release/8944323
+    - artist: 65_mines_street
+      name: "65 Mines Street"
+      type: album
+      date: "2010"
+      styles: ["Ska", "Reggae"]
+      labels: [productions_impossible_records]
+      note: "Premier album de 65 Mines Street, enregistré et mixé en mars 2010 à l'Indie Ear Studio et paru chez Productions Impossible Records, label associatif du pays de Montbéliard. Quatorze titres de ska et de reggae aux accents rock'n'roll, dont une reprise de « Stuck in the Middle with You ». Les premiers pressages du LP étaient accompagnés du CD (avec trois titres bonus)."
+      tracks:
+          - { title: "We Are 65 Mines Street", duration: "4:06" }
+          - { title: "Do You Exist?", duration: "2:31" }
+          - { title: "Pink Roses", duration: "4:12" }
+          - { title: "Life Is a Bitch", duration: "2:05" }
+          - { title: "Black & White", duration: "3:23" }
+          - { title: "His Name Is Joe", duration: "3:43" }
+          - { title: "65 Mines Street vs. Kentish Town Road", duration: "2:20" }
+          - { title: "Y-Files", duration: "3:23" }
+          - { title: "Bagarre", duration: "1:39" }
+          - { title: "Bang Bang", duration: "3:30" }
+          - { title: "Juicy Morning", duration: "3:59" }
+          - { title: "Stuck in the Middle with You", duration: "2:06" }
+          - { title: "Nite Shot", duration: "3:15" }
+          - { title: "Brand New Spring", duration: "4:01" }
+      releases:
+          - sku: 65-MINES-STREET-65-MINES-STREET-LP
+            format: vinyl_12
+            stock: 1
+            edition: "LP + CD"
+            pressingYear: 2010
+            catalogNumber: "PILP 013"
+            label: productions_impossible_records
+
+    # Krav Boca - City Hackers x3 LP — identification high, pressage high
+    # À vérifier : Un seul pressage vinyle connu (Discogs, couleur non indiquée). Kale Borroka ne
+    #   figure pas parmi les labels de ce disque. Positions face B : Discogs numérote B6–B9, ramené à
+    #   B1–B4. Durées : Bandcamp du groupe.
+    # Source : https://www.discogs.com/release/15936720
+    # Source : https://kravboca.bandcamp.com/album/city-hackers
+    # Source : https://rockers.de/en/record/krav-boca-city-hackers-lp-vinyl/
+    - artist: krav_boca
+      name: "City Hackers"
+      type: album
+      date: "2020-05-01"
+      styles: ["Rap", "Punk"]
+      labels: [rumagna_sgroza, mass_productions, fire_and_flames_music, general_strike, guerilla_vinyl, blackout_brigade, brigada_caoz, maloka, keponteam, up_the_punx, subversive_ways, punti_scena_records]
+      note: "Album de Krav Boca publié le 1er mai 2020, d'abord offert en téléchargement libre et dédié aux soignants, caissières, livreurs, éboueurs, gilets jaunes et à tous ceux en première ligne pendant la pandémie. Neuf titres mêlant rap, punk et metal, avec de nombreux invités (Chata Flores, My Own Voice, Matrak Attakk, Speira, Zafina, Al Nasser, Aeon). Le LP est une coproduction DIY d'une douzaine de labels."
+      tracks:
+          - { title: "Intro", duration: "2:04" }
+          - { title: "Souterrain (feat. Chata Flores)", duration: "2:52" }
+          - { title: "Kravmikaz", duration: "2:04" }
+          - { title: "Camtar", duration: "3:22" }
+          - { title: "Crust Riot (feat. My Own Voice, Matrak Attakk)", duration: "3:13" }
+          - { title: "Gas Mask (feat. Speira)", duration: "3:58" }
+          - { title: "Poison (feat. Zafina)", duration: "2:33" }
+          - { title: "Carte postale (feat. Al Nasser)", duration: "4:42" }
+          - { title: "City Hackers (feat. Aeon)", duration: "3:51" }
+      releases:
+          - sku: KRAV-BOCA-CITY-HACKERS-LP
+            format: vinyl_12
+            stock: 3
+            pressingYear: 2020
+            catalogNumber: "RS057"
+            label: rumagna_sgroza
+
+    # Krav Boca - Barrikade x11 LP (KBR#03) — identification high, pressage high
+    # À vérifier : Pressage KBR = LP blanc de mai 2021 (Discogs 18902008), 1000 ex. d'après Deviance
+    #   (« vinyle blanc, 1000 ex »), insert inclus ; Kale Borroka Records y est bien crédité. Discogs ne
+    #   donne pas de catno pour Kale Borroka (« none ») : KBR#03 repris de la numérotation du label
+    #   (KBR01 Union Thugs, KBR02 Asbestos, KBR#04 Revenja, KBR#05 Saccage). Tracklist : le numérique a
+    #   13 titres ; D.I.Y. Koło Records précise qu'« Interlude » et « L'Etat Assassine » ne sont pas sur
+    #   le vinyle, et Subversive Ways annonce onze titres, d'où les 11 titres retenus. Mais Discogs
+    #   liste « Interlude » en B1 (12 titres) : à vérifier au dos de la pochette. Positions face B
+    #   recalculées. La réédition 2024 (Boca Records, ajoute « Bloc ») n'est pas une production KBR.
+    #   Durées : Bandcamp.
+    # Source : https://www.discogs.com/release/18902008
+    # Source : https://www.discogs.com/master/2017225
+    # Source : https://www.discogs.com/release/29827477
+    - artist: krav_boca
+      name: "Barrikade"
+      type: album
+      date: "2021-02-14"
+      production: "KBR#003"
+      styles: ["Rap", "Punk"]
+      labels: [boca_records, fire_and_flames_music, guerilla_vinyl, maloka, urgence_disk_records, rumagna_sgroza, rebel_time_records, machete_records, deviance, up_the_punx, alternative_international_movement_roma, kale_borroka_records, nothing_to_harvest_records, dure_realite, keponteam, anfibio_records, subversive_ways, santa_diabla]
+      note: "Album de Krav Boca sorti en numérique en février 2021, puis en LP vinyle blanc en mai 2021. Le collectif y revendique son droit d'exister face aux restrictions imposées à la culture pendant la pandémie, avec de nombreux invités (Sponty, Sara, Skalpel, HPS, A. Atak Tos, Call The Cops, Brigada Flores Magon). Le vinyle, tiré à 1000 exemplaires, est une coproduction DIY d'une vingtaine de labels de plusieurs pays, dont Kale Borroka Records (sa 3e production)."
+      tracks:
+          - { title: "Intro", duration: "2:16" }
+          - { title: "Vertigo (feat. Sponty)", duration: "3:11" }
+          - { title: "Fumigène", duration: "2:51" }
+          - { title: "Brasero", duration: "3:12" }
+          - { title: "Barrikade (feat. Sara)", duration: "3:03" }
+          - { title: "Ceinture (feat. Skalpel, HPS)", duration: "3:35" }
+          - { title: "Synora (feat. A. Atak Tos)", duration: "4:15" }
+          - { title: "Tercian", duration: "3:48" }
+          - { title: "K.T.C (feat. Call The Cops)", duration: "3:05" }
+          - { title: "Ultra (feat. Brigada Flores Magon)", duration: "2:50" }
+          - { title: "O.V.V.T.C", duration: "3:36" }
+      releases:
+          - sku: KRAV-BOCA-BARRIKADE-LP
+            format: vinyl_12
+            stock: 11
+            color: "blanc"
+            limitedTo: 1000
+            pressingYear: 2021
+            catalogNumber: "KBR#03"
+            label: kale_borroka_records
+
+    # Saccage - Une vie de lutte x25 LP (KBR#05) — identification high, pressage high
+    # À vérifier : Discogs confirme le catno KBR#05 pour Kale Borroka Records (FFM127 pour Fire and
+    #   Flames, DM-026 pour Discos Machete). Aucune source ne donne la couleur ni le tirage du vinyle :
+    #   à compléter par le label (vous avez les exemplaires en main). Pas de code-barres listé.
+    #   Préventes LP à partir du 1er janvier 2026, release party le 11 avril (2026) à Paris ; Kanal
+    #   Hysterik date la sortie numérique du 05/12/2025.
+    # Source : https://www.discogs.com/release/36703108
+    # Source : https://saccageoi.bandcamp.com/album/une-vie-de-lutte
+    # Source : https://www.fireandflames.com/en/product/saccage-une-vie-de-lutte-lp/
+    - artist: saccage
+      name: "Une vie de lutte"
+      type: album
+      date: "2025-12-01"
+      production: "KBR#005"
+      styles: ["Oi!", "Streetpunk"]
+      labels: [fire_and_flames_music, kanal_hysterik, discos_machete, rumagna_sgroza, kale_borroka_records]
+      note: "Premier album de Saccage, sorti en numérique le 1er décembre 2025 puis en LP en 2026. Neuf titres d'oi! antifasciste, combatifs, fédérateurs ou mélancoliques, avec quelques passages de saxophone et Coratge en invité sur « Cœur d'acier ». Enregistré, mixé et masterisé au Disvlar Studio, illustrations d'Axel. Le vinyle est coproduit par Kanal Hysterik, Fire and Flames, Discos Machete, Rumagna Sgroza et Kale Borroka Records (sa 5e production)."
+      tracks:
+          - { title: "Cœur d'acier (feat. Coratge)", duration: "4:42" }
+          - { title: "Saccage", duration: "2:50" }
+          - { title: "Terre volée", duration: "3:34" }
+          - { title: "Left Side Skins", duration: "2:30" }
+          - { title: "Fantômes du futur", duration: "3:27" }
+          - { title: "Colonel Fabien", duration: "3:19" }
+          - { title: "Paris", duration: "3:14" }
+          - { title: "Prêt à frapper", duration: "3:37" }
+          - { title: "Une vie de lutte", duration: "5:41" }
+      releases:
+          - sku: SACCAGE-UNE-VIE-DE-LUTTE-LP
+            format: vinyl_12
+            stock: 25
+            pressingYear: 2026
+            catalogNumber: "KBR#05"
+            label: kale_borroka_records
+
+    # Harbour Rebels - On a Journey 10'' x3 — identification high, pressage high
+    # À vérifier : Un seul pressage connu. Couleur non précisée par Discogs ni par le label : « noir »
+    #   est déduit (convention Discogs), à vérifier sur le disque. Durées issues de Bandcamp (cohérentes
+    #   avec Discogs).
+    # Source : https://www.discogs.com/release/14726493
+    # Source : https://harbourrebels.bandcamp.com/album/on-a-journey
+    # Source : https://rudeandreckless.de/products/harbour-rebels-ep-on-a-journey
+    - artist: harbour_rebels
+      name: "On A Journey"
+      type: ep
+      date: "2020-01-20"
+      styles: ["Streetpunk", "Oi!"]
+      labels: [rude_reckless_productions]
+      note: "Deuxième sortie des Harbour Rebels : un EP de six titres en anglais, paru en 10\" 33 tours avec code de téléchargement chez Rude & Reckless Productions."
+      tracks:
+          - { title: "My Way", duration: "2:46" }
+          - { title: "Football Crowd", duration: "3:27" }
+          - { title: "Side By Side", duration: "3:17" }
+          - { title: "No Place For You", duration: "2:55" }
+          - { title: "I Don't Care", duration: "2:36" }
+          - { title: "Never Surrender", duration: "3:39" }
+      releases:
+          - sku: HARBOUR-REBELS-ON-A-JOURNEY-10
+            format: vinyl_10
+            stock: 3
+            color: "noir"
+            pressingYear: 2020
+            catalogNumber: "RRP001"
+            label: rude_reckless_productions
+            gtin: "4270001004819"
+
+    # Bull Brigade & Non Servium - The Chaos BroterHood 10'' x1 — identification high, pressage high
+    # À vérifier : Titre réel « The Chaos Brotherhood ». Split : l'artiste principal est mis à « Non
+    #   Servium / Bull Brigade » (ordre Discogs), pays laissé à null (ES + IT) ; tracklist[].artist =
+    #   groupe interprète (face A Non Servium, face B Bull Brigade). Ce sont des reprises croisées (une
+    #   vidéo YouTube présente « Augusta Taurinorum » par Bull Brigade comme une reprise de Non
+    #   Servium). Durées introuvables (null). Date Discogs 2018-10-01, mise en précision mois. Catno
+    #   aussi FFM060 chez Fire and Flames.
+    # Source : https://www.discogs.com/release/12589838
+    # Source : https://www.fireandflames.com/en/product/non-servium-bull-brigade-the-chaos-
+    #   brotherhood-split-10-ep-2/
+    # Source : https://www.motorcityproduzioni.com/product/bull-brigade-non-servium-the-chaos-
+    #   brotherhood-lp/
+    - artist: non_servium_bull_brigade
+      name: "The Chaos Brotherhood"
+      type: split
+      date: "2018-10"
+      styles: ["Oi!", "Streetpunk"]
+      labels: [casual_records, fire_and_flames_music, motorcity_produzioni, panda_artist_management]
+      note: "« Torino meets Madriz » : split 10\" où Non Servium et Bull Brigade reprennent chacun deux morceaux de l'autre groupe dans leur propre style. Pressé sur vinyle blanc avec code de téléchargement, en coproduction entre Casual Records, Fire and Flames, Motorcity Produzioni et Panda Artist."
+      tracks:
+          - { title: "Hecho En Madriz", artist: "Non Servium" }
+          - { title: "A Way Of Life", artist: "Non Servium" }
+          - { title: "Augusta Taurinorum", artist: "Bull Brigade" }
+          - { title: "Tredici Dodici", artist: "Bull Brigade" }
+      releases:
+          - sku: NON-SERVIUM-BULL-THE-CHAOS-BROTHERHOOD-10
+            format: vinyl_10
+            stock: 1
+            color: "blanc"
+            pressingYear: 2018
+            catalogNumber: "CR50"
+            label: casual_records
+
+    # VA - Tribute To Runnin Riot x1 EP — identification high, pressage high
+    # À vérifier : Un seul pressage connu (catno Crom : CR 005). Couleur non indiquée : « noir »
+    #   déduit. Hawkins Thugs est orthographié « Hawkings Thugs » sur la pochette. KnockOut = Knock Out
+    #   (Madrid), crédité « Knock Out (9) » sur Discogs. Durées issues de la page Bandcamp de Crom.
+    #   Année seule connue (Bandcamp indique 2015-06-01, date probablement approximative).
+    # Source : https://www.discogs.com/release/7373465
+    # Source : https://cromrecords.bandcamp.com/album/cr-005-tribute-to-runnin-riot-were-here-for-a-
+    #   good-time-not-a-long-time
+    # Source : https://www.fireandflames.com/en/product/va-tribute-to-runinn-riot-ep/
+    - artist: various_artists
+      name: "Tribute To Runnin Riot (We're Here For A Good Time, Not A Long Time...)"
+      type: compilation
+      date: "2015"
+      styles: ["Oi!", "Streetpunk"]
+      labels: [still_burning_records, crom_records]
+      note: "Hommage à Colin McQuilla, chanteur du groupe Oi! antifasciste de Belfast Runnin' Riot, décédé en 2014. Quatre groupes (KnockOut, Gonna Get Yours, Bull Brigade, Hawkins Thugs) y reprennent chacun un morceau de Runnin' Riot. 45 tours avec insert, coédité par Still Burning Records et Crom Records."
+      tracks:
+          - { title: "Tribute", duration: "4:20", artist: "KnockOut" }
+          - { title: "Divide And Conquer", duration: "2:48", artist: "Gonna Get Yours" }
+          - { title: "Double The Pain", duration: "4:36", artist: "Bull Brigade" }
+          - { title: "Buckfast Tonic Wine", duration: "3:12", artist: "Hawkins Thugs" }
+      releases:
+          - sku: VA-TRIBUTE-TO-RUNNIN-RIOT-7
+            format: vinyl_7
+            stock: 1
+            color: "noir"
+            pressingYear: 2015
+            catalogNumber: "SBR002"
+            label: still_burning_records
+
+    # Union Blood - Working Class Pride EP x1 EP — identification high, pressage medium
+    # À vérifier : Deux couleurs : 400 jaunes / 100 noirs (notes Discogs). Le jaune, majoritaire, est
+    #   retenu par défaut : vérifier la couleur du disque en stock (sinon color « noir », limitedTo
+    #   100). Durées de la page Bandcamp de Crom (« Reckless And Bones » y est une coquille pour «
+    #   Reckless & Bold »). Date : année seule ; Bandcamp de Crom indique 2017-02-15.
+    # Source : https://www.discogs.com/release/10216544
+    # Source : https://www.discogs.com/release/10056501
+    # Source : https://cromrecords.bandcamp.com/album/cr-009-working-class-pride
+    - artist: union_blood
+      name: "Working Class Pride EP"
+      type: ep
+      date: "2017"
+      styles: ["Oi!", "Streetpunk"]
+      labels: [crom_records, spirit_of_the_streets_records, crowd_control_media]
+      note: "Premier 45 tours d'Union Blood : quatre titres coédités par Crom Records, Spirit Of The Streets et Crowd Control Media. Pressé à 400 exemplaires sur vinyle jaune et 100 sur vinyle noir."
+      tracks:
+          - { title: "Working Class Pride", duration: "2:55" }
+          - { title: "Reckless & Bold", duration: "3:07" }
+          - { title: "Blood On The Streets", duration: "3:39" }
+          - { title: "Brawlers", duration: "3:04" }
+      releases:
+          - sku: UNION-BLOOD-WORKING-CLASS-PRIDE-EP-7
+            format: vinyl_7
+            stock: 1
+            color: "jaune"
+            limitedTo: 400
+            pressingYear: 2017
+            catalogNumber: "CR 009"
+            label: crom_records
+
+    # Wasted Youth - Remembering Means Fighting — identification high, pressage high
+    # À vérifier : AUCUNE QUANTITÉ dans la liste de stock : stock mis à null, à compléter. Groupe
+    #   allemand (Wasted Youth (7) sur Discogs), à ne pas confondre avec les Wasted Youth britannique ou
+    #   américain. Titre complet sur la pochette : « Remembering Means Fighting 04.01.1903 – 09.04.1945
+    #   ». Durées introuvables (pas de Bandcamp). Couleur non indiquée : « noir » déduit. Seule image
+    #   Discogs (marquée secondaire) utilisée comme pochette, à vérifier. Lien Facebook seulement, faute
+    #   d'autre site.
+    # Source : https://www.discogs.com/release/4269405
+    # Source : https://www.fireandflames.com/produkt/wasted-youth-remembering-means-fighting-ep/
+    # Source : https://alternativebarnsley.wordpress.com/2012/11/02/alternative-schwabisch-gmund/
+    - artist: wasted_youth
+      name: "Remembering Means Fighting"
+      type: ep
+      date: "2011"
+      styles: ["Hardcore", "Oi!"]
+      labels: [fire_and_flames_music]
+      note: "EP quatre titres dédié à Georg Elser (1903-1945), ouvrier souabe auteur de l'attentat manqué contre Hitler au Bürgerbräukeller de Munich en novembre 1939. Le groupe y rappelle son geste et appelle à la résistance active contre le fascisme. Paru chez Fire and Flames Music."
+      tracks:
+          - { title: "So Many Times" }
+          - { title: "Remembering Means Fighting" }
+          - { title: "What I See" }
+          - { title: "Wave Your Flags" }
+      releases:
+          - sku: WASTED-YOUTH-REMEMBERING-MEANS-7
+            format: vinyl_7
+            stock: 0
+            color: "noir"
+            pressingYear: 2011
+            catalogNumber: "FFM035"
+            label: fire_and_flames_music
+            published: false
+
+    # Siempre Peggio - Anni Buttati (yellow) x1 EP — identification high, pressage high
+    # À vérifier : Nom réel du groupe : « Sempre Peggio » (pas « Siempre »). Version jaune retenue
+    #   d'après l'indication de la liste. Face A en 45 tours, face B en 33 tours. Tirage par couleur
+    #   inconnu. Une chronique indique que « Senza Freni » adapte « Dreaming » de Blondie : non vérifié,
+    #   laissé hors de la note.
+    # Source : https://www.discogs.com/release/14804584
+    # Source : https://www.discogs.com/release/14786671
+    # Source : https://semprepeggio.bandcamp.com/album/anni-buttati
+    - artist: sempre_peggio
+      name: "Anni Buttati"
+      type: ep
+      date: "2020-02-15"
+      styles: ["Oi!", "Streetpunk"]
+      labels: [fire_and_flames_music, timebomb_records, radio_punk]
+      note: "Quatre titres streetpunk/Oi! enregistrés entre décembre 2019 et janvier 2020 au Mobsound de Milan, quatre ans après le premier album. Le 45 tours est sorti en vinyle jaune et noir, en coédition entre Fire and Flames Music, Timebomb Records et Radio Punk."
+      tracks:
+          - { title: "Malelingue", duration: "2:10" }
+          - { title: "Rinnegato Oi!", duration: "2:32" }
+          - { title: "Risveglio", duration: "3:16" }
+          - { title: "Senza Freni", duration: "3:10" }
+      releases:
+          - sku: SEMPRE-PEGGIO-ANNI-BUTTATI-7
+            format: vinyl_7
+            stock: 1
+            color: "jaune"
+            pressingYear: 2020
+            catalogNumber: "FFM078"
+            label: fire_and_flames_music
+
+    # T-KILLAS - Kicking The Pressure x1 EP — identification high, pressage medium
+    # À vérifier : Deux versions sur Discogs : rouge et sans couleur indiquée (noir). Fire and Flames
+    #   vend la version rouge, retenue par défaut : vérifier le disque. Styles Discogs : Ska, Mod, Soul,
+    #   Reggae. Durées Bandcamp.
+    # Source : https://www.discogs.com/release/9969477
+    # Source : https://www.discogs.com/release/9943868
+    # Source : https://t-killas.bandcamp.com/album/kicking-the-pressure
+    - artist: t_killas
+      name: "Kicking The Pressure"
+      type: ep
+      date: "2017-03-06"
+      styles: ["Ska", "Punk"]
+      labels: [fire_and_flames_music, casual_records, grover_records]
+      note: "Premier disque vinyle des T-Killas : quatre titres et quatre styles, d'un stomper rock à un hymne streetpunk en passant par un reggae et un morceau two-tone. Coédité par Fire and Flames Music, Casual Records et Grover Records, avec code de téléchargement."
+      tracks:
+          - { title: "Young But Not Free", duration: "3:09" }
+          - { title: "Liberation", duration: "2:57" }
+          - { title: "Sitting In The Rain", duration: "2:49" }
+          - { title: "Shake It", duration: "2:52" }
+      releases:
+          - sku: T-KILLAS-KICKING-THE-PRESSURE-7
+            format: vinyl_7
+            stock: 1
+            color: "rouge"
+            pressingYear: 2017
+            catalogNumber: "FFM048"
+            label: fire_and_flames_music
+
+    # VA - Red Skins Over Leipzig x2 EP — identification high, pressage low
+    # À vérifier : Disque bien identifié, mais couleur inconnue : 250 noirs / 250 orange. Noir retenu
+    #   arbitrairement (confiance basse) : vérifier les 2 exemplaires (ils peuvent même être de couleurs
+    #   différentes). Sous-titre « 10 Jahre RASH LE » ajouté au nom. Durées de la fiche Fire and Flames.
+    #   Fire and Flames écrit « Sharp X Cut », Discogs et Parocktikum « Sharp Cut ». Tous les groupes
+    #   sont de Leipzig, d'où country DE.
+    # Source : https://www.discogs.com/release/12765882
+    # Source : https://www.discogs.com/release/13312034
+    # Source : https://www.fireandflames.com/en/product/va-red-skins-over-leipzig-ep/
+    - artist: various_artists
+      name: "Red Skins Over Leipzig – 10 Jahre RASH LE"
+      type: compilation
+      date: "2018"
+      styles: ["Oi!", "Streetpunk"]
+      labels: [fire_and_flames_music]
+      note: "Compilation pour les dix ans de la section RASH (Red and Anarchist Skinheads) de Leipzig, avec un titre de chacun des groupes locaux Fontanelle, Flag Smasher, The Spartanics et Sharp Cut : Oi!, punk hardcore, streetpunk et skinhead rock'n'roll. Tirage limité à 500 exemplaires numérotés à la main (250 noirs, 250 orange), avec code de téléchargement."
+      tracks:
+          - { title: "R.A.S.H.", duration: "2:46", artist: "Fontanelle" }
+          - { title: "Askatasuna", duration: "2:47", artist: "Flag Smasher" }
+          - { title: "Don't You See", duration: "2:57", artist: "The Spartanics" }
+          - { title: "Antisocial", duration: "3:00", artist: "sharp_cut" }
+      releases:
+          - sku: VA-RED-SKINS-OVER-LEIPZIG-7
+            format: vinyl_7
+            stock: 2
+            color: "noir"
+            limitedTo: 250
+            pressingYear: 2018
+            catalogNumber: "FFM058"
+            label: fire_and_flames_music
+
+    # La Cruz - Cenzas x4 EP — identification high, pressage medium
+    # À vérifier : Titre réel « Cenizas ». Édition standard (500 ex.) retenue ; il existe 50
+    #   exemplaires numérotés à la main avec pochette alternative : vérifier les 4 copies (editionLabel
+    #   « pochette alternative numérotée », limitedTo 50 le cas échéant). Couleur non indiquée par
+    #   Discogs : « noir » déduit. Durées Bandcamp de Crom.
+    # Source : https://www.discogs.com/release/15422279
+    # Source : https://www.discogs.com/release/15434668
+    # Source : https://cromrecords.bandcamp.com/album/cr-017-cenizas
+    - artist: la_cruz
+      name: "Cenizas"
+      type: ep
+      date: "2020-05-29"
+      styles: ["Oi!"]
+      labels: [crom_records, radikal_1977_records, tough_ain_t_enough, the_firm_records]
+      note: "EP quatre titres de La Cruz, coédité par Crom Records, Radikal 1977 Records, Tough Ain't Enough et The Firm Records. Pressage limité à 500 exemplaires."
+      tracks:
+          - { title: "Con La Cabeza Alta", duration: "2:50" }
+          - { title: "Tóxico", duration: "2:47" }
+          - { title: "Real Oi!", duration: "2:23" }
+          - { title: "Cabezas Rapadas", duration: "3:18" }
+      releases:
+          - sku: LA-CRUZ-CENIZAS-7
+            format: vinyl_7
+            stock: 4
+            color: "noir"
+            limitedTo: 500
+            pressingYear: 2020
+            catalogNumber: "CR-017"
+            label: crom_records
+
+    # Knock Out - Rock'n'Roll Skinhead (white cover) x2 EP — identification high, pressage high
+    # À vérifier : Même disque que la ligne voisine (variantes de pochette) : album et artiste
+    #   identiques, seule la release change. Nom du groupe : « KnockOut » (Discogs : « Knock Out (9) »).
+    #   Date Discogs 2019-11-22 (Bandcamp : 2019-12-18). Durées Bandcamp de Crom. « Yunke » est
+    #   l'orthographe du disque. Pochette blanche = 218 ex. numérotés, vinyle doré (Discogs 15432976).
+    # Source : https://www.discogs.com/master/1751408
+    # Source : https://www.discogs.com/release/15432976
+    # Source : https://www.discogs.com/release/15018551
+    # Knock Out - Rock'n'Roll Skinhead (black cover) x2 EP — identification high, pressage medium
+    # À vérifier : Même disque que la ligne voisine (variantes de pochette) : album et artiste
+    #   identiques, seule la release change. Nom du groupe : « KnockOut » (Discogs : « Knock Out (9) »).
+    #   Date Discogs 2019-11-22 (Bandcamp : 2019-12-18). Durées Bandcamp de Crom. « Yunke » est
+    #   l'orthographe du disque. Pochette noire = 218 ex. numérotés, vinyle doré (Discogs 15018551).
+    #   Attention : il existe aussi 100 ex. à pochette noire peinte à la main, en vinyle noir, vendus
+    #   avec pins (Discogs 15431270) — si le disque est noir et la pochette faite main, changer color en
+    #   « noir », editionLabel en « pochette faite main » et limitedTo en 100.
+    # Source : https://www.discogs.com/master/1751408
+    # Source : https://www.discogs.com/release/15432976
+    # Source : https://www.discogs.com/release/15018551
+    - artist: knock_out
+      name: "Rock'n'Roll Skinhead"
+      type: ep
+      date: "2019-11-22"
+      styles: ["Oi!", "Rock'n'Roll"]
+      labels: [crom_records]
+      note: "EP quatre titres de KnockOut paru chez Crom Records et pressé par GZ Media. Tirage numéroté à la main : 218 exemplaires en vinyle doré sous pochette noire et 218 sous pochette blanche, plus 100 exemplaires à pochette faite main."
+      tracks:
+          - { title: "Mientras La Sangre Hierva", duration: "3:04" }
+          - { title: "Deambular", duration: "3:26" }
+          - { title: "Empty Minds", duration: "3:00" }
+          - { title: "Yunke & Martillo", duration: "3:47" }
+      releases:
+          - sku: KNOCK-OUT-ROCK-N-ROLL-SKINHEAD-7-POCHETTE-BLANCHE
+            name: "Knock Out - Rock'n'Roll Skinhead (pochette blanche)"
+            format: vinyl_7
+            stock: 2
+            color: "doré"
+            edition: "pochette blanche"
+            limitedTo: 218
+            pressingYear: 2019
+            catalogNumber: "CR016"
+            label: crom_records
+          - sku: KNOCK-OUT-ROCK-N-ROLL-SKINHEAD-7-POCHETTE-NOIRE
+            name: "Knock Out - Rock'n'Roll Skinhead (pochette noire)"
+            format: vinyl_7
+            stock: 2
+            color: "doré"
+            edition: "pochette noire"
+            limitedTo: 218
+            pressingYear: 2019
+            catalogNumber: "CR016"
+            label: crom_records
+
+    # Union Thugs - Folklore Ouvrier x22 CD+Fanzine (KBR#01) — identification high, pressage high
+    # À vérifier : Discogs 15582752 lists Kale Borroka Records with catno KBR01 (shop format would be
+    #   KBR#001). Release date 2020-07-04 from Discogs/Bandcamp (Fire and Flames says 2020-07-11).
+    #   Durations from Discogs; Bandcamp digital durations differ by a few seconds (e.g. Intro 2:59, La
+    #   complainte 4:52, Preamble 2:12). Track titles normalised from Bandcamp (Discogs: 'La
+    #   Complainte', 'Preambule to the IWW Constitution'; Bandcamp typo 'del la'). 'La complainte' is a
+    #   Molodoï cover. Discogs genre also Folk; country is Canada. Kale Borroka website left null (kale-
+    #   borroka-records.com unreachable when checked). Discogs images are all 'secondary', so cover
+    #   taken from Rebel Time's Bandcamp.
+    # Source : https://www.discogs.com/release/15582752
+    # Source : https://rebeltimerecords.bandcamp.com/album/union-thugs-folklore-ouvrier
+    # Source : https://www.fireandflames.com/en/ffm080-union-thugs-folklore-ouvrier/
+    - artist: union_thugs
+      name: "Folklore ouvrier"
+      type: ep
+      date: "2020-07-04"
+      production: "KBR#001"
+      styles: ["Oi!", "Punk", "Folk"]
+      labels: [kale_borroka_records, fire_and_flames_music, dure_realite, rebel_time_records, rudy_s_back, discos_machete, boite_a_musique_ca_bam]
+      note: "Deuxième sortie et premier EP des Union Thugs : une intro suivie de six chants ouvriers et révolutionnaires (Anne Feeney, The Almanac Singers, Leonard Cohen, Molodoï…) repris entre folk et punk-rock, en français et en anglais. Le CD est livré avec un fanzine de 16 pages contenant les paroles et des notes historiques bilingues sur chaque chanson. Coproduction internationale entre Fire and Flames, Dure Réalité, Rebel Time Records, Kale Borroka, Discos Machete et Rudy's Back : c'est la première production de Kale Borroka Records (KBR01)."
+      tracks:
+          - { title: "Intro", duration: "2:54" }
+          - { title: "War on the Workers", duration: "3:47" }
+          - { title: "Les piqueteuses de la gloire", duration: "4:28" }
+          - { title: "Partisan", duration: "3:38" }
+          - { title: "Union Maid", duration: "2:29" }
+          - { title: "La complainte des ouvriers", duration: "4:41" }
+          - { title: "Preamble to the IWW Constitution", duration: "1:59" }
+      releases:
+          - sku: UNION-THUGS-FOLKLORE-OUVRIER-CD
+            format: cd
+            stock: 22
+            edition: "CD + fanzine"
+            pressingYear: 2020
+            catalogNumber: "KBR01"
+            label: kale_borroka_records
+
+    # Harbour Rebels - Leinen Los x3 CD — identification high, pressage high
+    # À vérifier : Only one CD pressing on Discogs (self-released, barcode 4 260069 347287). Date =
+    #   Bandcamp release date. Band site says 'Leinen los' is their first album. Sold via the Rude &
+    #   Reckless shop (listed as distro, not on the Discogs credits).
+    # Source : https://www.discogs.com/release/12769973
+    # Source : https://harbourrebels.bandcamp.com/album/leinen-los
+    # Source : https://harbourrebels.com/
+    - artist: harbour_rebels
+      name: "Leinen los"
+      type: album
+      date: "2018-11-03"
+      styles: ["Streetpunk", "Oi!"]
+      labels: [rude_reckless]
+      note: "Premier album des Harbour Rebels, 11 titres de streetpunk chantés en allemand. Enregistré au studio Mastertone (Sülfeld), mixé et masterisé à l'Off Ya Tree Studio. CD autoproduit par le groupe en 2018."
+      tracks:
+          - { title: "Für immer Rebell", duration: "2:59" }
+          - { title: "Lügen", duration: "4:15" }
+          - { title: "Arbeitstier", duration: "2:58" }
+          - { title: "Die Qual der Wahl", duration: "2:31" }
+          - { title: "Attitude", duration: "1:20" }
+          - { title: "Stadionvagabunden", duration: "2:46" }
+          - { title: "Euer Hass", duration: "2:55" }
+          - { title: "Gegen die Welt", duration: "2:41" }
+          - { title: "Gib nicht auf", duration: "3:08" }
+          - { title: "Skinhead Times", duration: "2:00" }
+          - { title: "Trunkenbold", duration: "3:27" }
+      releases:
+          - sku: HARBOUR-REBELS-LEINEN-LOS-CD
+            format: cd
+            stock: 3
+            pressingYear: 2018
+            catalogNumber: "HRR1312"
+            gtin: "4260069347287"
+
+    # Tulamort - Des Hauts & des bars x5 CD — identification high, pressage high
+    # À vérifier : Real title: 'Des hauts et des bars'. Discogs lists it as self-released with no
+    #   catno; Fire and Flames gives Appel aux Luttes as label (Appel aux Luttes calls itself a
+    #   label/distro and sells the CD): check the back of the CD to see if Appel aux Luttes is a co-
+    #   producer. Appel aux Luttes says '3e opus... sorti à l'occasion des 10 ans du groupe' and spells
+    #   track 9 'Week end 2 bâtards'. Discogs has no style set.
+    # Source : https://www.discogs.com/release/15068582
+    # Source : https://tulamort.bandcamp.com/album/des-hauts-et-des-bars
+    # Source : https://appelauxluttes.bandcamp.com/album/tulamort-des-hauts-et-des-bars
+    - artist: tulamort
+      name: "Des hauts et des bars"
+      type: album
+      date: "2017-03-24"
+      styles: ["Streetpunk", "Oi!", "Punk"]
+      labels: [appel_aux_luttes]
+      note: "Troisième album de Tulamort, sorti pour les dix ans du groupe : 11 titres de punk des rues entre oi!, punk-hardcore et ska. CD en digipack."
+      tracks:
+          - { title: "Gamin", duration: "3:09" }
+          - { title: "Arnaque salariale", duration: "2:46" }
+          - { title: "Ménilmontant", duration: "2:52" }
+          - { title: "Toujours rien", duration: "3:45" }
+          - { title: "Pour tes frères", duration: "2:55" }
+          - { title: "I.W.W.", duration: "2:45" }
+          - { title: "Rebelles de vos lois", duration: "2:44" }
+          - { title: "Hajduk", duration: "3:58" }
+          - { title: "Week end", duration: "2:31" }
+          - { title: "Whiskey for rudies", duration: "3:14" }
+          - { title: "Colère sincère", duration: "4:27" }
+      releases:
+          - sku: TULAMORT-DES-HAUTS-ET-DES-BARS-CD
+            format: cd
+            stock: 5
+            edition: "digipack"
+            pressingYear: 2017
+
+    # Kabal La revolte - Doujans x3 CD — identification high, pressage high
+    # À vérifier : Band name is 'Kabal...La Révolte' (Discogs); album title spelled 'Doujãns' by the
+    #   band/Mass Prod, 'Doujans' on Discogs and Bandcamp — pick one for the shop. Single CD pressing on
+    #   Discogs, co-released by 7 labels; catnos RKR 011 (Rusty Knife) and mass121 (Mass Productions).
+    #   Discogs gives 2010-01-05 as release date, which conflicts with 'recorded early 2010': year only
+    #   kept. Rusty Knife's Bandcamp date (2015-08-05) is the digital upload. Sources say '11 tracks'
+    #   but there are 12 including the intro; track 12 is credited '(Mozart)' on Discogs. Durations from
+    #   Rusty Knife's Bandcamp. Spirit of Rock says Quimper, other sources say southern Finistère / pays
+    #   bigouden. No band website found.
+    # Source : https://www.discogs.com/release/4903172
+    # Source : https://www.discogs.com/artist/2103649
+    # Source : https://rustyknife.bandcamp.com/album/rkr-011-kabal-la-revolte-doujans
+    - artist: kabal_la_revolte
+      name: "Doujãns"
+      type: album
+      date: "2010"
+      styles: ["Punk"]
+      labels: [rusty_knife_records, mass_productions, ffc_productions, appel_aux_luttes, rural_muzik, krampouezh_team, efc_studio]
+      note: "Premier et unique album de Kabal...La Révolte, enregistré début 2010 ; « Doujãns » signifie « respect » en breton. Coproduit par plusieurs labels DIY (Rusty Knife, Mass Productions, FFC Productions, Appel aux Luttes, Rural Muzik…), il est sorti en CD digipack avec un livret de 12 pages."
+      tracks:
+          - { title: "Intro", duration: "1:39" }
+          - { title: "Kabal", duration: "3:30" }
+          - { title: "Les sans foyers", duration: "3:40" }
+          - { title: "Algérie 62", duration: "3:47" }
+          - { title: "Royaliste", duration: "3:21" }
+          - { title: "Sa main dans ta gueule", duration: "3:43" }
+          - { title: "No Sarko", duration: "2:23" }
+          - { title: "14 euros", duration: "1:58" }
+          - { title: "Une chanson verte", duration: "2:28" }
+          - { title: "Mots pour maux", duration: "3:20" }
+          - { title: "L.N.S.", duration: "2:35" }
+          - { title: "La marche turque", duration: "1:04" }
+      releases:
+          - sku: KABAL-LA-REVOLTE-DOUJANS-CD
+            format: cd
+            stock: 3
+            edition: "digipack + livret 12 pages"
+            pressingYear: 2010
+            catalogNumber: "RKR 011"
+            label: rusty_knife_records
+
+    # Resaka Sonora - Buenaventura x2 CD — identification high, pressage high
+    # À vérifier : Single CD pressing on Discogs (Not On Label, no catno, no barcode). Durations from
+    #   Bandcamp (Discogs has none). Date = Bandcamp release date. Line-up has changed over time (8 or 9
+    #   musicians depending on the source), so not listed.
+    # Source : https://www.discogs.com/release/6972435
+    # Source : https://resakasonora.bandcamp.com/album/buenaventura
+    # Source : https://www.fireandflames.com/en/product/resaka-sonora-buenaventura-cd/
+    - artist: resaka_sonora
+      name: "Buenaventura"
+      type: album
+      date: "2015-03-14"
+      styles: ["Ska", "Punk"]
+      note: "Album de 14 titres politiques, entre internationalisme et antifascisme, chantés en basque, en castillan et en français. CD en digipack, autoproduit par le groupe en 2015."
+      tracks:
+          - { title: "Buenaventura", duration: "2:59" }
+          - { title: "On marche ensemble", duration: "3:17" }
+          - { title: "Egun grisa", duration: "3:56" }
+          - { title: "Camisoles éventrées", duration: "3:06" }
+          - { title: "Continuer", duration: "2:38" }
+          - { title: "Nouvelle virée", duration: "3:05" }
+          - { title: "Un choix de supporter", duration: "3:07" }
+          - { title: "Era digital", duration: "3:03" }
+          - { title: "Col bleu", duration: "3:33" }
+          - { title: "Nuevas mascaras", duration: "3:24" }
+          - { title: "Nire aitaren etxea", duration: "3:40" }
+          - { title: "Larmes de sang", duration: "3:49" }
+          - { title: "Suis ton chemin", duration: "3:53" }
+          - { title: "Toiles d'orient", duration: "3:26" }
+      releases:
+          - sku: RESAKA-SONORA-BUENAVENTURA-CD
+            format: cd
+            stock: 2
+            edition: "digipack"
+            pressingYear: 2015
+
+    # Ya Basta - Toujours Debout x4 CD — identification high, pressage high
+    # À vérifier : Only one CD pressing on Discogs (self-released, catno YB2004-02 on the spine,
+    #   'YB2004 02' on the disc). Fire and Flames lists the CD under Maloka (the anarcho-punk
+    #   label/distro): maybe co-release or distribution, check the CD. Discogs gives September 2004 (no
+    #   day). Durations from Bandcamp (Discogs has none); titles from the Discogs CD entry. Fire and
+    #   Flames calls it their third album while French Wikipedia lists only Lucha y fiesta (2002) before
+    #   it plus a 1999 split, so 'third' was left out. Wikipedia says the band was formed in the Paris
+    #   suburbs, Fire and Flames says Paris.
+    # Source : https://www.discogs.com/release/1190014
+    # Source : https://www.discogs.com/release/1191268
+    # Source : https://www.discogs.com/master/55394
+    - artist: ya_basta
+      name: "Toujours debout"
+      type: album
+      date: "2004-09"
+      styles: ["Ska", "Punk", "Oi!"]
+      labels: [twisted_chords, maloka]
+      note: "Album de Ya Basta ! sorti en septembre 2004, enregistré et mixé au Lokal à Vincennes. Le CD autoproduit compte 15 titres, dont une version dub de « Que la peur change de camp » ; l'édition vinyle est sortie chez Twisted Chords (LP limité à 1500 exemplaires, 14 titres)."
+      tracks:
+          - { title: "Toujours debout (Que la peur change de camp)", duration: "1:26" }
+          - { title: "FTP", duration: "3:15" }
+          - { title: "Espèce urbaine", duration: "2:54" }
+          - { title: "Trench Town", duration: "2:47" }
+          - { title: "Lost Generation", duration: "3:42" }
+          - { title: "L'isolé", duration: "3:09" }
+          - { title: "Une vie brisée", duration: "3:24" }
+          - { title: "Mauvais consommateur", duration: "3:15" }
+          - { title: "Un vent glacial", duration: "3:07" }
+          - { title: "Guerres coloniales", duration: "2:17" }
+          - { title: "Question d'éthique", duration: "3:31" }
+          - { title: "P'tit Fred", duration: "3:12" }
+          - { title: "Hassan", duration: "1:55" }
+          - { title: "L'avant-garde", duration: "4:01" }
+          - { title: "Que la peur... (dub)", duration: "2:00" }
+      releases:
+          - sku: YA-BASTA-TOUJOURS-DEBOUT-CD
+            format: cd
+            stock: 4
+            pressingYear: 2004
+            catalogNumber: "YB2004-02"
+
+    # S-MOLEST - La Nostra Vita x3 CD — identification medium, pressage low
+    # À vérifier : Not found on Discogs nor Bandcamp. Year 2010 and the 8-track order come from the
+    #   Punk4free review; Punkadeka confirms a CD co-released by several DIY labels but does not name
+    #   them. Labels, catno, barcode, durations and cover unknown: read them off the CD. Band name
+    #   spelled 'S-Molest' in the sources. Punkadeka's page is dated 2013 (probably the review date, not
+    #   the release).
+    # Source : https://www.punk4free.org/articoli/4-recensioni/1832-s-molest-2010-la-nostra-vita.html
+    # Source : https://www.punkadeka.it/s-molest-la-nostra-vita/
+    # Source : https://www.last.fm/it/music/S-Molest
+    - artist: s_molest
+      name: "La nostra vita"
+      type: album
+      date: "2010"
+      styles: ["Oi!", "Streetpunk"]
+      note: "Album de huit titres, sorti en 2010 grâce à la collaboration de plusieurs labels dans le respect de l'éthique DIY. Les textes parlent d'antifascisme militant, critiquent les pratiques journalistiques et rendent hommage au quartier romain de San Lorenzo (« Skinhead San Lorenzo »)."
+      tracks:
+          - { title: "Il giuramento" }
+          - { title: "Machinata Tour" }
+          - { title: "La mia vita" }
+          - { title: "Un consiglio" }
+          - { title: "Il lupo" }
+          - { title: "Skinhead San Lorenzo" }
+          - { title: "Giornalista" }
+          - { title: "Prima o poi" }
+      releases:
+          - sku: S-MOLEST-LA-NOSTRA-VITA-CD
+            format: cd
+            stock: 3
+            pressingYear: 2010
+
+    # HVB - Valstar Revenge x 2 CD — identification medium, pressage low
+    # À vérifier : Not on Discogs. Bandcamp date '1 January 2012' is a placeholder: year only.
+    #   Bandcamp sells it as digital only; no information on the CD (label, catno, barcode) found —
+    #   probably self-released, check the disc. Bandcamp location is Mauléon (Deux-Sèvres); the band bio
+    #   says Saint-Aubin(-de-Baubigné), a neighbouring village. Listed as a 6-track first release ('EP'
+    #   in the bio, 'album' on Bandcamp): typed ep.
+    # Source : https://hvbmusic.bandcamp.com/album/valstar-revenge
+    # Source : http://supportyourlocaldownload.blogspot.com/2013/08/hooligans-valstar-band.html
+    # Source : https://www.youtube.com/watch?v=J35ZU9dsXJg
+    - artist: hvb
+      name: "Valstar Revenge"
+      type: ep
+      date: "2012"
+      styles: ["Streetpunk", "Oi!"]
+      note: "Premier disque de HVB : six titres de street-punk sortis en 2012."
+      tracks:
+          - { title: "Temps des rêves", duration: "4:01" }
+          - { title: "Sous les ponts", duration: "3:20" }
+          - { title: "HVB", duration: "2:29" }
+          - { title: "Jeunesse stigmatisée", duration: "4:44" }
+          - { title: "Autre univers", duration: "3:02" }
+          - { title: "Red eyes terror", duration: "3:28" }
+      releases:
+          - sku: HVB-VALSTAR-REVENGE-CD
+            format: cd
+            stock: 2
+            pressingYear: 2012
+
+    # Les Trois Huits - LTH x1 CD — identification high, pressage high
+    # À vérifier : Le groupe s'appelle « Les Trois Huit » (sans s) ; « LTH » est son sigle : l'album
+    #   est sans titre (Discogs : « Les Trois Huit »), et c'est le seul CD du groupe à part « Assigné.es
+    #   à résistance » (2016). Si la pochette du CD en stock porte « Assigné.es à résistance », ce n'est
+    #   pas le bon album. Les durées viennent de Deezer (version numérique), Discogs n'en donne pas.
+    #   Discogs écrit « Condisionati », Bandcamp et Deezer « Condizionati » : j'ai gardé Condizionati.
+    #   Les reprises (Bull Brigade, Les Partisans) sont indiquées comme telles par Deezer. Date du
+    #   23/11/2015 prise sur Bandcamp (Dure Réalité). Le code-barres Deezer (5057917008679) est celui de
+    #   la sortie numérique, pas du CD : non repris.
+    # Source : https://www.discogs.com/release/7722201-Les-Trois-Huit-Les-Trois-Huit
+    # Source : https://www.discogs.com/master/965884
+    # Source : https://durerealite.bandcamp.com/album/les-trois-huit
+    - artist: les_trois_huit
+      name: "Les Trois Huit"
+      type: album
+      date: "2015-11-23"
+      styles: ["Oi!", "Punk"]
+      labels: [rusty_knife_records, fire_and_flames_music, dure_realite, general_strike, ffc_productions]
+      note: "Premier album de Les Trois Huit, groupe de oi! antifasciste de Grenoble : 13 titres, chantés en français et en italien. On y trouve des reprises de Bull Brigade (« Birra ») et des Partisans (« Pas de quartier »). Le CD est une coproduction Rusty Knife (RKR 060A), Fire and Flames (FFM040), Dure Réalité (DR002), General Strike et FFC Productions ; une version LP 45 tours a suivi en 2016."
+      tracks:
+          - { title: "Writer", duration: "3:22" }
+          - { title: "Liberi Tutti", duration: "1:52" }
+          - { title: "Uni-e-s", duration: "3:09" }
+          - { title: "Travailler", duration: "2:10" }
+          - { title: "Chaque Fois Qu'on Sort", duration: "2:11" }
+          - { title: "Nos Valeurs", duration: "3:02" }
+          - { title: "Birra", duration: "3:33" }
+          - { title: "Grenoble", duration: "2:25" }
+          - { title: "Au Fond Des Yeux", duration: "3:01" }
+          - { title: "Camisole", duration: "2:18" }
+          - { title: "Condizionati", duration: "2:06" }
+          - { title: "Pas De Quartier", duration: "2:09" }
+          - { title: "Skin & Punk", duration: "1:29" }
+      releases:
+          - sku: LES-TROIS-HUIT-LES-TROIS-HUIT-CD
+            format: cd
+            stock: 1
+            pressingYear: 2015
+            catalogNumber: "RKR 060A"
+            label: rusty_knife_records
+
+    # Yuka - Qu'enfin souffle le vent de a contestation x2 CD — identification high, pressage high
+    # À vérifier : Titre corrigé : « de la contestation » (l'entrée dit « de a »). Seul pressage CD
+    #   connu. Durées des pistes 1 à 11 prises sur Bandcamp (mise en ligne numérique du 04/08/2015) ; la
+    #   piste 12 « La Téloche » n'est pas sur Bandcamp, durée inconnue. Bandcamp écrit « Les politicards
+    #   » et « Manifeste toi », Discogs « Les Policards » et « Manifestes-Toi » : j'ai gardé « Les
+    #   Policards » (Discogs, d'après le CD) et « Manifeste-Toi » ; à vérifier sur le dos du CD. Origine
+    #   géographique du groupe non trouvée (il figure sur la compilation « Chaos en Poitou-Charentes »
+    #   de 2006, ce qui ne suffit pas à l'affirmer) : pays FR seulement.
+    # Source : https://www.discogs.com/release/3302833-Yuka-Qu-Enfin-Souffle-Le-Vent-De-La-
+    #   Contestation
+    # Source : https://rustyknife.bandcamp.com/album/rkr-007-yuka-quenfin-souffle-le-vent-de-la-
+    #   contestation
+    # Source : https://ernest-everhard-records.blogspot.com/2010/09/yuka-quenfin-souffle-le-vent-de-
+    #   la.html
+    - artist: yuka
+      name: "Qu'enfin souffle le vent de la contestation"
+      type: album
+      date: "2010"
+      styles: ["Punk"]
+      labels: [rusty_knife_records, rudy_s_back, les_graillouteurs, rebel_s_united]
+      note: "Album de 12 titres de Yuka, sorti en 2010 en digipack chez Rusty Knife Records (RKR 007), avec Rudy's Back, Les Graillouteurs et Rebel's United. Les titres parlent de liberté, de sans-papiers, de police, d'antifascisme et de télévision (« Ni Dieu ni maître », « Sans papier », « Antifa », « La téloche »)."
+      tracks:
+          - { title: "Intro", duration: "1:57" }
+          - { title: "Liberté", duration: "2:34" }
+          - { title: "Indifférence", duration: "2:24" }
+          - { title: "Ni Dieu Ni Maître", duration: "2:50" }
+          - { title: "Sans Papier", duration: "3:22" }
+          - { title: "Les Policards", duration: "3:14" }
+          - { title: "Manifeste-Toi", duration: "2:45" }
+          - { title: "Ground Zéro", duration: "2:34" }
+          - { title: "Génération Punk", duration: "3:15" }
+          - { title: "Résiste", duration: "3:40" }
+          - { title: "Antifa", duration: "1:50" }
+          - { title: "La Téloche" }
+      releases:
+          - sku: YUKA-QU-ENFIN-SOUFFLE-LE-VENT-CD
+            format: cd
+            stock: 2
+            edition: "digipack"
+            pressingYear: 2010
+            catalogNumber: "RKR 007"
+            label: rusty_knife_records
+
+    # Block H & No Leader - ST x2 CD — identification high, pressage high
+    # À vérifier : Split : l'artiste « Block H / No Leader » est un nom composé, les deux groupes sont
+    #   donnés piste par piste dans tracklist[].artist ; à découper en deux fiches artiste si le site le
+    #   permet. Discogs l'appelle « Block-H / No Leader », sans titre. Seul pressage connu (Punk's
+    #   Shadow PKS 07, 2006). Durées d'après Discogs. Accents ajoutés aux titres (Discogs écrit « Marche
+    #   Ou Creve », « A L'Attaque », « Biere », « Emeute ») : à vérifier sur le CD. Aucune info fiable
+    #   sur Block H : ne pas le confondre avec Block H95 (électro-punk dans la lignée de Bérurier Noir),
+    #   lien non prouvé. Pas de lien https officiel trouvé pour les groupes (No Leader : seulement
+    #   Discogs).
+    # Source : https://www.discogs.com/release/5257966
+    # Source : https://www.discogs.com/artist/2118056-No-Leader
+    # Source : http://www.dirtypunk.fr/product_info.php?products_id=151
+    - artist: block_h_no_leader
+      name: "Block H / No Leader"
+      type: split
+      date: "2006"
+      styles: ["Punk", "Oi!"]
+      labels: [punk_s_shadow]
+      note: "Split CD sorti en 2006 chez Punk's Shadow (PKS 07), label associatif de Couterne (Orne). Cinq titres de Block H (punk rock engagé), puis cinq de No Leader, de la oi! à boîte à rythmes de Vitré."
+      tracks:
+          - { title: "Leather Face", duration: "3:03", artist: "Block H" }
+          - { title: "Rappelles-Toi", duration: "3:42", artist: "Block H" }
+          - { title: "Hoolie", duration: "4:46", artist: "Block H" }
+          - { title: "Rue De La Paix", duration: "3:16", artist: "Block H" }
+          - { title: "Marche Ou Crève", duration: "3:33", artist: "Block H" }
+          - { title: "Alerte Aux Cons", duration: "4:42", artist: "No Leader" }
+          - { title: "À L'Attaque", duration: "3:28", artist: "No Leader" }
+          - { title: "Mes Potes, La Bière Et La Oi", duration: "2:19", artist: "No Leader" }
+          - { title: "Émeute", duration: "3:21", artist: "No Leader" }
+          - { title: "Sortir D'Bar", duration: "2:24", artist: "No Leader" }
+      releases:
+          - sku: BLOCK-H-NO-LEADER-BLOCK-H-NO-LEADER-CD
+            format: cd
+            stock: 2
+            pressingYear: 2006
+            catalogNumber: "PKS 07"
+            label: punk_s_shadow
+
+    # Cartouche - Bread & Roses x2 CD — identification high, pressage high
+    # À vérifier : Un seul pressage CD (CACD003, GS058 chez General Strike). Le site du groupe donne «
+    #   avril 2014 », Discogs et Deezer le 23/05/2014 : j'ai retenu le 23/05/2014. Durées d'après
+    #   Deezer, à quelques secondes près de celles de Discogs (Discogs : 4:02, 2:28, 1:31, 3:52, 4:18,
+    #   4:05, 2:55, 2:42, 3:00, 3:24). La matrice du CD (« CA CACD003 ») suggère qu'Acontrario est le
+    #   label principal. L'origine Paris/Agen vient de Discogs seul.
+    # Source : https://www.discogs.com/release/6209348-Cartouche-Bread-Roses
+    # Source : https://www.discogs.com/master/747323-Cartouche-Bread-Roses
+    # Source : https://www.cartouche.punkrock.fr/en/albums/2014-bread-and-roses/
+    - artist: cartouche
+      name: "Bread & Roses"
+      type: album
+      date: "2014-05-23"
+      styles: ["Punk"]
+      labels: [acontrario_records, appel_aux_luttes, general_strike, maloka, ravin_bleu, rudy_s_back, zone_onze_records]
+      note: "Album de 10 titres enregistré et mixé en février 2014 au Studioscope à Angers par Cali, masterisé au Rumble Sound studio à Angers. Le CD est en digifile 6 volets, avec un livret de 24 pages : les paroles y sont en français, en anglais et en allemand. Coproduction Acontrario, Appel aux luttes, General Strike, Maloka, Ravin Bleu, Rudy's Back et Zone Onze."
+      tracks:
+          - { title: "Exil", duration: "4:02" }
+          - { title: "Pour Une Poignée De Dollars", duration: "2:28" }
+          - { title: "Ausserhalb", duration: "1:31" }
+          - { title: "Will You Think About Me", duration: "3:54" }
+          - { title: "Au Fil Des Rêves", duration: "4:18" }
+          - { title: "À Corps Perdu", duration: "4:07" }
+          - { title: "Obscenity", duration: "2:55" }
+          - { title: "En Amour Comme En Émeute", duration: "2:42" }
+          - { title: "Un Wonderbra Autour Du Cou", duration: "3:02" }
+          - { title: "Bread And Roses", duration: "3:18" }
+      releases:
+          - sku: CARTOUCHE-BREAD-ROSES-CD
+            format: cd
+            stock: 2
+            edition: "digifile + livret 24 pages"
+            pressingYear: 2014
+            catalogNumber: "CACD003"
+            label: acontrario_records
+
+    # The Midnight Rovers - Suburb Rock'nRoll' Class x3 CD — identification medium, pressage medium
+    # À vérifier : À VÉRIFIER : l'entrée « Suburb Rock'nRoll' Class » mélange deux albums distincts. «
+    #   Suburb Rock'n'Roll » (2010, 1er album, 11 titres, chant Marylou, CD digipack TMR - CD01) et «
+    #   Rockin' Class » (2013, 2e album, 10 titres, TMR CD02 / LP+CD TMR LP02) ne sont PAS le même
+    #   disque, ni la même tracklist (seul « Elle » se retrouve sur les deux). Le LP « Rockin' Class »
+    #   déjà en stock (batch-a) est donc un autre album. J'ai retenu « Suburb Rock'n'Roll » parce que
+    #   l'entrée commence par ce titre et que c'est un album sorti en CD seul ; si le CD en stock porte
+    #   « Rockin' Class », prendre plutôt la fiche Discogs 23719157 (durées : 2:20, 2:43, 3:19, 2:40,
+    #   2:16, 3:10, 2:40, 2:02, 2:47, 3:15). Durées de « Suburb Rock'n'Roll » inconnues, sauf la piste 2
+    #   (3:18, Bandcamp). Bandcamp écrit « Yasmina (LSD) », car c'est une reprise de LSD. Les dates
+    #   Bandcamp (oct. 2016) correspondent à la mise en ligne numérique, pas à la sortie. Le bassiste
+    #   s'appelle « Manu » sur la plupart des sources et « Manouche » dans les crédits Discogs.
+    # Source : https://www.discogs.com/release/2870756
+    # Source : https://www.discogs.com/artist/1511204-The-Midnight-Rovers
+    # Source : https://appelauxluttes.bandcamp.com/album/the-midnight-rovers-suburb-rockn-roll
+    - artist: the_midnight_rovers
+      name: "Suburb Rock'n'Roll"
+      type: album
+      date: "2010"
+      styles: ["Rockabilly", "Rock'n'Roll"]
+      labels: [appel_aux_luttes, general_strike]
+      note: "Premier album des Midnight Rovers, avec Marylou au chant : 11 titres entre rockabilly électrique et rock alternatif de banlieue. Il a été enregistré en mai 2009 dans l'ancienne gare d'Anneville-sur-Mer (Manche) et sort en 2010 en digipack, en autoproduction, distribué par Appel aux luttes et General Strike. « Yasmina » est une reprise de LSD."
+      tracks:
+          - { title: "Ennui Juvénile" }
+          - { title: "Rock'n'Roll Angel", duration: "3:18" }
+          - { title: "Ma Banlieue" }
+          - { title: "Elle" }
+          - { title: "Way Of Life" }
+          - { title: "Rien À Foutre" }
+          - { title: "The Midnight Rovers" }
+          - { title: "Yasmina" }
+          - { title: "One Summer Night" }
+          - { title: "Sombre Nuit" }
+          - { title: "Differently Alike" }
+      releases:
+          - sku: THE-MIDNIGHT-ROVERS-SUBURB-ROCK-N-ROLL-CD
+            format: cd
+            stock: 3
+            edition: "digipack"
+            pressingYear: 2010
+            catalogNumber: "TMR - CD01"
+
+    # 86 Crew - Old Reggea Friends x1 CD — identification high, pressage high
+    # À vérifier : Orthographe corrigée : « Old Reggae Friends » ; le groupe s'écrit « 8°6 Crew ». Un
+    #   seul CD connu (2010). Discogs donne deux références UVPR (UVPRCD X et UVPRCD 5) et mass134 chez
+    #   Mass Productions, prises sur le site des labels car le CD n'en porte aucune : j'ai mis UVPRCD 5.
+    #   La date « 28/08/2018 » d'Amazon est celle de la fiche import, pas de la sortie. Durées d'après
+    #   Deezer. Titres : Discogs écrit « In The Sherbeen » et Deezer « In the shebeens », j'ai mis « In
+    #   The Shebeen » (comme Amazon) ; Deezer écrit « Trouble on the east side » pour « Troubles In The
+    #   East Side ».
+    # Source : https://www.discogs.com/release/2668446
+    # Source : https://www.discogs.com/master/322428
+    # Source : https://www.discogs.com/artist/392485-86-Crew
+    - artist: 86_crew
+      name: "Old Reggae Friends"
+      type: album
+      date: "2010-11-25"
+      styles: ["Ska", "Reggae"]
+      labels: [une_vie_pour_rien, mass_productions]
+      note: "Album de 14 titres de 8°6 Crew, sorti fin 2010 : du ska et du reggae skinhead avec quelques morceaux dub (« Jaja Dub », « One Step Dub »). Le CD est coédité par Une Vie Pour Rien ? et Mass Productions (mass134) ; le vinyle sort chez Une Vie Pour Rien ? et a été réédité en 2020."
+      tracks:
+          - { title: "Too Strong", duration: "3:35" }
+          - { title: "Le Juge", duration: "3:03" }
+          - { title: "Give Me", duration: "4:57" }
+          - { title: "Troubles In The East Side", duration: "4:05" }
+          - { title: "Old Reggae Friends", duration: "3:03" }
+          - { title: "In The Shebeen", duration: "2:51" }
+          - { title: "Jaja Dub", duration: "3:36" }
+          - { title: "It's Time", duration: "3:45" }
+          - { title: "Un Pas", duration: "4:45" }
+          - { title: "Jibbers", duration: "2:47" }
+          - { title: "Still Rebel", duration: "4:17" }
+          - { title: "I Need Help", duration: "2:07" }
+          - { title: "United", duration: "4:09" }
+          - { title: "One Step Dub", duration: "3:59" }
+      releases:
+          - sku: 86-CREW-OLD-REGGAE-FRIENDS-CD
+            format: cd
+            stock: 1
+            pressingYear: 2010
+            catalogNumber: "UVPRCD 5"
+            label: une_vie_pour_rien
+
+    # VA - Benefit vol 2 x2 CD — identification low, pressage low
+    # À vérifier : NON IDENTIFIÉ. Aucune série « Benefit » vol. 2/3/4 en CD trouvée dans la scène du
+    #   label. Catalogues Discogs fouillés sans résultat : Kale Borroka Records (5 sorties), Rusty
+    #   Knife, General Strike, Appel aux luttes, Dure Réalité, Rudy's Back, Fire and Flames, Mass
+    #   Productions, Maloka, Une Vie Pour Rien ?, Rebel Time, Discos Machete, Kanal Hysterik, Crom,
+    #   Rumagna Sgroza, Skuds Prod, Red Head Man, Talion, Trauma Social, Siempre Contra, Punk's Shadow,
+    #   FFC, Zone Onze. Kale Borroka Records n'a pas sorti de compilation « Benefit » d'après Discogs.
+    #   Séries « Benefit » numérotées écartées : Sea Shepherd Benefit (Uncle M, vinyle seulement), Pup
+    #   Punk, Punk for the Gospel, United We Skate, El Puente (sans rapport). Seule série trouvée avec
+    #   des vol. 2, 3 et 4 en CD : « On The Run - Hunt Sabs Benefit » du label anglais On the Run Wreck
+    #   Chords (punk / anarcho-punk, au profit des saboteurs de chasse ; vol. 2 RUN02 du 25/07/2021,
+    #   vol. 3 RUN03 du 30/11/2021, vol. 4 du 05/08/2022). Elle figure dans pressing_candidates à titre
+    #   indicatif, sans preuve que ce sont ces disques. À faire par le label : lire la pochette et le
+    #   dos des CD (titre complet, label, référence, cause soutenue) et compléter. Tracklist laissée
+    #   vide plutôt que de deviner.
+    # Source : https://musicbrainz.org/release/4425152a-0526-40e5-af1d-50dc1f80acb6
+    # Source : https://musicbrainz.org/release/33f02ac9-e3d2-4374-86a4-248cdc0a8971
+    # Source : https://ontherunwreckchords.bandcamp.com/album/hunt-sabs-benefit
+    - artist: various_artists
+      name: "Benefit Vol. 2"
+      type: compilation
+      styles: ["Punk"]
+      releases:
+          - sku: VA-BENEFIT-VOL-2-CD
+            format: cd
+            stock: 2
+            published: false
+
+    # VA - Benefit vol 3 x3 CD — identification low, pressage low
+    # À vérifier : NON IDENTIFIÉ. Aucune série « Benefit » vol. 2/3/4 en CD trouvée dans la scène du
+    #   label. Catalogues Discogs fouillés sans résultat : Kale Borroka Records (5 sorties), Rusty
+    #   Knife, General Strike, Appel aux luttes, Dure Réalité, Rudy's Back, Fire and Flames, Mass
+    #   Productions, Maloka, Une Vie Pour Rien ?, Rebel Time, Discos Machete, Kanal Hysterik, Crom,
+    #   Rumagna Sgroza, Skuds Prod, Red Head Man, Talion, Trauma Social, Siempre Contra, Punk's Shadow,
+    #   FFC, Zone Onze. Kale Borroka Records n'a pas sorti de compilation « Benefit » d'après Discogs.
+    #   Séries « Benefit » numérotées écartées : Sea Shepherd Benefit (Uncle M, vinyle seulement), Pup
+    #   Punk, Punk for the Gospel, United We Skate, El Puente (sans rapport). Seule série trouvée avec
+    #   des vol. 2, 3 et 4 en CD : « On The Run - Hunt Sabs Benefit » du label anglais On the Run Wreck
+    #   Chords (punk / anarcho-punk, au profit des saboteurs de chasse ; vol. 2 RUN02 du 25/07/2021,
+    #   vol. 3 RUN03 du 30/11/2021, vol. 4 du 05/08/2022). Elle figure dans pressing_candidates à titre
+    #   indicatif, sans preuve que ce sont ces disques. À faire par le label : lire la pochette et le
+    #   dos des CD (titre complet, label, référence, cause soutenue) et compléter. Tracklist laissée
+    #   vide plutôt que de deviner.
+    # Source : https://musicbrainz.org/release/4425152a-0526-40e5-af1d-50dc1f80acb6
+    # Source : https://musicbrainz.org/release/33f02ac9-e3d2-4374-86a4-248cdc0a8971
+    # Source : https://ontherunwreckchords.bandcamp.com/album/hunt-sabs-benefit
+    - artist: various_artists
+      name: "Benefit Vol. 3"
+      type: compilation
+      styles: ["Punk"]
+      releases:
+          - sku: VA-BENEFIT-VOL-3-CD
+            format: cd
+            stock: 3
+            published: false
+
+    # VA - Benefit vol 4 x2 CD — identification low, pressage low
+    # À vérifier : NON IDENTIFIÉ. Aucune série « Benefit » vol. 2/3/4 en CD trouvée dans la scène du
+    #   label. Catalogues Discogs fouillés sans résultat : Kale Borroka Records (5 sorties), Rusty
+    #   Knife, General Strike, Appel aux luttes, Dure Réalité, Rudy's Back, Fire and Flames, Mass
+    #   Productions, Maloka, Une Vie Pour Rien ?, Rebel Time, Discos Machete, Kanal Hysterik, Crom,
+    #   Rumagna Sgroza, Skuds Prod, Red Head Man, Talion, Trauma Social, Siempre Contra, Punk's Shadow,
+    #   FFC, Zone Onze. Kale Borroka Records n'a pas sorti de compilation « Benefit » d'après Discogs.
+    #   Séries « Benefit » numérotées écartées : Sea Shepherd Benefit (Uncle M, vinyle seulement), Pup
+    #   Punk, Punk for the Gospel, United We Skate, El Puente (sans rapport). Seule série trouvée avec
+    #   des vol. 2, 3 et 4 en CD : « On The Run - Hunt Sabs Benefit » du label anglais On the Run Wreck
+    #   Chords (punk / anarcho-punk, au profit des saboteurs de chasse ; vol. 2 RUN02 du 25/07/2021,
+    #   vol. 3 RUN03 du 30/11/2021, vol. 4 du 05/08/2022). Elle figure dans pressing_candidates à titre
+    #   indicatif, sans preuve que ce sont ces disques. À faire par le label : lire la pochette et le
+    #   dos des CD (titre complet, label, référence, cause soutenue) et compléter. Tracklist laissée
+    #   vide plutôt que de deviner.
+    # Source : https://musicbrainz.org/release/4425152a-0526-40e5-af1d-50dc1f80acb6
+    # Source : https://musicbrainz.org/release/33f02ac9-e3d2-4374-86a4-248cdc0a8971
+    # Source : https://ontherunwreckchords.bandcamp.com/album/hunt-sabs-benefit
+    - artist: various_artists
+      name: "Benefit Vol. 4"
+      type: compilation
+      styles: ["Punk"]
+      releases:
+          - sku: VA-BENEFIT-VOL-4-CD
+            format: cd
+            stock: 2
+            published: false
+
+    # Bombshell Rocks - Generation Tranquilized x1 CD — identification high, pressage high
+    # À vérifier : Durées issues de Deezer (version numérique), Discogs n'en donne pas. Pirates Press
+    #   indique pour le vinyle : 500 jaune moutarde (Rev Distro), 500 oxblood (BHR Europe), 350
+    #   tricolore noir/oxblood/moutarde (PPR/groupe), 100 noir (promo) — on ne sait pas quelles fiches
+    #   Discogs correspondent à quelle couleur. Plastichead liste un CD PPR133CD daté du 03/05/2019
+    #   (repress possible, code-barres inconnu). Le CD Pirates Press inclut une carte de téléchargement.
+    # Source : https://www.discogs.com/release/6288519-Bombshell-Rocks-Generation-Tranquilized
+    # Source : https://www.discogs.com/master/766299-Bombshell-Rocks-Generation-Tranquilized
+    # Source : https://shop.piratespressrecords.com/products/bsr0p13300-cd
+    - artist: bombshell_rocks
+      name: "Generation Tranquilized"
+      type: album
+      date: "2014-11-25"
+      styles: ["Punk", "Streetpunk"]
+      labels: [pirates_press_records, burning_heart_records]
+      note: "Quatrième album de Bombshell Rocks, le premier depuis plus de dix ans avec le line-up d'origine. Enregistré aux Sound Lab Studios avec le producteur Mathias Färm (Millencolin), il compte douze titres. Coédité par Pirates Press Records et Burning Heart Records."
+      tracks:
+          - { title: "One Shot", duration: "1:43" }
+          - { title: "Poison Radio", duration: "2:31" }
+          - { title: "Without Destination", duration: "3:56" }
+          - { title: "Shine Some Light", duration: "2:15" }
+          - { title: "This Time Around", duration: "3:25" }
+          - { title: "Glow Is Fading", duration: "3:02" }
+          - { title: "Sick Town", duration: "3:16" }
+          - { title: "Generation Tranquilized", duration: "2:29" }
+          - { title: "Scars & Tattoos", duration: "2:02" }
+          - { title: "Southbound", duration: "3:15" }
+          - { title: "New Journey", duration: "1:21" }
+          - { title: "One Vision", duration: "3:16" }
+      releases:
+          - sku: BOMBSHELL-ROCKS-GENERATION-TRANQUILIZED-CD
+            format: cd
+            stock: 1
+            edition: "digipak"
+            pressingYear: 2014
+            catalogNumber: "PPR133 / BHR001"
+            label: pirates_press_records
+            gtin: "7320470196519"
+
+    # Modern Attack - The Last Minute x2 CD — identification high, pressage high
+    # À vérifier : Ligne d'entrée inversée : l'artiste est The Last Minute, l'album Modern Attack.
+    #   Durées issues de Deezer (numérique, daté 2008-09-01 par un agrégateur, date non retenue). Aucun
+    #   site officiel trouvé. Line-up selon Discogs : Kimmel (basse), Kutya (guitare, chant), Csui
+    #   (orgue), Topi (sax), Jojo (trombone), Akos (batterie).
+    # Source : https://www.discogs.com/release/11030823
+    # Source : https://www.discogs.com/artist/1444244-The-Last-Minute
+    # Source : https://www.deezer.com/album/128350092
+    - artist: the_last_minute
+      name: "Modern Attack"
+      type: album
+      date: "2008"
+      styles: ["Ska", "Oi!"]
+      labels: [siempre_contra, diffidati_records]
+      note: "Album de dix titres de The Last Minute, sorti en CD en 2008 chez Siempre Contra et Diffidati Records."
+      tracks:
+          - { title: "Intro", duration: "2:54" }
+          - { title: "Bad Joke", duration: "3:13" }
+          - { title: "Ska War", duration: "3:29" }
+          - { title: "Modern Attack", duration: "4:02" }
+          - { title: "Nana", duration: "3:12" }
+          - { title: "Kids Of The Streets", duration: "2:42" }
+          - { title: "Banned For A Life", duration: "2:17" }
+          - { title: "Vespa", duration: "3:52" }
+          - { title: "Hate", duration: "2:18" }
+          - { title: "Budapest '06", duration: "3:37" }
+      releases:
+          - sku: THE-LAST-MINUTE-MODERN-ATTACK-CD
+            format: cd
+            stock: 2
+            pressingYear: 2008
+            label: siempre_contra
+
+    # Binouze Metamphe Gang - ST x3 CD — identification medium, pressage high
+    # À vérifier : Pas de fiche Discogs trouvée, ni de durées. Orthographe : Rusty Knife écrit «
+    #   Binouze Metamph Gang », SoundCloud/Dailymotion/YouTube « Binouze Metamphe Gang » (retenu, comme
+    #   l'entrée). Origine parisienne probable (concerts à Paris, 2012) mais non confirmée : la
+    #   description reste prudente. Image de couverture issue du blog Rusty Knife (vérifier qu'il s'agit
+    #   bien de la pochette).
+    # Source : https://rustykniferecords.wordpress.com/releases/binouze-metamph-gang/
+    # Source : https://rustykniferecords.wordpress.com/rusty-knife-official-discography/
+    # Source : https://www.rustyknife.kingeshop.com/BINOUZE-METAMPH-GANG-st-bbaaaabza.asp
+    - artist: binouze_metamphe_gang
+      name: "Binouze Metamphe Gang"
+      type: album
+      date: "2010"
+      styles: ["Punk", "Oi!"]
+      labels: [rusty_knife_records, general_strike, appel_aux_luttes]
+      note: "Premier album sans titre du groupe, dix morceaux punk oi! chantés en français. Sorti en CD digipack en 2010 chez Rusty Knife Records (RKR015), en coédition avec General Strike et Appel Aux Luttes."
+      tracks:
+          - { title: "Rouge sang" }
+          - { title: "In the street" }
+          - { title: "Substitut" }
+          - { title: "Ça m'dégomme" }
+          - { title: "Keupon (sales majestés)" }
+          - { title: "Alcoolo" }
+          - { title: "Vert glauque" }
+          - { title: "Kata (gaspards de la nuit)" }
+          - { title: "Enfermé" }
+          - { title: "Équarisseur" }
+      releases:
+          - sku: BINOUZE-METAMPHE-BINOUZE-METAMPHE-GANG-CD
+            format: cd
+            stock: 3
+            edition: "digipack"
+            pressingYear: 2010
+            catalogNumber: "RKR015"
+            label: rusty_knife_records
+
+    # Gilbert & ses problèmes- En Transit x3 CD — identification high, pressage high
+    # À vérifier : Nom officiel « Gilbert et ses Problèmes » (pas « & »). Bandcamp date la sortie
+    #   numérique au 1er mai 2009 ; le CD est daté du 1er février 2010 sur Discogs (retenu). Durées
+    #   Discogs (Bandcamp diffère d'1 s sur quelques titres). URL de pochette Bandcamp passée en taille
+    #   _10 à partir de l'identifiant trouvé.
+    # Source : https://www.discogs.com/release/2956512-Gilbert-Et-Ses-Probl%C3%A8mes-En-Transit
+    # Source : https://www.discogs.com/master/347295-Gilbert-Et-Ses-Probl%C3%A8mes-En-Transit
+    # Source : https://gilbertetsesproblemes.bandcamp.com/album/en-transit
+    - artist: gilbert_et_ses_problemes
+      name: "En Transit"
+      type: album
+      date: "2010-02-01"
+      styles: ["Ska", "Punk"]
+      labels: [talion_productions, karameikos, general_strike, trauma_social, appel_aux_luttes, mass_productions, association_stygmate]
+      note: "Troisième album du groupe, enregistré en mai 2009 au studio La Quadrature du Cercle (Saint-Ybars, Ariège) par Plume. Quatorze titres ska-punk, sortis en CD en 2010 grâce à une coproduction de plusieurs labels DIY dont Talion Productions et Karameikos."
+      tracks:
+          - { title: "Intro", duration: "2:00" }
+          - { title: "Sans Étiquette", duration: "3:05" }
+          - { title: "Crois-tu pouvoir m'échapper ?", duration: "3:19" }
+          - { title: "Comment savoir ?", duration: "3:51" }
+          - { title: "En Transit", duration: "2:58" }
+          - { title: "Une futile fatalité", duration: "3:07" }
+          - { title: "Souvenir", duration: "4:23" }
+          - { title: "Tiguidiguidi", duration: "0:54" }
+          - { title: "Le Bar des pauvres", duration: "4:40" }
+          - { title: "Love Her Craft", duration: "2:47" }
+          - { title: "La Passion", duration: "3:20" }
+          - { title: "Dans un silence", duration: "2:55" }
+          - { title: "Rêve ô Lucie", duration: "4:24" }
+          - { title: "Blind Drunk", duration: "3:27" }
+      releases:
+          - sku: GILBERT-ET-SES-EN-TRANSIT-CD
+            format: cd
+            stock: 3
+            pressingYear: 2010
+            catalogNumber: "GESP004"
+            label: talion_productions
+
+    # Left For Dead - Humanity x2 CD — identification high, pressage high
+    # À vérifier : Plusieurs groupes s'appellent Left For Dead (dont un groupe hardcore canadien) :
+    #   celui-ci est le groupe punk londonien, seul à avoir un album « Humanity » en CD. Durées issues
+    #   du Bandcamp du groupe (11 titres comme le CD ; « I Hate Everybody » n'est pas mentionné sur la
+    #   pochette). Le vinyle 2020 : 300 ex. selon Discogs, 275 en noir selon Emergency Records.
+    # Source : https://www.discogs.com/release/1620891-Left-For-Dead-Humanity
+    # Source : https://www.discogs.com/release/16095511-Left-For-Dead-Humanity
+    # Source : https://leftfordead3.bandcamp.com/album/humanity
+    - artist: left_for_dead
+      name: "Humanity"
+      type: album
+      date: "2008"
+      styles: ["Punk", "Streetpunk"]
+      labels: [dead_records, active_distribution]
+      note: "Deuxième album de Left For Dead, sorti en CD en 2008 chez Dead Records et Active Distribution. La pochette est signée Kieran (The Restarts). Réédité pour la première fois en vinyle en 2020 par Emergency Records et Bomb-All Records."
+      tracks:
+          - { title: "Violent Culture", duration: "3:37" }
+          - { title: "Government State Police", duration: "2:59" }
+          - { title: "Humanity", duration: "4:12" }
+          - { title: "Don't Talk To Me", duration: "3:15" }
+          - { title: "Fuck Your Authority", duration: "4:01" }
+          - { title: "We Don't Need You", duration: "5:16" }
+          - { title: "Frank", duration: "3:40" }
+          - { title: "1984", duration: "3:25" }
+          - { title: "Ain't Killing Me", duration: "5:16" }
+          - { title: "Revenue", duration: "2:03" }
+          - { title: "I Hate Everybody", duration: "0:36" }
+      releases:
+          - sku: LEFT-FOR-DEAD-HUMANITY-CD
+            format: cd
+            stock: 2
+            pressingYear: 2008
+            catalogNumber: "Dead 04"
+            label: dead_records
+
+    # Les Gueules Noirs - Les Roses de la Trahison x1 CD — identification high, pressage high
+    # À vérifier : Nom corrigé : « Les Gueules Noires ». Autoproduction (aucun label). Bandcamp date
+    #   au 1er janvier 2014, sans doute une date par défaut : précision « année » retenue. Durées
+    #   Bandcamp ; les titres suivent l'orthographe Discogs (Bandcamp écrit « Sous Contrôle », Discogs «
+    #   Bière & Potes » et « Black Guiffe (Ska Dub Party) »).
+    # Source : https://www.discogs.com/release/7877150-Les-Gueules-Noires-Les-Roses-De-La-Trahison
+    # Source : https://www.discogs.com/release/10601133-Les-Gueules-Noires-Les-Roses-De-La-Trahison
+    # Source : https://lesgueulesnoires.bandcamp.com/album/les-roses-de-la-trahison
+    - artist: les_gueules_noires
+      name: "Les Roses de la Trahison"
+      type: album
+      date: "2014"
+      styles: ["Ska", "Punk"]
+      note: "Album de huit titres autoproduit en 2014, qui se termine par un long morceau ska-dub de dix minutes. Il existe en CD et en vinyle."
+      tracks:
+          - { title: "Sous-Contrôle", duration: "3:29" }
+          - { title: "Jour de Match", duration: "4:17" }
+          - { title: "Ni Oubli ! Ni Pardon !", duration: "3:27" }
+          - { title: "Peau Rouge", duration: "3:08" }
+          - { title: "Les Roses de la Trahison", duration: "4:35" }
+          - { title: "Friends", duration: "3:36" }
+          - { title: "Bières et Potes", duration: "3:32" }
+          - { title: "Black Guiff Ska Dub Party", duration: "10:10" }
+      releases:
+          - sku: LES-GUEULES-NOIRES-LES-ROSES-DE-LA-TRAHISON-CD
+            format: cd
+            stock: 1
+            pressingYear: 2014
+
+    # Enraged Minority - Antitude x1 CD — identification high, pressage high
+    # À vérifier : Date du 21/02/2014 et durées issues de Deezer (version numérique Mad Butcher). Pas
+    #   de code-barres CD sur Discogs (l'UPC Deezer 3610154732848 est celui du numérique, non retenu).
+    #   Discogs écrit « They Shall No Pass » (coquille) : titre corrigé d'après Mad Butcher. Le catno
+    #   Redstar73 du CD (« red79 043 ») semble une coquille Discogs pour « RED73 043 ». Petite image
+    #   Discogs (225 px) : Mad Butcher en a une autre :
+    #   https://commerce.madbutcher.de/media/images/org/7199_0.1547708626.jpg.
+    # Source : https://www.discogs.com/release/6758051-Enraged-Minority-Antitude
+    # Source : https://www.discogs.com/release/5653786-Enraged-Minority-Antitude
+    # Source : https://commerce.madbutcher.de/en/music/mad-butcher-music/mad-butcher-
+    #   records/cd/enraged-minority-antitude-cd
+    - artist: enraged_minority
+      name: "Antitude"
+      type: album
+      date: "2014-02-21"
+      styles: ["Streetpunk", "Oi!", "Hardcore"]
+      labels: [mad_butcher_records, casual_records, redstar73_records]
+      note: "Deuxième album d'Enraged Minority, sorti en 2014 après plus d'une centaine de concerts à travers l'Europe. Douze titres streetpunk, édités par Mad Butcher Records avec Casual Records et Redstar73 Records."
+      tracks:
+          - { title: "Antitude", duration: "2:25" }
+          - { title: "They Shall Not Pass", duration: "2:25" }
+          - { title: "Burn All Bridges", duration: "1:59" }
+          - { title: "Rude'n'Rebel", duration: "2:13" }
+          - { title: "Fight For Your Class", duration: "2:56" }
+          - { title: "Chosen Family", duration: "3:11" }
+          - { title: "Equality", duration: "3:28" }
+          - { title: "Our Place", duration: "2:12" }
+          - { title: "I Won't Shed A Tear", duration: "2:21" }
+          - { title: "On The Road", duration: "2:16" }
+          - { title: "Without You", duration: "2:29" }
+          - { title: "Cheers", duration: "2:19" }
+      releases:
+          - sku: ENRAGED-MINORITY-ANTITUDE-CD
+            format: cd
+            stock: 1
+            pressingYear: 2014
+            catalogNumber: "MBR 149"
+            label: mad_butcher_records
+
+    # Asbestos - ST x10 K7 (KBR#02) — identification high, pressage high
+    # À vérifier : Production KBR#02 (Discogs : catno « KBR02 », Dure Réalité DR030). Titre : Discogs
+    #   « Asbestos », Bandcamp « S/T ». Discogs indique que la face B reprend les cinq mêmes titres
+    #   (B1-B5 = A1-A5) : seuls les 5 titres uniques sont listés ici. Discos Machete et La Distro Elle A
+    #   Mauvaise Haleine sont cités par Rebel Time mais absents de la fiche Discogs. Couleur de la
+    #   cassette inconnue.
+    # Source : https://www.discogs.com/release/17484118
+    # Source : https://asbestosmtl.bandcamp.com/album/s-t
+    # Source : https://rebeltime.ca/2021/01/30/asbestos/
+    - artist: asbestos
+      name: "Asbestos"
+      type: ep
+      date: "2021-02-14"
+      production: "KBR#002"
+      styles: ["Oi!", "Streetpunk", "Hardcore"]
+      labels: [dure_realite, rebel_time_records, kale_borroka_records, discos_machete, la_distro_elle_a_mauvaise_haleine]
+      note: "Premier EP d'Asbestos, cinq titres en français dont une reprise de PomPom Beretta (« Esprit d'bande »). Enregistré et mixé au Studio BAF, masterisé chez Mammoth Sound Mastering. Sorti le 14 février 2021 en cassette limitée à 150 exemplaires, coproduite par Dure Réalité, Rebel Time Records, Discos Machete, Kale Borroka Records (KBR#02) et La Distro Elle A Mauvaise Haleine."
+      tracks:
+          - { title: "Mon héroïne", duration: "2:25" }
+          - { title: "Le fardeau des années", duration: "2:57" }
+          - { title: "La ballade des vauriens", duration: "3:21" }
+          - { title: "Esprit d'bande", duration: "2:09" }
+          - { title: "Les Royaux", duration: "2:52" }
+      releases:
+          - sku: ASBESTOS-ASBESTOS-K7
+            format: cassette
+            stock: 10
+            limitedTo: 150
+            pressingYear: 2021
+            catalogNumber: "KBR#02"
+            label: kale_borroka_records
+
+    # Revenja - Cançons De Guerra (KBR#04, épuisé : absent du stock) — identification high, pressage
+    #   high
+    # À vérifier : Production KBR#04, plus en stock : importée à stock 0 pour que le catalogue montre
+    #   toutes les productions et que la numérotation automatique (KBR#006 pour la prochaine) reste
+    #   juste. Fire and Flames mentionne une version rouge à 100 ex.
+    # Source : https://www.discogs.com/release/24505370
+    # Source : https://www.fireandflames.com/en/product/revenja-cancons-de-guerra-lp/
+    - artist: revenja
+      name: "Cançons De Guerra"
+      type: album
+      date: "2022-08-05"
+      production: "KBR#004"
+      styles: ["Streetpunk", "Oi!"]
+      labels: [kale_borroka_records, el_lokal, rat_produccions, mulisec_records, rumagna_sgroza, general_strike, fire_and_flames_music]
+      note: "Deuxième album de Revenja, coproduit par Kale Borroka Records (KBR#04) avec El Lokal, Rat Produccions, Mulisec Records, Rumagna Sgroza, General Strike et Fire and Flames."
+      tracks:
+          - { title: "Foc" }
+          - { title: "Mon Cruel" }
+          - { title: "L'Empremta De La Historia" }
+          - { title: "Lucre Promes" }
+          - { title: "Neighbor Sold" }
+          - { title: "Canço De Guerra" }
+          - { title: "Canadenca" }
+          - { title: "La Resposta" }
+          - { title: "Son Veus" }
+          - { title: "Som Els Revenja" }
+      releases:
+          - sku: REVENJA-CANCONS-DE-GUERRA-LP
+            format: vinyl_12
+            stock: 0
+            pressingYear: 2022
+            catalogNumber: "KBR#04"
+            label: kale_borroka_records
