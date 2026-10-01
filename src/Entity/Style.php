@@ -9,15 +9,44 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * A music style, picked from a closed list (OFFICIAL, after Discogs' styles, cut down to the
+ * label's scene and without genres above them). The rows are seeded by a migration: adding a
+ * style means adding it here, to a migration and to fixtures/style.yml (OfficialStylesTest).
+ */
 #[ORM\Entity(repositoryClass: StyleRepository::class)]
 class Style
 {
+    public const array OFFICIAL = [
+        'Punk',
+        'Oi',
+        'Street Punk',
+        'Hardcore',
+        'Crust',
+        'Anarcho-Punk',
+        'Celtic Punk',
+        'Ska',
+        'Ska Punk',
+        'Two Tone',
+        'Rocksteady',
+        'Reggae',
+        'Dub',
+        'Rock & Roll',
+        'Rockabilly',
+        'Psychobilly',
+        'Garage Rock',
+        'Folk',
+        'Folk Punk',
+        'Chanson',
+        'Hip Hop',
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
     /** @var Collection<int, Album> */
