@@ -32,6 +32,7 @@ class Artist
 
     /** ISO 3166-1 alpha-2 country code. */
     #[ORM\Column(length: 2, nullable: true)]
+    #[Assert\Country(message: 'Pays inconnu : code à deux lettres attendu (FR, DE, ES…).')]
     private ?string $country = null;
 
     /**

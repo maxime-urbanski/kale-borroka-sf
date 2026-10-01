@@ -124,8 +124,8 @@
                     {% for item in lowStock %}
                         <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" href="{{ item.editUrl }}">
                             <span>{{ item.article.name }} <span class="text-muted small ms-2">{{ item.article.formatLabel }}</span></span>
-                            <span class="badge {{ item.article.stock > 0 ? 'text-bg-warning' : 'text-bg-danger' }}">
-                                {{ item.article.stock > 0 ? item.article.stock : 'Épuisé' }}
+                            <span class="badge {{ item.article.soldOut ? 'text-bg-danger' : 'text-bg-warning' }}">
+                                {{ item.article.soldOut ? 'Épuisé' : item.article.stock }}
                             </span>
                         </a>
                     {% else %}

@@ -9,7 +9,8 @@ namespace App\Enum;
  *
  * Single source of truth for the list of sections: `Support::$code` is typed with it and the
  * catalogue routes get their requirement from it through EnumRequirement. Adding a case
- * means adding a Support row too (fixtures + migration).
+ * means adding a Support row too: in the fixtures, and in production through
+ * app:catalog:import (CatalogImporter creates the missing rows).
  *
  * A section is not a physical format — see ReleaseFormat. Which releases a section lists is
  * decided by ReleaseRepository::applySupports(); forRelease() below must stay consistent with it.
