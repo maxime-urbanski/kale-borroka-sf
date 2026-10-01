@@ -1,0 +1,30 @@
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# Threshold read once per request by AlbumCrudController (ShopSettings). #}
+{% set threshold = field.customOptions.get('lowStockThreshold') %}
+{% if field.value is empty %}
+    <span class="text-secondary">Aucun pressage : ajoutez-en un avec le bouton « Pressage ».</span>
+{% else %}
+    <table class="admin-pressings table table-sm mb-0">
+        <thead>
+            <tr>
+                <th>Pressage</th><th>Format</th><th>Édition</th><th>SKU</th>
+                <th class="text-end">Prix</th><th class="text-end">Stock</th><th>En ligne</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for release in field.value %}
+                <tr>
+                    <td><a href="{{ path('admin_release_detail', {entityId: release.id}) }}">{{ release.name }}</a></td>
+                    <td>{{ release.formatLabel }}</td>
+                    <td>{{ [release.color, release.editionLabel, release.limitedTo ? 'limité à ' ~ release.limitedTo ~ ' ex.' : null]|filter(part => part)|join(' · ') }}</td>
+                    <td><code>{{ release.sku }}</code></td>
+                    <td class="text-end">{{ (release.price / 100)|format_currency('EUR', locale: 'fr') }}</td>
+                    <td class="text-end">
+                        {% include 'admin/field/_stock_badge.html.twig' with {stock: release.stock, threshold} only %}
+                    </td>
+                    <td>{{ release.published ? 'Oui' : 'Non' }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}

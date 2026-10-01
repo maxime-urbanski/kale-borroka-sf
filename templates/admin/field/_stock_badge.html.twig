@@ -1,0 +1,8 @@
+{# Shared by the stock column (stock_badge.html.twig) and an album's pressings (pressings.html.twig). #}
+{% if stock <= 0 %}
+    <span class="badge text-bg-danger" title="Épuisé">{{ stock }}</span>
+{% elseif stock <= threshold %}
+    <span class="badge text-bg-warning" title="Stock critique (seuil : {{ threshold }})">{{ stock }}</span>
+{% else %}
+    <span class="badge text-bg-success">{{ stock }}</span>
+{% endif %}
