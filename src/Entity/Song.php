@@ -8,6 +8,7 @@ use App\Repository\SongRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SongRepository::class)]
 class Song
@@ -22,6 +23,14 @@ class Song
 
     #[ORM\Column]
     private ?int $track = null;
+
+    /**
+     * Side and place on it as printed on a vinyl or a tape (A1, B3, C2 for a double LP's second
+     * disc). Null on a CD, which plays straight through: the track number is enough.
+     */
+    #[ORM\Column(length: 3, nullable: true)]
+    #[Assert\Regex(pattern: '/^[A-Z][1-9]\d?$/', message: 'Position : une lettre de face puis un numéro (A1, B3).')]
+    private ?string $position = null;
 
     /** Length in seconds (schema.org: duration, rendered as ISO 8601). */
     #[ORM\Column(nullable: true)]
@@ -44,6 +53,22 @@ class Song
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getPosition(): ?string
+    {
+        return $this->position;
+    }
+
+    /**
+     * Typed « a1 » or « A1 »: the same position.
+     */
+    public function setPosition(?string $position): static
+    {
+        $position = null === $position ? '' : mb_strtoupper(trim($position));
+        $this->position = '' === $position ? null : $position;
+
+        return $this;
     }
 
     public function getName(): ?string

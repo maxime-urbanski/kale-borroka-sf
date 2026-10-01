@@ -12,27 +12,30 @@
         } %}
     {% endif %}
     {% if tracklist is defined %}
-        <ol class="kb-tracklist list-unstyled mb-0">
-            {% for track in tracklist %}
-                {# Compilations and splits credit each track to its own bands. #}
-                {% set guests = track.artist|filter(artist => artist.id != album_artist.id)|map(artist => artist.name) %}
-                {% set duration = track.duration %}
-                <li>
-                    <span class="kb-tracklist__number">{{ track.track }}</span><span class="visually-hidden"> -</span>
-                    <span class="kb-tracklist__name">
-                        {{ track.name }}
-                        {% if guests is not empty %}
-                            <span class="text-kb-gris">({{ guests|join(', ') }})</span>
+        {# tracklist: TracklistSide list (tracklist_sides()): a title per side, none on a CD. #}
+        {% for side in tracklist %}
+            {% if side.side %}
+                <h3 class="h5 {{ loop.first ? 'mt-0' : 'mt-4' }} mb-2">{{ side.label }}</h3>
+            {% endif %}
+            <ol class="kb-tracklist list-unstyled mb-0">
+                {% for track in side.tracks %}
+                    {# Compilations and splits credit each track to its own bands. #}
+                    {% set guests = track.artist|filter(artist => artist.id != album_artist.id)|map(artist => artist.name) %}
+                    {% set duration = track.duration %}
+                    <li>
+                        <span class="kb-tracklist__number">{{ side.side ? track.position : track.track }}</span><span class="visually-hidden"> -</span>
+                        <span class="kb-tracklist__name">
+                            {{ track.name }}
+                            {% if guests is not empty %}
+                                <span class="text-kb-gris">({{ guests|join(', ') }})</span>
+                            {% endif %}
+                        </span>
+                        {% if duration %}
+                            <time class="kb-tracklist__duration" datetime="PT{{ duration >= 3600 ? (duration // 3600) ~ 'H' }}{{ duration // 60 % 60 }}M{{ duration % 60 }}S">{{ duration|duration }}</time>
                         {% endif %}
-                    </span>
-                    {% if duration %}
-                        <time class="kb-tracklist__duration" datetime="PT{{ duration >= 3600 ? (duration // 3600) ~ 'H' }}{{ duration // 60 % 60 }}M{{ duration % 60 }}S">
-                            {{- duration >= 3600 ? (duration // 3600) ~ ':' ~ '%02d'|format(duration // 60 % 60) : duration // 60 -}}
-                            :{{- '%02d'|format(duration % 60) -}}
-                        </time>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ol>
+                    </li>
+                {% endfor %}
+            </ol>
+        {% endfor %}
     {% endif %}
 </section>

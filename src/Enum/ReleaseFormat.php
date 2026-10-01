@@ -39,6 +39,19 @@ enum ReleaseFormat: string
     }
 
     /**
+     * How a tracklist reads on it (TracklistLayout): by side and by disc on vinyl, by side on a
+     * tape, straight through on a CD.
+     */
+    public function tracklistLayout(): TracklistLayoutType
+    {
+        return match ($this) {
+            self::VINYL_12, self::VINYL_10, self::VINYL_7 => TracklistLayoutType::SIDES_AND_DISCS,
+            self::CASSETTE => TracklistLayoutType::SIDES,
+            self::CD => TracklistLayoutType::STRAIGHT,
+        };
+    }
+
+    /**
      * Disc diameter, for vinyl only.
      */
     public function size(): ?string

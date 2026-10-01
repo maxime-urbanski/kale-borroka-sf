@@ -7,6 +7,7 @@ namespace App\Tests\Controller\Catalog;
 use App\Entity\Artist;
 use App\Entity\Release;
 use App\Entity\Song;
+use App\Enum\ReleaseFormat;
 use App\Repository\ReleaseRepository;
 use App\Tests\Order\OrderTestTrait;
 use Doctrine\Bundle\DoctrineBundle\DataCollector\DoctrineDataCollector;
@@ -71,7 +72,7 @@ class ArticlePageContentTest extends WebTestCase
 
         $tracks = $crawler->filter('section ol li');
         self::assertCount(10, $tracks);
-        self::assertSame('1 - Pour les braves 2:34', preg_replace('/\s+/', ' ', trim($tracks->first()->text())));
+        self::assertSame('A1 - Pour les braves 2:34', preg_replace('/\s+/', ' ', trim($tracks->first()->text())));
         self::assertStringNotContainsString('Brixton Cats', $crawler->filter('section ol')->text(), 'The album artist is not repeated on each track.');
     }
 
@@ -94,7 +95,38 @@ class ArticlePageContentTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->uriOf($release));
 
         $track = preg_replace('/\s+/', ' ', trim($crawler->filter('section ol li')->eq(1)->text()));
-        self::assertSame('2 - Religion (Krav Boca, Moscow Death Brigade) 1:02:05', $track);
+        self::assertSame('A2 - Religion (Krav Boca, Moscow Death Brigade) 1:02:05', $track);
+    }
+
+    public function testAnLpTracklistIsSplitIntoItsSides(): void
+    {
+        $crawler = $this->client->request('GET', $this->uriOf($this->quartierMaudit()));
+
+        self::assertSame(['Face A', 'Face B'], $crawler->filter('section h3')->each(static fn ($title): string => trim($title->text())));
+        self::assertCount(5, $crawler->filter('section ol')->first()->filter('li'));
+        self::assertStringStartsWith('B1 - Choisir sa vie', trim($crawler->filter('section ol')->last()->filter('li')->first()->text()));
+    }
+
+    /**
+     * The same album pressed on CD: one list, numbered, whatever the vinyl sides.
+     */
+    public function testACdTracklistPlaysStraightThrough(): void
+    {
+        $album = $this->quartierMaudit()->getAlbum();
+        self::assertNotNull($album);
+        $cd = (new Release())->setName('Brixton Cats - Quartier Maudit (CD)')->setSku('TEST-QM-CD')->setFormat(ReleaseFormat::CD)
+            ->setPrice(1000)->setStock(3)->setPublished(true);
+        $album->addRelease($cd);
+        $this->entityManager()->persist($cd);
+        $this->entityManager()->flush();
+
+        $crawler = $this->client->request('GET', $this->uriOf($cd));
+
+        self::assertResponseIsSuccessful();
+        self::assertCount(0, $crawler->filter('section h3'), 'no side on a CD');
+        $tracks = $crawler->filter('section ol li');
+        self::assertCount(10, $tracks);
+        self::assertStringStartsWith('6 - Choisir sa vie', trim($tracks->eq(5)->text()));
     }
 
     /**

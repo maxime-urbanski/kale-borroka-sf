@@ -56,6 +56,7 @@ class ImportCatalogCommandTest extends KernelTestCase
         self::assertSame('2021-03-01', $album->getDateRelease()?->format('Y-m-d'));
         self::assertSame(['Ouverture', 'Final'], $album->getTracklists()->map(static fn ($song) => $song->getName())->getValues());
         self::assertSame([154, 61], $album->getTracklists()->map(static fn ($song) => $song->getDuration())->getValues());
+        self::assertSame(['A1', 'B1'], $album->getTracklists()->map(static fn ($song) => $song->getPosition())->getValues());
         self::assertCount(2, $album->getLabels());
         self::assertSame(['Punk', 'Street Punk'], $album->getStyles()->map(static fn (Style $style) => $style->getName())->getValues());
 
@@ -250,6 +251,20 @@ class ImportCatalogCommandTest extends KernelTestCase
 
             return $catalog;
         }, 'albums[0].styles[0] : style « Rap » absent de la liste officielle'];
+
+        yield 'position that is no side and number' => [static function (array $catalog): array {
+            $catalog['albums'][0]['tracks'][0]['position'] = 'Face A';
+
+            return $catalog;
+        }, 'albums[0].tracks[0].position : Position : une lettre de face puis un numéro'];
+
+        yield 'invalid pressing after one already taken' => [static function (array $catalog): array {
+            // The first SKU is a fanzine's: skipped, it must not shift the next one's name.
+            array_unshift($catalog['albums'][0]['releases'], ['sku' => 'KBR-BOOK-1', 'format' => 'vinyl_12', 'stock' => 1]);
+            $catalog['albums'][0]['releases'][2]['gtin'] = '12AB';
+
+            return $catalog;
+        }, 'albums[0].releases[2].gtin : Un code-barres'];
 
         yield 'invalid barcode' => [static function (array $catalog): array {
             $catalog['albums'][0]['releases'][0]['gtin'] = '12AB';

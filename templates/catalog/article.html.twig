@@ -118,12 +118,14 @@
             </div>
         </div>
         {% if tracklist %}
-            {# Shared by every pressing of the album. A song or an artist written clears `album` too. #}
-            {% cache 'album_tracklist_' ~ article.album.id tags(['album']) %}
+            {# Shared by the pressings of the album with the same layout (ReleaseFormat::tracklistLayout()):
+               an LP reads by side, a CD straight through. A song or an artist written clears `album` too. #}
+            {% set layout = article.format ? article.format.tracklistLayout.value : 'none' %}
+            {% cache 'album_tracklist_' ~ article.album.id ~ '_' ~ layout tags(['album']) %}
                 {% set tracks = tracklist.result %}
                 {% if tracks is not empty %}
                     {% include 'layout/article/_section.html.twig' with {
-                        tracklist: tracks,
+                        tracklist: tracklist_sides(tracks, article.format),
                         album_artist: article.album.artist,
                         title: 'Tracklist',
                         title_mb: 'mb-4'

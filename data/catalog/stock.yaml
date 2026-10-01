@@ -12,6 +12,7 @@
 # albums[].type      album, ep, single, split, compilation, live
 # albums[].date      AAAA-MM-JJ, AAAA-MM ou AAAA
 # albums[].production  numéro KBR#001 des productions du label
+# tracks[].position  face et numéro sur un vinyle ou une K7 (A1, B3), absent sur un CD
 # tracks[].duration  m:ss ou secondes ; tracks[].artist (compilations, splits) : clé de artists ou nom
 # releases[].format  vinyl_12, vinyl_10, vinyl_7, cd, cassette
 # releases[].price   en centimes, sinon le prix par défaut du format ci-dessous
@@ -341,16 +342,16 @@ albums:
       labels: [sheekiz_records, kanal_hysterik, general_strike]
       note: "Premier album d'All This Mess, enregistré en 2017 au studio Malambo, mixé et masterisé par Laurent Noise. Dix titres de punk-rock aux accents anarcho-punk des années 80. Coproduit en vinyle par Sheekiz Records, Kanal Hysterik et General Strike, avec un insert 12\" (paroles et crédits)."
       tracks:
-          - { title: "Phobia", duration: "2:21" }
-          - { title: "Prayer", duration: "3:18" }
-          - { title: "Bruises", duration: "3:25" }
-          - { title: "Gender Weirdness", duration: "2:16" }
-          - { title: "Lives To Blow", duration: "2:03" }
-          - { title: "Tant Pis", duration: "2:36" }
-          - { title: "Screen Head", duration: "2:48" }
-          - { title: "Come On, Ellen", duration: "3:25" }
-          - { title: "Mess", duration: "2:29" }
-          - { title: "The Way They Go", duration: "3:52" }
+          - { position: A1, title: "Phobia", duration: "2:21" }
+          - { position: A2, title: "Prayer", duration: "3:18" }
+          - { position: A3, title: "Bruises", duration: "3:25" }
+          - { position: A4, title: "Gender Weirdness", duration: "2:16" }
+          - { position: A5, title: "Lives To Blow", duration: "2:03" }
+          - { position: B1, title: "Tant Pis", duration: "2:36" }
+          - { position: B2, title: "Screen Head", duration: "2:48" }
+          - { position: B3, title: "Come On, Ellen", duration: "3:25" }
+          - { position: B4, title: "Mess", duration: "2:29" }
+          - { position: B5, title: "The Way They Go", duration: "3:52" }
       releases:
           - sku: ALL-THIS-MESS-ATM-LP
             format: vinyl_12
@@ -383,16 +384,16 @@ albums:
       labels: [the_midnight_rovers_productions, general_strike, appel_aux_luttes]
       note: "Deuxième album des Midnight Rovers, enregistré, mixé et masterisé au studio Luna Rosa à Paris, avec un rockabilly plus marqué et plus direct que sur le premier disque. Dix titres. Le vinyle 160 g est accompagné du CD de l'album (pochette carton) et d'une sous-pochette imprimée."
       tracks:
-          - { title: "Jungle Rockabilly (Instrumental)", duration: "2:20" }
-          - { title: "Lost Soldier", duration: "2:43" }
-          - { title: "A Man In Harmony", duration: "3:19" }
-          - { title: "Honey Don't", duration: "2:40" }
-          - { title: "Elle", duration: "2:16" }
-          - { title: "Be A Good Girl", duration: "3:10" }
-          - { title: "Cruel Life", duration: "2:40" }
-          - { title: "Tattoos", duration: "2:02" }
-          - { title: "Suburb Of Pain", duration: "2:47" }
-          - { title: "Blvd Vincent Auriol", duration: "3:15" }
+          - { position: A1, title: "Jungle Rockabilly (Instrumental)", duration: "2:20" }
+          - { position: A2, title: "Lost Soldier", duration: "2:43" }
+          - { position: A3, title: "A Man In Harmony", duration: "3:19" }
+          - { position: A4, title: "Honey Don't", duration: "2:40" }
+          - { position: A5, title: "Elle", duration: "2:16" }
+          - { position: B1, title: "Be A Good Girl", duration: "3:10" }
+          - { position: B2, title: "Cruel Life", duration: "2:40" }
+          - { position: B3, title: "Tattoos", duration: "2:02" }
+          - { position: B4, title: "Suburb Of Pain", duration: "2:47" }
+          - { position: B5, title: "Blvd Vincent Auriol", duration: "3:15" }
       releases:
           - sku: THE-MIDNIGHT-ROVERS-ROCKIN-CLASS-LP
             format: vinyl_12
@@ -419,15 +420,15 @@ albums:
       labels: [crom_records]
       note: "Deuxième album de Knock Out, après « Sin vergüenza » (2015). Neuf titres de Rock & Oi! chantés en espagnol, sortis en vinyle blanc chez Crom Records."
       tracks:
-          - { title: "Himno de taberna", duration: "3:34" }
-          - { title: "Siempre adelante", duration: "3:34" }
-          - { title: "Corazón salvaje", duration: "3:33" }
-          - { title: "Llanto de perdedor", duration: "3:19" }
-          - { title: "En las sombras", duration: "4:52" }
-          - { title: "Tiempos muertos", duration: "3:48" }
-          - { title: "Tardes de gloria", duration: "3:00" }
-          - { title: "Mercancía", duration: "3:05" }
-          - { title: "Enemigos de la humanidad", duration: "3:43" }
+          - { position: A1, title: "Himno de taberna", duration: "3:34" }
+          - { position: A2, title: "Siempre adelante", duration: "3:34" }
+          - { position: A3, title: "Corazón salvaje", duration: "3:33" }
+          - { position: A4, title: "Llanto de perdedor", duration: "3:19" }
+          - { position: A5, title: "En las sombras", duration: "4:52" }
+          - { position: B1, title: "Tiempos muertos", duration: "3:48" }
+          - { position: B2, title: "Tardes de gloria", duration: "3:00" }
+          - { position: B3, title: "Mercancía", duration: "3:05" }
+          - { position: B4, title: "Enemigos de la humanidad", duration: "3:43" }
       releases:
           - sku: KNOCK-OUT-TIEMPOS-MUERTOS-RITMOS-LP
             format: vinyl_12
@@ -457,16 +458,16 @@ albums:
       labels: [appel_aux_luttes, skuds_prod, general_strike, red_head_man, rudy_s_back, entre_chien_et_loup]
       note: "Premier album de Death Or Glory, sorti en avril 2013 en vinyle (500 exemplaires) accompagné du CD, coproduit par six labels DIY (Appel aux luttes, Skuds Prod, General Strike, Red Head Man, Rudy's Back, Entre Chien et Loup). Dix titres de punk-rock aux influences anglaises et post-punk ; le CD ajoute un titre bonus, « Bomb Song »."
       tracks:
-          - { title: "Shades of Pain", duration: "2:29" }
-          - { title: "Can't Stop Me", duration: "2:34" }
-          - { title: "Lost", duration: "3:14" }
-          - { title: "Streets of Gold", duration: "2:30" }
-          - { title: "Homely", duration: "2:23" }
-          - { title: "Unemployment", duration: "2:16" }
-          - { title: "The Syndicate", duration: "2:39" }
-          - { title: "Dei Vinti Memoria", duration: "2:25" }
-          - { title: "Jamy" }
-          - { title: "Adelante !", duration: "2:28" }
+          - { position: A1, title: "Shades of Pain", duration: "2:29" }
+          - { position: A2, title: "Can't Stop Me", duration: "2:34" }
+          - { position: A3, title: "Lost", duration: "3:14" }
+          - { position: A4, title: "Streets of Gold", duration: "2:30" }
+          - { position: A5, title: "Homely", duration: "2:23" }
+          - { position: B1, title: "Unemployment", duration: "2:16" }
+          - { position: B2, title: "The Syndicate", duration: "2:39" }
+          - { position: B3, title: "Dei Vinti Memoria", duration: "2:25" }
+          - { position: B4, title: "Jamy" }
+          - { position: B5, title: "Adelante !", duration: "2:28" }
       releases:
           - sku: DEATH-OR-GLORY-CAN-T-STOP-ME-LP
             format: vinyl_12
@@ -497,18 +498,18 @@ albums:
       labels: [skuds_prod, general_strike]
       note: "Dernier album du groupe rennais, douze titres entre punk-rock et ska, avec des touches de hardcore, des textes politiques et déjà les influences britanniques que l'on retrouvera chez Death Or Glory. Sorti en 2009 en vinyle autoproduit et en CD (Skuds Prod / General Strike)."
       tracks:
-          - { title: "City Lights" }
-          - { title: "Ma religion" }
-          - { title: "Lachez les bombes" }
-          - { title: "Partisan" }
-          - { title: "Des hommes nouveaux" }
-          - { title: "Entre les lignes" }
-          - { title: "Machette ou kalash" }
-          - { title: "Dernier train" }
-          - { title: "Pour nos frères" }
-          - { title: "Skin and Brain" }
-          - { title: "Burn the Flag Down" }
-          - { title: "Béton armé" }
+          - { position: A1, title: "City Lights" }
+          - { position: A2, title: "Ma religion" }
+          - { position: A3, title: "Lachez les bombes" }
+          - { position: A4, title: "Partisan" }
+          - { position: A5, title: "Des hommes nouveaux" }
+          - { position: A6, title: "Entre les lignes" }
+          - { position: B1, title: "Machette ou kalash" }
+          - { position: B2, title: "Dernier train" }
+          - { position: B3, title: "Pour nos frères" }
+          - { position: B4, title: "Skin and Brain" }
+          - { position: B5, title: "Burn the Flag Down" }
+          - { position: B6, title: "Béton armé" }
       releases:
           - sku: SKUDS-AND-PANIC-LACHEZ-LES-BOMBES-LP
             format: vinyl_12
@@ -536,18 +537,18 @@ albums:
       labels: [fire_and_flames_music, casual_records]
       note: "Troisième album d'Enraged Minority : douze titres de « classwar streetpunk » qui mêlent Oi!, punk-rock et hardcore avec des influences ska et rock'n'roll, sur des textes de solidarité contre la guerre, la menace fasciste et l'exploitation. Coédité par Fire and Flames Music (FFM057) et Casual Records (CR48)."
       tracks:
-          - { title: "A World To Win", duration: "0:42" }
-          - { title: "Go Out On The Piss", duration: "4:13" }
-          - { title: "Misfit", duration: "3:06" }
-          - { title: "By My Side", duration: "2:57" }
-          - { title: "Go Down Swinging", duration: "3:41" }
-          - { title: "It Is You", duration: "2:23" }
-          - { title: "Through The Desert", duration: "1:55" }
-          - { title: "The Spirits You Called", duration: "3:22" }
-          - { title: "Classwar Rock'n'Roll", duration: "3:21" }
-          - { title: "One Man Army", duration: "3:57" }
-          - { title: "Biji Berxwedan", duration: "4:51" }
-          - { title: "Unity Song", duration: "4:07" }
+          - { position: A1, title: "A World To Win", duration: "0:42" }
+          - { position: A2, title: "Go Out On The Piss", duration: "4:13" }
+          - { position: A3, title: "Misfit", duration: "3:06" }
+          - { position: A4, title: "By My Side", duration: "2:57" }
+          - { position: A5, title: "Go Down Swinging", duration: "3:41" }
+          - { position: A6, title: "It Is You", duration: "2:23" }
+          - { position: B1, title: "Through The Desert", duration: "1:55" }
+          - { position: B2, title: "The Spirits You Called", duration: "3:22" }
+          - { position: B3, title: "Classwar Rock'n'Roll", duration: "3:21" }
+          - { position: B4, title: "One Man Army", duration: "3:57" }
+          - { position: B5, title: "Biji Berxwedan", duration: "4:51" }
+          - { position: B6, title: "Unity Song", duration: "4:07" }
       releases:
           - sku: ENRAGED-MINORITY-A-WORLD-TO-WIN-LP
             format: vinyl_12
@@ -575,18 +576,18 @@ albums:
       labels: [fire_and_flames_music, plastic_bomb_records]
       note: "Deuxième album des Stumbling Pins, douze titres sur la folie de la société capitaliste, le racisme, la pauvreté, l'oppression et la peur qui en découle. Enregistré fin 2015 à Die Tonmeisterei (Oldenburg), voix enregistrées au Melloton Studio de Hambourg, avec Flicke (No Weather Talks) en invité sur « The Beauty In Imperfection ». Coédité par Fire and Flames Music et Plastic Bomb Records ; le vinyle 180 g est livré avec code de téléchargement, poster, autocollant et sous-pochette imprimée."
       tracks:
-          - { title: "Words", duration: "2:50" }
-          - { title: "Know Too Much / Feel Too Little", duration: "2:20" }
-          - { title: "The Beauty In Imperfection", duration: "3:23" }
-          - { title: "Shiver Alone", duration: "2:38" }
-          - { title: "Ode To Joy", duration: "3:24" }
-          - { title: "Gentrifucks", duration: "3:31" }
-          - { title: "Save Somebody Else", duration: "2:34" }
-          - { title: "From Rags To Riches", duration: "3:05" }
-          - { title: "I Hate My Brain", duration: "2:20" }
-          - { title: "Off The Beaten Track", duration: "3:53" }
-          - { title: "The Fuckit List", duration: "2:43" }
-          - { title: "Empty Pockets", duration: "3:45" }
+          - { position: A1, title: "Words", duration: "2:50" }
+          - { position: A2, title: "Know Too Much / Feel Too Little", duration: "2:20" }
+          - { position: A3, title: "The Beauty In Imperfection", duration: "3:23" }
+          - { position: A4, title: "Shiver Alone", duration: "2:38" }
+          - { position: A5, title: "Ode To Joy", duration: "3:24" }
+          - { position: A6, title: "Gentrifucks", duration: "3:31" }
+          - { position: B1, title: "Save Somebody Else", duration: "2:34" }
+          - { position: B2, title: "From Rags To Riches", duration: "3:05" }
+          - { position: B3, title: "I Hate My Brain", duration: "2:20" }
+          - { position: B4, title: "Off The Beaten Track", duration: "3:53" }
+          - { position: B5, title: "The Fuckit List", duration: "2:43" }
+          - { position: B6, title: "Empty Pockets", duration: "3:45" }
       releases:
           - sku: STUMBLING-PINS-COMMON-ANGST-LP
             format: vinyl_12
@@ -628,16 +629,16 @@ albums:
       labels: [rockers_records]
       note: "Premier album des Snob City Boys : dix titres d'Oi! mélodique et militante, dont « Revolution », seul titre chanté en allemand. Paru d'abord en CD et en numérique en 2019, puis remasterisé pour le vinyle sorti chez Rockers Records le 31 juillet 2020 (300 premiers exemplaires en vinyle blanc, les suivants en noir, avec feuille de paroles)."
       tracks:
-          - { title: "A Fighter's Heart", duration: "3:02" }
-          - { title: "Skinhead Girrrls", duration: "2:43" }
-          - { title: "Remember October 4th 1936", duration: "3:18" }
-          - { title: "Weekend Offender", duration: "3:40" }
-          - { title: "Revolution", duration: "4:27" }
-          - { title: "This Sound's For Us", duration: "4:36" }
-          - { title: "Dying Everyday", duration: "3:13" }
-          - { title: "Road To Nowhere", duration: "2:40" }
-          - { title: "Like Family", duration: "2:54" }
-          - { title: "We Pay the Price", duration: "3:14" }
+          - { position: A1, title: "A Fighter's Heart", duration: "3:02" }
+          - { position: A2, title: "Skinhead Girrrls", duration: "2:43" }
+          - { position: A3, title: "Remember October 4th 1936", duration: "3:18" }
+          - { position: A4, title: "Weekend Offender", duration: "3:40" }
+          - { position: A5, title: "Revolution", duration: "4:27" }
+          - { position: B1, title: "This Sound's For Us", duration: "4:36" }
+          - { position: B2, title: "Dying Everyday", duration: "3:13" }
+          - { position: B3, title: "Road To Nowhere", duration: "2:40" }
+          - { position: B4, title: "Like Family", duration: "2:54" }
+          - { position: B5, title: "We Pay the Price", duration: "3:14" }
       releases:
           - sku: SNOB-CITY-BOYS-THIS-SOUND-S-FOR-US-LP
             format: vinyl_12
@@ -715,18 +716,18 @@ albums:
       labels: [riot_bike_records, fire_and_flames_music, sm_musik, troihand, save_the_scene_records]
       note: "Compilation de douze groupes saxons classés « d'extrême gauche » par l'Office de protection de la Constitution de Saxe (Landesamt für Verfassungsschutz) ; le titre reprend un extrait de son rapport 2018. Quatre groupes visés avaient obtenu devant le tribunal administratif de Dresde que leurs noms soient retirés de ces publications. Du punk allemand au hardcore, en passant par l'Oi!, le streetpunk et l'électro-punk ; vinyle accompagné d'un livret de 4 pages (contexte, paroles, notes)."
       tracks:
-          - { title: "Mit freundlichen Grüszen", duration: "3:01", artist: "Sozialer Fehltritt" }
-          - { title: "Trouble From The Streets", duration: "2:45", artist: "Sharp Cut" }
-          - { title: "Tell Me What You Know", duration: "2:20", artist: "The Spartanics" }
-          - { title: "Wer ist die Gefahr?", duration: "3:09", artist: "One Step Ahead" }
-          - { title: "Oi! gegen Oi!", duration: "2:43", artist: "Fontanelle" }
-          - { title: "Keine Wahl", duration: "2:16", artist: "Kommando Kronstadt" }
-          - { title: "Im Osten nichts Neues", duration: "2:46", artist: "Dr. Ulrich Undeutsch" }
-          - { title: "Was kostet die Welt", duration: "1:24", artist: "Selbstjustiz" }
-          - { title: "Deutsche Publizisten", duration: "3:45", artist: "Hoi!erswerda" }
-          - { title: "Feindbild", duration: "3:03", artist: "Endstation Chaos" }
-          - { title: "The Hate You Give", duration: "2:27", artist: "Social Enemies" }
-          - { title: "Oi! It's Class War", duration: "2:14", artist: "Flag Smasher" }
+          - { position: A1, title: "Mit freundlichen Grüszen", duration: "3:01", artist: "Sozialer Fehltritt" }
+          - { position: A2, title: "Trouble From The Streets", duration: "2:45", artist: "Sharp Cut" }
+          - { position: A3, title: "Tell Me What You Know", duration: "2:20", artist: "The Spartanics" }
+          - { position: A4, title: "Wer ist die Gefahr?", duration: "3:09", artist: "One Step Ahead" }
+          - { position: A5, title: "Oi! gegen Oi!", duration: "2:43", artist: "Fontanelle" }
+          - { position: A6, title: "Keine Wahl", duration: "2:16", artist: "Kommando Kronstadt" }
+          - { position: B1, title: "Im Osten nichts Neues", duration: "2:46", artist: "Dr. Ulrich Undeutsch" }
+          - { position: B2, title: "Was kostet die Welt", duration: "1:24", artist: "Selbstjustiz" }
+          - { position: B3, title: "Deutsche Publizisten", duration: "3:45", artist: "Hoi!erswerda" }
+          - { position: B4, title: "Feindbild", duration: "3:03", artist: "Endstation Chaos" }
+          - { position: B5, title: "The Hate You Give", duration: "2:27", artist: "Social Enemies" }
+          - { position: B6, title: "Oi! It's Class War", duration: "2:14", artist: "Flag Smasher" }
       releases:
           - sku: VA-UNTER-DEM-DECKMANTEL-DES-LP
             format: vinyl_12
@@ -755,16 +756,16 @@ albums:
       labels: [fire_and_flames_music, grover_records]
       note: "Deuxième album des T-Killas, dix titres entre ska two-tone, reggae, soul, mod et punk-rock, avec des textes engagés. Coédité par Fire and Flames Music et Grover Records ; le vinyle a une pochette retournée (« inside-out »), une sous-pochette imprimée avec les paroles et un code de téléchargement."
       tracks:
-          - { title: "Kowalski", duration: "2:03" }
-          - { title: "Dandy and Rude", duration: "3:44" }
-          - { title: "Lonely Hearts", duration: "3:28" }
-          - { title: "Running", duration: "4:36" }
-          - { title: "Coming Home", duration: "4:30" }
-          - { title: "Do You Eat", duration: "3:16" }
-          - { title: "Rudie's Struggle", duration: "2:45" }
-          - { title: "Calling for Stars", duration: "4:05" }
-          - { title: "Gonna Go", duration: "3:13" }
-          - { title: "Riot Ground", duration: "3:15" }
+          - { position: A1, title: "Kowalski", duration: "2:03" }
+          - { position: A2, title: "Dandy and Rude", duration: "3:44" }
+          - { position: A3, title: "Lonely Hearts", duration: "3:28" }
+          - { position: A4, title: "Running", duration: "4:36" }
+          - { position: A5, title: "Coming Home", duration: "4:30" }
+          - { position: B1, title: "Do You Eat", duration: "3:16" }
+          - { position: B2, title: "Rudie's Struggle", duration: "2:45" }
+          - { position: B3, title: "Calling for Stars", duration: "4:05" }
+          - { position: B4, title: "Gonna Go", duration: "3:13" }
+          - { position: B5, title: "Riot Ground", duration: "3:15" }
       releases:
           - sku: T-KILLAS-AWARENESS-LP
             format: vinyl_12
@@ -793,18 +794,18 @@ albums:
       labels: [fire_and_flames_music, dure_realite, general_strike]
       note: "Deuxième album de Resaka Sonora, sorti en mai 2020 chez Fire and Flames Music, Dure Réalité et General Strike. Douze titres entre ska, reggae, punk, oi! et une touche de dancehall, chantés en plusieurs langues. Les textes évoquent des luttes historiques et actuelles, de Kronstadt (1921) au Rojava, avec Los Tres Puntos et Juantxo Skalari en invités."
       tracks:
-          - { title: "1000 Voces", duration: "2:13" }
-          - { title: "Ey Raquib", duration: "3:10" }
-          - { title: "Silencio", duration: "3:28" }
-          - { title: "Seguir Adelante", duration: "3:03" }
-          - { title: "Comme un cœur qui bat", duration: "4:38" }
-          - { title: "Invade the City", duration: "4:06" }
-          - { title: "202.0 Mhz", duration: "4:24" }
-          - { title: "Clandestin", duration: "2:45" }
-          - { title: "K-1921", duration: "3:45" }
-          - { title: "Un seul héros, le peuple", duration: "3:30" }
-          - { title: "Dall'alba della storia", duration: "3:23" }
-          - { title: "À l'assaut des ondes", duration: "3:36" }
+          - { position: A1, title: "1000 Voces", duration: "2:13" }
+          - { position: A2, title: "Ey Raquib", duration: "3:10" }
+          - { position: A3, title: "Silencio", duration: "3:28" }
+          - { position: A4, title: "Seguir Adelante", duration: "3:03" }
+          - { position: A5, title: "Comme un cœur qui bat", duration: "4:38" }
+          - { position: A6, title: "Invade the City", duration: "4:06" }
+          - { position: B1, title: "202.0 Mhz", duration: "4:24" }
+          - { position: B2, title: "Clandestin", duration: "2:45" }
+          - { position: B3, title: "K-1921", duration: "3:45" }
+          - { position: B4, title: "Un seul héros, le peuple", duration: "3:30" }
+          - { position: B5, title: "Dall'alba della storia", duration: "3:23" }
+          - { position: B6, title: "À l'assaut des ondes", duration: "3:36" }
       releases:
           - sku: RESAKA-SONORA-FREKUENZIA-LP
             format: vinyl_12
@@ -831,18 +832,18 @@ albums:
       labels: [gremlins_records, crom_records, tough_ain_t_enough, nation_on_fire_records]
       note: "Compilation espagnole parue en 2017 : onze groupes oi! de la péninsule reprennent chacun un classique du punk ibérique (RIP, Desorden, La Polla, Eskorbuto, Kortatu, Siniestro Total…). Elle se termine par une reprise de « If The Kids Are United » de Sham 69. Édition limitée à 500 exemplaires, coéditée par Gremlins, Crom, Tough Ain't Enough et Nation On Fire."
       tracks:
-          - { title: "Odio a mi patria", duration: "1:58", artist: "Arkada Social" }
-          - { title: "Destruye", duration: "2:07", artist: "Fred & The Perrys" }
-          - { title: "Botes de humo", duration: "2:39", artist: "Instinto Agresivo" }
-          - { title: "Y ahora qué?", duration: "2:17", artist: "Crusaders" }
-          - { title: "Envenenado", duration: "2:22", artist: "Against You" }
-          - { title: "Historia triste", duration: "4:50", artist: "Rude Pride" }
-          - { title: "Todo por nada", duration: "3:48", artist: "Up Yours" }
-          - { title: "Cuando yo reviente", duration: "4:11", artist: "knock_out" }
-          - { title: "Hotel Monbar", duration: "3:38", artist: "Shock Waves" }
-          - { title: "Ké buen Dios", duration: "2:36", artist: "Bogavantes Con Tirantes" }
-          - { title: "Luna sobre Marín", duration: "3:12", artist: "Keltoi!" }
-          - { title: "If The Kids Are United", duration: "3:43", artist: "Various" }
+          - { position: A1, title: "Odio a mi patria", duration: "1:58", artist: "Arkada Social" }
+          - { position: A2, title: "Destruye", duration: "2:07", artist: "Fred & The Perrys" }
+          - { position: A3, title: "Botes de humo", duration: "2:39", artist: "Instinto Agresivo" }
+          - { position: A4, title: "Y ahora qué?", duration: "2:17", artist: "Crusaders" }
+          - { position: A5, title: "Envenenado", duration: "2:22", artist: "Against You" }
+          - { position: A6, title: "Historia triste", duration: "4:50", artist: "Rude Pride" }
+          - { position: B1, title: "Todo por nada", duration: "3:48", artist: "Up Yours" }
+          - { position: B2, title: "Cuando yo reviente", duration: "4:11", artist: "knock_out" }
+          - { position: B3, title: "Hotel Monbar", duration: "3:38", artist: "Shock Waves" }
+          - { position: B4, title: "Ké buen Dios", duration: "2:36", artist: "Bogavantes Con Tirantes" }
+          - { position: B5, title: "Luna sobre Marín", duration: "3:12", artist: "Keltoi!" }
+          - { position: B6, title: "If The Kids Are United", duration: "3:43", artist: "Various" }
       releases:
           - sku: VA-OI-IN-HEAD-PUNK-IN-HEART-LP
             format: vinyl_12
@@ -868,13 +869,13 @@ albums:
       labels: [fire_and_flames_music, general_strike]
       note: "Premier album de Sharp Cut, sorti en septembre 2018 chez Fire and Flames Music. Sept titres en anglais, dédiés aux militants antifascistes de la bataille de Cable Street (Londres, 1936), qu'illustre la pochette. Le 12\" (45 tours) est livré avec une sous-pochette imprimée avec les paroles et un code de téléchargement."
       tracks:
-          - { title: "Trouble From The Streets", duration: "2:45" }
-          - { title: "Working Class", duration: "2:50" }
-          - { title: "Still Here", duration: "2:41" }
-          - { title: "Barking Dogs", duration: "2:30" }
-          - { title: "Hands In Chains", duration: "3:14" }
-          - { title: "I'm Quite Alright", duration: "3:06" }
-          - { title: "RASH'n'Roll", duration: "2:46" }
+          - { position: A1, title: "Trouble From The Streets", duration: "2:45" }
+          - { position: A2, title: "Working Class", duration: "2:50" }
+          - { position: A3, title: "Still Here", duration: "2:41" }
+          - { position: A4, title: "Barking Dogs", duration: "2:30" }
+          - { position: B1, title: "Hands In Chains", duration: "3:14" }
+          - { position: B2, title: "I'm Quite Alright", duration: "3:06" }
+          - { position: B3, title: "RASH'n'Roll", duration: "2:46" }
       releases:
           - sku: SHARP-CUT-TROUBLE-FROM-THE-STREETS-LP
             format: vinyl_12
@@ -904,14 +905,14 @@ albums:
       labels: [fire_and_flames_music]
       note: "Premier vinyle de Moscow Death Brigade, paru en 2014 chez Fire and Flames Music. Le 12\" 45 tours réunit l'EP de cinq titres « Hoods Up » (face A) et trois titres bonus (face B), dont deux inédits. Il a été repressé plusieurs fois (2015, 2020, 2022) en noir et en couleurs."
       tracks:
-          - { title: "Ghettoblaster", duration: "2:42" }
-          - { title: "It's Us", duration: "3:13" }
-          - { title: "Cut Off Your Tongue", duration: "3:05" }
-          - { title: "Viking's Life", duration: "2:46" }
-          - { title: "Prove Them Wrong", duration: "3:13" }
-          - { title: "Your Anthem", duration: "3:02" }
-          - { title: "The Truth", duration: "2:54" }
-          - { title: "Heroes", duration: "3:46" }
+          - { position: A1, title: "Ghettoblaster", duration: "2:42" }
+          - { position: A2, title: "It's Us", duration: "3:13" }
+          - { position: A3, title: "Cut Off Your Tongue", duration: "3:05" }
+          - { position: A4, title: "Viking's Life", duration: "2:46" }
+          - { position: A5, title: "Prove Them Wrong", duration: "3:13" }
+          - { position: B1, title: "Your Anthem", duration: "3:02" }
+          - { position: B2, title: "The Truth", duration: "2:54" }
+          - { position: B3, title: "Heroes", duration: "3:46" }
       releases:
           - sku: MOSCOW-DEATH-BRIGADE-HOODS-UP-LP
             format: vinyl_12
@@ -938,18 +939,18 @@ albums:
       labels: [fire_and_flames_music, rebel_sound_records]
       note: "Premier album de Moscow Death Brigade, sorti le 26 janvier 2018 chez Fire and Flames Music et Rebel Sound Records. Il mêle punk, hardcore et rap à la drum'n'bass, au dancehall, à la techno et au grime, contre le racisme, le fascisme, le sexisme et l'intolérance. Le LP contient deux titres bonus et une sous-pochette imprimée."
       tracks:
-          - { title: "Renegade Stomp", duration: "2:55" }
-          - { title: "What We Do", duration: "2:46" }
-          - { title: "Anne Frank Army, Pt. II", duration: "3:43" }
-          - { title: "Boltcutter", duration: "3:48" }
-          - { title: "All for One", duration: "3:28" }
-          - { title: "Straight Outta Moscow, Pt. II", duration: "3:00" }
-          - { title: "Collateral Murder", duration: "3:14" }
-          - { title: "Brother & Sisterhood", duration: "2:45" }
-          - { title: "Rudegirl Warrior", duration: "2:55" }
-          - { title: "Crocodile Style", duration: "3:07" }
-          - { title: "One for the Ski Mask", duration: "2:54" }
-          - { title: "Papers Please!", duration: "2:50" }
+          - { position: A1, title: "Renegade Stomp", duration: "2:55" }
+          - { position: A2, title: "What We Do", duration: "2:46" }
+          - { position: A3, title: "Anne Frank Army, Pt. II", duration: "3:43" }
+          - { position: A4, title: "Boltcutter", duration: "3:48" }
+          - { position: A5, title: "All for One", duration: "3:28" }
+          - { position: A6, title: "Straight Outta Moscow, Pt. II", duration: "3:00" }
+          - { position: B1, title: "Collateral Murder", duration: "3:14" }
+          - { position: B2, title: "Brother & Sisterhood", duration: "2:45" }
+          - { position: B3, title: "Rudegirl Warrior", duration: "2:55" }
+          - { position: B4, title: "Crocodile Style", duration: "3:07" }
+          - { position: B5, title: "One for the Ski Mask", duration: "2:54" }
+          - { position: B6, title: "Papers Please!", duration: "2:50" }
       releases:
           - sku: MOSCOW-DEATH-BRIGADE-BOLTCUTTER-LP
             format: vinyl_12
@@ -975,17 +976,17 @@ albums:
       labels: [fire_and_flames_music, rebel_sound_records]
       note: "Album de Moscow Death Brigade sorti en avril 2020 chez Fire and Flames Music. Onze titres qui mêlent punk rock, hardcore, guitares metal, drum'n'bass et techno, rappés en anglais sur des sujets sociaux mais aussi le graffiti et la tournée. Selon le groupe, le « bad accent » est celui de ceux qui voyagent et militent. Le LP est livré avec une sous-pochette imprimée."
       tracks:
-          - { title: "Out the Basement", duration: "3:03" }
-          - { title: "Feed the Crocodiles", duration: "3:34" }
-          - { title: "Bad Accent", duration: "3:29" }
-          - { title: "Break the Mold", duration: "3:03" }
-          - { title: "Sound of Sirens", duration: "3:11" }
-          - { title: "Megaphone", duration: "3:08" }
-          - { title: "Whack-a-Mole", duration: "2:44" }
-          - { title: "Shy Kidz 2020", duration: "2:06" }
-          - { title: "Throw Ya Canz 2020", duration: "3:19" }
-          - { title: "Dirty White Sneakers", duration: "3:37" }
-          - { title: "Never Walk Alone", duration: "3:17" }
+          - { position: A1, title: "Out the Basement", duration: "3:03" }
+          - { position: A2, title: "Feed the Crocodiles", duration: "3:34" }
+          - { position: A3, title: "Bad Accent", duration: "3:29" }
+          - { position: A4, title: "Break the Mold", duration: "3:03" }
+          - { position: A5, title: "Sound of Sirens", duration: "3:11" }
+          - { position: B1, title: "Megaphone", duration: "3:08" }
+          - { position: B2, title: "Whack-a-Mole", duration: "2:44" }
+          - { position: B3, title: "Shy Kidz 2020", duration: "2:06" }
+          - { position: B4, title: "Throw Ya Canz 2020", duration: "3:19" }
+          - { position: B5, title: "Dirty White Sneakers", duration: "3:37" }
+          - { position: B6, title: "Never Walk Alone", duration: "3:17" }
       releases:
           - sku: MOSCOW-DEATH-BRIGADE-BAD-ACCENT-ANTHEMS-LP
             format: vinyl_12
@@ -1013,18 +1014,18 @@ albums:
       labels: [fire_and_flames_music, brigada_caoz]
       note: "Premier album de Helem (« La grande trahison »), enregistré début 2019 avec Arie Aranovich et publié en numérique en avril 2019. Le LP, coédité en 2020 par Fire and Flames Music et Brigada Caoz, ajoute aux dix titres en hébreu deux morceaux live inédits. Numéroté à la main et limité à 500 exemplaires en vinyle rouge, blanc ou noir, avec insert de paroles en hébreu et en anglais."
       tracks:
-          - { title: "הבגידה הגדולה (The Big Betrayal)", duration: "2:39" }
-          - { title: "אנטיסוציאלי (Antisocial)", duration: "2:36" }
-          - { title: "אופיום (Opium)", duration: "2:44" }
-          - { title: "יום יבוא (A Day Will Come)", duration: "2:45" }
-          - { title: "חלם (Helem)", duration: "3:06" }
-          - { title: "זאבים (Wolves)", duration: "3:00" }
-          - { title: "הכפתור האדום (The Red Button)", duration: "2:25" }
-          - { title: "אפס סובלנות (Zero Tolerance)", duration: "3:10" }
-          - { title: "הפרד ומשול (Divide & Conquer)", duration: "2:51" }
-          - { title: "עם הפנים לקיר (Faces To The Wall)", duration: "2:41" }
-          - { title: "כל הגיבורים שלי חלאות (All My Heroes Are Scums) (Live)" }
-          - { title: "יום יבוא (A Day Will Come) (Live)" }
+          - { position: A1, title: "הבגידה הגדולה (The Big Betrayal)", duration: "2:39" }
+          - { position: A2, title: "אנטיסוציאלי (Antisocial)", duration: "2:36" }
+          - { position: A3, title: "אופיום (Opium)", duration: "2:44" }
+          - { position: A4, title: "יום יבוא (A Day Will Come)", duration: "2:45" }
+          - { position: A5, title: "חלם (Helem)", duration: "3:06" }
+          - { position: A6, title: "זאבים (Wolves)", duration: "3:00" }
+          - { position: B1, title: "הכפתור האדום (The Red Button)", duration: "2:25" }
+          - { position: B2, title: "אפס סובלנות (Zero Tolerance)", duration: "3:10" }
+          - { position: B3, title: "הפרד ומשול (Divide & Conquer)", duration: "2:51" }
+          - { position: B4, title: "עם הפנים לקיר (Faces To The Wall)", duration: "2:41" }
+          - { position: B5, title: "כל הגיבורים שלי חלאות (All My Heroes Are Scums) (Live)" }
+          - { position: B6, title: "יום יבוא (A Day Will Come) (Live)" }
       releases:
           - sku: HELEM-HABGIDA-HAGDOLA-LP
             format: vinyl_12
@@ -1053,20 +1054,20 @@ albums:
       labels: [productions_impossible_records]
       note: "Premier album de 65 Mines Street, enregistré et mixé en mars 2010 à l'Indie Ear Studio et paru chez Productions Impossible Records, label associatif du pays de Montbéliard. Quatorze titres de ska et de reggae aux accents rock'n'roll, dont une reprise de « Stuck in the Middle with You ». Les premiers pressages du LP étaient accompagnés du CD (avec trois titres bonus)."
       tracks:
-          - { title: "We Are 65 Mines Street", duration: "4:06" }
-          - { title: "Do You Exist?", duration: "2:31" }
-          - { title: "Pink Roses", duration: "4:12" }
-          - { title: "Life Is a Bitch", duration: "2:05" }
-          - { title: "Black & White", duration: "3:23" }
-          - { title: "His Name Is Joe", duration: "3:43" }
-          - { title: "65 Mines Street vs. Kentish Town Road", duration: "2:20" }
-          - { title: "Y-Files", duration: "3:23" }
-          - { title: "Bagarre", duration: "1:39" }
-          - { title: "Bang Bang", duration: "3:30" }
-          - { title: "Juicy Morning", duration: "3:59" }
-          - { title: "Stuck in the Middle with You", duration: "2:06" }
-          - { title: "Nite Shot", duration: "3:15" }
-          - { title: "Brand New Spring", duration: "4:01" }
+          - { position: A1, title: "We Are 65 Mines Street", duration: "4:06" }
+          - { position: A2, title: "Do You Exist?", duration: "2:31" }
+          - { position: A3, title: "Pink Roses", duration: "4:12" }
+          - { position: A4, title: "Life Is a Bitch", duration: "2:05" }
+          - { position: A5, title: "Black & White", duration: "3:23" }
+          - { position: A6, title: "His Name Is Joe", duration: "3:43" }
+          - { position: A7, title: "65 Mines Street vs. Kentish Town Road", duration: "2:20" }
+          - { position: B1, title: "Y-Files", duration: "3:23" }
+          - { position: B2, title: "Bagarre", duration: "1:39" }
+          - { position: B3, title: "Bang Bang", duration: "3:30" }
+          - { position: B4, title: "Juicy Morning", duration: "3:59" }
+          - { position: B5, title: "Stuck in the Middle with You", duration: "2:06" }
+          - { position: B6, title: "Nite Shot", duration: "3:15" }
+          - { position: B7, title: "Brand New Spring", duration: "4:01" }
       releases:
           - sku: 65-MINES-STREET-65-MINES-STREET-LP
             format: vinyl_12
@@ -1091,15 +1092,15 @@ albums:
       labels: [rumagna_sgroza, mass_productions, fire_and_flames_music, general_strike, guerilla_vinyl, blackout_brigade, brigada_caoz, maloka, keponteam, up_the_punx, subversive_ways, punti_scena_records]
       note: "Album de Krav Boca publié le 1er mai 2020, d'abord offert en téléchargement libre et dédié aux soignants, caissières, livreurs, éboueurs, gilets jaunes et à tous ceux en première ligne pendant la pandémie. Neuf titres mêlant rap, punk et metal, avec de nombreux invités (Chata Flores, My Own Voice, Matrak Attakk, Speira, Zafina, Al Nasser, Aeon). Le LP est une coproduction DIY d'une douzaine de labels."
       tracks:
-          - { title: "Intro", duration: "2:04" }
-          - { title: "Souterrain (feat. Chata Flores)", duration: "2:52" }
-          - { title: "Kravmikaz", duration: "2:04" }
-          - { title: "Camtar", duration: "3:22" }
-          - { title: "Crust Riot (feat. My Own Voice, Matrak Attakk)", duration: "3:13" }
-          - { title: "Gas Mask (feat. Speira)", duration: "3:58" }
-          - { title: "Poison (feat. Zafina)", duration: "2:33" }
-          - { title: "Carte postale (feat. Al Nasser)", duration: "4:42" }
-          - { title: "City Hackers (feat. Aeon)", duration: "3:51" }
+          - { position: A1, title: "Intro", duration: "2:04" }
+          - { position: A2, title: "Souterrain (feat. Chata Flores)", duration: "2:52" }
+          - { position: A3, title: "Kravmikaz", duration: "2:04" }
+          - { position: A4, title: "Camtar", duration: "3:22" }
+          - { position: A5, title: "Crust Riot (feat. My Own Voice, Matrak Attakk)", duration: "3:13" }
+          - { position: B1, title: "Gas Mask (feat. Speira)", duration: "3:58" }
+          - { position: B2, title: "Poison (feat. Zafina)", duration: "2:33" }
+          - { position: B3, title: "Carte postale (feat. Al Nasser)", duration: "4:42" }
+          - { position: B4, title: "City Hackers (feat. Aeon)", duration: "3:51" }
       releases:
           - sku: KRAV-BOCA-CITY-HACKERS-LP
             format: vinyl_12
@@ -1130,17 +1131,17 @@ albums:
       labels: [boca_records, fire_and_flames_music, guerilla_vinyl, maloka, urgence_disk_records, rumagna_sgroza, rebel_time_records, machete_records, deviance, up_the_punx, alternative_international_movement_roma, kale_borroka_records, nothing_to_harvest_records, dure_realite, keponteam, anfibio_records, subversive_ways, santa_diabla]
       note: "Album de Krav Boca sorti en numérique en février 2021, puis en LP vinyle blanc en mai 2021. Le collectif y revendique son droit d'exister face aux restrictions imposées à la culture pendant la pandémie, avec de nombreux invités (Sponty, Sara, Skalpel, HPS, A. Atak Tos, Call The Cops, Brigada Flores Magon). Le vinyle, tiré à 1000 exemplaires, est une coproduction DIY d'une vingtaine de labels de plusieurs pays, dont Kale Borroka Records (sa 3e production)."
       tracks:
-          - { title: "Intro", duration: "2:16" }
-          - { title: "Vertigo (feat. Sponty)", duration: "3:11" }
-          - { title: "Fumigène", duration: "2:51" }
-          - { title: "Brasero", duration: "3:12" }
-          - { title: "Barrikade (feat. Sara)", duration: "3:03" }
-          - { title: "Ceinture (feat. Skalpel, HPS)", duration: "3:35" }
-          - { title: "Synora (feat. A. Atak Tos)", duration: "4:15" }
-          - { title: "Tercian", duration: "3:48" }
-          - { title: "K.T.C (feat. Call The Cops)", duration: "3:05" }
-          - { title: "Ultra (feat. Brigada Flores Magon)", duration: "2:50" }
-          - { title: "O.V.V.T.C", duration: "3:36" }
+          - { position: A1, title: "Intro", duration: "2:16" }
+          - { position: A2, title: "Vertigo (feat. Sponty)", duration: "3:11" }
+          - { position: A3, title: "Fumigène", duration: "2:51" }
+          - { position: A4, title: "Brasero", duration: "3:12" }
+          - { position: A5, title: "Barrikade (feat. Sara)", duration: "3:03" }
+          - { position: A6, title: "Ceinture (feat. Skalpel, HPS)", duration: "3:35" }
+          - { position: B1, title: "Synora (feat. A. Atak Tos)", duration: "4:15" }
+          - { position: B2, title: "Tercian", duration: "3:48" }
+          - { position: B3, title: "K.T.C (feat. Call The Cops)", duration: "3:05" }
+          - { position: B4, title: "Ultra (feat. Brigada Flores Magon)", duration: "2:50" }
+          - { position: B5, title: "O.V.V.T.C", duration: "3:36" }
       releases:
           - sku: KRAV-BOCA-BARRIKADE-LP
             format: vinyl_12
@@ -1169,15 +1170,15 @@ albums:
       labels: [fire_and_flames_music, kanal_hysterik, discos_machete, rumagna_sgroza, kale_borroka_records]
       note: "Premier album de Saccage, sorti en numérique le 1er décembre 2025 puis en LP en 2026. Neuf titres d'oi! antifasciste, combatifs, fédérateurs ou mélancoliques, avec quelques passages de saxophone et Coratge en invité sur « Cœur d'acier ». Enregistré, mixé et masterisé au Disvlar Studio, illustrations d'Axel. Le vinyle est coproduit par Kanal Hysterik, Fire and Flames, Discos Machete, Rumagna Sgroza et Kale Borroka Records (sa 5e production)."
       tracks:
-          - { title: "Cœur d'acier (feat. Coratge)", duration: "4:42" }
-          - { title: "Saccage", duration: "2:50" }
-          - { title: "Terre volée", duration: "3:34" }
-          - { title: "Left Side Skins", duration: "2:30" }
-          - { title: "Fantômes du futur", duration: "3:27" }
-          - { title: "Colonel Fabien", duration: "3:19" }
-          - { title: "Paris", duration: "3:14" }
-          - { title: "Prêt à frapper", duration: "3:37" }
-          - { title: "Une vie de lutte", duration: "5:41" }
+          - { position: A1, title: "Cœur d'acier (feat. Coratge)", duration: "4:42" }
+          - { position: A2, title: "Saccage", duration: "2:50" }
+          - { position: A3, title: "Terre volée", duration: "3:34" }
+          - { position: A4, title: "Left Side Skins", duration: "2:30" }
+          - { position: A5, title: "Fantômes du futur", duration: "3:27" }
+          - { position: B1, title: "Colonel Fabien", duration: "3:19" }
+          - { position: B2, title: "Paris", duration: "3:14" }
+          - { position: B3, title: "Prêt à frapper", duration: "3:37" }
+          - { position: B4, title: "Une vie de lutte", duration: "5:41" }
       releases:
           - sku: SACCAGE-UNE-VIE-DE-LUTTE-LP
             format: vinyl_12
@@ -1201,12 +1202,12 @@ albums:
       labels: [rude_reckless_productions]
       note: "Deuxième sortie des Harbour Rebels : un EP de six titres en anglais, paru en 10\" 33 tours avec code de téléchargement chez Rude & Reckless Productions."
       tracks:
-          - { title: "My Way", duration: "2:46" }
-          - { title: "Football Crowd", duration: "3:27" }
-          - { title: "Side By Side", duration: "3:17" }
-          - { title: "No Place For You", duration: "2:55" }
-          - { title: "I Don't Care", duration: "2:36" }
-          - { title: "Never Surrender", duration: "3:39" }
+          - { position: A1, title: "My Way", duration: "2:46" }
+          - { position: A2, title: "Football Crowd", duration: "3:27" }
+          - { position: A3, title: "Side By Side", duration: "3:17" }
+          - { position: B1, title: "No Place For You", duration: "2:55" }
+          - { position: B2, title: "I Don't Care", duration: "2:36" }
+          - { position: B3, title: "Never Surrender", duration: "3:39" }
       releases:
           - sku: HARBOUR-REBELS-ON-A-JOURNEY-10
             format: vinyl_10
@@ -1237,10 +1238,10 @@ albums:
       labels: [casual_records, fire_and_flames_music, motorcity_produzioni, panda_artist_management]
       note: "« Torino meets Madriz » : split 10\" où Non Servium et Bull Brigade reprennent chacun deux morceaux de l'autre groupe dans leur propre style. Pressé sur vinyle blanc avec code de téléchargement, en coproduction entre Casual Records, Fire and Flames, Motorcity Produzioni et Panda Artist."
       tracks:
-          - { title: "Hecho En Madriz", artist: "Non Servium" }
-          - { title: "A Way Of Life", artist: "Non Servium" }
-          - { title: "Augusta Taurinorum", artist: "Bull Brigade" }
-          - { title: "Tredici Dodici", artist: "Bull Brigade" }
+          - { position: A1, title: "Hecho En Madriz", artist: "Non Servium" }
+          - { position: A2, title: "A Way Of Life", artist: "Non Servium" }
+          - { position: B1, title: "Augusta Taurinorum", artist: "Bull Brigade" }
+          - { position: B2, title: "Tredici Dodici", artist: "Bull Brigade" }
       releases:
           - sku: NON-SERVIUM-BULL-THE-CHAOS-BROTHERHOOD-10
             format: vinyl_10
@@ -1267,10 +1268,10 @@ albums:
       labels: [still_burning_records, crom_records]
       note: "Hommage à Colin McQuilla, chanteur du groupe Oi! antifasciste de Belfast Runnin' Riot, décédé en 2014. Quatre groupes (KnockOut, Gonna Get Yours, Bull Brigade, Hawkins Thugs) y reprennent chacun un morceau de Runnin' Riot. 45 tours avec insert, coédité par Still Burning Records et Crom Records."
       tracks:
-          - { title: "Tribute", duration: "4:20", artist: "KnockOut" }
-          - { title: "Divide And Conquer", duration: "2:48", artist: "Gonna Get Yours" }
-          - { title: "Double The Pain", duration: "4:36", artist: "Bull Brigade" }
-          - { title: "Buckfast Tonic Wine", duration: "3:12", artist: "Hawkins Thugs" }
+          - { position: A1, title: "Tribute", duration: "4:20", artist: "KnockOut" }
+          - { position: A2, title: "Divide And Conquer", duration: "2:48", artist: "Gonna Get Yours" }
+          - { position: B1, title: "Double The Pain", duration: "4:36", artist: "Bull Brigade" }
+          - { position: B2, title: "Buckfast Tonic Wine", duration: "3:12", artist: "Hawkins Thugs" }
       releases:
           - sku: VA-TRIBUTE-TO-RUNNIN-RIOT-7
             format: vinyl_7
@@ -1296,10 +1297,10 @@ albums:
       labels: [crom_records, spirit_of_the_streets_records, crowd_control_media]
       note: "Premier 45 tours d'Union Blood : quatre titres coédités par Crom Records, Spirit Of The Streets et Crowd Control Media. Pressé à 400 exemplaires sur vinyle jaune et 100 sur vinyle noir."
       tracks:
-          - { title: "Working Class Pride", duration: "2:55" }
-          - { title: "Reckless & Bold", duration: "3:07" }
-          - { title: "Blood On The Streets", duration: "3:39" }
-          - { title: "Brawlers", duration: "3:04" }
+          - { position: A1, title: "Working Class Pride", duration: "2:55" }
+          - { position: A2, title: "Reckless & Bold", duration: "3:07" }
+          - { position: B1, title: "Blood On The Streets", duration: "3:39" }
+          - { position: B2, title: "Brawlers", duration: "3:04" }
       releases:
           - sku: UNION-BLOOD-WORKING-CLASS-PRIDE-EP-7
             format: vinyl_7
@@ -1328,10 +1329,10 @@ albums:
       labels: [fire_and_flames_music]
       note: "EP quatre titres dédié à Georg Elser (1903-1945), ouvrier souabe auteur de l'attentat manqué contre Hitler au Bürgerbräukeller de Munich en novembre 1939. Le groupe y rappelle son geste et appelle à la résistance active contre le fascisme. Paru chez Fire and Flames Music."
       tracks:
-          - { title: "So Many Times" }
-          - { title: "Remembering Means Fighting" }
-          - { title: "What I See" }
-          - { title: "Wave Your Flags" }
+          - { position: A1, title: "So Many Times" }
+          - { position: A2, title: "Remembering Means Fighting" }
+          - { position: B1, title: "What I See" }
+          - { position: B2, title: "Wave Your Flags" }
       releases:
           - sku: WASTED-YOUTH-REMEMBERING-MEANS-7
             format: vinyl_7
@@ -1358,10 +1359,10 @@ albums:
       labels: [fire_and_flames_music, timebomb_records, radio_punk]
       note: "Quatre titres streetpunk/Oi! enregistrés entre décembre 2019 et janvier 2020 au Mobsound de Milan, quatre ans après le premier album. Le 45 tours est sorti en vinyle jaune et noir, en coédition entre Fire and Flames Music, Timebomb Records et Radio Punk."
       tracks:
-          - { title: "Malelingue", duration: "2:10" }
-          - { title: "Rinnegato Oi!", duration: "2:32" }
-          - { title: "Risveglio", duration: "3:16" }
-          - { title: "Senza Freni", duration: "3:10" }
+          - { position: A1, title: "Malelingue", duration: "2:10" }
+          - { position: A2, title: "Rinnegato Oi!", duration: "2:32" }
+          - { position: B1, title: "Risveglio", duration: "3:16" }
+          - { position: B2, title: "Senza Freni", duration: "3:10" }
       releases:
           - sku: SEMPRE-PEGGIO-ANNI-BUTTATI-7
             format: vinyl_7
@@ -1386,10 +1387,10 @@ albums:
       labels: [fire_and_flames_music, casual_records, grover_records]
       note: "Premier disque vinyle des T-Killas : quatre titres et quatre styles, d'un stomper rock à un hymne streetpunk en passant par un reggae et un morceau two-tone. Coédité par Fire and Flames Music, Casual Records et Grover Records, avec code de téléchargement."
       tracks:
-          - { title: "Young But Not Free", duration: "3:09" }
-          - { title: "Liberation", duration: "2:57" }
-          - { title: "Sitting In The Rain", duration: "2:49" }
-          - { title: "Shake It", duration: "2:52" }
+          - { position: A1, title: "Young But Not Free", duration: "3:09" }
+          - { position: A2, title: "Liberation", duration: "2:57" }
+          - { position: B1, title: "Sitting In The Rain", duration: "2:49" }
+          - { position: B2, title: "Shake It", duration: "2:52" }
       releases:
           - sku: T-KILLAS-KICKING-THE-PRESSURE-7
             format: vinyl_7
@@ -1416,10 +1417,10 @@ albums:
       labels: [fire_and_flames_music]
       note: "Compilation pour les dix ans de la section RASH (Red and Anarchist Skinheads) de Leipzig, avec un titre de chacun des groupes locaux Fontanelle, Flag Smasher, The Spartanics et Sharp Cut : Oi!, punk hardcore, streetpunk et skinhead rock'n'roll. Tirage limité à 500 exemplaires numérotés à la main (250 noirs, 250 orange), avec code de téléchargement."
       tracks:
-          - { title: "R.A.S.H.", duration: "2:46", artist: "Fontanelle" }
-          - { title: "Askatasuna", duration: "2:47", artist: "Flag Smasher" }
-          - { title: "Don't You See", duration: "2:57", artist: "The Spartanics" }
-          - { title: "Antisocial", duration: "3:00", artist: "sharp_cut" }
+          - { position: A1, title: "R.A.S.H.", duration: "2:46", artist: "Fontanelle" }
+          - { position: A2, title: "Askatasuna", duration: "2:47", artist: "Flag Smasher" }
+          - { position: B1, title: "Don't You See", duration: "2:57", artist: "The Spartanics" }
+          - { position: B2, title: "Antisocial", duration: "3:00", artist: "sharp_cut" }
       releases:
           - sku: VA-RED-SKINS-OVER-LEIPZIG-7
             format: vinyl_7
@@ -1446,10 +1447,10 @@ albums:
       labels: [crom_records, radikal_1977_records, tough_ain_t_enough, the_firm_records]
       note: "EP quatre titres de La Cruz, coédité par Crom Records, Radikal 1977 Records, Tough Ain't Enough et The Firm Records. Pressage limité à 500 exemplaires."
       tracks:
-          - { title: "Con La Cabeza Alta", duration: "2:50" }
-          - { title: "Tóxico", duration: "2:47" }
-          - { title: "Real Oi!", duration: "2:23" }
-          - { title: "Cabezas Rapadas", duration: "3:18" }
+          - { position: A1, title: "Con La Cabeza Alta", duration: "2:50" }
+          - { position: A2, title: "Tóxico", duration: "2:47" }
+          - { position: B1, title: "Real Oi!", duration: "2:23" }
+          - { position: B2, title: "Cabezas Rapadas", duration: "3:18" }
       releases:
           - sku: LA-CRUZ-CENIZAS-7
             format: vinyl_7
@@ -1487,10 +1488,10 @@ albums:
       labels: [crom_records]
       note: "EP quatre titres de KnockOut paru chez Crom Records et pressé par GZ Media. Tirage numéroté à la main : 218 exemplaires en vinyle doré sous pochette noire et 218 sous pochette blanche, plus 100 exemplaires à pochette faite main."
       tracks:
-          - { title: "Mientras La Sangre Hierva", duration: "3:04" }
-          - { title: "Deambular", duration: "3:26" }
-          - { title: "Empty Minds", duration: "3:00" }
-          - { title: "Yunke & Martillo", duration: "3:47" }
+          - { position: A1, title: "Mientras La Sangre Hierva", duration: "3:04" }
+          - { position: A2, title: "Deambular", duration: "3:26" }
+          - { position: B1, title: "Empty Minds", duration: "3:00" }
+          - { position: B2, title: "Yunke & Martillo", duration: "3:47" }
       releases:
           - sku: KNOCK-OUT-ROCK-N-ROLL-SKINHEAD-7-POCHETTE-BLANCHE
             name: "Knock Out - Rock'n'Roll Skinhead (pochette blanche)"
@@ -2386,11 +2387,11 @@ albums:
       labels: [dure_realite, rebel_time_records, kale_borroka_records, discos_machete, la_distro_elle_a_mauvaise_haleine]
       note: "Premier EP d'Asbestos, cinq titres en français dont une reprise de PomPom Beretta (« Esprit d'bande »). Enregistré et mixé au Studio BAF, masterisé chez Mammoth Sound Mastering. Sorti le 14 février 2021 en cassette limitée à 150 exemplaires, coproduite par Dure Réalité, Rebel Time Records, Discos Machete, Kale Borroka Records (KBR#02) et La Distro Elle A Mauvaise Haleine."
       tracks:
-          - { title: "Mon héroïne", duration: "2:25" }
-          - { title: "Le fardeau des années", duration: "2:57" }
-          - { title: "La ballade des vauriens", duration: "3:21" }
-          - { title: "Esprit d'bande", duration: "2:09" }
-          - { title: "Les Royaux", duration: "2:52" }
+          - { position: A1, title: "Mon héroïne", duration: "2:25" }
+          - { position: A2, title: "Le fardeau des années", duration: "2:57" }
+          - { position: A3, title: "La ballade des vauriens", duration: "3:21" }
+          - { position: A4, title: "Esprit d'bande", duration: "2:09" }
+          - { position: A5, title: "Les Royaux", duration: "2:52" }
       releases:
           - sku: ASBESTOS-ASBESTOS-K7
             format: cassette
@@ -2416,16 +2417,16 @@ albums:
       labels: [kale_borroka_records, el_lokal, rat_produccions, mulisec_records, rumagna_sgroza, general_strike, fire_and_flames_music]
       note: "Deuxième album de Revenja, coproduit par Kale Borroka Records (KBR#04) avec El Lokal, Rat Produccions, Mulisec Records, Rumagna Sgroza, General Strike et Fire and Flames."
       tracks:
-          - { title: "Foc" }
-          - { title: "Mon Cruel" }
-          - { title: "L'Empremta De La Historia" }
-          - { title: "Lucre Promes" }
-          - { title: "Neighbor Sold" }
-          - { title: "Canço De Guerra" }
-          - { title: "Canadenca" }
-          - { title: "La Resposta" }
-          - { title: "Son Veus" }
-          - { title: "Som Els Revenja" }
+          - { position: A1, title: "Foc" }
+          - { position: A2, title: "Mon Cruel" }
+          - { position: A3, title: "L'Empremta De La Historia" }
+          - { position: A4, title: "Lucre Promes" }
+          - { position: A5, title: "Neighbor Sold" }
+          - { position: B1, title: "Canço De Guerra" }
+          - { position: B2, title: "Canadenca" }
+          - { position: B3, title: "La Resposta" }
+          - { position: B4, title: "Son Veus" }
+          - { position: B5, title: "Som Els Revenja" }
       releases:
           - sku: REVENJA-CANCONS-DE-GUERRA-LP
             format: vinyl_12
