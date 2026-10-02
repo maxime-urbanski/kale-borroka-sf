@@ -1,0 +1,25 @@
+// The same tokens as CSS custom properties, for templates and style attributes.
+:root {
+    --kb-noir: #{$kb-noir};
+    --kb-papier: #{$kb-papier};
+    --kb-papier-2: #{$kb-papier-2};
+    --kb-papier-3: #{$kb-papier-3};
+    --kb-rouge: #{$kb-rouge};
+    --kb-rouge-fonce: #{$kb-rouge-fonce};
+    --kb-gris: #{$kb-gris};
+    --kb-gris-clair: #{$kb-gris-clair};
+    --kb-gris-filet: #{$kb-gris-filet};
+    --kb-encre-2: #{$kb-encre-2};
+    --kb-vert: #{$kb-vert};
+
+    --kb-font-display: #{$kb-font-display};
+    --kb-font-body: #{$kb-font-body};
+    --kb-font-mono: #{$kb-font-mono};
+
+    @each $key, $value in $kb-spaces {
+        --kb-space-#{$key}: #{$value};
+    }
+
+    --kb-shadow: #{$kb-shadow};
+    --kb-shadow-rouge: #{$kb-shadow-rouge};
+}

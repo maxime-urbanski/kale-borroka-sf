@@ -41,7 +41,7 @@ class ArticlePageContentTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->uriOf($this->quartierMaudit()));
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('form button.btn-success', 'Ajouter au panier');
+        self::assertSelectorTextContains('form button.btn-primary', 'Ajouter au panier');
         self::assertSelectorTextNotContains('body', 'Épuisé');
         self::assertCount(1, $crawler->filter('input[name$="[quantity]"]'));
     }

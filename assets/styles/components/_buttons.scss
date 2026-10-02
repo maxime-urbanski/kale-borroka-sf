@@ -1,0 +1,140 @@
+// Heights: 44 (icon/compact, .btn-sm), 48 (standard), 56 (buying, .btn-lg).
+.btn {
+    --bs-btn-focus-box-shadow: 0 0 0 3px #{$kb-papier};
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+
+    &:focus-visible {
+        outline: 3px solid $kb-noir !important;
+    }
+
+    // The sold-out button: grey, struck through by its label and icon, never red only.
+    &:disabled,
+    &.disabled {
+        --bs-btn-disabled-bg: #{$kb-papier-3};
+        --bs-btn-disabled-color: #{$kb-gris};
+        --bs-btn-disabled-border-color: #{$kb-gris-clair};
+    }
+}
+
+.btn-lg {
+    min-height: 56px;
+}
+
+.btn-sm {
+    min-height: 44px;
+    gap: 6px;
+}
+
+// Buying: red, darker on hover.
+.btn-primary,
+.btn-danger {
+    --bs-btn-color: #{$kb-papier};
+    --bs-btn-bg: #{$kb-rouge};
+    --bs-btn-border-color: #{$kb-rouge};
+    --bs-btn-hover-color: #{$kb-papier};
+    --bs-btn-hover-bg: #{$kb-rouge-fonce};
+    --bs-btn-hover-border-color: #{$kb-rouge-fonce};
+    --bs-btn-active-color: #{$kb-papier};
+    --bs-btn-active-bg: #{$kb-rouge-fonce};
+    --bs-btn-active-border-color: #{$kb-rouge-fonce};
+}
+
+// Secondary: black. .btn-success (confirmations) and .btn-dark look the same.
+.btn-secondary,
+.btn-success,
+.btn-dark {
+    --bs-btn-color: #{$kb-papier};
+    --bs-btn-bg: #{$kb-noir};
+    --bs-btn-border-color: #{$kb-noir};
+    --bs-btn-hover-color: #{$kb-papier};
+    --bs-btn-hover-bg: #{$kb-rouge};
+    --bs-btn-hover-border-color: #{$kb-rouge};
+    --bs-btn-active-color: #{$kb-papier};
+    --bs-btn-active-bg: #{$kb-rouge-fonce};
+    --bs-btn-active-border-color: #{$kb-rouge-fonce};
+}
+
+// Outline: 2px black on paper, whatever the variant asked for.
+[class*="btn-outline-"] {
+    --bs-btn-color: #{$kb-noir};
+    --bs-btn-bg: transparent;
+    --bs-btn-border-color: #{$kb-noir};
+    --bs-btn-hover-color: #{$kb-papier};
+    --bs-btn-hover-bg: #{$kb-noir};
+    --bs-btn-hover-border-color: #{$kb-noir};
+    --bs-btn-active-color: #{$kb-papier};
+    --bs-btn-active-bg: #{$kb-noir};
+    --bs-btn-active-border-color: #{$kb-noir};
+}
+
+// Destructive outline keeps a red cue on top of its label.
+.btn-outline-danger {
+    --bs-btn-color: #{$kb-rouge-fonce};
+    --bs-btn-border-color: #{$kb-rouge};
+    --bs-btn-hover-bg: #{$kb-rouge};
+    --bs-btn-hover-border-color: #{$kb-rouge};
+    --bs-btn-active-bg: #{$kb-rouge-fonce};
+    --bs-btn-active-border-color: #{$kb-rouge-fonce};
+}
+
+// On black: paper buttons.
+.btn-light {
+    --bs-btn-color: #{$kb-noir};
+    --bs-btn-bg: #{$kb-papier};
+    --bs-btn-border-color: #{$kb-papier};
+    --bs-btn-hover-color: #{$kb-papier};
+    --bs-btn-hover-bg: #{$kb-rouge};
+    --bs-btn-hover-border-color: #{$kb-rouge};
+}
+
+.btn-outline-light {
+    --bs-btn-color: #{$kb-papier};
+    --bs-btn-border-color: #{$kb-papier};
+    --bs-btn-hover-color: #{$kb-noir};
+    --bs-btn-hover-bg: #{$kb-papier};
+    --bs-btn-hover-border-color: #{$kb-papier};
+}
+
+.btn-link {
+    --bs-btn-color: #{$kb-noir};
+    --bs-btn-hover-color: #{$kb-rouge};
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+// Square icon button, 44×44. Needs an aria-label.
+.kb-icon-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: $kb-noir;
+    color: $kb-papier;
+    font-size: 1.125rem;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+        background: $kb-rouge;
+        color: $kb-papier;
+    }
+
+    &--ghost {
+        background: none;
+        color: $kb-noir;
+
+        &:hover {
+            background: none;
+            color: $kb-rouge;
+        }
+    }
+}

@@ -1,68 +1,58 @@
-<footer class="bg-dark mt-auto">
-    <div class="container-fluid py-5">
-        <div class="container-md text-white">
-            <div class="row">
-                <div class="col-sm-12 col-md-4">
-                    <h5 class="fs-4 mx-auto">A PROPOS</h5>
-                    {{ _self.page_links(pages.about ?? []) }}
-                </div>
-                <div class="col-sm-12 col-md-4 mt-4 mt-md-0">
-                    <h5 class="fs-4 mx-auto">LE SHOP</h5>
-                    <ul class="nav flex-column align-items-center mt-4">
-                        {% for support in supports %}
-                            <li class="nav-item fs-5">
-                                <a href="{{ path('app_catalog_list', {support: support.name}) }}"
-                                   class="text-decoration-none text-white">
-                                    {{ support |upper }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                        {% for page in pages.shop ?? [] %}
-                            <li class="nav-item fs-5">
-                                <a href="{{ path('app_page_show', {slug: page.slug}) }}" class="text-decoration-none text-white">{{ page.title }}</a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <div class="col-sm-12 col-md-4 mt-4 mt-md-0">
-                    <h5 class="fs-4 mx-auto">RESEAUX SOCIAUX</h5>
-                            <div class="d-flex justify-content-center align-items-center h-100">
-                        {% for social in socialNetworks %}
-                                <div class="d-flex flex-column align-items-center {% if not loop.first %}ms-3{% endif %}">
-                                    <a href="{{ social.url }}" target="_blank">
-                                        <img src="{{ social.file ? vich_uploader_asset(social.file) }}" alt="{{ social.name }}" width="40"
-                                             class="rounded-circle social-icon">
-                                    </a>
-                                    <p class="mb-0 fs-6">
-                                        {{ social.name }}
-                                    </p>
-                                </div>
-                        {% endfor %}
-                            </div>
-                </div>
-            </div>
+<footer class="kb-footer">
+    <div class="kb-burnt" aria-hidden="true"></div>
+    <div class="kb-footer__main">
+        <div class="kb-footer__col kb-footer__brand">
+            <p class="kb-footer__name mb-0"><span>Kale Borroka</span><span>Riot Records</span></p>
+            <p class="kb-footer__about">
+                Label et distro indépendants. Punk, hardcore, oi! et tout ce qui fait du bruit contre l'extrême droite.
+                Fait main, sans patron.
+            </p>
         </div>
-    </div>
-    <div class="container-fluid bg-white py-1 overflow-hidden">
-        {% if pages.bottom is defined %}
-            <nav class="text-center small my-1" data-test="footer-bottom-pages">
-                {% for page in pages.bottom %}
-                    <a href="{{ path('app_page_show', {slug: page.slug}) }}" class="text-dark">{{ page.title }}</a>{% if not loop.last %} · {% endif %}
+        {% if (pages.about ?? []) is not empty %}
+            <nav class="kb-footer__col" aria-labelledby="footer-about">
+                <span class="kb-footer__heading" id="footer-about">À propos</span>
+                {% for page in pages.about %}
+                    <a href="{{ path('app_page_show', {slug: page.slug}) }}" class="kb-footer__link">{{ page.title }}</a>
                 {% endfor %}
             </nav>
         {% endif %}
-        <h6 class="text-center m-0">{{ 'now' | date('Y') }} - {{ '&copy;' }}Kale Borroka records - All Rights reserved - Make racists afraid again</h6>
+        <nav class="kb-footer__col" aria-labelledby="footer-shop">
+            <span class="kb-footer__heading" id="footer-shop">Shop</span>
+            {% for support in supports %}
+                <a href="{{ path('app_catalog_list', {support: support.name}) }}" class="kb-footer__link">{{ support.name|upper }}</a>
+            {% endfor %}
+            {% for page in pages.shop ?? [] %}
+                <a href="{{ path('app_page_show', {slug: page.slug}) }}" class="kb-footer__link">{{ page.title }}</a>
+            {% endfor %}
+        </nav>
+        {% if socialNetworks is not empty %}
+            <div class="kb-footer__col">
+                <span class="kb-footer__heading" id="footer-follow">Suivre</span>
+                <ul class="kb-footer__socials list-unstyled mb-0" aria-labelledby="footer-follow">
+                    {% for social in socialNetworks %}
+                        <li>
+                            <a href="{{ social.url }}" class="kb-footer__social" target="_blank" rel="noopener"
+                               {%- if not social.file %} aria-label="{{ social.name }}"{% endif %}>
+                                {% if social.file %}
+                                    <img src="{{ vich_uploader_asset(social.file) }}" alt="{{ social.name }}" width="22" height="22">
+                                {% else %}
+                                    <i class="bi bi-link-45deg" aria-hidden="true"></i>
+                                {% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+    <div class="kb-footer__bottom">
+        {% if pages.bottom is defined %}
+            <nav aria-label="Informations légales" data-test="footer-bottom-pages">
+                {% for page in pages.bottom %}
+                    <a href="{{ path('app_page_show', {slug: page.slug}) }}">{{ page.title }}</a>
+                {% endfor %}
+            </nav>
+        {% endif %}
+        <span class="kb-footer__copyright">© {{ 'now'|date('Y') }} Kale Borroka Riot Records · Make racists afraid again</span>
     </div>
 </footer>
-
-{% macro page_links(pages) %}
-    {% if pages is not empty %}
-        <ul class="nav flex-column align-items-center mt-4">
-            {% for page in pages %}
-                <li class="nav-item fs-5">
-                    <a href="{{ path('app_page_show', {slug: page.slug}) }}" class="text-decoration-none text-white">{{ page.title }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endmacro %}

@@ -1,0 +1,147 @@
+// Breadcrumb (nav + aria-current="page"), pagination, tabs, dropdown, offcanvas.
+.breadcrumb {
+    font-family: $kb-font-mono;
+    text-transform: uppercase;
+
+    .breadcrumb-item {
+        a {
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+        &.active {
+            font-weight: 600;
+        }
+    }
+}
+
+.pagination {
+    flex-wrap: wrap;
+    row-gap: 6px;
+
+    .page-link {
+        display: grid;
+        place-items: center;
+        min-width: 44px;
+        height: 44px;
+        padding: 0 10px;
+        font-family: $kb-font-mono;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    // The ellipsis is not a target: no frame.
+    .kb-page-ellipsis {
+        border-color: transparent;
+    }
+}
+
+.nav-tabs {
+    border-bottom-width: 3px;
+
+    .nav-link {
+        margin-bottom: -3px;
+        border-width: 2px 2px 0;
+        font-weight: 800;
+        font-size: .875rem;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+    }
+}
+
+.dropdown-menu {
+    box-shadow: 8px 8px 0 $kb-rouge;
+}
+
+.offcanvas {
+    .offcanvas-title {
+        font-size: 1.75rem;
+    }
+}
+
+.offcanvas-start {
+    border-right-width: 3px;
+}
+
+.offcanvas-end {
+    border-left-width: 3px;
+}
+
+// Tables: black head in Plex Mono, 1px rules.
+.table {
+    > thead > tr > * {
+        background: $kb-noir;
+        color: $kb-papier;
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        border-bottom: 0;
+    }
+}
+
+.progress {
+    border: 2px solid $kb-noir;
+    height: 16px;
+}
+
+.placeholder {
+    background-color: $kb-papier-3;
+}
+
+.card {
+    --bs-card-border-width: 2px;
+}
+
+.btn-close {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background-size: 1em;
+}
+
+// Filter accordion: 2px rules above and below, 52px headers.
+.kb-filter {
+    border-top: 2px solid $kb-noir;
+    border-bottom: 2px solid $kb-noir;
+
+    & + & {
+        border-top: 0;
+    }
+
+    &__toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        height: 52px;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: $kb-noir;
+        font-weight: 800;
+        font-size: .875rem;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        cursor: pointer;
+
+        label {
+            cursor: pointer;
+            margin: 0;
+        }
+    }
+
+    &__body {
+        max-height: 0;
+        overflow-y: auto;
+        transition: max-height .3s ease-in-out;
+
+        &.opened {
+            max-height: 240px;
+            padding-bottom: 8px;
+        }
+    }
+}

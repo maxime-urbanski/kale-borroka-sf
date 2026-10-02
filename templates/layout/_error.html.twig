@@ -1,0 +1,28 @@
+{#
+    Error pages: no sub-request (navbar, footer), no database query, so that they still render
+    when what failed is the database.
+#}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Kale Borroka Records | {% block title %}Erreur{% endblock %}</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('/favicon-32x32.png') }}">
+    {{ encore_entry_link_tags('app') }}
+</head>
+<body>
+<header class="kb-header">
+    <nav class="navbar kb-navbar" aria-label="Navigation principale">
+        <a class="navbar-brand" href="{{ path('app_homepage') }}">
+            <img src="{{ asset('images/logo-kbr.jpg') }}" alt="Kale Borroka Riot Records — accueil"
+                 class="kb-navbar__logo" width="398" height="400">
+        </a>
+    </nav>
+</header>
+<main id="contenu" class="kb-main container py-5 my-lg-5">
+    {% block body %}{% endblock %}
+</main>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{% extends 'layout/_error.html.twig' %}
+
+{% block title %}Page introuvable{% endblock %}
+
+{% block body %}
+    <div class="kb-error kb-error--404">
+        <span class="kb-error__code" aria-hidden="true">404</span>
+        <h1 class="kb-error__title">Affiche arrachée.</h1>
+        <p class="kb-error__text">Cette page a été décollée ou n'a jamais été posée. Le reste du mur est encore là.</p>
+        <div class="kb-error__actions">
+            <a href="{{ path('app_homepage') }}" class="btn btn-light">Accueil</a>
+            <a href="{{ path('app_catalog') }}" class="btn btn-outline-light">Catalogue</a>
+        </div>
+    </div>
+{% endblock %}

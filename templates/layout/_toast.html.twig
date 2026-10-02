@@ -1,16 +1,33 @@
-{% for label, messages in app.flashes %}
-    {% for message in messages %}
-        <div class="toast-container top-10 end-0 p-3">
-            <div id="test" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header">
-                    <div class="badge-toast toast-{{ label|default('success') }} rounded me-2"></div>
-                    <strong class="me-auto">Kale Borroka Records</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+{# Flash messages. Errors interrupt (role="alert"), the rest is announced politely (role="status"). #}
+{% set toast_types = {
+    success: {icon: 'bi-check-circle-fill', prefix: null},
+    danger: {icon: 'bi-exclamation-octagon-fill', prefix: 'Erreur :'},
+    warning: {icon: 'bi-exclamation-triangle-fill', prefix: 'Attention :'},
+    info: {icon: 'bi-info-circle-fill', prefix: 'Info :'},
+} %}
+{# Labels set by bundles, mapped onto ours. #}
+{% set toast_aliases = {reset_password_error: 'danger'} %}
+{% set flashes = app.flashes %}
+{% if flashes is not empty %}
+    <div class="kb-toasts">
+        {% for label, messages in flashes %}
+            {% set type = toast_aliases[label] ?? (toast_types[label] is defined ? label : 'info') %}
+            {% for message in messages %}
+                <div class="toast show toast-{{ type }}"
+                     role="{{ type == 'danger' ? 'alert' : 'status' }}"
+                     aria-live="{{ type == 'danger' ? 'assertive' : 'polite' }}"
+                     aria-atomic="true">
+                    <i class="bi {{ toast_types[type].icon }}" aria-hidden="true"></i>
+                    <div class="toast-body">
+                        {% if toast_types[type].prefix %}<strong>{{ toast_types[type].prefix }}</strong>{% endif %}
+                        {{ message }}
+                    </div>
+                    <button type="button"
+                            class="btn-close{{ type == 'success' ? ' btn-close-white' }}"
+                            data-bs-dismiss="toast"
+                            aria-label="Fermer"></button>
                 </div>
-                <div class="toast-body">
-                    {{ message }}
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-{% endfor %}
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endif %}

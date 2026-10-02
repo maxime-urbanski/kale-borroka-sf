@@ -1,0 +1,173 @@
+// Article card (KbrCard): square cover, badges top right, meta, artist, title, price.
+.kb-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    height: 100%;
+    color: $kb-noir;
+
+    &__cover {
+        position: relative;
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        border: 2px solid $kb-noir;
+        background: $kb-papier-2;
+        container-type: inline-size;
+
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .kb-cover-missing {
+            height: 100%;
+            border: 0;
+            padding: 9%;
+            font-size: max(9px, 4.6cqw);
+        }
+    }
+
+    &__badges {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 6px;
+    }
+
+    // Sold out: stamp over a faded cover, struck price.
+    &__stamp {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+
+        .kb-stamp {
+            background: $kb-papier;
+            font-size: max(18px, 13cqw);
+            letter-spacing: .06em;
+            transform: rotate(-12deg);
+        }
+    }
+
+    &--sold &__cover img {
+        filter: grayscale(1);
+        opacity: .4;
+    }
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+        flex: 1;
+    }
+
+    &__meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: $kb-gris;
+
+        > :first-child {
+            font-weight: 600;
+            color: $kb-noir;
+        }
+
+        > :last-child:not(:first-child) {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    // The title link covers the whole card.
+    &__link {
+        font-weight: 800;
+        font-size: 1rem;
+        line-height: 1.25;
+        color: $kb-noir;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: .01em;
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+        }
+
+        &:hover {
+            color: $kb-rouge;
+        }
+
+        &:focus-visible {
+            outline: 0 !important;
+            box-shadow: none;
+
+            &::after {
+                outline: 3px solid $kb-noir;
+                outline-offset: 3px;
+                box-shadow: 0 0 0 3px $kb-papier;
+            }
+        }
+    }
+
+    &:hover &__cover {
+        box-shadow: $kb-shadow;
+    }
+
+    &__subtitle {
+        font-size: .9375rem;
+        line-height: 1.3;
+        color: $kb-encre-2;
+    }
+
+    &__footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: auto;
+        padding-top: 6px;
+    }
+}
+
+// Tracklist: Anton numbers, 1px rules, Plex Mono durations.
+.kb-tracklist {
+    border-top: 3px solid $kb-noir;
+
+    li {
+        display: grid;
+        grid-template-columns: 48px 1fr auto;
+        gap: 12px;
+        align-items: baseline;
+        padding: 12px 0;
+        border-bottom: 1px solid $kb-gris-filet;
+    }
+
+    &__number {
+        font-family: $kb-font-display;
+        font-size: 1.5rem;
+        line-height: 1;
+    }
+
+    &__name {
+        font-weight: 600;
+    }
+
+    &__duration {
+        font-family: $kb-font-mono;
+        font-size: .875rem;
+    }
+}

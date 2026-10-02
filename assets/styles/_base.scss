@@ -1,0 +1,148 @@
+// Elements, focus, motion. Target: RGAA 4.1 / WCAG 2.2 AA.
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+// Double ring, readable on paper as on black.
+:focus-visible {
+    outline: 3px solid $kb-noir !important;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 3px $kb-papier;
+}
+
+::placeholder {
+    color: $kb-gris;
+    opacity: 1;
+}
+
+::selection {
+    background: $kb-noir;
+    color: $kb-papier;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+        animation: none !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
+    text-transform: uppercase;
+    letter-spacing: .01em;
+}
+
+// 88 / 56 / 40 on desktop, 52 / 34 / 28 on mobile.
+h1, .h1 { font-size: clamp(3.25rem, 6vw + 1rem, 5.5rem); }
+h2, .h2 { font-size: clamp(2.125rem, 3.5vw + 1rem, 3.5rem); }
+h3, .h3 { font-size: clamp(1.75rem, 2vw + 1rem, 2.5rem); }
+
+a {
+    text-decoration-thickness: 2px;
+}
+
+code, kbd, samp {
+    font-family: $kb-font-mono;
+}
+
+code {
+    color: inherit;
+}
+
+hr {
+    opacity: 1;
+}
+
+// « Aller au contenu »: first focusable element of every page.
+.kb-skip-link {
+    position: absolute;
+    top: -80px;
+    left: 8px;
+    z-index: 1100;
+    padding: 12px 16px;
+    background: $kb-noir;
+    color: $kb-papier;
+    font-weight: 800;
+    font-size: .875rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+
+    &:focus {
+        top: 8px;
+        color: $kb-papier;
+    }
+}
+
+.kb-main {
+    flex: 1 0 auto;
+}
+
+// Typography helpers
+.kb-display {
+    font-family: $kb-font-display;
+    font-weight: 400;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.kb-price {
+    font-family: $kb-font-display;
+    font-weight: 400;
+    letter-spacing: .02em;
+    font-size: 1.375rem;
+    line-height: 1.1;
+
+    &--lg {
+        font-size: clamp(2.75rem, 3vw + 1.5rem, 3.75rem);
+    }
+
+    &--sold {
+        text-decoration: line-through;
+    }
+}
+
+.kb-meta {
+    font-family: $kb-font-mono;
+    font-size: .8125rem;
+    font-weight: 500;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.kb-eyebrow {
+    font-family: $kb-font-mono;
+    font-size: .75rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: $kb-gris;
+}
+
+.kb-label {
+    font-size: .9375rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+.kb-lead {
+    font-size: $lead-font-size;
+    line-height: 1.55;
+    max-width: 70ch;
+}
+
+.text-kb-gris { color: $kb-gris !important; }
+.text-kb-rouge-fonce { color: $kb-rouge-fonce !important; }
+.bg-kb-papier-2 { background-color: $kb-papier-2 !important; }
+
+// Target of the skip link: focused, but no ring around the whole page.
+.kb-main:focus-visible {
+    outline: 0 !important;
+    box-shadow: none;
+}

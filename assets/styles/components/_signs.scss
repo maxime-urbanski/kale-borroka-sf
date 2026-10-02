@@ -1,0 +1,136 @@
+// Signs of the poster wall. Rotations are decorative (±1° max on titles) and never touch running text.
+
+// Banner title: black strip, paper Anton capitals.
+.kb-banner {
+    display: inline-block;
+    align-self: flex-start;
+    margin: 0;
+    padding: 8px 18px 6px;
+    background: $kb-noir;
+    color: $kb-papier;
+    font-family: $kb-font-display;
+    font-weight: 400;
+    font-size: clamp(2.125rem, 2vw + 1.5rem, 3rem);
+    line-height: 1;
+    text-transform: uppercase;
+    transform: rotate(-1deg);
+
+    &--right {
+        transform: rotate(1deg);
+    }
+
+    // Red on black only from 32px up: the banner stays red on paper.
+    &--rouge {
+        background: $kb-rouge;
+    }
+
+    &--sm {
+        padding: 6px 14px 4px;
+        font-size: 2.125rem;
+    }
+}
+
+// Paper inset on a black block (« Kale Borroka » in the hero).
+.kb-inset {
+    display: inline-block;
+    padding: 4px 10px 0;
+    background: $kb-papier;
+    color: $kb-noir;
+}
+
+// Rubber stamp: sold out, pre-order, empty.
+.kb-stamp {
+    display: inline-block;
+    padding: 2px 14px;
+    border: 3px solid $kb-rouge;
+    outline: 1.5px solid $kb-rouge;
+    outline-offset: 3px;
+    color: $kb-rouge;
+    font-family: $kb-font-display;
+    font-size: 1.75rem;
+    letter-spacing: .08em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    transform: rotate(-6deg);
+}
+
+// Tape: highlights one thing per screen.
+.kb-tape {
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        z-index: 1;
+        width: 120px;
+        height: 28px;
+        margin-left: -60px;
+        background: rgba(243, 238, 228, .8);
+        transform: rotate(-6deg);
+        pointer-events: none;
+    }
+}
+
+// Ikurriña rule: decorative only (aria-hidden).
+.kb-ikurrina {
+    display: inline-flex;
+    width: 90px;
+    height: 18px;
+
+    > span {
+        flex: 1;
+
+        &:nth-child(1) { background: $kb-rouge; }
+        &:nth-child(2) { background: $kb-vert; }
+        &:nth-child(3) { background: $kb-papier; border: 1px solid $kb-noir; }
+    }
+}
+
+// Solid offset shadows.
+.kb-shadow { box-shadow: $kb-shadow; }
+.kb-shadow-rouge { box-shadow: $kb-shadow-rouge; }
+
+// Rules: 1px list separators, 2px fields/cards/buttons, 3px structure, 2px dashed warning/addition.
+.kb-rule-1 { border-top: 1px solid $kb-gris-filet; }
+.kb-rule-2 { border-top: 2px solid $kb-noir; }
+.kb-rule-3 { border-top: 3px solid $kb-noir; }
+.kb-rule-dashed { border-top: 2px dashed $kb-noir; }
+
+// Missing cover: square halftone placeholder.
+.kb-cover-missing {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    aspect-ratio: 1 / 1;
+    padding: 10px;
+    border: 2px solid $kb-noir;
+    background-color: $kb-papier-2;
+    font-family: $kb-font-mono;
+    font-size: .625rem;
+    text-transform: uppercase;
+
+    .bi {
+        font-size: 1.375rem;
+    }
+}
+
+// Loading card (aria-busy="true" on the container).
+.kb-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    &__cover {
+        aspect-ratio: 1 / 1;
+        border: 2px solid $kb-gris-clair;
+        background-color: $kb-papier-2;
+    }
+
+    &__line {
+        display: block;
+        height: 14px;
+        background: $kb-papier-3;
+    }
+}

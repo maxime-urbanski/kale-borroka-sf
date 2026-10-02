@@ -1,0 +1,34 @@
+{% extends 'layout/_error.html.twig' %}
+
+{% set titles = {
+    401: 'Connexion requise',
+    403: 'Accès refusé',
+    405: 'Action impossible',
+    410: 'Page retirée',
+    429: 'Trop de requêtes',
+} %}
+{% set title = status_code >= 500 ? 'Erreur du serveur' : (titles[status_code] ?? 'Page inaccessible') %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    {% if status_code >= 500 %}
+        <div class="kb-error kb-error--500">
+            <span class="kb-error__code" aria-hidden="true">{{ status_code }}</span>
+            <h1 class="kb-error__title">La photocopieuse a calé.</h1>
+            <p class="kb-error__text">Erreur de notre côté. Ton panier est sauvegardé ; réessaie dans quelques minutes.</p>
+            {# Not a link to the failed URI: Symfony renders this page as a GET, and a POST action would answer 405. #}
+            <a href="{{ path('app_homepage') }}" class="btn btn-dark align-self-start">Retour à l'accueil</a>
+        </div>
+    {% else %}
+        <div class="kb-error kb-error--404">
+            <span class="kb-error__code" aria-hidden="true">{{ status_code }}</span>
+            <h1 class="kb-error__title">{{ title }}.</h1>
+            <p class="kb-error__text">Cette page ne t'est pas accessible. Le reste du mur est encore là.</p>
+            <div class="kb-error__actions">
+                <a href="{{ path('app_homepage') }}" class="btn btn-light">Accueil</a>
+                <a href="{{ path('app_catalog') }}" class="btn btn-outline-light">Catalogue</a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,113 @@
+// Notifications: success black, error red-bordered, warning dashed, info kraft.
+.alert {
+    --bs-alert-padding-x: 16px;
+    --bs-alert-padding-y: 14px;
+    --bs-alert-border-width: 2px;
+    --bs-alert-color: #{$kb-noir};
+    --bs-alert-bg: #{$kb-papier};
+    --bs-alert-border-color: #{$kb-noir};
+    --bs-alert-link-color: currentcolor;
+    border-width: var(--bs-alert-border-width);
+    font-size: .9375rem;
+    line-height: 1.4;
+
+    &.d-flex,
+    &.kb-alert {
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    > .bi:first-child {
+        font-size: 1.25rem;
+        line-height: 1;
+    }
+}
+
+.kb-alert {
+    display: flex;
+}
+
+.alert-success,
+.alert-dark {
+    --bs-alert-color: #{$kb-papier};
+    --bs-alert-bg: #{$kb-noir};
+    --bs-alert-border-color: #{$kb-noir};
+}
+
+.alert-danger,
+.alert-primary {
+    --bs-alert-border-width: 3px;
+    --bs-alert-color: #{$kb-rouge-fonce};
+    --bs-alert-bg: #{$kb-papier};
+    --bs-alert-border-color: #{$kb-rouge};
+}
+
+.alert-warning {
+    --bs-alert-color: #{$kb-noir};
+    --bs-alert-bg: #{$kb-papier};
+    --bs-alert-border-color: #{$kb-noir};
+    border-style: dashed;
+}
+
+.alert-info,
+.alert-secondary,
+.alert-light {
+    --bs-alert-color: #{$kb-noir};
+    --bs-alert-bg: #{$kb-papier-2};
+    --bs-alert-border-color: #{$kb-noir};
+}
+
+// Flash messages, announced by their live region (role="status" or "alert").
+.kb-toasts {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1090;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: calc(100vw - 32px);
+}
+
+.toast {
+    --bs-toast-color: #{$kb-noir};
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    line-height: 1.4;
+
+    &:not(.show) {
+        display: none;
+    }
+
+    .toast-body {
+        flex: 1;
+        padding: 0;
+    }
+
+    > .bi {
+        font-size: 1.25rem;
+        line-height: 1;
+    }
+
+    .btn-close {
+        flex: none;
+    }
+}
+
+.toast-success {
+    --bs-toast-bg: #{$kb-noir};
+    --bs-toast-color: #{$kb-papier};
+    --bs-toast-box-shadow: #{$kb-shadow-rouge};
+}
+
+.toast-danger {
+    --bs-toast-border-width: 3px;
+    --bs-toast-border-color: #{$kb-rouge};
+    --bs-toast-color: #{$kb-rouge-fonce};
+}
+
+.toast-warning {
+    border-style: dashed;
+}

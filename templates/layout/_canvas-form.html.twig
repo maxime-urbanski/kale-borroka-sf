@@ -5,7 +5,7 @@
 
 {% if action_create %}
     <div
-        class="card justify-content-center align-items-center border border-secondary shadow p-3 bg-body-white rounded px-5 py-3 cursor-pointer h-100"
+        class="card justify-content-center align-items-center border border-dark shadow p-3 rounded px-5 py-3 cursor-pointer h-100"
         data-bs-toggle="offcanvas"
         data-bs-target="#offcanvasRight"
         aria-controls="offcanvasRight"
@@ -25,11 +25,13 @@
 {% endif %}
 
 {% if action_filter %}
-    <button class="btn btn-sm btn-outline-dark btn-lg h-100"
+    <button class="btn btn-outline-dark"
+            type="button"
             data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasLeft"
             aria-controls="offcanvasLeft">
-        <i class="bi bi-filter-left"></i>
+        <i class="bi bi-sliders" aria-hidden="true"></i>
+        Filtres
     </button>
 {% endif %}
 
@@ -47,7 +49,7 @@
         <button type="button"
                 class="btn-close"
                 data-bs-dismiss="offcanvas"
-                aria-label="Close"></button>
+                aria-label="Fermer"></button>
     </div>
     <div class="offcanvas-body overflow-y-hidden position-relative">
         <div class="overflow-y-scroll h-100 no-scroll-bar">
@@ -106,7 +108,7 @@
             {% endif %}
         </div>
         <div class="d-grid col-12 mx-auto mt-3 order-last position-absolute bottom-0 start-0">
-            <div class="bg-white px-2 py-4 border-top">
+            <div class="bg-body px-2 py-4 border-top">
                 <button class="btn btn-outline-dark w-100" type="submit">Envoyer</button>
                 {% if action_filter and (filters.artists or filters.styles or filters.labels) %}
                     {% include 'partials/_obfuscation_link.html.twig' with {

@@ -4,7 +4,7 @@
     <div class="container py-5">
         <h3>Merci pour votre commande n° {{ order.reference }}</h3>
         <p>
-            Statut : <span class="badge border border-primary text-primary">{{ order.status.label }}</span>
+            Statut : <span class="kb-badge kb-badge--outline">{{ order.status.label }}</span>
         </p>
         <ul class="list-unstyled">
             {% for line in order.orderDetails %}

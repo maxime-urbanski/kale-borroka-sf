@@ -1,15 +1,19 @@
-<div class="filter-accordion cursor-pointer mb-4 {{ order is defined ? order : '' }}"
-     data-controller="filter-accordion"
-     data-action="click->filter-accordion#open"
->
-    <div class="filter-label bg-black text-white fw-bolder rounded-2">
-        {{ form_label(form) }}
-        <i class="bi bi-chevron-compact-down {{ opened is defined ? 'rotate-180' : '' }}"
-           data-filter-accordion-target="icon">
-        </i>
-    </div>
-    <div class="filter-body {{ opened is defined ? 'opened' : '' }} no-scroll-bar"
+<div class="kb-filter {{ order is defined ? order : '' }}"
+     data-controller="filter-accordion">
+    <button type="button" class="kb-filter__toggle"
+            data-action="filter-accordion#open"
+            aria-expanded="{{ opened is defined ? 'true' : 'false' }}"
+            aria-controls="filter-{{ form.vars.id }}">
+        <span>{{ form.vars.label|default(form.vars.name|humanize) }}</span>
+        <i class="bi {{ opened is defined ? 'bi-dash-lg' : 'bi-plus-lg' }}" aria-hidden="true"
+           data-filter-accordion-target="icon"></i>
+    </button>
+    <div class="kb-filter__body {{ opened is defined ? 'opened' : '' }} no-scroll-bar"
+         id="filter-{{ form.vars.id }}"
          data-filter-accordion-target="body">
-        {{ form_widget(form) }}
+        <fieldset>
+            <legend class="visually-hidden">{{ form.vars.label|default(form.vars.name|humanize) }}</legend>
+            {{ form_widget(form) }}
+        </fieldset>
     </div>
 </div>
