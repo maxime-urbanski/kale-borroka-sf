@@ -74,7 +74,7 @@ class LayoutTest extends WebTestCase
     public static function errors(): iterable
     {
         yield '404' => [new NotFoundHttpException(), 'Affiche arrachée.'];
-        yield '403' => [new AccessDeniedHttpException(), 'Forbidden'];
+        yield '403' => [new AccessDeniedHttpException(), 'Accès refusé.'];
         yield '500' => [new \RuntimeException(), 'La photocopieuse a calé.'];
     }
 

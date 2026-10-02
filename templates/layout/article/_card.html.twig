@@ -11,7 +11,7 @@
                  alt="Pochette : {{ artist ? artist.name ~ ', ' }}{{ article.name }}"
                  loading="lazy">
         {% else %}
-            <div class="kb-cover-missing kb-tex-halftone" role="img"
+            <div class="kb-cover-missing" role="img"
                  aria-label="Pochette à venir : {{ article.name }}">
                 <i class="bi bi-vinyl" aria-hidden="true"></i>
                 <span aria-hidden="true">Pochette<br>à venir</span>
@@ -24,7 +24,7 @@
             {% if article is release and article.limitedTo %}
                 <span class="kb-badge kb-badge--sm"><i class="bi bi-hash" aria-hidden="true"></i>Ltd {{ article.limitedTo }} ex.</span>
             {% endif %}
-            {% if article.itemCondition.value == 'used' %}
+            {% if article.itemCondition is same as(constant('App\\Enum\\ItemCondition::USED')) %}
                 <span class="kb-badge kb-badge--sm kb-badge--papier"><i class="bi bi-arrow-repeat" aria-hidden="true"></i>{{ article.itemCondition.label }}</span>
             {% endif %}
         </div>

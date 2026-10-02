@@ -8,7 +8,7 @@
                 Fait main, sans patron.
             </p>
         </div>
-        {% if pages.about ?? [] is not empty %}
+        {% if (pages.about ?? []) is not empty %}
             <nav class="kb-footer__col" aria-labelledby="footer-about">
                 <span class="kb-footer__heading" id="footer-about">À propos</span>
                 {% for page in pages.about %}

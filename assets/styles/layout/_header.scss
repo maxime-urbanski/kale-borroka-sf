@@ -1,10 +1,15 @@
 // Shop header (KbrHeader): black strip, logo, main nav with the catalogue mega-menu, account, cart.
 .kb-header {
-    position: relative;
-    z-index: 1030;
     background: $kb-papier;
     color: $kb-noir;
     border-bottom: 3px solid $kb-noir;
+
+    // Above the page for the mega-menu. Not below lg: a stacking context would put the menu
+    // offcanvas under the backdrop Bootstrap appends to <body>.
+    @include media-breakpoint-up(lg) {
+        position: relative;
+        z-index: 1030;
+    }
 
     &__strip {
         display: flex;

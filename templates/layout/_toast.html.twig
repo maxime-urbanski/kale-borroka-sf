@@ -5,11 +5,13 @@
     warning: {icon: 'bi-exclamation-triangle-fill', prefix: 'Attention :'},
     info: {icon: 'bi-info-circle-fill', prefix: 'Info :'},
 } %}
+{# Labels set by bundles, mapped onto ours. #}
+{% set toast_aliases = {reset_password_error: 'danger'} %}
 {% set flashes = app.flashes %}
 {% if flashes is not empty %}
     <div class="kb-toasts">
         {% for label, messages in flashes %}
-            {% set type = toast_types[label] is defined ? label : 'info' %}
+            {% set type = toast_aliases[label] ?? (toast_types[label] is defined ? label : 'info') %}
             {% for message in messages %}
                 <div class="toast show toast-{{ type }}"
                      role="{{ type == 'danger' ? 'alert' : 'status' }}"
