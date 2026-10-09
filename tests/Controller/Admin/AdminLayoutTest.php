@@ -100,6 +100,23 @@ class AdminLayoutTest extends WebTestCase
         self::assertStringContainsString('utilisez le format 3:45', $crawler->text());
     }
 
+    public function testTrackPositionsAreTypedAsSideAndNumber(): void
+    {
+        $album = $this->quartierMaudit();
+        $form = $this->client->request('GET', \sprintf('/admin/album/%d/edit', $album->getId()))->filter('form[name="Album"]')->form();
+        $values = $form->getPhpValues();
+        self::assertSame('A1', $values['Album']['tracklists'][0]['position'] ?? null, 'the position is in the track row');
+
+        $values['Album']['tracklists'] = [['track' => '1', 'position' => 'c3', 'name' => 'Intro', 'duration' => '3:45']];
+        $this->client->request('POST', $form->getUri(), $values);
+        self::assertResponseRedirects();
+        self::assertSame('C3', $this->entityManager()->getRepository(Song::class)->findOneBy(['name' => 'Intro'], ['id' => 'DESC'])?->getPosition(), 'stored upper case');
+
+        $values['Album']['tracklists'] = [['track' => '1', 'position' => 'Face A', 'name' => 'Intro', 'duration' => '3:45']];
+        $crawler = $this->client->request('POST', $form->getUri(), $values);
+        self::assertStringContainsString('une lettre de face puis un numéro', $crawler->text());
+    }
+
     public function testArtistLinksAreAListOfUrls(): void
     {
         $artist = $this->entityManager()->getRepository(Artist::class)->findOneBy(['name' => 'Brixton Cats']);
@@ -119,8 +136,11 @@ class AdminLayoutTest extends WebTestCase
         $crawler = $this->client->request('GET', \sprintf('/admin/album/%d', $this->quartierMaudit()->getId()));
 
         self::assertResponseIsSuccessful();
+        self::assertSame(['Face A', 'Face B'], $crawler->filter('.admin-tracklist-side')->each(static fn (Crawler $title): string => trim($title->text())));
         $tracks = $crawler->filter('ol.admin-tracklist > li');
         self::assertCount(10, $tracks);
+        self::assertStringStartsWith('A1', trim($tracks->first()->text()));
+        self::assertStringContainsString('3:42', $tracks->eq(5)->text(), 'durations as on the shop');
         self::assertStringContainsString('Pour les braves', $tracks->first()->text());
         self::assertStringContainsString('Quartier Maudit', $tracks->last()->text());
     }

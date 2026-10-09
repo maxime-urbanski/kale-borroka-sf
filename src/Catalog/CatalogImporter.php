@@ -37,7 +37,7 @@ final readonly class CatalogImporter
     private const array LABEL_KEYS = ['name', 'website', 'distro'];
     private const array ARTIST_KEYS = ['name', 'country', 'links', 'description'];
     private const array ALBUM_KEYS = ['artist', 'name', 'type', 'date', 'production', 'styles', 'labels', 'note', 'tracks', 'releases'];
-    private const array TRACK_KEYS = ['title', 'duration', 'artist'];
+    private const array TRACK_KEYS = ['position', 'title', 'duration', 'artist'];
     private const array RELEASE_KEYS = ['sku', 'name', 'format', 'stock', 'price', 'color', 'edition', 'limitedTo', 'pressingYear', 'catalogNumber', 'label', 'gtin', 'condition', 'published'];
 
     public function __construct(
@@ -234,6 +234,8 @@ final readonly class CatalogImporter
         }
 
         $album = $this->existingAlbum($releases, $artist, $name);
+        // Not from getId(): the SEQUENCE strategy gives the new album its id on persist().
+        $newAlbum = null === $album;
 
         if (null === $album) {
             $album = $this->newAlbum($node, $artist, $name, $state, $report, $errors);
@@ -241,18 +243,20 @@ final readonly class CatalogImporter
             $report->skipped('album '.$album->fullName());
         }
 
-        $newAlbum = null === $album->getId();
-
         foreach ($releases as $releaseNode) {
             $release = $this->release($releaseNode, $album, $state, $report);
 
-            if (!$newAlbum && null !== $release) {
+            // Each with its own entry of the file: a pressing skipped before it would shift the
+            // index of the album's collection.
+            if (null !== $release) {
                 $this->validate($release, $releaseNode->path, $errors);
             }
         }
 
         if ($newAlbum) {
-            $this->validate($album, $node->path, $errors);
+            // Its songs are validated with it (Assert\Valid), named as in the file; its pressings
+            // were just above.
+            $this->validate($album, $node->path, $errors, ['tracklists' => 'tracks'], 'releases');
         }
     }
 
@@ -309,6 +313,7 @@ final readonly class CatalogImporter
             $song = (new Song())
                 ->setName($trackNode->string('title'))
                 ->setTrack($index + 1)
+                ->setPosition($trackNode->optionalString('position'))
                 ->setDuration($this->duration($trackNode))
                 ->addArtist($this->trackArtist($trackNode, $state, $report, $errors) ?? $artist);
             $album->addTracklist($song);
@@ -534,12 +539,20 @@ final readonly class CatalogImporter
     }
 
     /**
-     * @param list<string> $errors
+     * @param list<string>          $errors
+     * @param array<string, string> $renamed property name => key of the file
+     * @param string|null           $skipped property whose violations are reported elsewhere
      */
-    private function validate(object $entity, string $path, array &$errors): void
+    private function validate(object $entity, string $path, array &$errors, array $renamed = [], ?string $skipped = null): void
     {
         foreach ($this->validator->validate($entity) as $violation) {
-            $errors[] = \sprintf('%s.%s : %s', $path, $violation->getPropertyPath(), $violation->getMessage());
+            $property = $violation->getPropertyPath();
+
+            if (null !== $skipped && 1 === preg_match('/^'.preg_quote($skipped, '/').'\b/', $property)) {
+                continue;
+            }
+
+            $errors[] = \sprintf('%s.%s : %s', $path, strtr($property, $renamed), $violation->getMessage());
         }
     }
 }

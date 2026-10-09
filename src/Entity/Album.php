@@ -12,6 +12,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: AlbumRepository::class)]
 class Album
@@ -51,6 +52,7 @@ class Album
     /** @var Collection<int, Song> */
     #[ORM\ManyToMany(targetEntity: Song::class, inversedBy: 'albums', cascade: ['persist'])]
     #[ORM\OrderBy(['track' => 'ASC'])]
+    #[Assert\Valid]
     private Collection $tracklists;
 
     /** @var Collection<int, Style> */
@@ -91,6 +93,55 @@ class Album
         $this->styles = new ArrayCollection();
         $this->releases = new ArrayCollection();
         $this->images = new ArrayCollection();
+    }
+
+    /**
+     * Sides (TracklistLayout) only mean something when every track has a position, once, in
+     * track order: A1, A2, B1… A tracklist without any position is a CD's.
+     */
+    #[Assert\Callback]
+    public function validateTracklistPositions(ExecutionContextInterface $context): void
+    {
+        $positions = $this->tracklists->map(static fn (Song $song): ?string => $song->getPosition())->getValues();
+        $given = array_values(array_filter($positions, static fn (?string $position): bool => null !== $position));
+
+        if ([] === $given) {
+            return;
+        }
+
+        $twice = null;
+        $seen = [];
+
+        foreach ($given as $position) {
+            if (isset($seen[$position])) {
+                $twice ??= $position;
+            }
+            $seen[$position] = true;
+        }
+
+        $message = match (true) {
+            \count($given) !== \count($positions) => 'Indiquez la face de tous les morceaux, ou d\'aucun.',
+            null !== $twice => \sprintf('Position %s en double.', $twice),
+            $given !== self::sortedPositions($given) => 'Les positions doivent suivre l\'ordre des morceaux (A1 avant A2…).',
+            default => null,
+        };
+
+        if (null !== $message) {
+            $context->buildViolation($message)->atPath('tracklists')->addViolation();
+        }
+    }
+
+    /**
+     * @param list<string> $positions
+     *
+     * @return list<string>
+     */
+    private static function sortedPositions(array $positions): array
+    {
+        // By side, then by number on it: A2 before A10.
+        usort($positions, static fn (string $a, string $b): int => [$a[0], (int) substr($a, 1)] <=> [$b[0], (int) substr($b, 1)]);
+
+        return $positions;
     }
 
     public function getId(): ?int
