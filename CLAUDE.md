@@ -54,7 +54,7 @@ docker compose exec php vendor/bin/php-cs-fixer fix --dry-run --diff
 docker compose exec -T php bin/console -e test doctrine:schema:validate
 ```
 
-CI (`.github/workflows/ci.yml`) runs on pull requests and on pushes to `main` only — pushes to `dev` (the default branch) are not checked unless they go through a PR. It also lints the `Dockerfile` with hadolint.
+CI (`.github/workflows/ci.yml`) runs on pull requests and on pushes to `dev` (the default branch) and `main`; on a push, once the tests pass, it calls `deploy.yml`. It also lints the `Dockerfile` with hadolint and validates the edge Caddyfile (`deploy/edge/validate.sh`).
 
 Assets (yarn, run on the host):
 
@@ -68,7 +68,7 @@ Without a built `public/build/`, every page fails with `Asset manifest file … 
 
 Switching between the dev and prod stacks on one machine requires dropping the `caddy_data`/`caddy_config` volumes first: the root-run dev container leaves a root-owned local CA the `www-data` prod container cannot read.
 
-Deployment (`docs/deployment.md`): prod and preprod share one VPS behind an edge Caddy (`deploy/edge/`, TLS, basic auth + noindex on `preprod.`); each stack is `compose.yaml` + `compose.prod.yaml` + `deploy/compose.app.yaml` (GHCR image `sha-<commit>`, `SERVER_NAME=:80`, no published port, `SYMFONY_TRUSTED_PROXIES=PRIVATE_SUBNETS`). `.github/workflows/deploy.yml` builds and deploys on push: `dev` → preprod, `main` → prod, over SSH to `deploy/deploy.sh`, the key's forced command, which only accepts a commit of the environment's branch. Mail leaves from `MAILER_DEFAULT_SENDER` (default `From` in `mailer.yaml`; never set `from()` in code): OVH's Zimbra relays nothing else.
+Deployment (`docs/deployment.md`): prod and preprod share one VPS behind an edge Caddy (`deploy/edge/`, TLS, basic auth + noindex on `preprod.`, one network per stack); each stack is `compose.yaml` + `compose.prod.yaml` + `deploy/compose.app.yaml` (GHCR image `sha-<commit>`, `SERVER_NAME=:80`, no published port, trusted proxies `PRIVATE_SUBNETS` with `X-Forwarded-For`/`-Proto` only, `SYMFONY_TRUSTED_HOSTS`). `dev` → preprod, `main` → prod, over SSH to `deploy/deploy.sh`, the forced command of one key per environment: it only moves forward on the branch, runs the migrations in a one-off container before replacing the stack, and refreshes the edge on main's head. Sessions are files in `var/sessions` (a volume in prod) so a deploy keeps carts and logins; `DEFAULT_URI` feeds `router.default_uri`. Mail leaves from `MAILER_DEFAULT_SENDER` (default `From` in `mailer.yaml`; never set `from()` in code): OVH's Zimbra relays nothing else.
 
 Mailpit UI: http://localhost:8025 (`MAILER_DSN=smtp://mailer:1025`, `MAILPIT_PORT` to move the UI port).
 

@@ -36,6 +36,8 @@ services:
       - uploads:/app/public/upload
       - media:/app/public/media
       - invoices:/app/private/invoices
+      # Sessions (logins, carts) outlive the container, see config/packages/framework.yaml.
+      - sessions:/app/var/sessions
 
   database:
     environment:
@@ -45,3 +47,4 @@ volumes:
   uploads:
   media:
   invoices:
+  sessions:

@@ -104,7 +104,7 @@ COPY --link --exclude=frankenphp/ . ./
 COPY --link --from=assets_builder /app/public/build public/build
 
 RUN <<-EOF
-	mkdir -p var/cache var/log var/share
+	mkdir -p var/cache var/log var/share var/sessions
 	# VichUploader destinations, see config/packages/vich_uploader.yaml
 	mkdir -p public/upload/albums public/media private/invoices
 	composer dump-autoload --classmap-authoritative --no-dev
@@ -176,7 +176,7 @@ COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/var /app/var
 COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/public/upload /app/public/upload
 COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/public/media /app/public/media
 COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/private /app/private
-RUN chmod g=u /app/var /app/public/upload /app/public/media /app/private /app/private/invoices
+RUN chmod g=u /app/var /app/var/sessions /app/public/upload /app/public/media /app/private /app/private/invoices
 
 COPY --link --chmod=755 frankenphp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 

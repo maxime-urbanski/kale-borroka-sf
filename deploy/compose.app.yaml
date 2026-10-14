@@ -4,7 +4,7 @@
 services:
   php:
     # Built by .github/workflows/deploy.yml, one tag per commit.
-    image: ghcr.io/maxime-urbanski/kale-borroka-sf:${IMAGE_TAG:?IMAGE_TAG must be set}
+    image: ${IMAGE:-ghcr.io/maxime-urbanski/kale-borroka-sf}:${IMAGE_TAG:?IMAGE_TAG must be set}
     build: !reset null
     environment:
       # TLS ends at the edge Caddy: FrankenPHP serves plain HTTP on the Docker network.
@@ -12,10 +12,15 @@ services:
       DEFAULT_URI: ${DEFAULT_URI:?DEFAULT_URI must be set}
       MAILER_DSN: ${MAILER_DSN:?MAILER_DSN must be set}
       MAILER_DEFAULT_SENDER: ${MAILER_DEFAULT_SENDER:?MAILER_DEFAULT_SENDER must be set}
-      # No published port: only the edge Caddy reaches this container, from the Docker
-      # network. Trusting its X-Forwarded-* headers gives Symfony the visitor's address
-      # (login throttling) and HTTPS (secure cookies, https:// URLs).
+      # No published port: only the edge Caddy reaches this container, over a network of
+      # its own. Trusting its X-Forwarded-For and -Proto gives Symfony the visitor's address
+      # (login throttling) and HTTPS (secure cookies, https:// URLs). Not -Port nor -Host,
+      # which Caddy passes on as the client sent them.
       SYMFONY_TRUSTED_PROXIES: PRIVATE_SUBNETS
+      SYMFONY_TRUSTED_HEADERS: x-forwarded-for,x-forwarded-proto
+      # The environment's own domain only, e.g. '^kale-borroka-records\.com$': a request
+      # with another Host must not get links to it (password reset mails).
+      SYMFONY_TRUSTED_HOSTS: ${TRUSTED_HOSTS:?TRUSTED_HOSTS must be set}
     ports: !reset []
     networks:
       default:
@@ -25,5 +30,7 @@ services:
           - ${EDGE_ALIAS:?EDGE_ALIAS must be set}
 
 networks:
+  # edge-prod or edge-preprod, created by deploy/edge/compose.yaml.
   edge:
+    name: ${EDGE_NETWORK:?EDGE_NETWORK must be set}
     external: true

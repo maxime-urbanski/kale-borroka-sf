@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller\Security;
 
-use App\Tests\Order\OrderTestTrait;
+use App\Tests\DatabaseIsolationTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Mime\Address;
@@ -16,7 +16,7 @@ use Symfony\Component\Mime\Email;
  */
 class MailSenderTest extends WebTestCase
 {
-    use OrderTestTrait;
+    use DatabaseIsolationTrait;
 
     private KernelBrowser $client;
 

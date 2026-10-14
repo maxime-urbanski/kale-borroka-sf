@@ -4,15 +4,22 @@ on:
   push:
     branches:
       - main
+      # dev too: what a merge produces is tested before deploy.yml sends it to preprod.
+      - dev
   pull_request: ~
   workflow_dispatch: ~
 
 permissions:
   contents: read
 
+# Actions pinned by commit: on dev and main these jobs share the GHA cache of the run that
+# builds and deploys the image (Dependabot keeps them up to date).
+#
+# A pull request cancels its previous run. Pushes to a branch queue up instead, so their
+# deploys reach the VPS in order (deploy.sh refuses to go back).
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   tests:
@@ -25,13 +32,13 @@ jobs:
       HTTP3_PORT: 443
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
       - name: Build Docker images
-        uses: docker/bake-action@v7
+        uses: docker/bake-action@018cb6412ab401ebaa809aa5f85966b74628600f # v7.4.0
         with:
           pull: true
           load: true
@@ -52,7 +59,7 @@ jobs:
         # and the dev database is not migrated, so the homepage itself answers 500.
         run: curl -v --insecure -o /dev/null https://localhost
       - name: Set up Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
           cache: yarn
@@ -79,8 +86,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Lint Dockerfile
-        uses: hadolint/hadolint-action@v3.5.0
+        uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387 # v3.5.0
+      - name: Validate the edge Caddyfile
+        run: deploy/edge/validate.sh
+
+  deploy:
+    name: Deploy
+    needs:
+      - tests
+      - lint
+    if: github.event_name == 'push'
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
