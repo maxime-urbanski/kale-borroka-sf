@@ -1,0 +1,225 @@
+// Homepage feature (FeaturedRelease): the record put up like a poster, cover taped on kraft.
+
+.kb-feature {
+    padding: 28px 0 40px;
+    border-bottom: 3px solid $kb-noir;
+    background-color: $kb-papier-2;
+
+    @include media-breakpoint-up(lg) {
+        padding: 72px 0 80px;
+    }
+
+    &__grid {
+        display: grid;
+        gap: 28px;
+        align-items: center;
+
+        @include media-breakpoint-up(lg) {
+            grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+            gap: 72px;
+        }
+    }
+
+    // Two strips of tape hold the cover.
+    &__visual {
+        position: relative;
+        width: 100%;
+        max-width: 540px;
+        margin-right: 8px;
+
+        &::before,
+        &::after {
+            content: "";
+            position: absolute;
+            z-index: 1;
+            height: 36px;
+            background: rgba($kb-papier, .78);
+            pointer-events: none;
+        }
+
+        &::before {
+            top: -16px;
+            left: 48px;
+            width: 150px;
+            transform: rotate(-7deg);
+        }
+
+        &::after {
+            right: -30px;
+            bottom: -6px;
+            width: 130px;
+            transform: rotate(-38deg);
+
+            @include media-breakpoint-down(lg) {
+                right: -12px;
+            }
+        }
+    }
+
+    &__cover,
+    &__poster {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border: 3px solid $kb-noir;
+        box-shadow: 8px 8px 0 $kb-noir;
+
+        @include media-breakpoint-up(lg) {
+            box-shadow: 14px 14px 0 $kb-noir;
+        }
+    }
+
+    &__cover {
+        object-fit: cover;
+        background-color: $kb-papier;
+    }
+
+    &__poster {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 22px;
+        background-color: $kb-rouge;
+        color: $kb-noir;
+
+        @include media-breakpoint-up(lg) {
+            padding: 40px;
+        }
+    }
+
+    &__poster-title {
+        font-family: $kb-font-display;
+        font-size: clamp(3.5rem, 7vw, 9.375rem);
+        line-height: .85;
+        text-transform: uppercase;
+        overflow-wrap: break-word;
+        hyphens: auto;
+    }
+
+    &__mono {
+        font-family: $kb-font-mono;
+        font-size: .875rem;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        max-width: 640px;
+    }
+
+    &__stamp {
+        margin: 8px 0 0;
+        font-size: 1rem;
+        transform: rotate(-3deg);
+
+        @include media-breakpoint-up(lg) {
+            font-size: 1.375rem;
+        }
+    }
+
+    &__headline {
+        margin: 0;
+        font-family: $kb-font-mono;
+        font-size: .875rem;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+
+    &__title {
+        margin: 0;
+        font-family: $kb-font-display;
+        font-weight: 400;
+        font-size: clamp(3.75rem, 5vw + 1.5rem, 7.5rem);
+        line-height: .98;
+        text-transform: uppercase;
+        overflow-wrap: break-word;
+        hyphens: auto;
+    }
+
+    // Red from 60px up only: display type, never running text.
+    &__artist {
+        display: block;
+        color: $kb-rouge;
+    }
+
+    &__text {
+        display: -webkit-box;
+        margin: 0;
+        max-width: 52ch;
+        overflow: hidden;
+        font-size: 1.1875rem;
+        line-height: 1.55;
+        text-wrap: pretty;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 5;
+        line-clamp: 5;
+    }
+
+    &__facts {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 6px 24px;
+        margin: 0;
+        font-family: $kb-font-mono;
+        font-size: .875rem;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+
+        dt {
+            font-weight: 400;
+            color: $kb-gris;
+        }
+
+        dd {
+            margin: 0;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+
+        @include media-breakpoint-down(sm) {
+            align-self: stretch;
+            flex-direction: column;
+
+            .btn {
+                width: 100%;
+            }
+        }
+    }
+
+    &--long &__poster-title {
+        font-size: clamp(2.75rem, 5vw, 6rem);
+    }
+
+    &--long &__title {
+        font-size: clamp(3rem, 4vw + 1.25rem, 6rem);
+    }
+
+    &--xlong &__poster-title {
+        font-size: clamp(2.25rem, 3.5vw, 4.5rem);
+    }
+
+    &--xlong &__title {
+        font-size: clamp(2.5rem, 3vw + 1rem, 4.5rem);
+    }
+
+    &__soldout {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 56px;
+        margin: 0;
+        padding: 0 24px;
+        border: 2px dashed $kb-noir;
+        font-weight: 800;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+}

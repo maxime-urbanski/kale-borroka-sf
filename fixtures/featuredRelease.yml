@@ -1,0 +1,14 @@
+# The homepage feature: a KBR production on pre-order, online.
+App\Entity\FeaturedRelease:
+    featured_preorder:
+        kind: '<(App\Enum\FeatureKind::PREORDER)>'
+        release: '@release_1'
+        description: "Dix titres enregistrés live, sans retouche. Premier album du quatuor, entre oi! mélodique et punk basque à l'ancienne."
+        releaseDate: '<(new \DateTimeImmutable("+1 month"))>'
+        listenUrl: 'https://kaleborroka.bandcamp.com'
+        published: true
+
+    featured_offline:
+        kind: '<(App\Enum\FeatureKind::FAVORITE)>'
+        release: '@release_2'
+        published: false

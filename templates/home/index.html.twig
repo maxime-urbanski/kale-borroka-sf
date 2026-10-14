@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    {% if feature %}
+        {% include 'home/_feature.html.twig' with {feature} only %}
+    {% endif %}
     <div class="container pt-5">
         {# lastArticles and lastProductions are queries: they only run on a cache miss. #}
         {% cache 'home_sections' tags(['article', 'album', 'style']) %}

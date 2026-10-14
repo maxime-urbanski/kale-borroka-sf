@@ -1,0 +1,92 @@
+{#
+    Homepage feature (FeaturedRelease): a pre-order, a favourite, a record to discover.
+    Never inside a {% cache %} block: it shows the stock and a CSRF token.
+#}
+{% set release = feature.release %}
+{% set album = release.album %}
+{% set artist = album ? album.artist : null %}
+{% set title = album ? album.name : release.name %}
+{% set reference = release.catalogNumber ?: (album ? album.kbrProductionId) %}
+{% set description = feature.description ?: (album ? album.note) %}
+{% set preorder = feature.kind is same as(constant('App\\Enum\\FeatureKind::PREORDER')) %}
+{% set listen_on = feature.listenUrl matches '{^https?://([^/]+\\.)?bandcamp\\.com(:\\d+)?(/|$)}i' ? ' sur Bandcamp'
+    : (feature.listenUrl matches '{^https?://([^/]+\\.)?(youtube\\.com|youtu\\.be)(:\\d+)?(/|$)}i' ? ' sur YouTube' : '') %}
+{# Display type shrinks with the title: a long one would otherwise break mid-word. #}
+{% set length_class = title|length > 24 ? ' kb-feature--xlong' : (title|length > 10 ? ' kb-feature--long') %}
+<section class="kb-feature kb-tex-grain{{ length_class }}" aria-labelledby="kb-feature-title">
+    <div class="container kb-feature__grid">
+        <div class="kb-feature__visual">
+            {% if release.coverImageName %}
+                <img src="{{ asset('upload/albums/' ~ release.coverImageName) }}"
+                     alt="Pochette : {{ artist ? artist.name ~ ', ' }}{{ title }}"
+                     class="kb-feature__cover">
+            {% else %}
+                {# Typographic poster while the cover is missing: everything on it is repeated beside. #}
+                <div class="kb-feature__poster kb-tex-grain" aria-hidden="true">
+                    <span class="kb-feature__mono">{{ reference }}</span>
+                    <span class="d-flex flex-column gap-2">
+                        <span class="kb-feature__poster-title">{{ title }}</span>
+                        <span class="kb-feature__mono">{{ artist ? artist.name ~ ' — ' }}{{ release.formatLabel }}</span>
+                    </span>
+                </div>
+            {% endif %}
+        </div>
+        <div class="kb-feature__body">
+            <p class="kb-stamp kb-feature__stamp">
+                {{ feature.kind.label }}
+                {%- if preorder and feature.releaseDate %} · sortie le <time datetime="{{ feature.releaseDate|date('Y-m-d') }}">{{ feature.releaseDate|date('d.m') }}</time>{% endif -%}
+            </p>
+            <p class="kb-feature__headline">{{ feature.headline ?: feature.kind.defaultHeadline(album and album.kbrProduction) }}</p>
+            <h1 id="kb-feature-title" class="kb-feature__title">
+                {{ title }}
+                {% if artist %}<span class="kb-feature__artist">{{ artist.name }}</span>{% endif %}
+            </h1>
+            {% if description %}
+                <p class="kb-feature__text">{{ description|nl2br }}</p>
+            {% endif %}
+            <dl class="kb-feature__facts">
+                <dt>Format</dt>
+                <dd>{{ release.formatLabel }}</dd>
+                {% if release.color %}
+                    <dt>Couleur</dt>
+                    <dd>{{ release.color }}</dd>
+                {% endif %}
+                {% if release.editionLabel %}
+                    <dt>Édition</dt>
+                    <dd>{{ release.editionLabel }}</dd>
+                {% endif %}
+                {% if release.limitedTo %}
+                    <dt>Tirage</dt>
+                    <dd>{{ release.limitedTo }} ex.</dd>
+                {% endif %}
+                {% if reference %}
+                    <dt>Réf.</dt>
+                    <dd>{{ reference }}</dd>
+                {% endif %}
+            </dl>
+            <div class="kb-feature__actions">
+                {% if release.soldOut %}
+                    <p class="kb-feature__soldout"><i class="bi bi-x-octagon" aria-hidden="true"></i>Épuisé</p>
+                {% else %}
+                    {% include 'partials/_post_button.html.twig' with {
+                        token_id: 'cart',
+                        url: path('app_cart_add', {id: release.id}),
+                        class: 'btn btn-primary btn-lg',
+                        form_class: 'd-flex',
+                        text_btn: feature.kind.callToAction ~ ' — ' ~ (release.price/100)|format_currency('EUR', [], 'fr'),
+                        icon: 'bi-bag-plus'
+                    } only %}
+                {% endif %}
+                <a href="{{ article_path(release) }}" class="btn btn-outline-dark btn-lg">Voir le disque</a>
+                {# Validated as http(s) in the admin; checked again for any other write path. #}
+                {% if feature.listenUrl matches '{^https?://}i' %}
+                    <a href="{{ feature.listenUrl }}" class="btn btn-outline-dark btn-lg" rel="noopener noreferrer">
+                        Écouter{{ listen_on }}
+                        <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+                        <span class="visually-hidden">(site externe)</span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
