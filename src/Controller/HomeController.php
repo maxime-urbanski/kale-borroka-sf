@@ -27,7 +27,7 @@ final class HomeController extends AbstractController
         return $this->render('home/index.html.twig', [
             'feature' => $featuredReleaseRepository->findCurrent($clock->now()),
             'lastArticles' => $releaseRepository->getLastReleases(),
-            'lastProductions' => $releaseRepository->getOwnProduction(true),
+            'lastProductions' => $releaseRepository->latestProductions(4),
         ]);
     }
 }

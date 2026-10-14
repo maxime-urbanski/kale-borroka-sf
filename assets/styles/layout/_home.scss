@@ -1,0 +1,82 @@
+// Homepage sections under the feature (_feature.scss): banner title, a link to the rest, cards.
+
+.kb-home-section {
+    padding: 36px 0;
+
+    @include media-breakpoint-up(lg) {
+        padding: 72px 0;
+    }
+
+    &__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 20px;
+
+        @include media-breakpoint-up(md) {
+            align-items: flex-end;
+            margin-bottom: 36px;
+        }
+
+        .kb-banner {
+            margin: 0;
+        }
+    }
+
+    // Text link from md up; a 44px square arrow below, its text kept for screen readers.
+    &__more {
+        display: flex;
+        flex: none;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px;
+        font-size: .875rem;
+        font-weight: 800;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+
+        @include media-breakpoint-down(md) {
+            justify-content: center;
+            width: 44px;
+            border: 2px solid $kb-noir;
+            font-size: 1.125rem;
+            text-decoration: none;
+        }
+    }
+
+    &__more-label {
+        @include media-breakpoint-down(md) {
+            @include visually-hidden;
+        }
+    }
+}
+
+.kb-home-shelf {
+    display: grid;
+    gap: 32px;
+    margin: 0;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    > li {
+        min-width: 0;
+    }
+
+    // Phones: a strip to swipe, bleeding off the right edge.
+    &--strip {
+        @include media-breakpoint-down(md) {
+            display: flex;
+            gap: 16px;
+            margin-right: calc(var(--bs-gutter-x) * -.5);
+            padding: 0 calc(var(--bs-gutter-x) * .5) 8px 0;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+
+            > li {
+                flex: none;
+                width: 168px;
+                scroll-snap-align: start;
+            }
+        }
+    }
+}

@@ -106,6 +106,22 @@ class HomeControllerTest extends WebTestCase
         self::assertSelectorNotExists('.kb-feature');
     }
 
+    public function testTheLatestProductionsAreListedUnderTheFeature(): void
+    {
+        $crawler = $this->client->request('GET', '/');
+
+        $section = $crawler->filter('#dernieres-prod');
+        self::assertCount(1, $section);
+        self::assertSame('Dernières prod', trim($section->filter('h2')->text()));
+        self::assertCount(4, $section->filter('.kb-card'));
+        self::assertStringContainsString('KBR#010', $section->filter('.kb-card')->first()->text());
+        self::assertCount(1, $section->filter('a[href="/production"]'), 'link to the label catalogue');
+
+        // Under the feature, before the latest articles.
+        $order = $crawler->filter('.kb-feature, #dernieres-prod, #derniers-articles')->each(static fn ($node): string => (string) ($node->attr('id') ?? 'feature'));
+        self::assertSame(['feature', 'dernieres-prod'], \array_slice($order, 0, 2));
+    }
+
     /**
      * The feature of the fixtures, with the stock of its release set: flush() saves it.
      */

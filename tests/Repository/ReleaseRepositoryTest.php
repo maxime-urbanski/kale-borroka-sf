@@ -55,4 +55,66 @@ class ReleaseRepositoryTest extends KernelTestCase
         $names = array_map(static fn (Release $release): ?string => $release->getName(), $repository->filterReleaseQuery(new \App\Data\ArticleFilterData())->getResult());
         self::assertNotContains('Brouillon jamais publié', $names);
     }
+
+    /**
+     * The homepage's « Dernières prod »: KBR productions only, newest production number
+     * first, one pressing per album.
+     */
+    public function testLatestProductionsAreTheNewestKbrNumbersOnePressingEach(): void
+    {
+        $productions = self::service(ReleaseRepository::class)->latestProductions(4)->getResult();
+
+        self::assertCount(4, $productions);
+        self::assertSame(['KBR#010', 'KBR#009', 'KBR#008', 'KBR#007'], array_map(
+            static fn (Release $release): ?string => $release->getAlbum()?->getKbrProductionId(),
+            $productions,
+        ));
+
+        foreach ($productions as $release) {
+            self::assertTrue($release->isPublished());
+        }
+    }
+
+    public function testLatestProductionsShowAnAlbumOnce(): void
+    {
+        $repository = self::service(ReleaseRepository::class);
+        $newest = $repository->latestProductions(1)->getResult()[0] ?? null;
+        self::assertInstanceOf(Release::class, $newest);
+
+        $entityManager = self::service(\Doctrine\ORM\EntityManagerInterface::class);
+        $entityManager->getConnection()->beginTransaction();
+
+        try {
+            $pressing = (clone $newest)->setName('Second pressage')->setPublished(true);
+            $entityManager->persist($pressing);
+            $entityManager->flush();
+
+            $albums = array_map(
+                static fn (Release $release): ?int => $release->getAlbum()?->getId(),
+                $repository->latestProductions(4)->getResult(),
+            );
+            self::assertSame(array_unique($albums), $albums);
+        } finally {
+            $entityManager->getConnection()->rollBack();
+        }
+    }
+
+    public function testProductionNumbersAreSortedAsNumbers(): void
+    {
+        $repository = self::service(ReleaseRepository::class);
+        $entityManager = self::service(\Doctrine\ORM\EntityManagerInterface::class);
+        $entityManager->getConnection()->beginTransaction();
+
+        try {
+            $oldest = $entityManager->getRepository(\App\Entity\Album::class)->findOneBy(['kbrProductionId' => 'KBR#001']);
+            self::assertNotNull($oldest);
+            $oldest->setKbrProductionId('KBR#1000');
+            $entityManager->getRepository(\App\Entity\Album::class)->findOneBy(['kbrProductionId' => 'KBR#002'])?->setKbrProductionId('KBR#999');
+            $entityManager->flush();
+
+            self::assertSame('KBR#1000', ($repository->latestProductions(1)->getResult()[0] ?? null)?->getAlbum()?->getKbrProductionId());
+        } finally {
+            $entityManager->getConnection()->rollBack();
+        }
+    }
 }
