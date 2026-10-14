@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Homepage;
+use App\Enum\HomeShelf;
 use App\Repository\HomepageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -14,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -75,6 +77,22 @@ class HomepageCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        yield FormField::addTab('Dernières prod', 'fa fa-record-vinyl');
+        yield BooleanField::new('productionsShown', 'Afficher la section')
+            ->setHelp('Les productions du label, du plus grand numéro KBR au plus petit, sous l\'encart à la une.')
+            ->renderAsSwitch(false)
+            ->setColumns(12);
+        yield TextField::new('productionsTitle', 'Titre')
+            ->setColumns(4);
+        yield ChoiceField::new('productionsLimit', 'Nombre de disques')
+            ->setChoices(array_combine(array_map(strval(...), Homepage::PRODUCTIONS_LIMITS), Homepage::PRODUCTIONS_LIMITS))
+            ->setHelp('Par rangées de quatre.')
+            ->setColumns(4);
+        yield TextField::new('productionsLinkText', 'Lien vers « Nos productions »')
+            ->setRequired(false)
+            ->setHelp('Vide : pas de lien.')
+            ->setColumns(4);
+
         yield FormField::addTab('Bloc « Le label »', 'fa fa-flag');
         yield BooleanField::new('manifestoShown', 'Afficher le bloc')
             ->setHelp('Bloc noir entre « Dernières prod » et « Derniers articles ».')
@@ -114,5 +132,30 @@ class HomepageCrudController extends AbstractCrudController
             ->setRequired(false)
             ->setHelp('Si aucune page n\'est choisie : https://… ou un chemin du site comme /catalog.')
             ->setColumns(4);
+
+        yield FormField::addTab('Derniers articles', 'fa fa-box-open');
+        yield BooleanField::new('latestShown', 'Afficher la section')
+            ->setHelp('Les derniers articles ajoutés au catalogue (date de création de la fiche), en bas de page.')
+            ->renderAsSwitch(false)
+            ->setColumns(12);
+        yield TextField::new('latestTitle', 'Titre')
+            ->setColumns(4);
+        yield ChoiceField::new('latestLimit', 'Nombre d\'articles par rayon')
+            ->setChoices(array_combine(array_map(strval(...), Homepage::LATEST_LIMITS), Homepage::LATEST_LIMITS))
+            ->setHelp('Par rangées de six ; quatre sur téléphone.')
+            ->setColumns(4);
+        yield TextField::new('latestLinkText', 'Lien vers le catalogue')
+            ->setRequired(false)
+            ->setHelp('Vide : pas de lien.')
+            ->setColumns(4);
+        yield ChoiceField::new('latestShelves', 'Rayons proposés')
+            ->setChoices(HomeShelf::cases())
+            // The column holds strings: EasyAdmin cannot guess the enum.
+            ->setFormTypeOption('class', HomeShelf::class)
+            ->setFormTypeOption('choice_label', static fn (HomeShelf $shelf): string => $shelf->label())
+            ->allowMultipleChoices()
+            ->renderExpanded()
+            ->setHelp('Un bouton par rayon au-dessus des articles, le premier affiché d\'office. Un rayon vide n\'a pas de bouton ; un seul rayon, pas de bouton du tout. Pas de merch : un t-shirt n\'a pas encore de page.')
+            ->setColumns(12);
     }
 }

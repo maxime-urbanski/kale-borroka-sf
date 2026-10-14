@@ -47,4 +47,16 @@ class HomepageValidationTest extends KernelTestCase
         // A hidden block may be left empty.
         self::assertCount(0, self::service(ValidatorInterface::class)->validate($homepage->setManifestoShown(false)));
     }
+
+    public function testTheSectionsKeepSensibleSettings(): void
+    {
+        $validator = self::service(ValidatorInterface::class);
+        $homepage = new Homepage();
+        self::assertCount(0, $validator->validate($homepage), 'the defaults are valid');
+
+        $homepage->setProductionsLimit(5)->setLatestLimit(1000)->setLatestShelves([])->setProductionsTitle(' ');
+        $paths = array_map(static fn ($violation): string => $violation->getPropertyPath(), iterator_to_array($validator->validate($homepage)));
+        sort($paths);
+        self::assertSame(['latestLimit', 'latestShelves', 'productionsLimit', 'productionsTitle'], $paths);
+    }
 }

@@ -8,6 +8,7 @@ use App\Entity\FeaturedRelease;
 use App\Entity\Homepage;
 use App\Entity\Release;
 use App\Enum\FeatureKind;
+use App\Enum\HomeShelf;
 use App\Enum\ItemCondition;
 use App\Repository\FeaturedReleaseRepository;
 use App\Service\HomepageProviderInterface;
@@ -181,6 +182,55 @@ class HomeControllerTest extends WebTestCase
 
         $this->client->request('GET', '/');
         self::assertSelectorNotExists('#le-label');
+    }
+
+    public function testTheSectionsFollowTheBackOffice(): void
+    {
+        $this->homepage()
+            ->setProductionsTitle('Nos sorties')
+            ->setProductionsLimit(8)
+            ->setProductionsLinkText('Toute la discographie')
+            ->setLatestTitle('Arrivages')
+            ->setLatestLimit(12)
+            ->setLatestLinkText('Tout le catalogue')
+            ->setLatestShelves([HomeShelf::CD, HomeShelf::ALL]);
+        $this->flush();
+
+        $crawler = $this->client->request('GET', '/');
+
+        $productions = $crawler->filter('#dernieres-prod');
+        self::assertSame('Nos sorties', trim($productions->filter('h2')->text()));
+        self::assertCount(8, $productions->filter('.kb-card'));
+        self::assertStringContainsString('Toute la discographie', $productions->filter('a[href="/production"]')->text());
+
+        $latest = $crawler->filter('#derniers-articles');
+        self::assertSame('Arrivages', trim($latest->filter('h2')->text()));
+        self::assertSame(['Tout', 'CD'], $latest->filter('button[aria-pressed]')->each(static fn ($chip): string => trim($chip->text())), 'in the shop order');
+        self::assertCount(12, $latest->filter('#rayon-tout .kb-card'));
+        self::assertStringContainsString('Tout le catalogue', $latest->filter('a[href="/catalog"]')->text());
+    }
+
+    public function testASingleShelfNeedsNoChip(): void
+    {
+        $this->homepage()->setLatestShelves([HomeShelf::VINYL]);
+        $this->flush();
+
+        $crawler = $this->client->request('GET', '/');
+
+        self::assertCount(0, $crawler->filter('#derniers-articles button[aria-pressed]'));
+        self::assertCount(1, $crawler->filter('#rayon-vinyles:not([hidden])'));
+    }
+
+    public function testTheSectionsCanBeHidden(): void
+    {
+        $this->homepage()->setProductionsShown(false)->setLatestShown(false);
+        $this->flush();
+
+        $this->client->request('GET', '/');
+
+        self::assertSelectorNotExists('#dernieres-prod');
+        self::assertSelectorNotExists('#derniers-articles');
+        self::assertSelectorExists('#le-label');
     }
 
     private function homepage(): Homepage

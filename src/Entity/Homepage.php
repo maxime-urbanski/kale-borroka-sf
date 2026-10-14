@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\HomeShelf;
 use App\Repository\HomepageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -24,6 +25,10 @@ class Homepage
      * read `//host` and `/\host` as another site.
      */
     public const string LINK_PATTERN = '#^(https?://|/(?![/\\\\]))\S*$#i';
+
+    /** Full rows on a wide screen: 4 cards across for the productions, 6 for the articles. */
+    public const array PRODUCTIONS_LIMITS = [4, 8, 12];
+    public const array LATEST_LIMITS = [6, 12, 18];
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
@@ -68,6 +73,49 @@ class Homepage
     #[Assert\Length(max: 255)]
     #[Assert\Regex(pattern: self::LINK_PATTERN, message: 'Une adresse commençant par https:// ou une page du site commençant par / (sans espace).')]
     private ?string $manifestoUrl = null;
+
+    #[ORM\Column(options: ['default' => true])]
+    private bool $productionsShown = true;
+
+    #[ORM\Column(length: 60, options: ['default' => 'Dernières prod'])]
+    #[Assert\NotBlank(message: 'Donnez un titre à la section.', normalizer: 'trim')]
+    #[Assert\Length(max: 60)]
+    private string $productionsTitle = 'Dernières prod';
+
+    #[ORM\Column(options: ['default' => 4])]
+    #[Assert\Choice(choices: self::PRODUCTIONS_LIMITS)]
+    private int $productionsLimit = 4;
+
+    /** Link to the label catalogue; empty: no link. */
+    #[ORM\Column(length: 60, nullable: true)]
+    #[Assert\Length(max: 60)]
+    private ?string $productionsLinkText = 'Tout le catalogue du label';
+
+    #[ORM\Column(options: ['default' => true])]
+    private bool $latestShown = true;
+
+    #[ORM\Column(length: 60, options: ['default' => 'Derniers articles'])]
+    #[Assert\NotBlank(message: 'Donnez un titre à la section.', normalizer: 'trim')]
+    #[Assert\Length(max: 60)]
+    private string $latestTitle = 'Derniers articles';
+
+    #[ORM\Column(options: ['default' => 6])]
+    #[Assert\Choice(choices: self::LATEST_LIMITS)]
+    private int $latestLimit = 6;
+
+    /** Link to the catalogue; empty: no link. */
+    #[ORM\Column(length: 60, nullable: true)]
+    #[Assert\Length(max: 60)]
+    private ?string $latestLinkText = 'Tous les arrivages';
+
+    /**
+     * Chips offered above the latest articles (HomeShelf values).
+     *
+     * @var list<string>
+     */
+    #[ORM\Column(type: Types::JSON)]
+    #[Assert\Count(min: 1, minMessage: 'Choisissez au moins un rayon.')]
+    private array $latestShelves = ['tout', 'vinyles', 'cd', 'k7', 'zines', 'occasion'];
 
     #[Assert\Callback]
     public function validateSlogan(ExecutionContextInterface $context): void
@@ -198,6 +246,123 @@ class Homepage
     public function setManifestoUrl(?string $manifestoUrl): static
     {
         $this->manifestoUrl = self::nullIfBlank($manifestoUrl);
+
+        return $this;
+    }
+
+    public function isProductionsShown(): bool
+    {
+        return $this->productionsShown;
+    }
+
+    public function setProductionsShown(bool $productionsShown): static
+    {
+        $this->productionsShown = $productionsShown;
+
+        return $this;
+    }
+
+    public function getProductionsTitle(): string
+    {
+        return $this->productionsTitle;
+    }
+
+    public function setProductionsTitle(?string $productionsTitle): static
+    {
+        $this->productionsTitle = (string) $productionsTitle;
+
+        return $this;
+    }
+
+    public function getProductionsLimit(): int
+    {
+        return $this->productionsLimit;
+    }
+
+    public function setProductionsLimit(int $productionsLimit): static
+    {
+        $this->productionsLimit = $productionsLimit;
+
+        return $this;
+    }
+
+    public function getProductionsLinkText(): ?string
+    {
+        return $this->productionsLinkText;
+    }
+
+    public function setProductionsLinkText(?string $productionsLinkText): static
+    {
+        $this->productionsLinkText = self::nullIfBlank($productionsLinkText);
+
+        return $this;
+    }
+
+    public function isLatestShown(): bool
+    {
+        return $this->latestShown;
+    }
+
+    public function setLatestShown(bool $latestShown): static
+    {
+        $this->latestShown = $latestShown;
+
+        return $this;
+    }
+
+    public function getLatestTitle(): string
+    {
+        return $this->latestTitle;
+    }
+
+    public function setLatestTitle(?string $latestTitle): static
+    {
+        $this->latestTitle = (string) $latestTitle;
+
+        return $this;
+    }
+
+    public function getLatestLimit(): int
+    {
+        return $this->latestLimit;
+    }
+
+    public function setLatestLimit(int $latestLimit): static
+    {
+        $this->latestLimit = $latestLimit;
+
+        return $this;
+    }
+
+    public function getLatestLinkText(): ?string
+    {
+        return $this->latestLinkText;
+    }
+
+    public function setLatestLinkText(?string $latestLinkText): static
+    {
+        $this->latestLinkText = self::nullIfBlank($latestLinkText);
+
+        return $this;
+    }
+
+    /**
+     * @return list<HomeShelf> the chosen shelves, in the shop's order whatever the order picked
+     */
+    public function getLatestShelves(): array
+    {
+        return array_values(array_filter(
+            HomeShelf::cases(),
+            fn (HomeShelf $shelf): bool => \in_array($shelf->value, $this->latestShelves, true),
+        ));
+    }
+
+    /**
+     * @param list<HomeShelf> $latestShelves
+     */
+    public function setLatestShelves(array $latestShelves): static
+    {
+        $this->latestShelves = array_map(static fn (HomeShelf $shelf): string => $shelf->value, $latestShelves);
 
         return $this;
     }

@@ -4,17 +4,22 @@
     {% if feature %}
         {% include 'home/_feature.html.twig' with {feature} only %}
     {% endif %}
-    {# The sections' variables are queries: they only run on a cache miss. #}
-    {% cache 'home_productions' tags(['article', 'album', 'style']) %}
-        {% include 'home/_productions.html.twig' with {releases: lastProductions.result} only %}
-    {% endcache %}
+    {# The sections' variables are queries: they only run on a cache miss. Their texts and
+       sizes come from the back office (homepage tag). #}
+    {% if homepage.productionsShown %}
+        {% cache 'home_productions' tags(['article', 'album', 'style', 'homepage']) %}
+            {% include 'home/_productions.html.twig' with {releases: lastProductions.result, homepage} only %}
+        {% endcache %}
+    {% endif %}
     {% if homepage.manifestoShown %}
         {# Back-office texts and the linked page: invalidated with either. #}
         {% cache 'home_label' tags(['homepage', 'page']) %}
             {% include 'home/_label.html.twig' with {homepage} only %}
         {% endcache %}
     {% endif %}
-    {% cache 'home_latest' tags(['article', 'album', 'style']) %}
-        {% include 'home/_latest.html.twig' with {shelves: latestArticles} only %}
-    {% endcache %}
+    {% if homepage.latestShown %}
+        {% cache 'home_latest' tags(['article', 'album', 'style', 'homepage']) %}
+            {% include 'home/_latest.html.twig' with {shelves: latestArticles, homepage} only %}
+        {% endcache %}
+    {% endif %}
 {% endblock %}

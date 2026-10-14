@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Controller\Admin;
 
 use App\Entity\Homepage;
+use App\Enum\HomeShelf;
 use App\Tests\Order\OrderTestTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -53,6 +54,9 @@ class AdminHomepageTest extends WebTestCase
         $values = $form->getPhpValues();
         $values['Homepage']['manifestoKicker'] = 'Le collectif';
         $values['Homepage']['manifestoHeadline'] = "Pas de patron.\nPas de chef.";
+        $values['Homepage']['productionsTitle'] = 'Nos sorties';
+        $values['Homepage']['latestLimit'] = '12';
+        $values['Homepage']['latestShelves'] = ['tout', 'cd'];
         $this->client->request('POST', $form->getUri(), $values);
         self::assertResponseRedirects();
 
@@ -60,6 +64,9 @@ class AdminHomepageTest extends WebTestCase
         $homepage = $this->entityManager()->getRepository(Homepage::class)->findOneBy([]);
         self::assertSame('Le collectif', $homepage?->getManifestoKicker());
         self::assertSame(['Pas de patron.', 'Pas de chef.'], $homepage->getManifestoHeadlineLines());
+        self::assertSame('Nos sorties', $homepage->getProductionsTitle());
+        self::assertSame(12, $homepage->getLatestLimit());
+        self::assertSame([HomeShelf::ALL, HomeShelf::CD], $homepage->getLatestShelves());
 
         $this->client->request('GET', '/');
         self::assertSelectorTextContains('#le-label', 'Pas de chef.');

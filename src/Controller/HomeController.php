@@ -27,16 +27,18 @@ final class HomeController extends AbstractController
         ReleaseRepository $releaseRepository,
         FeaturedReleaseRepository $featuredReleaseRepository,
         ClockInterface $clock,
-        HomepageProviderInterface $homepage,
+        HomepageProviderInterface $homepageProvider,
     ): Response {
+        $homepage = $homepageProvider->get();
+
         return $this->render('home/index.html.twig', [
-            'homepage' => $homepage->get(),
+            'homepage' => $homepage,
             'feature' => $featuredReleaseRepository->findCurrent($clock->now()),
             'latestArticles' => array_map(static fn (HomeShelf $shelf): array => [
                 'shelf' => $shelf,
-                'articles' => $articleRepository->latest($shelf, 6),
-            ], HomeShelf::cases()),
-            'lastProductions' => $releaseRepository->latestProductions(4),
+                'articles' => $articleRepository->latest($shelf, $homepage->getLatestLimit()),
+            ], $homepage->getLatestShelves()),
+            'lastProductions' => $releaseRepository->latestProductions($homepage->getProductionsLimit()),
         ]);
     }
 }

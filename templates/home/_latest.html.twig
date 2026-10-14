@@ -1,5 +1,5 @@
 {#
-    « Derniers articles », one shelf per chip (HomeShelf). Rendered inside a {% cache %}
+    « Derniers articles », one shelf per chip (HomeShelf), texts and shelves from Homepage. Rendered inside a {% cache %}
     block, see _card.html.twig. Without JavaScript the « Tout » shelf alone shows and the
     chips stay hidden; shelf-filter_controller.js reveals them.
 #}
@@ -14,10 +14,12 @@
     <section id="derniers-articles" class="kb-home-section kb-home-section--last" aria-labelledby="derniers-articles-titre" data-controller="shelf-filter">
         <div class="container">
             <div class="kb-home-section__head">
-                <h2 id="derniers-articles-titre" class="kb-banner kb-banner--right">Derniers articles</h2>
-                <a href="{{ path('app_catalog') }}" class="kb-home-section__more d-none d-md-flex">
-                    Tous les arrivages <i class="bi bi-arrow-right" aria-hidden="true"></i>
-                </a>
+                <h2 id="derniers-articles-titre" class="kb-banner kb-banner--right">{{ homepage.latestTitle }}</h2>
+                {% if homepage.latestLinkText %}
+                    <a href="{{ path('app_catalog') }}" class="kb-home-section__more d-none d-md-flex">
+                        {{ homepage.latestLinkText }} <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </a>
+                {% endif %}
             </div>
             {% if filled|length > 1 %}
                 <div class="kb-shelf-chips" role="group" aria-label="Rayon" data-shelf-filter-target="chips" hidden>
@@ -38,9 +40,11 @@
                     {% endfor %}
                 </ul>
             {% endfor %}
-            <a href="{{ path('app_catalog') }}" class="btn btn-outline-dark btn-lg w-100 mt-4 d-md-none">
-                Tous les arrivages <i class="bi bi-arrow-right" aria-hidden="true"></i>
-            </a>
+            {% if homepage.latestLinkText %}
+                <a href="{{ path('app_catalog') }}" class="btn btn-outline-dark btn-lg w-100 mt-4 d-md-none">
+                    {{ homepage.latestLinkText }} <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </a>
+            {% endif %}
         </div>
     </section>
 {% endif %}

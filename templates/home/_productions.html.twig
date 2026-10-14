@@ -1,15 +1,17 @@
-{# « Dernières prod »: rendered inside a {% cache %} block, see _card.html.twig. #}
+{# « Dernières prod »: rendered inside a {% cache %} block, see _card.html.twig. Texts from Homepage. #}
 {% if releases is not empty %}
     <section id="dernieres-prod" class="kb-home-section" aria-labelledby="dernieres-prod-titre">
         <div class="container">
             <div class="kb-home-section__head">
-                <h2 id="dernieres-prod-titre" class="kb-banner">Dernières prod</h2>
-                <a href="{{ path('app_production') }}" class="kb-home-section__more">
-                    <span class="kb-home-section__more-label">Tout le catalogue du label</span>
-                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
-                </a>
+                <h2 id="dernieres-prod-titre" class="kb-banner">{{ homepage.productionsTitle }}</h2>
+                {% if homepage.productionsLinkText %}
+                    <a href="{{ path('app_production') }}" class="kb-home-section__more">
+                        <span class="kb-home-section__more-label">{{ homepage.productionsLinkText }}</span>
+                        <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </a>
+                {% endif %}
             </div>
-            {# A row of four, a strip to swipe on a phone. #}
+            {# Rows of four, a strip to swipe on a phone. #}
             <ul class="kb-home-shelf kb-home-shelf--strip list-unstyled">
                 {% for article in releases %}
                     <li>{% include 'layout/article/_card.html.twig' with {article} only %}</li>
