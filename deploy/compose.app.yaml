@@ -1,0 +1,29 @@
+# The shop on the VPS (prod and preprod), behind the edge Caddy (deploy/edge). Applied on top
+# of the prod files by deploy/deploy.sh:
+#   docker compose -f compose.yaml -f compose.prod.yaml -f deploy/compose.app.yaml
+services:
+  php:
+    # Built by .github/workflows/deploy.yml, one tag per commit.
+    image: ghcr.io/maxime-urbanski/kale-borroka-sf:${IMAGE_TAG:?IMAGE_TAG must be set}
+    build: !reset null
+    environment:
+      # TLS ends at the edge Caddy: FrankenPHP serves plain HTTP on the Docker network.
+      SERVER_NAME: :80
+      DEFAULT_URI: ${DEFAULT_URI:?DEFAULT_URI must be set}
+      MAILER_DSN: ${MAILER_DSN:?MAILER_DSN must be set}
+      MAILER_DEFAULT_SENDER: ${MAILER_DEFAULT_SENDER:?MAILER_DEFAULT_SENDER must be set}
+      # No published port: only the edge Caddy reaches this container, from the Docker
+      # network. Trusting its X-Forwarded-* headers gives Symfony the visitor's address
+      # (login throttling) and HTTPS (secure cookies, https:// URLs).
+      SYMFONY_TRUSTED_PROXIES: PRIVATE_SUBNETS
+    ports: !reset []
+    networks:
+      default:
+      edge:
+        aliases:
+          # The name the edge Caddy proxies to: kbr-prod or kbr-preprod.
+          - ${EDGE_ALIAS:?EDGE_ALIAS must be set}
+
+networks:
+  edge:
+    external: true

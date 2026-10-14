@@ -1,0 +1,33 @@
+# The only container publishing ports on the VPS: it gets the TLS certificates and routes
+# each domain to its stack (deploy/compose.app.yaml) over the shared "edge" network.
+# Runs from /srv/kbr/edge, where deploy/deploy.sh copies this directory on each prod deploy.
+name: kbr-edge
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      KBR_DOMAIN: ${KBR_DOMAIN:-kale-borroka-records.com}
+      ACME_EMAIL: ${ACME_EMAIL:?ACME_EMAIL must be set}
+      PREPROD_BASIC_AUTH_USER: ${PREPROD_BASIC_AUTH_USER:?PREPROD_BASIC_AUTH_USER must be set}
+      PREPROD_BASIC_AUTH_HASH: ${PREPROD_BASIC_AUTH_HASH:?PREPROD_BASIC_AUTH_HASH must be set}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      # The directory, not the file: a file mount keeps the old inode once it is replaced.
+      - ./:/etc/caddy:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - edge
+
+networks:
+  edge:
+    name: edge
+
+volumes:
+  caddy_data:
+  caddy_config:

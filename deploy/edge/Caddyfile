@@ -1,0 +1,23 @@
+{
+	email {$ACME_EMAIL}
+}
+
+www.{$KBR_DOMAIN} {
+	redir https://{$KBR_DOMAIN}{uri} permanent
+}
+
+{$KBR_DOMAIN} {
+	reverse_proxy kbr-prod:80
+}
+
+preprod.{$KBR_DOMAIN} {
+	# Not for the public nor for search engines.
+	header X-Robots-Tag "noindex, nofollow"
+	basic_auth {
+		{$PREPROD_BASIC_AUTH_USER} {$PREPROD_BASIC_AUTH_HASH}
+	}
+	reverse_proxy kbr-preprod:80 {
+		# The preprod password stops here, out of the shop's logs and $_SERVER.
+		header_up -Authorization
+	}
+}
