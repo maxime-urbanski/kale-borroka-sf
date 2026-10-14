@@ -1,0 +1,42 @@
+# The only container publishing ports on the VPS: it gets the TLS certificates and routes
+# each domain to its stack (deploy/compose.app.yaml), each over its own network, so that
+# preprod cannot reach prod. Runs from /srv/kbr/edge, where deploy/deploy.sh copies this
+# directory when main's head is deployed.
+name: kbr-edge
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      KBR_DOMAIN: ${KBR_DOMAIN:-kale-borroka-records.com}
+      ACME_EMAIL: ${ACME_EMAIL:?ACME_EMAIL must be set}
+      PREPROD_BASIC_AUTH_USER: ${PREPROD_BASIC_AUTH_USER:?PREPROD_BASIC_AUTH_USER must be set}
+      PREPROD_BASIC_AUTH_HASH: ${PREPROD_BASIC_AUTH_HASH:?PREPROD_BASIC_AUTH_HASH must be set}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      # The directory, not the file: a file mount keeps the old inode once it is replaced.
+      - ./:/etc/caddy:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - edge-prod
+      - edge-preprod
+
+# IPv6 on the networks the published ports lead to: otherwise Docker proxies an IPv6
+# visitor through its gateway, and every one of them shares a private IPv4 address (one
+# login throttle for all, no address in the logs).
+networks:
+  edge-prod:
+    name: edge-prod
+    enable_ipv6: true
+  edge-preprod:
+    name: edge-preprod
+    enable_ipv6: true
+
+volumes:
+  caddy_data:
+  caddy_config:

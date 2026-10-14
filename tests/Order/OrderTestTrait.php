@@ -15,6 +15,7 @@ use App\Repository\PaymentRepository;
 use App\Repository\ReleaseRepository;
 use App\Repository\TransporterRepository;
 use App\Repository\UserRepository;
+use App\Tests\DatabaseIsolationTrait;
 use App\Tests\ServiceTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,23 +26,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 trait OrderTestTrait
 {
+    use DatabaseIsolationTrait;
     use ServiceTrait;
 
     abstract protected static function getContainer(): ContainerInterface;
-
-    protected function beginIsolation(): void
-    {
-        $this->entityManager()->getConnection()->beginTransaction();
-    }
-
-    protected function endIsolation(): void
-    {
-        $connection = $this->entityManager()->getConnection();
-
-        while ($connection->isTransactionActive()) {
-            $connection->rollBack();
-        }
-    }
 
     protected function entityManager(): EntityManagerInterface
     {
