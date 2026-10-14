@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use App\Entity\FeaturedRelease;
+use App\Entity\Homepage;
 use App\Enum\FeatureKind;
 use App\Repository\FeaturedReleaseRepository;
+use App\Service\HomepageProviderInterface;
 use App\Tests\DatabaseIsolationTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -120,6 +122,68 @@ class HomeControllerTest extends WebTestCase
         // Under the feature, before the latest articles.
         $order = $crawler->filter('.kb-feature, #dernieres-prod, #derniers-articles')->each(static fn ($node): string => (string) ($node->attr('id') ?? 'feature'));
         self::assertSame(['feature', 'dernieres-prod'], \array_slice($order, 0, 2));
+    }
+
+    public function testTheLabelBlockSaysWhatTheFixturesSay(): void
+    {
+        $page = self::service(HomepageProviderInterface::class)->get()->getManifestoPage();
+        self::assertNotNull($page, 'no manifesto page in the fixtures');
+
+        $crawler = $this->client->request('GET', '/');
+
+        $block = $crawler->filter('#le-label');
+        self::assertCount(1, $crawler->filter('#dernieres-prod + #le-label'), 'after the productions');
+        self::assertSame(['Pas de patron.', 'Pas de pub.', 'Pas de fachos.'], $block->filter('h2 > span')->each(static fn ($line): string => trim($line->text())));
+        self::assertSame('Lire le manifeste', trim($block->filter(\sprintf('a[href="/page/%s"]', $page->getSlug()))->text()));
+    }
+
+    public function testEveryWordOfTheLabelBlockComesFromTheBackOffice(): void
+    {
+        $this->homepage()
+            ->setManifestoKicker('Le collectif')
+            ->setManifestoHeadline("Ligne un\n\n  Ligne deux  ")
+            ->setManifestoHighlight('Ligne trois')
+            ->setManifestoText("Premier paragraphe.\nSuite <b>gras</b>")
+            ->setManifestoLinkText('Notre charte')
+            ->setManifestoPage(null)
+            ->setManifestoUrl('https://example.org/charte')
+            ->setManifestoRule(false);
+        $this->flush();
+
+        $crawler = $this->client->request('GET', '/');
+
+        $block = $crawler->filter('#le-label');
+        self::assertStringContainsString('Le collectif', $block->text());
+        self::assertSame(['Ligne un', 'Ligne deux', 'Ligne trois'], $block->filter('h2 > span')->each(static fn ($line): string => trim($line->text())));
+        self::assertCount(1, $block->filter('h2 > span.kb-inset'), 'the highlighted line sits on the paper strip');
+        self::assertStringContainsString('Suite <b>gras</b>', $block->filter('p')->eq(1)->text(), 'plain text, escaped');
+        self::assertCount(1, $block->filter('p br'), 'line breaks kept');
+        self::assertSame('Notre charte', trim($block->filter('a[href="https://example.org/charte"]')->text()));
+        self::assertCount(0, $block->filter('.kb-ikurrina'));
+    }
+
+    public function testNoLinkWithoutAPublishedPageNorAnAddress(): void
+    {
+        $this->homepage()->getManifestoPage()?->setPublished(false);
+        $this->flush();
+
+        $this->client->request('GET', '/');
+        self::assertSelectorExists('#le-label h2');
+        self::assertSelectorNotExists('#le-label a');
+    }
+
+    public function testTheLabelBlockCanBeHidden(): void
+    {
+        $this->homepage()->setManifestoShown(false);
+        $this->flush();
+
+        $this->client->request('GET', '/');
+        self::assertSelectorNotExists('#le-label');
+    }
+
+    private function homepage(): Homepage
+    {
+        return self::service(HomepageProviderInterface::class)->get();
     }
 
     /**

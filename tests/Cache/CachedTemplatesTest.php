@@ -25,6 +25,7 @@ class CachedTemplatesTest extends TestCase
             'layout/article/_article-grid.html.twig',
             'layout/article/_card.html.twig',
             'home/_productions.html.twig',
+            'home/_label.html.twig',
         ] as $template) {
             yield $template => [$template];
         }

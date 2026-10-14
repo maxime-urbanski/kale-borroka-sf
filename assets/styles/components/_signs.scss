@@ -86,6 +86,11 @@
         &:nth-child(2) { background: $kb-vert; }
         &:nth-child(3) { background: $kb-papier; border: 1px solid $kb-noir; }
     }
+
+    &--sm {
+        width: 36px;
+        height: 10px;
+    }
 }
 
 // Solid offset shadows.

@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Repository\FeaturedReleaseRepository;
 use App\Repository\ReleaseRepository;
+use App\Service\HomepageProviderInterface;
 use Psr\Clock\ClockInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,8 +24,10 @@ final class HomeController extends AbstractController
         ReleaseRepository $releaseRepository,
         FeaturedReleaseRepository $featuredReleaseRepository,
         ClockInterface $clock,
+        HomepageProviderInterface $homepage,
     ): Response {
         return $this->render('home/index.html.twig', [
+            'homepage' => $homepage->get(),
             'feature' => $featuredReleaseRepository->findCurrent($clock->now()),
             'lastArticles' => $releaseRepository->getLastReleases(),
             'lastProductions' => $releaseRepository->latestProductions(4),
