@@ -135,13 +135,6 @@ class ReleaseRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
-    public function getLastReleases(): Query
-    {
-        return $this->publishedQuery()
-            ->setMaxResults(8)
-            ->getQuery();
-    }
-
     /**
      * Restricts the query to releases listed under at least one of the given sections.
      * Must stay consistent with SupportType::forRelease(): a release is always listed

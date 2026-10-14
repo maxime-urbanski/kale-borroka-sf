@@ -6,7 +6,9 @@ namespace App\Tests\Controller;
 
 use App\Entity\FeaturedRelease;
 use App\Entity\Homepage;
+use App\Entity\Release;
 use App\Enum\FeatureKind;
+use App\Enum\ItemCondition;
 use App\Repository\FeaturedReleaseRepository;
 use App\Service\HomepageProviderInterface;
 use App\Tests\DatabaseIsolationTrait;
@@ -184,6 +186,43 @@ class HomeControllerTest extends WebTestCase
     private function homepage(): Homepage
     {
         return self::service(HomepageProviderInterface::class)->get();
+    }
+
+    public function testTheLatestArticlesAreSortedIntoShelves(): void
+    {
+        $crawler = $this->client->request('GET', '/');
+
+        $section = $crawler->filter('#derniers-articles');
+        self::assertCount(1, $section);
+        self::assertCount(1, $crawler->filter('#le-label + #derniers-articles'), 'after the label block');
+        self::assertSame('Derniers articles', trim($section->filter('h2')->text()));
+
+        // No second-hand copy in the fixtures: an empty shelf gets no chip.
+        $chips = $section->filter('button[aria-pressed]');
+        self::assertSame(['Tout', 'Vinyles', 'CD', 'K7', 'Zines'], $chips->each(static fn ($chip): string => trim($chip->text())));
+        self::assertSame(['true', 'false', 'false', 'false', 'false'], $chips->each(static fn ($chip): string => (string) $chip->attr('aria-pressed')));
+
+        // Without JavaScript, the « Tout » shelf alone shows; the chips appear with it.
+        foreach ($chips->each(static fn ($chip): string => (string) $chip->attr('aria-controls')) as $index => $shelfId) {
+            $panel = $section->filter('#'.$shelfId);
+            self::assertCount(1, $panel);
+            self::assertSame(0 !== $index, null !== $panel->attr('hidden'));
+            self::assertGreaterThan(0, $panel->filter('.kb-card')->count());
+            self::assertLessThanOrEqual(6, $panel->filter('.kb-card')->count());
+        }
+
+        self::assertGreaterThan(0, $section->filter('a[href="/catalog"]')->count(), '« Tous les arrivages »');
+    }
+
+    public function testAUsedCopyOpensTheSecondHandShelf(): void
+    {
+        $copy = self::service(EntityManagerInterface::class)->getRepository(Release::class)->findOneBy(['published' => true]);
+        $copy?->setItemCondition(ItemCondition::USED);
+        $this->flush();
+
+        $this->client->request('GET', '/');
+
+        self::assertSelectorTextContains('#derniers-articles button[aria-controls="rayon-occasion"]', 'Occasion');
     }
 
     /**

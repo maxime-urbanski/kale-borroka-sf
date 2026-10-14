@@ -1,0 +1,46 @@
+{#
+    « Derniers articles », one shelf per chip (HomeShelf). Rendered inside a {% cache %}
+    block, see _card.html.twig. Without JavaScript the « Tout » shelf alone shows and the
+    chips stay hidden; shelf-filter_controller.js reveals them.
+#}
+{% set filled = [] %}
+{% for shelf in shelves %}
+    {% set articles = shelf.articles.result %}
+    {% if articles is not empty %}
+        {% set filled = filled|merge([{shelf: shelf.shelf, articles}]) %}
+    {% endif %}
+{% endfor %}
+{% if filled is not empty %}
+    <section id="derniers-articles" class="kb-home-section kb-home-section--last" aria-labelledby="derniers-articles-titre" data-controller="shelf-filter">
+        <div class="container">
+            <div class="kb-home-section__head">
+                <h2 id="derniers-articles-titre" class="kb-banner kb-banner--right">Derniers articles</h2>
+                <a href="{{ path('app_catalog') }}" class="kb-home-section__more d-none d-md-flex">
+                    Tous les arrivages <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </a>
+            </div>
+            {% if filled|length > 1 %}
+                <div class="kb-shelf-chips" role="group" aria-label="Rayon" data-shelf-filter-target="chips" hidden>
+                    {% for item in filled %}
+                        <button type="button" class="kb-toggle"
+                                aria-pressed="{{ loop.first ? 'true' : 'false' }}"
+                                aria-controls="rayon-{{ item.shelf.value }}"
+                                data-shelf-filter-target="chip"
+                                data-action="shelf-filter#show">{{ item.shelf.label }}</button>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% for item in filled %}
+                <ul id="rayon-{{ item.shelf.value }}" class="kb-home-shelf kb-home-shelf--latest list-unstyled"
+                    aria-label="{{ item.shelf.label }}" data-shelf-filter-target="shelf"{{ loop.first ? '' : ' hidden' }}>
+                    {% for article in item.articles %}
+                        <li>{% include 'layout/article/_card.html.twig' with {article} only %}</li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+            <a href="{{ path('app_catalog') }}" class="btn btn-outline-dark btn-lg w-100 mt-4 d-md-none">
+                Tous les arrivages <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </a>
+        </div>
+    </section>
+{% endif %}

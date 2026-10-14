@@ -48,10 +48,6 @@ class ReleaseRepositoryTest extends KernelTestCase
     {
         $repository = self::service(ReleaseRepository::class);
 
-        foreach ($repository->getLastReleases()->getResult() as $release) {
-            self::assertTrue($release->isPublished());
-        }
-
         $names = array_map(static fn (Release $release): ?string => $release->getName(), $repository->filterReleaseQuery(new \App\Data\ArticleFilterData())->getResult());
         self::assertNotContains('Brouillon jamais publié', $names);
     }

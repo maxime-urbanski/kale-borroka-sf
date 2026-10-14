@@ -164,3 +164,50 @@
         }
     }
 }
+
+.kb-home-section--last {
+    padding-bottom: 44px;
+
+    @include media-breakpoint-up(lg) {
+        padding-bottom: 88px;
+    }
+}
+
+// « Derniers articles »: six across on a wide screen, four in two columns on a phone.
+.kb-home-shelf--latest {
+    gap: 24px 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    @include media-breakpoint-up(md) {
+        gap: 24px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    @include media-breakpoint-up(xl) {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    @include media-breakpoint-down(md) {
+        > li:nth-child(n + 5) {
+            display: none;
+        }
+    }
+}
+
+.kb-shelf-chips {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+
+    // A row to swipe on a phone, bleeding off the right edge.
+    @include media-breakpoint-down(md) {
+        margin-right: calc(var(--bs-gutter-x) * -.5);
+        margin-bottom: 20px;
+        padding-right: calc(var(--bs-gutter-x) * .5);
+        overflow-x: auto;
+    }
+
+    &[hidden] {
+        display: none;
+    }
+}

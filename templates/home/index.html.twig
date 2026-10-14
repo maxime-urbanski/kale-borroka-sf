@@ -14,12 +14,7 @@
             {% include 'home/_label.html.twig' with {homepage} only %}
         {% endcache %}
     {% endif %}
-    <div class="container pt-5">
-        {% cache 'home_sections' tags(['article', 'album', 'style']) %}
-            {% include 'layout/article/_section.html.twig' with {
-                articles: lastArticles.result,
-                title: 'Derniers Articles'
-            } %}
-        {% endcache %}
-    </div>
+    {% cache 'home_latest' tags(['article', 'album', 'style']) %}
+        {% include 'home/_latest.html.twig' with {shelves: latestArticles} only %}
+    {% endcache %}
 {% endblock %}
