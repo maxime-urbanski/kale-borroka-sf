@@ -168,6 +168,7 @@ class DashboardController extends AbstractDashboardController
         ]);
 
         yield MenuItem::subMenu('Contenu', 'fas fa-file-lines')->setSubItems([
+            MenuItem::linkTo(FeaturedReleaseCrudController::class, 'Encart de l\'accueil', 'fas fa-star'),
             MenuItem::linkTo(PageCrudController::class, 'Pages', 'fas fa-file-lines'),
             MenuItem::linkTo(SocialNetworkCrudController::class, 'Réseaux sociaux', 'fas fa-share-nodes'),
             MenuItem::linkTo(ImageCrudController::class, 'Visuels des albums', 'fas fa-image'),
