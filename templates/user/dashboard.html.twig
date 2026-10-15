@@ -1,0 +1,183 @@
+{% extends 'user/user-dashboard.html.twig' %}
+
+{#
+    Mon compte, tableau de bord (maquette 07): the wantlist articles back in stock, the
+    latest orders, collection and wantlist as crates of records, then the account details.
+#}
+{# Artist « album » for a record (the pressing's name repeats the artist), the article's name otherwise. #}
+{% macro article_title(article) -%}
+    {%- set album = article is release ? article.album : null -%}
+    {{ album and album.artist ? album.artist.name ~ ' « ' ~ album.name ~ ' »' : article.name }}
+    {%- if article.itemCondition is same as(constant('App\\Enum\\ItemCondition::USED')) %} (occasion){% endif -%}
+{%- endmacro %}
+
+{# What a cover without picture shows, like a crate divider: the artist. #}
+{% macro crate_label(article) -%}
+    {%- set album = article is release ? article.album : null -%}
+    {{ album and album.artist ? album.artist.name : article.name }}
+{%- endmacro %}
+
+{% block title %}Mon compte{% endblock %}
+
+{% block account_head %}
+    <h1 class="kb-account__title">Kaixo, {{ user.firstname }}</h1>
+    {% if user.createdAt %}
+        <span class="kb-account__since">Membre depuis {{ user.createdAt|date('Y', 'Europe/Paris') }}</span>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% set in_stock = counts.wantlistInStock %}
+    {% if in_stock > 0 %}
+        {# Macro output is already escaped: printed in a loop, never joined into a plain string. #}
+        {% set named = wantlist
+            |filter(item => item.article.inStock)
+            |slice(0, 2) %}
+        {% set others = in_stock - named|length %}
+        <div class="kb-account-alert">
+            <i class="bi bi-heart-fill" aria-hidden="true"></i>
+            <p class="kb-account-alert__text">
+                <strong>{{ in_stock }} article{{ in_stock > 1 ? 's' }} de ta wantlist {{ in_stock > 1 ? 'sont' : 'est' }} en stock</strong>
+                {%- if named is not empty %}<span class="d-none d-md-inline"> —
+                    {%- for item in named %} {{ _self.article_title(item.article) }}
+                        {%- if not loop.last %}{{ others > 0 ? ',' : ' et' }}{% endif %}
+                    {%- endfor %}
+                    {%- if others > 0 %} et {{ others }} autre{{ others > 1 ? 's' }}{% endif %}</span>
+                {%- endif %}.
+            </p>
+            <a href="{{ path('app_user_wishlist') }}" class="kb-account-alert__link">
+                Voir<span class="visually-hidden"> ma wantlist</span> <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </a>
+        </div>
+    {% endif %}
+
+    <section class="kb-account-orders" aria-labelledby="orders-title">
+        <div class="kb-account__section-head">
+            <h2 class="kb-account__section-title" id="orders-title">Dernières commandes</h2>
+            {% if orders is not empty %}
+                <a href="{{ path('app_user_orders') }}" class="kb-account__more">Toutes les commandes</a>
+            {% endif %}
+        </div>
+        {% if orders is empty %}
+            <p class="kb-account__empty">Pas encore de commande. <a href="{{ path('app_catalog') }}">Faire un tour au catalogue</a></p>
+        {% else %}
+            <table class="kb-orders d-none d-md-table">
+                <caption class="visually-hidden">Tes dernières commandes</caption>
+                <thead>
+                <tr>
+                    <th scope="col">N°</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Articles</th>
+                    <th scope="col">Statut</th>
+                    <th scope="col" class="text-end">Total</th>
+                    <th scope="col"><span class="visually-hidden">Détail</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in orders %}
+                    {% set order = row.order %}
+                    <tr>
+                        <td class="kb-orders__ref">{{ order.reference }}</td>
+                        <td>{{ order.createdAt|date('d.m.Y', 'Europe/Paris') }}</td>
+                        <td>{{ row.items }} article{{ row.items > 1 ? 's' }}</td>
+                        <td>{% include 'partials/_order_status.html.twig' with {status: order.status} only %}</td>
+                        <td class="kb-orders__total">{{ (order.totalPrice / 100)|format_currency('EUR', [], 'fr') }}</td>
+                        <td class="text-end">
+                            <a href="{{ path('app_order_overview', {orderReference: order.reference}) }}">Détail<span class="visually-hidden"> de la commande {{ order.reference }}</span></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <ul class="kb-orders-list d-md-none list-unstyled">
+                {% for row in orders|slice(0, 3) %}
+                    {% set order = row.order %}
+                    <li>
+                        <a href="{{ path('app_order_overview', {orderReference: order.reference}) }}" class="kb-orders-list__item">
+                            <span class="kb-orders-list__ref">{{ order.reference }} · {{ order.createdAt|date('d.m.Y', 'Europe/Paris') }}</span>
+                            <span class="kb-orders-list__total">{{ (order.totalPrice / 100)|format_currency('EUR', [], 'fr') }}</span>
+                            {% include 'partials/_order_status.html.twig' with {status: order.status, small: true} only %}
+                            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </section>
+
+    <div class="kb-account__crates">
+        {% for crate in [
+            {key: 'collection', title: 'Collection', count: counts.collection, extra: '', items: collection,
+                link: 'app_user_collection', cta: 'Parcourir ma collection', empty: 'Ta collection est vide pour l’instant.'},
+            {key: 'wantlist', title: 'Wantlist', count: counts.wantlist, extra: in_stock > 0 ? ' · ' ~ in_stock ~ ' dispo' : '', items: wantlist,
+                link: 'app_user_wishlist', cta: 'Voir ma wantlist', empty: 'Rien dans ta wantlist pour l’instant.'},
+        ] %}
+            <section class="kb-crate kb-crate--{{ crate.key }}" aria-labelledby="crate-{{ crate.key }}">
+                <div class="kb-crate__head">
+                    <h2 class="kb-crate__title" id="crate-{{ crate.key }}">{{ crate.title }}</h2>
+                    <span class="kb-crate__count">{{ crate.count }} article{{ crate.count > 1 ? 's' }}{{ crate.extra }}</span>
+                </div>
+                {% if crate.items is empty %}
+                    <p class="kb-account__empty">{{ crate.empty }}</p>
+                {% else %}
+                    <ul class="kb-crate__covers list-unstyled">
+                        {% for item in crate.items %}
+                            {% set article = item.article %}
+                            {# An unpublished article has no page to link to. #}
+                            {% set tag = article.published ? 'a' : 'span' %}
+                            <li>
+                                <{{ tag }}{% if article.published %} href="{{ article_path(article) }}"{% endif %} class="kb-crate__cover">
+                                    {% if article.coverImageName %}
+                                        <img src="{{ asset('upload/albums/' ~ article.coverImageName) }}"
+                                             alt="{{ _self.article_title(article) }}" loading="lazy">
+                                    {% else %}
+                                        <span class="kb-crate__name"><span class="visually-hidden">{{ _self.article_title(article) }}</span><span aria-hidden="true">{{ _self.crate_label(article) }}</span></span>
+                                    {% endif %}
+                                </{{ tag }}>
+                            </li>
+                        {% endfor %}
+                        {% if crate.items|length < covers %}
+                            {% for i in 1..(covers - crate.items|length) %}
+                                <li class="kb-crate__slot" aria-hidden="true"></li>
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
+                {% endif %}
+                <a href="{{ path(crate.link) }}" class="kb-crate__more">
+                    {{ crate.cta }} <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </a>
+            </section>
+        {% endfor %}
+    </div>
+
+    {% set other_addresses = counts.addresses - (defaultAddress ? 1 : 0) %}
+    <div class="kb-account__panels d-none d-md-grid">
+        <section class="kb-account-panel kb-account-panel--informations" aria-labelledby="panel-informations">
+            <h2 class="kb-account-panel__title" id="panel-informations">Informations</h2>
+            <p class="kb-account-panel__text">{{ user.fullName }}<br>{{ user.email }}</p>
+            <div class="kb-account-panel__actions">
+                <a href="{{ path('app_user_informations_patch') }}" class="btn btn-outline-dark btn-sm">Modifier</a>
+                <a href="{{ path('app_user_informations_password_put') }}" class="btn btn-outline-dark btn-sm">Changer le mot de passe</a>
+            </div>
+        </section>
+        <section class="kb-account-panel kb-account-panel--address" aria-labelledby="panel-address">
+            <h2 class="kb-account-panel__title" id="panel-address">Adresse par défaut</h2>
+            <p class="kb-account-panel__text">
+                {% if defaultAddress %}
+                    {{ [defaultAddress.address, defaultAddress.complementAddress, defaultAddress.zipcode ~ ' ' ~ defaultAddress.city, defaultAddress.country]|map(line => (line ?? '')|trim)|filter(line => line is not empty)|join(', ') }}
+                    {% if other_addresses > 0 %}
+                        <br><span class="kb-account-panel__meta">+ {{ other_addresses }} autre{{ other_addresses > 1 ? 's' }} adresse{{ other_addresses > 1 ? 's' }}</span>
+                    {% endif %}
+                {% else %}
+                    Pas encore d’adresse par défaut.
+                    {% if counts.addresses > 0 %}
+                        <br><span class="kb-account-panel__meta">{{ counts.addresses }} adresse{{ counts.addresses > 1 ? 's' }} dans ton carnet</span>
+                    {% endif %}
+                {% endif %}
+            </p>
+            <div class="kb-account-panel__actions">
+                <a href="{{ path('app_user_addresses_index') }}" class="btn btn-outline-dark btn-sm">Carnet d’adresses</a>
+            </div>
+        </section>
+    </div>
+{% endblock %}

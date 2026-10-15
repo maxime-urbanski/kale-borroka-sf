@@ -107,7 +107,8 @@ class AccountSecurityTest extends WebTestCase
 
     public function testDefaultAddressIsShownEscaped(): void
     {
-        $address = $this->addressOf('test@test.fr')->setName('<img src=x onerror=alert(1)>')->setIsMainAddress(true);
+        // The dashboard shows the street and the city, not the entry's name.
+        $address = $this->addressOf('test@test.fr')->setAddress('<img src=x onerror=alert(1)>')->setIsMainAddress(true);
         $this->entityManager()->flush();
 
         $this->client->request('GET', '/mon-compte');
@@ -115,7 +116,7 @@ class AccountSecurityTest extends WebTestCase
         self::assertResponseIsSuccessful();
         $html = (string) $this->client->getResponse()->getContent();
         self::assertStringNotContainsString('<img src=x', $html);
-        self::assertStringContainsString('&lt;img src=x onerror=alert(1)&gt;<br />', $html);
+        self::assertStringContainsString('&lt;img src=x onerror=alert(1)&gt;, ', $html);
         self::assertStringContainsString((string) $address->getCity(), $html);
     }
 

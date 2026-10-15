@@ -1,24 +1,19 @@
 {% extends 'base.html.twig' %}
 
+{#
+    Layout of the account pages (maquette 07): the account menu on the left from lg up, chips
+    under the page title below. A page fills `account_head` (its title) and `content`.
+    `counts` (App\Account\AccountTotals) is passed by pages that need it anyway.
+#}
 {% block body %}
-    <div class="container">
-
-        <div class="d-grid col-4 ms-auto my-5">
-            {% include 'partials/_post_button.html.twig' with {
-                url: path('app_logout'),
-                token_id: 'logout',
-                form_class: 'd-grid',
-                class: "btn btn-outline-danger",
-                text_btn: 'Déconnexion'
-            } %}
-        </div>
-        <div class="row bg-light mb-5 py-5">
-            <div class="col-4">
-                {% include 'layout/_sidebar.html.twig' %}
-            </div>
-            <div class="col-8">
-                {% block content %}{% endblock %}
-            </div>
+    {% set account_head %}{% block account_head %}{% endblock %}{% endset %}
+    <div class="container-xxl kb-account{{ account_head|trim ? '' : ' kb-account--headless' }}">
+        {% if account_head|trim %}
+            <div class="kb-account__head">{{ account_head }}</div>
+        {% endif %}
+        {% include 'layout/_sidebar.html.twig' with {counts: counts ?? account_counts(app.user)} only %}
+        <div class="kb-account__main">
+            {% block content %}{% endblock %}
         </div>
     </div>
 {% endblock %}

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Article;
+use App\Entity\User;
 use App\Entity\UserCollection;
 use App\Entity\UserCollectionItems;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -51,5 +52,25 @@ class UserCollectionItemsRepository extends ServiceEntityRepository
             ->setParameter('userCollection', $userCollection)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * The user's latest collection items.
+     *
+     * @return list<UserCollectionItems>
+     */
+    public function latestOfUser(User $user, int $limit): array
+    {
+        return $this->createQueryBuilder('ci')
+            ->addSelect('a')
+            ->join('ci.collection', 'c')
+            ->join('ci.article', 'a')
+            ->where('c.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('ci.added_at', 'DESC')
+            ->addOrderBy('a.id', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
     }
 }
