@@ -60,6 +60,7 @@ class AdminHomepageTest extends WebTestCase
         $values['Homepage']['latestShelves'] = ['tout', 'cd'];
         $values['Homepage']['stripRight'] = 'Oi! · antifa';
         $values['Homepage']['footerText'] = 'Fait à Bayonne.';
+        $values['Homepage']['footerTagline'] = 'Gora herria';
         $this->client->request('POST', $form->getUri(), $values);
         self::assertResponseRedirects();
 
@@ -77,6 +78,7 @@ class AdminHomepageTest extends WebTestCase
         self::assertSelectorTextContains('#le-label', 'Pas de chef.');
         self::assertSelectorTextContains('.kb-header__strip', 'Oi! · antifa');
         self::assertSelectorTextContains('.kb-footer__about', 'Fait à Bayonne.');
+        self::assertSelectorTextContains('.kb-footer__copyright', 'Gora herria');
     }
 
     public function testFooterColumnsAreCreatedWithTheirLinks(): void

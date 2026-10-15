@@ -135,6 +135,11 @@ class Homepage
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $footerText = 'Label et distro indépendants. Punk, hardcore, oi! et tout ce qui fait du bruit contre l\'extrême droite. Fait main, sans patron.';
 
+    /** After the copyright line, at the bottom of the footer. */
+    #[ORM\Column(length: 120, nullable: true)]
+    #[Assert\Length(max: 120)]
+    private ?string $footerTagline = 'Make racists afraid again';
+
     #[Assert\Callback]
     public function validateSlogan(ExecutionContextInterface $context): void
     {
@@ -429,6 +434,18 @@ class Homepage
     public function setFooterText(?string $footerText): static
     {
         $this->footerText = self::nullIfBlank($footerText);
+
+        return $this;
+    }
+
+    public function getFooterTagline(): ?string
+    {
+        return $this->footerTagline;
+    }
+
+    public function setFooterTagline(?string $footerTagline): static
+    {
+        $this->footerTagline = self::nullIfBlank($footerTagline);
 
         return $this;
     }

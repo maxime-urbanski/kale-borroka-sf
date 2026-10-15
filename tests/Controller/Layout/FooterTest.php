@@ -48,6 +48,7 @@ class FooterTest extends WebTestCase
         ], $columns, 'unpublished pages are left out');
         self::assertCount(1, $crawler->filter('footer a[href="/catalog/lp"]'));
         self::assertSelectorTextContains('footer .kb-footer__about', 'Fait main, sans patron.');
+        self::assertSelectorTextContains('footer .kb-footer__copyright', 'Make racists afraid again');
         self::assertSelectorTextContains('header .kb-header__strip', 'Punk · antifa · DIY');
     }
 
@@ -74,21 +75,23 @@ class FooterTest extends WebTestCase
     public function testTheStripAndTheFooterTextComeFromTheBackOffice(): void
     {
         $homepage = $this->entityManager()->getRepository(Homepage::class)->findOneBy([]) ?? throw new \LogicException('no homepage in the fixtures');
-        $homepage->setStripLeft('Distro du Pays basque')->setStripRight(null)->setFooterText("Fait main.\nSans patron.");
+        $homepage->setStripLeft('Distro du Pays basque')->setStripRight(null)->setFooterText("Fait main.\nSans patron.")->setFooterTagline('Gora herria');
         $this->entityManager()->flush();
 
         $crawler = $this->client->request('GET', '/production');
 
         self::assertSelectorTextContains('header .kb-header__strip', 'Distro du Pays basque');
         self::assertStringContainsString('Fait main.<br>', $crawler->filter('footer .kb-footer__about')->html());
+        self::assertSame('© '.date('Y').' Kale Borroka Riot Records · Gora herria', $crawler->filter('footer .kb-footer__copyright')->text());
 
-        $homepage->setStripShown(false)->setFooterText(' ');
+        $homepage->setStripShown(false)->setFooterText(' ')->setFooterTagline(' ');
         $this->entityManager()->flush();
 
         $crawler = $this->client->request('GET', '/production');
 
         self::assertCount(0, $crawler->filter('.kb-header__strip'));
         self::assertCount(0, $crawler->filter('.kb-footer__about'));
+        self::assertSame('© '.date('Y').' Kale Borroka Riot Records', $crawler->filter('footer .kb-footer__copyright')->text());
     }
 
     private function entityManager(): EntityManagerInterface

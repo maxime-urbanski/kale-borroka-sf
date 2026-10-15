@@ -176,5 +176,9 @@ class HomepageCrudController extends AbstractCrudController
             ->setNumOfRows(4)
             ->setHelp('Sur toutes les pages. Texte brut ; les retours à la ligne sont gardés. Vide : pas de texte. Les colonnes de liens se règlent dans « Colonnes du footer ».')
             ->setColumns(12);
+        yield TextField::new('footerTagline', 'Devise après le copyright')
+            ->setRequired(false)
+            ->setHelp('« © année Kale Borroka Riot Records · devise », tout en bas. Vide : pas de devise.')
+            ->setColumns(12);
     }
 }

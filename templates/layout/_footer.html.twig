@@ -53,6 +53,6 @@
                 {% endfor %}
             </nav>
         {% endif %}
-        <span class="kb-footer__copyright">© {{ 'now'|date('Y') }} Kale Borroka Riot Records · Make racists afraid again</span>
+        <span class="kb-footer__copyright">© {{ 'now'|date('Y') }} Kale Borroka Riot Records{% if homepage.footerTagline %} · {{ homepage.footerTagline }}{% endif %}</span>
     </div>
 </footer>
