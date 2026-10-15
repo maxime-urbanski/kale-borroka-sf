@@ -1,0 +1,10 @@
+{#
+    Strip above the navbar (Homepage::$strip*), from « Blocs de l'accueil ». Same for every
+    visitor: cached with the homepage tag in base.html.twig.
+#}
+{% if homepage.stripShown and (homepage.stripLeft or homepage.stripRight) %}
+    <div class="kb-header__strip d-none d-lg-flex">
+        <span>{{ homepage.stripLeft }}</span>
+        <span>{{ homepage.stripRight }}</span>
+    </div>
+{% endif %}

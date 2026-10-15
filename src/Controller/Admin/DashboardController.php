@@ -167,8 +167,14 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkTo(CategoryCrudController::class, 'Catégories', 'fas fa-folder-tree'),
         ]);
 
+        yield MenuItem::subMenu('Page d\'accueil', 'fas fa-house')->setSubItems([
+            MenuItem::linkTo(HomepageCrudController::class, 'Blocs de l\'accueil', 'fas fa-table-cells-large'),
+            MenuItem::linkTo(FeaturedReleaseCrudController::class, 'Encart à la une', 'fas fa-star'),
+            MenuItem::linkTo(FooterColumnCrudController::class, 'Colonnes du footer', 'fas fa-table-columns'),
+            MenuItem::linkToUrl('Voir l\'accueil', 'fas fa-arrow-up-right-from-square', $this->generateUrl('app_homepage')),
+        ]);
+
         yield MenuItem::subMenu('Contenu', 'fas fa-file-lines')->setSubItems([
-            MenuItem::linkTo(FeaturedReleaseCrudController::class, 'Encart de l\'accueil', 'fas fa-star'),
             MenuItem::linkTo(PageCrudController::class, 'Pages', 'fas fa-file-lines'),
             MenuItem::linkTo(SocialNetworkCrudController::class, 'Réseaux sociaux', 'fas fa-share-nodes'),
             MenuItem::linkTo(ImageCrudController::class, 'Visuels des albums', 'fas fa-image'),

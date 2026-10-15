@@ -67,10 +67,11 @@ class PageCrudController extends AbstractCrudController
         yield FormField::addColumn(4);
         yield BooleanField::new('published', 'Publiée')
             ->setHelp('Non publiée : introuvable pour les visiteurs, visible en aperçu par les administrateurs.');
-        yield ChoiceField::new('footerPlacement', 'Dans le footer')
+        yield ChoiceField::new('footerPlacement', 'En bas du footer')
             ->setChoices(FooterPlacement::cases())
-            ->setFormTypeOption('choice_label', static fn (FooterPlacement $placement): string => $placement->label());
-        yield IntegerField::new('footerPosition', 'Ordre dans le footer')
+            ->setFormTypeOption('choice_label', static fn (FooterPlacement $placement): string => $placement->label())
+            ->setHelp('Pour la mettre dans une colonne du footer : « Page d\'accueil » → « Colonnes du footer ».');
+        yield IntegerField::new('footerPosition', 'Ordre en bas du footer')
             ->setHelp('Les plus petits nombres d\'abord.')
             ->setRequired(false);
         yield DateTimeField::new('updatedAt', 'Modifiée le')

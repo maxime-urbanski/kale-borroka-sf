@@ -5,9 +5,14 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Article;
+use App\Entity\Book;
 use App\Entity\MerchVariant;
 use App\Entity\Release;
+use App\Enum\HomeShelf;
+use App\Enum\ItemCondition;
+use App\Enum\ReleaseFormat;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -109,6 +114,53 @@ class ArticleRepository extends ServiceEntityRepository
         }
 
         return $stock;
+    }
+
+    /**
+     * Newest published articles of a homepage shelf. No merch: a t-shirt has no page of its
+     * own to link to yet (CatalogExtension::articlePath()).
+     */
+    public function latest(HomeShelf $shelf, int $limit): Query
+    {
+        $class = match ($shelf) {
+            HomeShelf::VINYL, HomeShelf::CD, HomeShelf::TAPE => Release::class,
+            HomeShelf::ZINE => Book::class,
+            HomeShelf::ALL, HomeShelf::USED => Article::class,
+        };
+
+        $query = $this->getEntityManager()->createQueryBuilder()
+            ->select('article')
+            ->from($class, 'article')
+            ->where('article.published = true')
+            ->orderBy('article.createdAt', 'DESC')
+            ->addOrderBy('article.id', 'DESC')
+            ->setMaxResults($limit);
+
+        match ($shelf) {
+            HomeShelf::VINYL => $query->andWhere('article.format IN (:formats)')->setParameter('formats', array_map(
+                static fn (ReleaseFormat $format): string => $format->value,
+                array_filter(ReleaseFormat::cases(), static fn (ReleaseFormat $format): bool => null !== $format->size()),
+            )),
+            HomeShelf::CD => $query->andWhere('article.format = :format')->setParameter('format', ReleaseFormat::CD->value),
+            HomeShelf::TAPE => $query->andWhere('article.format = :format')->setParameter('format', ReleaseFormat::CASSETTE->value),
+            HomeShelf::USED => $query->andWhere('article.itemCondition = :condition')->setParameter('condition', ItemCondition::USED->value),
+            HomeShelf::ALL, HomeShelf::ZINE => null,
+        };
+
+        // What a record's card reads, loaded with it; the root query cannot reach subclass fields.
+        if (Release::class === $class) {
+            $query
+                ->leftJoin('article.album', 'album')
+                ->leftJoin('album.artist', 'artist')
+                ->leftJoin('article.label', 'label')
+                ->addSelect('album', 'artist', 'label');
+        }
+
+        if (Article::class === $class) {
+            $query->andWhere(\sprintf('article NOT INSTANCE OF %s', MerchVariant::class));
+        }
+
+        return $query->getQuery();
     }
 
     public function findPublishedBySlug(string $slug): ?Article

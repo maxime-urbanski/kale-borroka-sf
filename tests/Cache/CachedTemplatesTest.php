@@ -20,10 +20,14 @@ class CachedTemplatesTest extends TestCase
     public static function cachedTemplates(): iterable
     {
         foreach ([
+            'layout/_strip.html.twig',
             'layout/_footer.html.twig',
             'layout/article/_section.html.twig',
             'layout/article/_article-grid.html.twig',
             'layout/article/_card.html.twig',
+            'home/_productions.html.twig',
+            'home/_label.html.twig',
+            'home/_latest.html.twig',
         ] as $template) {
             yield $template => [$template];
         }

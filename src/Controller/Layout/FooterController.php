@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Layout;
 
+use App\Repository\FooterColumnRepository;
 use App\Repository\PageRepository;
 use App\Repository\SocialNetworkRepository;
 use App\Repository\SupportRepository;
+use App\Service\HomepageProviderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Twig\Environment;
@@ -23,18 +25,19 @@ class FooterController
      * @throws LoaderError
      */
     public function __invoke(
-        SupportRepository $supportRepository,
+        FooterColumnRepository $footerColumnRepository,
         SocialNetworkRepository $socialNetworkRepository,
         PageRepository $pageRepository,
+        SupportRepository $supportRepository,
+        HomepageProviderInterface $homepageProvider,
         Environment $twig,
     ): Response {
-        $supports = $supportRepository->findAll();
-        $socialNetworks = $socialNetworkRepository->getAllSocialNetworkForFooter();
-
         $content = $twig->render('layout/_footer.html.twig', [
-            'supports' => $supports,
-            'socialNetworks' => $socialNetworks,
-            'pages' => $pageRepository->findForFooter(),
+            'homepage' => $homepageProvider->get(),
+            'columns' => $footerColumnRepository->findForFooter(),
+            'supports' => $supportRepository->findBy([], ['id' => 'ASC']),
+            'socialNetworks' => $socialNetworkRepository->getAllSocialNetworkForFooter(),
+            'bottomPages' => $pageRepository->findForFooterBottom(),
         ]);
 
         return new Response($content);

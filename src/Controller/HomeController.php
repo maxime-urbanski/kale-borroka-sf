@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Enum\HomeShelf;
+use App\Repository\ArticleRepository;
 use App\Repository\FeaturedReleaseRepository;
 use App\Repository\ReleaseRepository;
+use App\Service\HomepageProviderInterface;
 use Psr\Clock\ClockInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,14 +23,22 @@ final class HomeController extends AbstractController
      */
     #[Route('/', 'app_homepage')]
     public function index(
+        ArticleRepository $articleRepository,
         ReleaseRepository $releaseRepository,
         FeaturedReleaseRepository $featuredReleaseRepository,
         ClockInterface $clock,
+        HomepageProviderInterface $homepageProvider,
     ): Response {
+        $homepage = $homepageProvider->get();
+
         return $this->render('home/index.html.twig', [
+            'homepage' => $homepage,
             'feature' => $featuredReleaseRepository->findCurrent($clock->now()),
-            'lastArticles' => $releaseRepository->getLastReleases(),
-            'lastProductions' => $releaseRepository->getOwnProduction(true),
+            'latestArticles' => array_map(static fn (HomeShelf $shelf): array => [
+                'shelf' => $shelf,
+                'articles' => $articleRepository->latest($shelf, $homepage->getLatestLimit()),
+            ], $homepage->getLatestShelves()),
+            'lastProductions' => $releaseRepository->latestProductions($homepage->getProductionsLimit()),
         ]);
     }
 }

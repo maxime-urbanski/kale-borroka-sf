@@ -1,0 +1,42 @@
+{#
+    « Le label » (Homepage::$manifesto*): every word comes from the back office, « Blocs de
+    l'accueil ». Same for every visitor: cached with the homepage and page tags.
+#}
+{% set lines = homepage.manifestoHeadlineLines %}
+{% set page = homepage.manifestoPage %}
+{% set href = page and page.published ? path('app_page_show', {slug: page.slug})
+    : (homepage.manifestoUrl and homepage.manifestoUrl matches constant('App\\Entity\\Homepage::LINK_PATTERN') ? homepage.manifestoUrl) %}
+<section id="le-label" class="kb-home-label kb-tex-grain" aria-labelledby="le-label-titre">
+    <div class="container kb-home-label__grid">
+        <div class="kb-home-label__intro">
+            {% if homepage.manifestoKicker or homepage.manifestoRule %}
+                <p class="kb-home-label__kicker">
+                    {% if homepage.manifestoRule %}
+                        <span class="kb-ikurrina kb-ikurrina--sm" aria-hidden="true"><span></span><span></span><span></span></span>
+                    {% endif %}
+                    {{ homepage.manifestoKicker }}
+                </p>
+            {% endif %}
+            <h2 id="le-label-titre" class="kb-home-label__title">
+                {% for line in lines %}
+                    <span>{{ line }}</span>
+                {% endfor %}
+                {% if homepage.manifestoHighlight %}
+                    <span class="kb-inset">{{ homepage.manifestoHighlight }}</span>
+                {% endif %}
+            </h2>
+        </div>
+        {% if homepage.manifestoText or (href and homepage.manifestoLinkText) %}
+            <div class="kb-home-label__body">
+                {% if homepage.manifestoText %}
+                    <p class="kb-home-label__text">{{ homepage.manifestoText|nl2br }}</p>
+                {% endif %}
+                {% if href and homepage.manifestoLinkText %}
+                    <a href="{{ href }}" class="kb-home-label__link">
+                        {{ homepage.manifestoLinkText }} <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</section>

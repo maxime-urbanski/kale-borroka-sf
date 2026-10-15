@@ -88,3 +88,30 @@
         background: $kb-rouge;
     }
 }
+
+// Toggle chip (aria-pressed): one of a group of filters, the pressed one in black.
+.kb-toggle {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    height: 44px;
+    padding: 0 18px;
+    border: 2px solid $kb-noir;
+    background: transparent;
+    color: $kb-noir;
+    font-weight: 700;
+    font-size: .875rem;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover {
+        background: $kb-papier-2;
+    }
+
+    &[aria-pressed="true"] {
+        background: $kb-noir;
+        color: $kb-papier;
+    }
+}

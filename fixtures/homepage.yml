@@ -1,0 +1,4 @@
+# The homepage's texts, as the label wrote them (the defaults of Homepage).
+App\Entity\Homepage:
+    homepage:
+        manifestoPage: '@page_about'

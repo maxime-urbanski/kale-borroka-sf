@@ -3,56 +3,63 @@
     <div class="kb-footer__main">
         <div class="kb-footer__col kb-footer__brand">
             <p class="kb-footer__name mb-0"><span>Kale Borroka</span><span>Riot Records</span></p>
-            <p class="kb-footer__about">
-                Label et distro indépendants. Punk, hardcore, oi! et tout ce qui fait du bruit contre l'extrême droite.
-                Fait main, sans patron.
-            </p>
+            {% if homepage.footerText %}
+                <p class="kb-footer__about">{{ homepage.footerText|nl2br }}</p>
+            {% endif %}
         </div>
-        {% if (pages.about ?? []) is not empty %}
-            <nav class="kb-footer__col" aria-labelledby="footer-about">
-                <span class="kb-footer__heading" id="footer-about">À propos</span>
-                {% for page in pages.about %}
-                    <a href="{{ path('app_page_show', {slug: page.slug}) }}" class="kb-footer__link">{{ page.title }}</a>
+        {# FooterColumn rows, from « Colonnes du footer »; a column with nothing to follow is left out. #}
+        {% set shownColumns = columns|filter(column => column.shownLinks is not empty or (column.supportsListed and supports is not empty)) %}
+        {% if shownColumns is not empty or socialNetworks is not empty %}
+            <div class="kb-footer__links">
+                {% for column in shownColumns %}
+                    <nav class="kb-footer__col" aria-labelledby="footer-col-{{ loop.index }}">
+                        <span class="kb-footer__heading" id="footer-col-{{ loop.index }}">{{ column.name }}</span>
+                        {% if column.supportsListed %}
+                            {% for support in supports %}
+                                <a href="{{ path('app_catalog_list', {support: support.name}) }}" class="kb-footer__link">{{ support.name|upper }}</a>
+                            {% endfor %}
+                        {% endif %}
+                        {% for link in column.shownLinks %}
+                            {% if link.page %}
+                                <a href="{{ path('app_page_show', {slug: link.page.slug}) }}" class="kb-footer__link">{{ link.name ?? link.page.title }}</a>
+                            {% elseif link.support %}
+                                <a href="{{ path('app_catalog_list', {support: link.support.name}) }}" class="kb-footer__link">{{ link.name ?? link.support.name|upper }}</a>
+                            {% else %}
+                                <a href="{{ link.url }}" class="kb-footer__link">{{ link.name }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </nav>
                 {% endfor %}
-            </nav>
-        {% endif %}
-        <nav class="kb-footer__col" aria-labelledby="footer-shop">
-            <span class="kb-footer__heading" id="footer-shop">Shop</span>
-            {% for support in supports %}
-                <a href="{{ path('app_catalog_list', {support: support.name}) }}" class="kb-footer__link">{{ support.name|upper }}</a>
-            {% endfor %}
-            {% for page in pages.shop ?? [] %}
-                <a href="{{ path('app_page_show', {slug: page.slug}) }}" class="kb-footer__link">{{ page.title }}</a>
-            {% endfor %}
-        </nav>
-        {% if socialNetworks is not empty %}
-            <div class="kb-footer__col">
-                <span class="kb-footer__heading" id="footer-follow">Suivre</span>
-                <ul class="kb-footer__socials list-unstyled mb-0" aria-labelledby="footer-follow">
-                    {% for social in socialNetworks %}
-                        <li>
-                            <a href="{{ social.url }}" class="kb-footer__social" target="_blank" rel="noopener"
-                               {%- if not social.file %} aria-label="{{ social.name }}"{% endif %}>
-                                {% if social.file %}
-                                    <img src="{{ vich_uploader_asset(social.file) }}" alt="{{ social.name }}" width="22" height="22">
-                                {% else %}
-                                    <i class="bi bi-link-45deg" aria-hidden="true"></i>
-                                {% endif %}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
+                {% if socialNetworks is not empty %}
+                    <div class="kb-footer__col">
+                        <span class="kb-footer__heading" id="footer-follow">Suivre</span>
+                        <ul class="kb-footer__socials list-unstyled mb-0" aria-labelledby="footer-follow">
+                            {% for social in socialNetworks %}
+                                <li>
+                                    <a href="{{ social.url }}" class="kb-footer__social" target="_blank" rel="noopener"
+                                       {%- if not social.file %} aria-label="{{ social.name }}"{% endif %}>
+                                        {% if social.file %}
+                                            <img src="{{ vich_uploader_asset(social.file) }}" alt="{{ social.name }}" width="22" height="22">
+                                        {% else %}
+                                            <i class="bi bi-link-45deg" aria-hidden="true"></i>
+                                        {% endif %}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
             </div>
         {% endif %}
     </div>
     <div class="kb-footer__bottom">
-        {% if pages.bottom is defined %}
+        {% if bottomPages is not empty %}
             <nav aria-label="Informations légales" data-test="footer-bottom-pages">
-                {% for page in pages.bottom %}
+                {% for page in bottomPages %}
                     <a href="{{ path('app_page_show', {slug: page.slug}) }}">{{ page.title }}</a>
                 {% endfor %}
             </nav>
         {% endif %}
-        <span class="kb-footer__copyright">© {{ 'now'|date('Y') }} Kale Borroka Riot Records · Make racists afraid again</span>
+        <span class="kb-footer__copyright">© {{ 'now'|date('Y') }} Kale Borroka Riot Records{% if homepage.footerTagline %} · {{ homepage.footerTagline }}{% endif %}</span>
     </div>
 </footer>

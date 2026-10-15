@@ -4,17 +4,22 @@
     {% if feature %}
         {% include 'home/_feature.html.twig' with {feature} only %}
     {% endif %}
-    <div class="container pt-5">
-        {# lastArticles and lastProductions are queries: they only run on a cache miss. #}
-        {% cache 'home_sections' tags(['article', 'album', 'style']) %}
-            {% include 'layout/article/_section.html.twig' with {
-                articles: lastArticles.result,
-                title: 'Derniers Articles'
-            } %}
-            {% include 'layout/article/_section.html.twig' with {
-                articles: lastProductions.result,
-                title: 'Dernières prod'
-            } %}
+    {# The sections' variables are queries: they only run on a cache miss. Their texts and
+       sizes come from the back office (homepage tag). #}
+    {% if homepage.productionsShown %}
+        {% cache 'home_productions' tags(['article', 'album', 'style', 'homepage']) %}
+            {% include 'home/_productions.html.twig' with {releases: lastProductions.result, homepage} only %}
         {% endcache %}
-    </div>
+    {% endif %}
+    {% if homepage.manifestoShown %}
+        {# Back-office texts and the linked page: invalidated with either. #}
+        {% cache 'home_label' tags(['homepage', 'page']) %}
+            {% include 'home/_label.html.twig' with {homepage} only %}
+        {% endcache %}
+    {% endif %}
+    {% if homepage.latestShown %}
+        {% cache 'home_latest' tags(['article', 'album', 'style', 'homepage']) %}
+            {% include 'home/_latest.html.twig' with {shelves: latestArticles, homepage} only %}
+        {% endcache %}
+    {% endif %}
 {% endblock %}

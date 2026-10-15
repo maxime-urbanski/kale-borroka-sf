@@ -1,0 +1,213 @@
+// Homepage sections under the feature (_feature.scss): banner title, a link to the rest, cards.
+
+.kb-home-section {
+    padding: 36px 0;
+
+    @include media-breakpoint-up(lg) {
+        padding: 72px 0;
+    }
+
+    &__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 20px;
+
+        @include media-breakpoint-up(md) {
+            align-items: flex-end;
+            margin-bottom: 36px;
+        }
+
+        .kb-banner {
+            margin: 0;
+        }
+    }
+
+    // Text link from md up; a 44px square arrow below, its text kept for screen readers.
+    &__more {
+        display: flex;
+        flex: none;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px;
+        font-size: .875rem;
+        font-weight: 800;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+
+        @include media-breakpoint-down(md) {
+            justify-content: center;
+            width: 44px;
+            border: 2px solid $kb-noir;
+            font-size: 1.125rem;
+            text-decoration: none;
+        }
+    }
+
+    &__more-label {
+        @include media-breakpoint-down(md) {
+            @include visually-hidden;
+        }
+    }
+}
+
+.kb-home-shelf {
+    display: grid;
+    gap: 32px;
+    margin: 0;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    > li {
+        min-width: 0;
+    }
+
+    // Phones: a strip to swipe, bleeding off the right edge.
+    &--strip {
+        @include media-breakpoint-down(md) {
+            display: flex;
+            gap: 16px;
+            margin-right: calc(var(--bs-gutter-x) * -.5);
+            padding: 0 calc(var(--bs-gutter-x) * .5) 8px 0;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+
+            > li {
+                flex: none;
+                width: 168px;
+                scroll-snap-align: start;
+            }
+        }
+    }
+}
+
+// « Le label »: black poster, paper type, the last line on a paper strip.
+.kb-home-label {
+    padding: 44px 0;
+    background-color: $kb-noir;
+    color: $kb-papier;
+
+    @include media-breakpoint-up(lg) {
+        padding: 88px 0;
+    }
+
+    &__grid {
+        display: grid;
+        gap: 18px;
+
+        @include media-breakpoint-up(lg) {
+            grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+            gap: 72px;
+            align-items: end;
+        }
+    }
+
+    &__intro,
+    &__body {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    &__kicker {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0;
+        font-family: $kb-font-mono;
+        font-size: .8125rem;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        color: $kb-papier-3;
+    }
+
+    &__title {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        margin: 0;
+        font-family: $kb-font-display;
+        font-weight: 400;
+        font-size: clamp(3rem, 5vw + 1rem, 5.75rem);
+        line-height: 1;
+        text-transform: uppercase;
+
+        .kb-inset {
+            margin-top: 8px;
+            padding: 4px 12px 0;
+        }
+    }
+
+    &__text {
+        margin: 0;
+        font-size: 1.125rem;
+        line-height: 1.6;
+        color: $kb-papier-3;
+        text-wrap: pretty;
+    }
+
+    &__link {
+        display: flex;
+        align-self: flex-start;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px;
+        color: $kb-papier;
+        font-size: .875rem;
+        font-weight: 800;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+
+        &:hover {
+            color: $kb-papier;
+        }
+    }
+}
+
+.kb-home-section--last {
+    padding-bottom: 44px;
+
+    @include media-breakpoint-up(lg) {
+        padding-bottom: 88px;
+    }
+}
+
+// « Derniers articles »: six across on a wide screen, four in two columns on a phone.
+.kb-home-shelf--latest {
+    gap: 24px 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    @include media-breakpoint-up(md) {
+        gap: 24px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    @include media-breakpoint-up(xl) {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    @include media-breakpoint-down(md) {
+        > li:nth-child(n + 5) {
+            display: none;
+        }
+    }
+}
+
+.kb-shelf-chips {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+
+    // A row to swipe on a phone, bleeding off the right edge.
+    @include media-breakpoint-down(md) {
+        margin-right: calc(var(--bs-gutter-x) * -.5);
+        margin-bottom: 20px;
+        padding-right: calc(var(--bs-gutter-x) * .5);
+        overflow-x: auto;
+    }
+
+    &[hidden] {
+        display: none;
+    }
+}

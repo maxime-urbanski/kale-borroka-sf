@@ -175,7 +175,7 @@ class AdminActionsTest extends WebTestCase
 
     public function testPageSlugIsGeneratedKeptOnRenameAndChecked(): void
     {
-        $this->submitPage('/admin/page/new', ['title' => 'Nos distros amies', 'slug' => '', 'footerPlacement' => 'shop', 'published' => '1']);
+        $this->submitPage('/admin/page/new', ['title' => 'Nos distros amies', 'slug' => '', 'footerPlacement' => 'bottom', 'published' => '1']);
         $page = $this->entityManager()->getRepository(\App\Entity\Page::class)->findOneBy(['title' => 'Nos distros amies']);
         self::assertSame('nos-distros-amies', $page?->getSlug());
 

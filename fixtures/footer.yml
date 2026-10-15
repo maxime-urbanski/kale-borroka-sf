@@ -1,0 +1,24 @@
+# The footer's columns as they were before the back office managed them.
+App\Entity\FooterColumn:
+    footer_column_about:
+        name: 'À propos'
+        position: 1
+    footer_column_shop:
+        name: 'Shop'
+        position: 2
+        supportsListed: true
+
+App\Entity\FooterLink:
+    footer_link_about:
+        column: '@footer_column_about'
+        page: '@page_about'
+        position: 1
+    # Unpublished: not shown.
+    footer_link_draft:
+        column: '@footer_column_about'
+        page: '@page_draft'
+        position: 2
+    footer_link_bandcamp:
+        column: '@footer_column_shop'
+        name: 'Bandcamp'
+        url: 'https://kaleborroka.bandcamp.com'
