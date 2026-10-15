@@ -29,6 +29,16 @@ services:
           # The name the edge Caddy proxies to: kbr-prod or kbr-preprod.
           - ${EDGE_ALIAS:?EDGE_ALIAS must be set}
 
+  # Same image as the shop (one tag per commit), so the worker never runs older code than the
+  # request that queued the mail. It only needs the database and the SMTP account: no
+  # published port, no edge network.
+  worker:
+    image: ${IMAGE:-ghcr.io/maxime-urbanski/kale-borroka-sf}:${IMAGE_TAG:?IMAGE_TAG must be set}
+    build: !reset null
+    environment:
+      MAILER_DSN: ${MAILER_DSN:?MAILER_DSN must be set}
+      MAILER_DEFAULT_SENDER: ${MAILER_DEFAULT_SENDER:?MAILER_DEFAULT_SENDER must be set}
+
 networks:
   # edge-prod or edge-preprod, created by deploy/edge/compose.yaml.
   edge:

@@ -10,6 +10,8 @@ use App\Tests\ServiceTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Messenger\SendEmailMessage;
+use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -45,7 +47,7 @@ class ResetPasswordTest extends WebTestCase
     {
         $this->requestReset('test@test.fr');
 
-        self::assertEmailCount(1);
+        self::assertQueuedEmailCount(1);
         $email = self::getMailerMessage();
         self::assertInstanceOf(Email::class, $email);
         self::assertEmailAddressContains($email, 'To', 'test@test.fr');
@@ -56,6 +58,34 @@ class ResetPasswordTest extends WebTestCase
         self::assertEmailHtmlBodyContains($email, '1 heure');
         self::assertEmailTextBodyContains($email, $this->resetLink());
         self::assertEmailTextBodyContains($email, '1 heure');
+    }
+
+    /**
+     * The SMTP round-trip happens in the worker, not in the request: it no longer tells a known
+     * address from an unknown one by the response time, and an SMTP outage is no 500.
+     */
+    public function testTheMailIsQueuedAndNotSentDuringTheRequest(): void
+    {
+        $this->requestReset('test@test.fr');
+
+        self::assertQueuedEmailCount(1);
+        $transport = self::service(InMemoryTransport::class, 'messenger.transport.async');
+        $sent = $transport->getSent();
+        self::assertCount(1, $sent);
+        $queued = $sent[0]->getMessage();
+        self::assertInstanceOf(SendEmailMessage::class, $queued);
+
+        // Rendered in the request, whose host passed SYMFONY_TRUSTED_HOSTS: the worker has no
+        // request, its links would point to router.default_uri, and it may run another version.
+        $email = $queued->getMessage();
+        self::assertInstanceOf(Email::class, $email);
+        self::assertStringContainsString('http://localhost/reset-password/reset/', (string) $email->getTextBody());
+        self::assertStringContainsString('http://localhost/reset-password/reset/', (string) $email->getHtmlBody());
+
+        // The transport and the mailer events are reset with each request.
+        $this->requestReset('nobody@example.org');
+        self::assertQueuedEmailCount(0);
+        self::assertCount(0, $transport->getSent(), 'an unknown address queues nothing');
     }
 
     public function testTheWholeJourneyEndsLoggedInWithTheNewPassword(): void
@@ -117,7 +147,7 @@ class ResetPasswordTest extends WebTestCase
         $this->requestReset('nobody@example.org');
 
         self::assertResponseRedirects('/reset-password/check-email');
-        self::assertEmailCount(0);
+        self::assertQueuedEmailCount(0);
         $this->client->followRedirect();
         self::assertSelectorTextContains('h1', 'Regarde ta boîte mail');
         self::assertSelectorTextContains('main', 'nobody@example.org');
@@ -174,7 +204,7 @@ class ResetPasswordTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(Response::HTTP_TOO_MANY_REQUESTS);
         self::assertSelectorTextContains('form[name="reset_password_request_form"]', 'Trop de demandes');
-        self::assertEmailCount(0);
+        self::assertQueuedEmailCount(0);
     }
 
     private function requestReset(string $email): void

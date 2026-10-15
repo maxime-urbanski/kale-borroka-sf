@@ -39,6 +39,12 @@ services:
       # Sessions (logins, carts) outlive the container, see config/packages/framework.yaml.
       - sessions:/app/var/sessions
 
+  worker:
+    image: ${IMAGES_PREFIX:-}app-php-prod
+    environment:
+      APP_SECRET: ${APP_SECRET:?APP_SECRET must be set in production}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in production}@database:5432/${POSTGRES_DB:-app}?serverVersion=${POSTGRES_VERSION:-15}&charset=${POSTGRES_CHARSET:-utf8}
+
   database:
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in production}

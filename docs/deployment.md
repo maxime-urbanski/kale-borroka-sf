@@ -173,6 +173,16 @@ Same for prod once `main` holds the deploy files (`kbr-prod`, `/srv/kbr/prod`, `
   edge keeps main's head.
 - **Downtime**: a deploy restarts the php container, a few seconds of 502. Sessions (logins,
   carts) are on a volume and survive it.
+- **Mails** are rendered during the request, queued in the database (`messenger_messages`)
+  and sent by the `worker` service, the shop's image running `messenger:consume async`
+  (restarted every hour or at 128 MB). A mail the SMTP server refuses is retried after 1, 3
+  then 9 minutes, then moved to the `failed` queue: look with
+  `kbr exec worker bin/console messenger:failed:show`, resend with `messenger:failed:retry`.
+  A password-reset mail older than an hour carries a dead link: remove it
+  (`messenger:failed:remove <id>`) rather than retrying it. Do not leave mails in `failed`:
+  until removed, their body (reset links, addresses) stays in the table and in the backups.
+  If mails stop leaving, check `kbr logs worker` first: while it is down they pile up in the
+  table and go out when it comes back.
 - **Images** of earlier commits are pruned two weeks after they were built.
 - **Backups** (`pg_dump` and the `uploads`, `media`, `invoices` volumes, off the VPS) are not
   set up by this.
