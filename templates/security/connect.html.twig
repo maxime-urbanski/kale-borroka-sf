@@ -1,0 +1,176 @@
+{% extends 'base.html.twig' %}
+
+{#
+    Connexion & inscription (maquette 08): both forms side by side from lg up; below, the
+    tab of the route (/login or /register) and links to switch. Rendered by App\Security\ConnectPage.
+#}
+{% set is_login = tab == 'login' %}
+{% set page_title = is_login ? 'Connexion' : 'Créer un compte' %}
+{% set password_rules = 'App\\Validator\\PasswordRequirements' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block body %}
+    <div class="container-xxl kb-connect">
+        {% include 'layout/_breadcrumb.html.twig' with {
+            breadcrumb: [{path: 'app_homepage', name: 'Accueil'}]
+                |merge(cart ? [{path: 'app_cart_index', name: 'Panier'}] : [])
+                |merge([{path: is_login ? 'app_login' : 'app_register', name: page_title}])
+        } %}
+
+        {% if cart %}
+            <div class="alert alert-dark kb-alert kb-connect__cart">
+                <i class="bi bi-bag-check" aria-hidden="true"></i>
+                <p class="mb-0">
+                    <strong>Ton panier est gardé au chaud ({{ cart.items }} article{{ cart.items > 1 ? 's' }} · {{ (cart.total / 100)|format_currency('EUR') }}).</strong>
+                    Connecte-toi ou crée un compte pour passer commande.
+                </p>
+            </div>
+        {% endif %}
+
+        {% if app.user %}
+            {# Outside the login form: forms cannot be nested. #}
+            <div class="alert alert-info kb-alert">
+                <i class="bi bi-person-check" aria-hidden="true"></i>
+                <p class="mb-0">
+                    Connecté·e en tant que {{ app.user.userIdentifier }},
+                    {% include 'partials/_post_button.html.twig' with {
+                        url: path('app_logout'),
+                        token_id: 'logout',
+                        class: 'btn btn-link p-0 align-baseline',
+                        text_btn: 'se déconnecter'
+                    } %}
+                </p>
+            </div>
+        {% endif %}
+
+        <nav class="kb-connect__tabs d-lg-none" aria-label="Connexion ou création de compte">
+            <a href="{{ path('app_login') }}"{% if is_login %} aria-current="page"{% endif %}>Connexion</a>
+            <a href="{{ path('app_register') }}"{% if not is_login %} aria-current="page"{% endif %}>Créer un compte</a>
+        </nav>
+
+        <div class="kb-connect__grid">
+            <section class="kb-connect__col kb-connect__col--login{{ is_login ? '' : ' d-none d-lg-flex' }}"
+                     aria-labelledby="connect-login-title">
+                <h{{ is_login ? 1 : 2 }} class="kb-connect__title" id="connect-login-title">Connexion</h{{ is_login ? 1 : 2 }}>
+                <p class="kb-connect__intro">Tu as déjà un compte ? Retrouve ta collection, ta wantlist et tes commandes.</p>
+
+                {% if error %}
+                    <div class="alert alert-danger kb-alert mb-0" role="alert" id="login-error">
+                        <i class="bi bi-exclamation-octagon-fill" aria-hidden="true"></i>
+                        <p class="mb-0"><strong>Erreur :</strong> {{ error.messageKey|trans(error.messageData, 'security') }}</p>
+                    </div>
+                {% endif %}
+
+                <form method="post" action="{{ path('app_login') }}" name="login" class="kb-connect__form">
+                    <div>
+                        <label for="inputEmail" class="form-label">E-mail</label>
+                        <input type="email" value="{{ last_username }}" name="email" id="inputEmail"
+                               class="form-control" autocomplete="email" required
+                               {%- if is_login and not last_username %} autofocus{% endif %}>
+                    </div>
+                    <div data-controller="password">
+                        <div class="kb-connect__label-row">
+                            <label for="inputPassword" class="form-label mb-0">Mot de passe</label>
+                            <a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a>
+                        </div>
+                        <div class="kb-password">
+                            <input type="password" name="password" id="inputPassword"
+                                   class="form-control{{ error ? ' is-invalid' }}" autocomplete="current-password" required
+                                   data-password-target="input"
+                                   {%- if error %} aria-invalid="true" aria-describedby="login-error"{% endif %}
+                                   {%- if is_login and last_username %} autofocus{% endif %}>
+                            {{ _self.password_toggle() }}
+                        </div>
+                    </div>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    <button class="btn btn-primary btn-lg w-100" type="submit">
+                        {{ cart ? 'Se connecter et continuer' : 'Se connecter' }}
+                        <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </button>
+                </form>
+
+                <p class="kb-connect__switch d-lg-none">
+                    Pas encore de compte ? <a href="{{ path('app_register') }}">Créer un compte</a>
+                </p>
+            </section>
+
+            <section class="kb-connect__col kb-connect__col--register{{ is_login ? ' d-none d-lg-flex' }}"
+                     aria-labelledby="connect-register-title">
+                <h{{ is_login ? 2 : 1 }} class="kb-connect__title" id="connect-register-title">Nouveau ici ?</h{{ is_login ? 2 : 1 }}>
+                <p class="kb-connect__intro">Un compte, c'est le suivi de tes commandes, ta wantlist et ta collection en ligne.</p>
+
+                {{ form_start(registrationForm, {attr: {class: 'kb-connect__form'}}) }}
+                    {{ form_errors(registrationForm) }}
+                    <div class="row g-3">
+                        <div class="col-6">{{ form_row(registrationForm.firstname, {row_attr: {class: 'mb-0'}}) }}</div>
+                        <div class="col-6">{{ form_row(registrationForm.lastname, {row_attr: {class: 'mb-0'}}) }}</div>
+                    </div>
+                    {{ form_row(registrationForm.email, {row_attr: {class: 'mb-0'}}) }}
+
+                    {# Rendered piece by piece: form_row() is what links the errors, so do it here. #}
+                    {% set password = registrationForm.plainPassword %}
+                    {% set password_errors = password.vars.errors|map((_, index) => password.vars.id ~ '_error' ~ (index + 1)) %}
+                    <div data-controller="password">
+                        {{ form_label(password) }}
+                        <div class="kb-password">
+                            {{ form_widget(password, {attr: password.vars.attr|merge({
+                                'aria-describedby': (['password-rules']|merge(password_errors))|join(' '),
+                                'data-password-target': 'input',
+                                'data-action': 'password#check',
+                            })|merge(password_errors ? {'aria-invalid': 'true'} : {})}) }}
+                            {{ _self.password_toggle() }}
+                        </div>
+                        <div class="kb-password-meter" data-password-target="meter" aria-hidden="true" hidden>
+                            <span></span><span></span><span></span><span></span>
+                        </div>
+                        <ul class="kb-password-rules" id="password-rules">
+                            <li data-password-target="rule" data-min="{{ constant(password_rules ~ '::MIN_LENGTH') }}">
+                                <i class="bi bi-dash" aria-hidden="true"></i>
+                                {{ constant(password_rules ~ '::MIN_LENGTH') }} caractères minimum<span class="visually-hidden" data-state></span>
+                            </li>
+                            <li data-password-target="rule" data-pattern="{{ constant(password_rules ~ '::DIGIT_OR_SYMBOL') }}">
+                                <i class="bi bi-dash" aria-hidden="true"></i>
+                                Un chiffre ou un symbole<span class="visually-hidden" data-state></span>
+                            </li>
+                        </ul>
+                        {{ form_errors(password) }}
+                    </div>
+
+                    {% set terms = _self.legal_link(legal, constant('App\\Security\\ConnectPage::TERMS_SLUG'), 'conditions générales de vente') %}
+                    {% set privacy = _self.legal_link(legal, constant('App\\Security\\ConnectPage::PRIVACY_SLUG'), 'politique de confidentialité') %}
+                    {# The privacy policy is only named once its page exists. #}
+                    {{ form_row(registrationForm.agreeTerms, {
+                        label: 'J\'accepte les ' ~ terms ~ (constant('App\\Security\\ConnectPage::PRIVACY_SLUG') in legal ? ' et la ' ~ privacy) ~ '.',
+                        label_html: true,
+                        row_attr: {class: 'mb-0'},
+                    }) }}
+
+                    <button type="submit" class="btn btn-dark btn-lg w-100">Créer mon compte</button>
+                {{ form_end(registrationForm) }}
+
+                <p class="kb-connect__switch d-lg-none">
+                    Déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a>
+                </p>
+            </section>
+        </div>
+    </div>
+{% endblock %}
+
+{# Shown by the password controller: without JavaScript the field works as a plain one. #}
+{% macro password_toggle() %}
+    <button type="button" class="kb-password__toggle" hidden
+            data-password-target="toggle" data-action="password#toggle"
+            aria-label="Afficher le mot de passe" aria-pressed="false">
+        <i class="bi bi-eye" aria-hidden="true"></i>
+    </button>
+{% endmacro %}
+
+{# A published CMS page opens in a new tab, so that the form keeps what was typed. #}
+{% macro legal_link(published, slug, text) %}
+    {%- if slug in published -%}
+        <a href="{{ path('app_page_show', {slug}) }}" target="_blank" rel="noopener">{{ text }}<span class="visually-hidden"> (nouvel onglet)</span></a>
+    {%- else -%}
+        {{ text }}
+    {%- endif -%}
+{% endmacro %}

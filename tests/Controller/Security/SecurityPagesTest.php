@@ -27,8 +27,10 @@ class SecurityPagesTest extends WebTestCase
      */
     public static function pageProvider(): iterable
     {
-        yield 'login' => ['/login', 'form[method="post"]'];
+        yield 'login' => ['/login', 'form[name="login"]'];
+        yield 'login, registration column' => ['/login', 'form[name="registration_form"]'];
         yield 'register' => ['/register', 'form[name="registration_form"]'];
+        yield 'register, login column' => ['/register', 'form[name="login"]'];
         yield 'reset password request' => ['/reset-password', 'form[name="reset_password_request_form"]'];
     }
 

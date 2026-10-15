@@ -1,0 +1,197 @@
+// Connexion & inscription (maquette 08): two columns split by a 3px rule from lg up,
+// tabs below. The password field (toggle, meter, rules) is reused by any password form.
+
+.kb-connect {
+    padding-bottom: 48px;
+
+    @include media-breakpoint-up(lg) {
+        padding-bottom: 96px;
+    }
+
+    &__cart {
+        margin-bottom: 0;
+    }
+
+    // Links, not ARIA tabs: each one is a page (/login, /register), working without JS.
+    &__tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin-top: 16px;
+        border: 3px solid $kb-noir;
+
+        a {
+            display: grid;
+            place-items: center;
+            min-height: 56px;
+            padding: 0 8px;
+            font-size: .875rem;
+            font-weight: 800;
+            text-align: center;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+
+            &[aria-current="page"] {
+                background: $kb-noir;
+                color: $kb-papier;
+            }
+        }
+    }
+
+    &__grid {
+        display: grid;
+
+        @include media-breakpoint-up(lg) {
+            grid-template-columns: 1fr 1fr;
+            padding-top: 40px;
+        }
+    }
+
+    &__col {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        min-width: 0;
+        padding-top: 24px;
+
+        @include media-breakpoint-up(lg) {
+            padding-top: 0;
+
+            &--login {
+                padding-right: 56px;
+                border-right: 3px solid $kb-noir;
+            }
+
+            &--register {
+                padding-left: 56px;
+            }
+        }
+    }
+
+    // h1 or h2 depending on the route: the same size either way, 52 → 72.
+    &__title {
+        margin: 0;
+        font-size: clamp(3.25rem, 2vw + 2.5rem, 4.5rem);
+        line-height: .95;
+    }
+
+    &__intro {
+        margin: 0;
+        font-size: 1.0625rem;
+        line-height: 1.5;
+        color: $kb-encre-2;
+    }
+
+    &__form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        .form-label {
+            font-size: .9375rem;
+        }
+
+        .form-check-label {
+            font-size: .9375rem;
+            line-height: 1.4;
+        }
+    }
+
+    // « Mot de passe » on the left, « Mot de passe oublié ? » on the right, 44px target.
+    &__label-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        column-gap: 16px;
+        min-height: 44px;
+        margin-bottom: 4px;
+
+        a {
+            display: inline-flex;
+            align-items: center;
+            min-height: 44px;
+            font-size: .875rem;
+            font-weight: 600;
+        }
+    }
+
+    &__switch {
+        margin: 8px 0 0;
+        text-align: center;
+
+        a {
+            font-weight: 700;
+        }
+    }
+}
+
+// The eye sits inside the field's border.
+.kb-password {
+    position: relative;
+
+    .form-control {
+        padding-right: 52px;
+    }
+
+    &__toggle {
+        position: absolute;
+        top: 50%;
+        right: 2px;
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: $kb-noir;
+        font-size: 1.125rem;
+        transform: translateY(-50%);
+
+        &:hover {
+            color: $kb-rouge-fonce;
+        }
+    }
+}
+
+// Decorative: the rules below carry the information.
+.kb-password-meter {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin-top: 8px;
+
+    span {
+        height: 6px;
+        background: $kb-papier-3;
+
+        &.is-on {
+            background: $kb-noir;
+        }
+    }
+}
+
+// A met rule turns its dash into a check (and says so to screen readers), never colour only.
+.kb-password-rules {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+    font-family: $kb-font-mono;
+    font-size: .8125rem;
+    color: $kb-gris;
+
+    li {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        &.is-met {
+            color: $kb-noir;
+            font-weight: 600;
+        }
+    }
+}

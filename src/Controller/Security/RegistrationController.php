@@ -7,10 +7,10 @@ namespace App\Controller\Security;
 use App\Entity\User;
 use App\Entity\UserCollection;
 use App\Entity\Wishlist;
-use App\Form\RegistrationFormType;
 use App\Repository\UserCollectionRepository;
 use App\Repository\UserRepository;
 use App\Repository\WishlistRepository;
+use App\Security\ConnectPage;
 use App\Security\UserAuthenticator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,9 +30,10 @@ class RegistrationController extends AbstractController
         UserRepository $userRepository,
         UserCollectionRepository $userCollectionRepository,
         WishlistRepository $wishlistRepository,
+        ConnectPage $connectPage,
     ): Response {
         $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form = $connectPage->registrationForm($user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -66,9 +67,6 @@ class RegistrationController extends AbstractController
                 ?? $this->redirectToRoute('app_login');
         }
 
-        return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form->createView(),
-            'title' => 'Inscription',
-        ]);
+        return $connectPage->render(ConnectPage::REGISTER, $form);
     }
 }
