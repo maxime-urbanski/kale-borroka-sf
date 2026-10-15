@@ -96,6 +96,23 @@ class FooterTest extends WebTestCase
         self::assertSame([...$sections, 'Occasions'], $column->filter('a')->each(static fn ($link): string => $link->text()));
     }
 
+    /**
+     * Written past the form (FooterColumnValidationTest): the section still shows once.
+     */
+    public function testAListedSectionIsNotLinkedTwice(): void
+    {
+        $lp = $this->entityManager()->getRepository(Support::class)->findOneBy(['name' => 'lp']) ?? throw new \LogicException('no lp section in the fixtures');
+        $this->entityManager()->persist((new FooterColumn())->setName('Rayons')->setSupportsListed(true)
+            ->addLink((new FooterLink())->setSupport($lp)->setName('Les LP')));
+        $this->entityManager()->flush();
+        $this->entityManager()->clear();
+
+        $crawler = $this->client->request('GET', '/');
+
+        $column = $crawler->filter('footer nav.kb-footer__col')->reduce(static fn ($nav): bool => 'Rayons' === $nav->filter('.kb-footer__heading')->text());
+        self::assertCount(1, $column->filter('a[href="/catalog/lp"]'));
+    }
+
     public function testNothingToFollowLeavesNoEmptyArea(): void
     {
         foreach ([FooterColumn::class, SocialNetwork::class] as $class) {

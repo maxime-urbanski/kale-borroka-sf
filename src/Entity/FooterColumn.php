@@ -60,7 +60,7 @@ class FooterColumn
     {
         if ($this->supportsListed && $this->links->exists(static fn (int $key, FooterLink $link): bool => null !== $link->getSupport())) {
             $context->buildViolation('La colonne liste déjà tous les rayons : retirez les liens vers un rayon, ou décochez « Tous les rayons du catalogue ».')
-                ->atPath('links')
+                ->atPath('supportsListed')
                 ->addViolation();
         }
     }
@@ -115,11 +115,14 @@ class FooterColumn
     }
 
     /**
-     * @return list<FooterLink> the links a visitor can follow; none: the column is not shown
+     * @return list<FooterLink> the links a visitor can follow, but those to a section the
+     *                          column already lists (refused by the form, not by every writer)
      */
     public function getShownLinks(): array
     {
-        return array_values($this->links->filter(static fn (FooterLink $link): bool => $link->isShown())->toArray());
+        return array_values($this->links->filter(
+            fn (FooterLink $link): bool => $link->isShown() && !($this->supportsListed && null !== $link->getSupport()),
+        )->toArray());
     }
 
     public function addLink(FooterLink $link): static

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Entity;
 
-use App\Entity\FooterColumn;
 use App\Entity\FooterLink;
 use App\Entity\Page;
 use App\Entity\Support;
@@ -39,16 +38,6 @@ class FooterLinkValidationTest extends KernelTestCase
         self::assertTrue((new FooterLink())->setName('Bandcamp')->setUrl('https://kaleborroka.bandcamp.com')->isShown());
         self::assertFalse((new FooterLink())->setName('Piège')->setUrl('javascript:alert(1)')->isShown(), 'written past the form');
         self::assertFalse((new FooterLink())->setUrl('https://kaleborroka.bandcamp.com')->isShown(), 'no text');
-    }
-
-    public function testAColumnListingTheSectionsHasNoLinkToOne(): void
-    {
-        $column = (new FooterColumn())->setName('Shop')->setSupportsListed(true)
-            ->addLink((new FooterLink())->setSupport(new Support()));
-        $validator = self::service(ValidatorInterface::class);
-
-        self::assertSame(['links'], array_map(static fn ($violation): string => $violation->getPropertyPath(), iterator_to_array($validator->validate($column))));
-        self::assertCount(0, $validator->validate($column->setSupportsListed(false)));
     }
 
     /**

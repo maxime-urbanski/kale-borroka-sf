@@ -52,6 +52,11 @@
         @include media-breakpoint-up(md) {
             justify-self: start;
         }
+
+        // Nothing to link: no empty track beside it.
+        &:only-child {
+            grid-column: 1 / -1;
+        }
     }
 
     &__name {
