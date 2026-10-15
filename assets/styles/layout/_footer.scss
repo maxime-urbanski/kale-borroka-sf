@@ -11,16 +11,25 @@
         background-color: $kb-noir;
         text-align: center;
 
-        // As many link columns as the back office makes (FooterColumn): the brand on its own
-        // row on a tablet, then beside the columns, which wrap rather than shrink below 160px.
         @include media-breakpoint-up(md) {
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             padding: 48px 40px;
             text-align: left;
         }
 
+        // The brand above the link columns on a tablet, beside them from lg up.
         @include media-breakpoint-up(lg) {
-            grid-template-columns: minmax(280px, 2fr) repeat(auto-fit, minmax(160px, 1fr));
+            grid-template-columns: minmax(260px, 1fr) 2fr;
+        }
+    }
+
+    // As many columns as the back office makes (FooterColumn), then « Suivre »: they wrap
+    // under each other rather than shrink below 160px.
+    &__links {
+        display: grid;
+        gap: 40px;
+
+        @include media-breakpoint-up(md) {
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
         }
     }
 
@@ -41,12 +50,7 @@
         justify-self: center;
 
         @include media-breakpoint-up(md) {
-            grid-column: 1 / -1;
             justify-self: start;
-        }
-
-        @include media-breakpoint-up(lg) {
-            grid-column: auto;
         }
     }
 

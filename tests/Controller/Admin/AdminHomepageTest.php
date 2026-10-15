@@ -111,9 +111,9 @@ class AdminHomepageTest extends WebTestCase
      */
     public function testFooterLinksHaveNoPagesOfTheirOwn(): void
     {
-        $link = $this->entityManager()->getRepository(FooterLink::class)->findOneBy([]);
+        $link = $this->entityManager()->getRepository(FooterLink::class)->findOneBy([]) ?? throw new \LogicException('no footer link in the fixtures');
 
-        foreach (['/admin/footer-link', \sprintf('/admin/footer-link/%d', $link?->getId()), \sprintf('/admin/footer-link/%d/edit', $link?->getId())] as $uri) {
+        foreach (['/admin/footer-link', \sprintf('/admin/footer-link/%d', $link->getId()), \sprintf('/admin/footer-link/%d/edit', $link->getId())] as $uri) {
             $this->client->request('GET', $uri);
             self::assertResponseStatusCodeSame(403, $uri);
         }

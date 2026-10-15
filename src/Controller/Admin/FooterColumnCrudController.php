@@ -58,11 +58,11 @@ class FooterColumnCrudController extends AbstractCrudController
             ->setRequired(false)
             ->setColumns(4);
         yield BooleanField::new('supportsListed', 'Tous les rayons du catalogue')
-            ->setHelp('En tête de colonne, un lien par rayon (LP, CD…), tenu à jour tout seul quand un rayon est ajouté.')
+            ->setHelp('En tête de colonne, un lien par rayon (LP, CD…), tenu à jour tout seul quand un rayon est ajouté. Inutile alors d\'ajouter un lien vers un rayon en dessous.')
             ->renderAsSwitch(false)
             ->setColumns(12);
         yield CollectionField::new('links', 'Liens')
-            ->setHelp('De haut en bas, par ordre croissant. Un lien vers une page non publiée n\'est pas affiché ; une colonne sans lien affiché non plus.')
+            ->setHelp('De haut en bas, par ordre croissant, après les rayons s\'ils sont listés. Un lien vers une page non publiée n\'est pas affiché ; une colonne sans rayon ni lien affiché non plus.')
             ->useEntryCrudForm(FooterLinkCrudController::class, FooterLinkCrudController::PAGE_IN_COLUMN_NEW, FooterLinkCrudController::PAGE_IN_COLUMN_EDIT)
             ->setFormTypeOption('by_reference', false)
             ->setColumns(12);

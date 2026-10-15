@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Layout;
 
+use App\Entity\FooterColumn;
 use App\Repository\FooterColumnRepository;
 use App\Repository\PageRepository;
 use App\Repository\SocialNetworkRepository;
@@ -32,10 +33,15 @@ class FooterController
         HomepageProviderInterface $homepageProvider,
         Environment $twig,
     ): Response {
+        $columns = $footerColumnRepository->findForFooter();
+
         $content = $twig->render('layout/_footer.html.twig', [
             'homepage' => $homepageProvider->get(),
-            'columns' => $footerColumnRepository->findForFooter(),
-            'supports' => $supportRepository->findBy([], ['id' => 'ASC']),
+            'columns' => $columns,
+            // Only when a column lists the catalogue sections.
+            'supports' => array_any($columns, static fn (FooterColumn $column): bool => $column->isSupportsListed())
+                ? $supportRepository->findBy([], ['id' => 'ASC'])
+                : [],
             'socialNetworks' => $socialNetworkRepository->getAllSocialNetworkForFooter(),
             'bottomPages' => $pageRepository->findForFooterBottom(),
         ]);
