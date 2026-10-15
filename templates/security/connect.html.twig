@@ -6,7 +6,6 @@
 #}
 {% set is_login = tab == 'login' %}
 {% set page_title = is_login ? 'Connexion' : 'Créer un compte' %}
-{% set password_rules = 'App\\Validator\\PasswordRequirements' %}
 
 {% block title %}{{ page_title }}{% endblock %}
 
@@ -80,7 +79,7 @@
                                    data-password-target="input"
                                    {%- if error %} aria-invalid="true" aria-describedby="login-error"{% endif %}
                                    {%- if is_login and last_username %} autofocus{% endif %}>
-                            {{ _self.password_toggle() }}
+                            {% include 'security/_password_toggle.html.twig' %}
                         </div>
                     </div>
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
@@ -97,45 +96,18 @@
 
             <section class="kb-connect__col kb-connect__col--register{{ is_login ? ' d-none d-lg-flex' }}"
                      aria-labelledby="connect-register-title">
-                <h{{ is_login ? 2 : 1 }} class="kb-connect__title" id="connect-register-title">Nouveau ici ?</h{{ is_login ? 2 : 1 }}>
+                <h{{ is_login ? 2 : 1 }} class="kb-connect__title" id="connect-register-title">Nouveau ici&nbsp;?</h{{ is_login ? 2 : 1 }}>
                 <p class="kb-connect__intro">Un compte, c'est le suivi de tes commandes, ta wantlist et ta collection en ligne.</p>
 
                 {{ form_start(registrationForm, {attr: {class: 'kb-connect__form'}}) }}
-                    {{ form_errors(registrationForm) }}
+                    {% include 'security/_form_errors.html.twig' with {form: registrationForm} only %}
                     <div class="row g-3">
                         <div class="col-6">{{ form_row(registrationForm.firstname, {row_attr: {class: 'mb-0'}}) }}</div>
                         <div class="col-6">{{ form_row(registrationForm.lastname, {row_attr: {class: 'mb-0'}}) }}</div>
                     </div>
                     {{ form_row(registrationForm.email, {row_attr: {class: 'mb-0'}}) }}
 
-                    {# Rendered piece by piece: form_row() is what links the errors, so do it here. #}
-                    {% set password = registrationForm.plainPassword %}
-                    {% set password_errors = password.vars.errors|map((_, index) => password.vars.id ~ '_error' ~ (index + 1)) %}
-                    <div data-controller="password">
-                        {{ form_label(password) }}
-                        <div class="kb-password">
-                            {{ form_widget(password, {attr: password.vars.attr|merge({
-                                'aria-describedby': (['password-rules']|merge(password_errors))|join(' '),
-                                'data-password-target': 'input',
-                                'data-action': 'password#check',
-                            })|merge(password_errors ? {'aria-invalid': 'true'} : {})}) }}
-                            {{ _self.password_toggle() }}
-                        </div>
-                        <div class="kb-password-meter" data-password-target="meter" aria-hidden="true" hidden>
-                            <span></span><span></span><span></span><span></span>
-                        </div>
-                        <ul class="kb-password-rules" id="password-rules">
-                            <li data-password-target="rule" data-min="{{ constant(password_rules ~ '::MIN_LENGTH') }}">
-                                <i class="bi bi-dash" aria-hidden="true"></i>
-                                {{ constant(password_rules ~ '::MIN_LENGTH') }} caractères minimum<span class="visually-hidden" data-state></span>
-                            </li>
-                            <li data-password-target="rule" data-pattern="{{ constant(password_rules ~ '::DIGIT_OR_SYMBOL') }}">
-                                <i class="bi bi-dash" aria-hidden="true"></i>
-                                Un chiffre ou un symbole<span class="visually-hidden" data-state></span>
-                            </li>
-                        </ul>
-                        {{ form_errors(password) }}
-                    </div>
+                    {% include 'security/_password_field.html.twig' with {field: registrationForm.plainPassword} only %}
 
                     {% set terms = _self.legal_link(legal, constant('App\\Security\\ConnectPage::TERMS_SLUG'), 'conditions générales de vente') %}
                     {% set privacy = _self.legal_link(legal, constant('App\\Security\\ConnectPage::PRIVACY_SLUG'), 'politique de confidentialité') %}
@@ -156,15 +128,6 @@
         </div>
     </div>
 {% endblock %}
-
-{# Shown by the password controller: without JavaScript the field works as a plain one. #}
-{% macro password_toggle() %}
-    <button type="button" class="kb-password__toggle" hidden
-            data-password-target="toggle" data-action="password#toggle"
-            aria-label="Afficher le mot de passe" aria-pressed="false">
-        <i class="bi bi-eye" aria-hidden="true"></i>
-    </button>
-{% endmacro %}
 
 {# A published CMS page opens in a new tab, so that the form keeps what was typed. #}
 {% macro legal_link(published, slug, text) %}

@@ -25,8 +25,12 @@ class UpdatePasswordFormType extends AbstractType
             ])
             ->add('new_password', RepeatedType::class, [
                 'type' => PasswordType::class,
-                'first_options' => ['label' => 'Nouveau mot de passe'],
+                'first_options' => [
+                    'label' => 'Nouveau mot de passe',
+                    'attr' => ['autocomplete' => 'new-password'],
+                ],
                 'second_options' => ['label' => 'Confirmez mot de passe'],
+                'invalid_message' => 'Les deux mots de passe ne correspondent pas.',
                 'constraints' => [new PasswordRequirements()],
             ])
             ->add('submit', SubmitType::class, [

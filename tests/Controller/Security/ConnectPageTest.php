@@ -39,10 +39,10 @@ class ConnectPageTest extends WebTestCase
     {
         $this->client->request('GET', '/login');
         self::assertSelectorTextSame('h1', 'Connexion');
-        self::assertSelectorTextSame('h2#connect-register-title', 'Nouveau ici ?');
+        self::assertSelectorTextSame('h2#connect-register-title', "Nouveau ici\u{a0}?");
 
         $this->client->request('GET', '/register');
-        self::assertSelectorTextSame('h1', 'Nouveau ici ?');
+        self::assertSelectorTextSame('h1', "Nouveau ici\u{a0}?");
         self::assertSelectorTextSame('h2#connect-login-title', 'Connexion');
     }
 

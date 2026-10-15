@@ -1,0 +1,15 @@
+{% autoescape false %}
+Salut,
+
+Quelqu'un (toi, on espère) a demandé à changer le mot de passe de ton compte Kale Borroka Records. Pour en choisir un nouveau, ouvre ce lien :
+
+{{ url('app_reset_password', {token: resetToken.token}) }}
+
+Le lien expire dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }} et ne sert qu'une fois.
+
+Ce n'est pas toi ? Ignore ce message : ton mot de passe ne change pas.
+
+--
+Kale Borroka Records · label & distro antifasciste depuis 2019
+{{ url('app_homepage') }}
+{% endautoescape %}

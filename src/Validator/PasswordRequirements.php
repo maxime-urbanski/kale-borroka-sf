@@ -11,8 +11,8 @@ use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
 use Symfony\Component\Validator\Constraints\Regex;
 
 /**
- * Rules for every new password (registration, reset, account): the ones the registration
- * form lists under the field (templates/security/connect.html.twig).
+ * Rules for every new password (registration, reset, account): the ones the
+ * forms list under the field (templates/security/_password_field.html.twig).
  */
 #[\Attribute]
 final class PasswordRequirements extends Compound

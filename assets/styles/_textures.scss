@@ -35,3 +35,10 @@
 .kb-error--500 {
     background-image: url("../images/textures/halftone.svg");
 }
+
+// Under the « tract » pages, the footer's edge burns into the halftone, not into the paper.
+.kb-main:has(> .kb-tract-page) + .kb-footer .kb-burnt {
+    background:
+        url("../images/textures/burnt.svg") repeat-x bottom / 600px 48px,
+        $kb-papier-2 url("../images/textures/halftone.svg");
+}

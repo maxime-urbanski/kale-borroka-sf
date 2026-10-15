@@ -1,0 +1,7 @@
+{# Errors of the form itself (CSRF, rate limit), shaped like the login error: icon, prefix, red border. #}
+{% for error in form.vars.errors %}
+    <div class="alert alert-danger kb-alert mb-0" role="alert">
+        <i class="bi bi-exclamation-octagon-fill" aria-hidden="true"></i>
+        <p class="mb-0"><strong>Erreur :</strong> {{ error.message }}</p>
+    </div>
+{% endfor %}
