@@ -1,15 +1,19 @@
-{% extends 'connect.html.twig' %}
+{% extends 'security/_tract.html.twig' %}
 
-{% block title %}Password Reset Email Sent{% endblock %}
+{% block step_icon %}bi-envelope-check{% endblock %}
+{% block step %}Étape 2 / 3{% endblock %}
+{% block heading %}Regarde ta boîte mail.{% endblock %}
 
-{% block form %}
-    <p>
-        Si un compte correspondant à votre adresse e-mail existe, un lien pour réinitialiser votre mot de passe vient de
-        vous être envoyé sur l'adresse email renseigné.
-        Ce lien expirera
-        dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+{# The same words whether or not an account exists: nothing tells them apart. #}
+{% block card %}
+    <p class="kb-tract__text">
+        Si un compte existe pour {% if email %}<strong>{{ email }}</strong>{% else %}cette adresse{% endif %},
+        un lien de réinitialisation vient de partir.
     </p>
-    <p>Si vous ne recevez pas d'e-mail, veuillez vérifier votre dossier spam ou <a
-            href="{{ path('app_forgot_password_request') }}">renvoyer l'email</a>.</p>
-
+    <div class="kb-tract__note">
+        <strong>Rien reçu ?</strong>
+        Vérifie tes spams. Le lien expire dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }} ;
+        tu peux en redemander un après {{ retryMinutes }} minutes.
+    </div>
+    <a href="{{ path('app_forgot_password_request') }}" class="btn btn-outline-dark btn-lg w-100">Renvoyer le lien</a>
 {% endblock %}

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Controller\Security;
 
 use App\Tests\DatabaseIsolationTrait;
+use App\Tests\ServiceTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Mime\Address;
@@ -17,6 +18,7 @@ use Symfony\Component\Mime\Email;
 class MailSenderTest extends WebTestCase
 {
     use DatabaseIsolationTrait;
+    use ServiceTrait;
 
     private KernelBrowser $client;
 
@@ -26,6 +28,8 @@ class MailSenderTest extends WebTestCase
         $this->client->disableReboot();
         // The reset request is stored (and throttled) in the database: roll it back.
         $this->beginIsolation();
+        // The reset form is rate limited per address: start from a fresh count.
+        self::service(\Symfony\Component\Cache\Adapter\AdapterInterface::class, 'cache.rate_limiter')->clear();
     }
 
     protected function tearDown(): void

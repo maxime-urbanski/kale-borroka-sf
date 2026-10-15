@@ -68,7 +68,7 @@ class LoginThrottlingTest extends WebTestCase
     private function logIn(string $email, string $password): void
     {
         $crawler = $this->client->request('GET', '/login');
-        $this->client->submit($crawler->filter('form[method="post"]')->last()->form([
+        $this->client->submit($crawler->filter('form[name="login"]')->form([
             'email' => $email,
             'password' => $password,
         ]));

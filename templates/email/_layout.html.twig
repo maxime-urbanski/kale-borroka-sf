@@ -1,0 +1,50 @@
+{#
+    Layout of every HTML e-mail, in the shop's three inks. Mail clients ignore stylesheets and
+    web fonts: tables, inline styles, system fonts. No image nor remote resource (lighter, and
+    nothing to block or to track). Always send a text part next to it (textTemplate()).
+
+    Blocks: preheader (the line clients show after the subject), content.
+#}
+{%- set kb_noir = '#111010' -%}
+{%- set kb_papier = '#f3eee4' -%}
+{%- set kb_papier_2 = '#e8e1d3' -%}
+{%- set kb_rouge = '#c4161c' -%}
+{%- set kb_gris = '#5b5750' -%}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="supported-color-schemes" content="light">
+    <title>{{ email.subject }}</title>
+</head>
+<body style="margin:0;padding:0;background-color:{{ kb_papier_2 }};">
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">{% block preheader %}{% endblock %}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:{{ kb_papier_2 }};">
+    <tr>
+        <td align="center" style="padding:32px 12px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                   style="max-width:560px;background-color:{{ kb_papier }};border:3px solid {{ kb_noir }};">
+                <tr>
+                    <td style="padding:20px 28px;background-color:{{ kb_noir }};font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:26px;line-height:1.1;letter-spacing:.02em;text-transform:uppercase;color:{{ kb_papier }};">
+                        Kale Borroka <span style="padding:0 6px;background-color:{{ kb_rouge }};color:{{ kb_papier }};">Riot Records</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:32px 28px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.5;color:{{ kb_noir }};">
+                        {% block content %}{% endblock %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:18px 28px;border-top:2px solid {{ kb_noir }};font-family:'Courier New',Courier,monospace;font-size:12px;line-height:1.5;letter-spacing:.06em;text-transform:uppercase;color:{{ kb_gris }};">
+                        Label &amp; distro antifasciste depuis 2019 ·
+                        <a href="{{ url('app_homepage') }}" style="color:{{ kb_noir }};">kale borroka records</a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

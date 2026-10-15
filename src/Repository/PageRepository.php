@@ -38,4 +38,25 @@ class PageRepository extends ServiceEntityRepository
 
         return $pages;
     }
+
+    /**
+     * Which of these pages are published, to link them only when they exist.
+     *
+     * @param list<string> $slugs
+     *
+     * @return list<string>
+     */
+    public function findPublishedSlugs(array $slugs): array
+    {
+        /** @var list<string> $published */
+        $published = $this->createQueryBuilder('page')
+            ->select('page.slug')
+            ->where('page.published = true')
+            ->andWhere('page.slug IN (:slugs)')
+            ->setParameter('slugs', $slugs)
+            ->getQuery()
+            ->getSingleColumnResult();
+
+        return $published;
+    }
 }

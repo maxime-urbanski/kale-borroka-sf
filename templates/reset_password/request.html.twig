@@ -1,25 +1,14 @@
-{% extends 'connect.html.twig' %}
+{% extends 'security/_tract.html.twig' %}
 
-{% block connect_error %}
-    {% for flash_error in app.flashes('reset_password_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-{% endblock %}
+{% block step_icon %}bi-key{% endblock %}
+{% block step %}Étape 1 / 3{% endblock %}
+{% block heading %}Mot de passe oublié&nbsp;?{% endblock %}
 
-{% block form %}
-    <div>
-        <small>
-            Saisissez votre adresse électronique et nous vous enverrons un lien pour réinitialiser votre mot de passe.
-            lien pour réinitialiser votre mot de passe.
-        </small>
-    </div>
-    {{ form_start(requestForm) }}
-    <div class="form-floating my-3">
-        {{ form_widget(requestForm.email) }}
-        {{ form_label(requestForm.email) }}
-    </div>
-    <div class="d-grid col-8 mx-auto">
-        <button class="btn btn-outline-success">Lien pour réinitialiser votre mot de passe.</button>
-    </div>
+{% block card %}
+    <p class="kb-tract__text">Indique l'e-mail de ton compte. On t'envoie un lien pour en choisir un nouveau.</p>
+    {{ form_start(requestForm, {attr: {class: 'kb-tract__form'}}) }}
+        {% include 'security/_form_errors.html.twig' with {form: requestForm} only %}
+        {{ form_row(requestForm.email, {row_attr: {class: 'mb-0'}}) }}
+        <button type="submit" class="btn btn-dark btn-lg w-100">Envoyer le lien</button>
     {{ form_end(requestForm) }}
 {% endblock %}

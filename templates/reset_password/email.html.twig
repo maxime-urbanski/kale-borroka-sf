@@ -1,12 +1,23 @@
-<div class="container">
-    <h1>Hi!</h1>
+{% extends 'email/_layout.html.twig' %}
 
-    <p>To reset your password, please visit the following link</p>
+{% set reset_url = url('app_reset_password', {token: resetToken.token}) %}
+{% set expires_in = resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') %}
 
-    <a href="{{ url('app_reset_password', {token: resetToken.token}) }}">{{ url('app_reset_password', {token: resetToken.token}) }}</a>
+{% block preheader %}Ton lien pour choisir un nouveau mot de passe, valable {{ expires_in }}.{% endblock %}
 
-    <p>This link will expire
-        in {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
-
-    <p>Cheers!</p>
-</div>
+{% block content %}
+    <h1 style="margin:0 0 20px;font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:36px;font-weight:400;line-height:1;text-transform:uppercase;">Nouveau mot de passe</h1>
+    <p style="margin:0 0 16px;">Salut,</p>
+    <p style="margin:0 0 24px;">Quelqu'un (toi, on espère) a demandé à changer le mot de passe de ton compte Kale Borroka Records. Pour en choisir un nouveau&nbsp;:</p>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
+        <tr>
+            <td style="background-color:#111010;">
+                <a href="{{ reset_url }}" style="display:inline-block;padding:16px 26px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;color:#f3eee4;">Choisir un nouveau mot de passe</a>
+            </td>
+        </tr>
+    </table>
+    <p style="margin:0 0 16px;">Le lien expire dans {{ expires_in }} et ne sert qu'une fois.</p>
+    <p style="margin:0 0 16px;font-size:14px;">Le bouton ne marche pas&nbsp;? Copie ce lien dans ton navigateur&nbsp;:<br>
+        <a href="{{ reset_url }}" style="color:#111010;word-break:break-all;">{{ reset_url }}</a></p>
+    <p style="margin:0;padding:12px 14px;border:2px dashed #111010;font-size:14px;"><strong>Ce n'est pas toi&nbsp;?</strong> Ignore ce message&nbsp;: ton mot de passe ne change pas.</p>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{#
+    Mot de passe oublié (maquette 09): one centred « tract » card on a halftone ground, for the
+    three steps. Blocks: step (« Étape 1 / 3 »), step_icon, heading, card.
+#}
+{% block title %}{{ block('heading') }}{% endblock %}
+
+{% block body %}
+    <div class="kb-tract-page bg-kb-papier-2 kb-tex-halftone">
+        <div class="kb-tract">
+            <p class="kb-tract__step kb-meta">
+                <i class="bi {% block step_icon %}{% endblock %}" aria-hidden="true"></i>
+                {% block step %}{% endblock %}
+            </p>
+            <h1 class="kb-tract__title">{% block heading %}{% endblock %}</h1>
+            {% block card %}{% endblock %}
+            <a class="kb-tract__back" href="{{ path('app_login') }}">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>Retour à la connexion
+            </a>
+        </div>
+    </div>
+{% endblock %}

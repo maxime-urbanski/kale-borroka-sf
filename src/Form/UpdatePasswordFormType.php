@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Data\UpdatePasswordData;
+use App\Validator\PasswordRequirements;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -12,8 +13,6 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
 
 class UpdatePasswordFormType extends AbstractType
 {
@@ -26,9 +25,13 @@ class UpdatePasswordFormType extends AbstractType
             ])
             ->add('new_password', RepeatedType::class, [
                 'type' => PasswordType::class,
-                'first_options' => ['label' => 'Nouveau mot de passe'],
+                'first_options' => [
+                    'label' => 'Nouveau mot de passe',
+                    'attr' => ['autocomplete' => 'new-password'],
+                ],
                 'second_options' => ['label' => 'Confirmez mot de passe'],
-                'constraints' => [new Length(min: 6), new NotCompromisedPassword()],
+                'invalid_message' => 'Les deux mots de passe ne correspondent pas.',
+                'constraints' => [new PasswordRequirements()],
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Modifier mon mot de passe',

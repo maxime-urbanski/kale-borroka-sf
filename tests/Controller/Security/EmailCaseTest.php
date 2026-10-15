@@ -33,7 +33,7 @@ class EmailCaseTest extends WebTestCase
     public function testLoginIgnoresTheCaseOfTheEmail(): void
     {
         $crawler = $this->client->request('GET', '/login');
-        $form = $crawler->filter('form[method="post"]')->form([
+        $form = $crawler->filter('form[name="login"]')->form([
             'email' => ' TEST@Test.fr ',
             'password' => 'password123',
         ]);
@@ -51,20 +51,20 @@ class EmailCaseTest extends WebTestCase
         $count = $users->count();
 
         $crawler = $this->client->request('GET', '/register');
-        $form = $crawler->filter('form')->last()->form();
+        $form = $crawler->filter('form[name="registration_form"]')->form();
         $prefix = $form->getName();
         $form->setValues([
             $prefix.'[lastname]' => 'Doe',
             $prefix.'[firstname]' => 'Jane',
             $prefix.'[email]' => 'Test@TEST.fr',
-            $prefix.'[plainPassword]' => 'password123',
+            $prefix.'[plainPassword]' => 'Kale-Borroka-2026!',
         ]);
         $agreeTerms = $form[$prefix.'[agreeTerms]'];
         self::assertInstanceOf(ChoiceFormField::class, $agreeTerms);
         $agreeTerms->tick();
         $this->client->submit($form);
 
-        self::assertSelectorTextContains('form', 'There is already an account with this email');
+        self::assertSelectorTextContains('form[name="registration_form"]', 'Un compte existe déjà avec cet e-mail.');
         self::assertSame($count, $users->count());
     }
 

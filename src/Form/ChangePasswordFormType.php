@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Validator\PasswordRequirements;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ChangePasswordFormType extends AbstractType
 {
@@ -21,25 +20,17 @@ class ChangePasswordFormType extends AbstractType
                 'type' => PasswordType::class,
                 'options' => [
                     'attr' => [
-                        'autocomplete' => 'Nouveau mot de passe',
+                        'autocomplete' => 'new-password',
                     ],
                 ],
                 'first_options' => [
-                    'constraints' => [
-                        new NotBlank(message: 'Please enter a password'),
-                        new Length(
-                            min: 6,
-                            // max length allowed by Symfony for security reasons
-                            max: 4096,
-                            minMessage: 'Your password should be at least {{ limit }} characters',
-                        ),
-                    ],
+                    'constraints' => [new PasswordRequirements()],
                     'label' => 'Nouveau mot de passe',
                 ],
                 'second_options' => [
-                    'label' => 'Confirmez le mot de passe',
+                    'label' => 'Confirmer',
                 ],
-                'invalid_message' => 'The password fields must match.',
+                'invalid_message' => 'Les deux mots de passe ne correspondent pas.',
                 // Instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,
