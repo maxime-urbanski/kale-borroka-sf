@@ -23,10 +23,11 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class Homepage
 {
     /**
-     * A shop path or an http(s) address, without spaces. Not protocol-relative: browsers
-     * read `//host` and `/\host` as another site.
+     * A shop path or an http(s) address, without spaces, up to the very end (`\z`: `$` would
+     * let a final line break through). Not protocol-relative: browsers read `//host` and
+     * `/\host` as another site.
      */
-    public const string LINK_PATTERN = '#^(https?://|/(?![/\\\\]))\S*$#i';
+    public const string LINK_PATTERN = '#^(https?://|/(?![/\\\\]))\S*\z#i';
 
     /** Full rows on a wide screen: 4 cards across for the productions, 6 for the articles. */
     public const array PRODUCTIONS_LIMITS = [4, 8, 12];

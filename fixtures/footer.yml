@@ -6,6 +6,7 @@ App\Entity\FooterColumn:
     footer_column_shop:
         name: 'Shop'
         position: 2
+        supportsListed: true
 
 App\Entity\FooterLink:
     footer_link_about:
@@ -17,6 +18,7 @@ App\Entity\FooterLink:
         column: '@footer_column_about'
         page: '@page_draft'
         position: 2
-    footer_link_{LP, EP, CD, FANZINE, TAPE}:
+    footer_link_bandcamp:
         column: '@footer_column_shop'
-        support: '@support_<current()>'
+        name: 'Bandcamp'
+        url: 'https://kaleborroka.bandcamp.com'

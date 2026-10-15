@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -56,6 +57,10 @@ class FooterColumnCrudController extends AbstractCrudController
             ->setHelp('De gauche à droite, les plus petits nombres d\'abord.')
             ->setRequired(false)
             ->setColumns(4);
+        yield BooleanField::new('supportsListed', 'Tous les rayons du catalogue')
+            ->setHelp('En tête de colonne, un lien par rayon (LP, CD…), tenu à jour tout seul quand un rayon est ajouté.')
+            ->renderAsSwitch(false)
+            ->setColumns(12);
         yield CollectionField::new('links', 'Liens')
             ->setHelp('De haut en bas, par ordre croissant. Un lien vers une page non publiée n\'est pas affiché ; une colonne sans lien affiché non plus.')
             ->useEntryCrudForm(FooterLinkCrudController::class, FooterLinkCrudController::PAGE_IN_COLUMN_NEW, FooterLinkCrudController::PAGE_IN_COLUMN_EDIT)

@@ -7,6 +7,7 @@ namespace App\Tests\Controller\Layout;
 use App\Entity\FooterColumn;
 use App\Entity\FooterLink;
 use App\Entity\Homepage;
+use App\Entity\Support;
 use App\Tests\DatabaseIsolationTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -44,9 +45,10 @@ class FooterTest extends WebTestCase
         ]);
         self::assertSame([
             ['À propos', ['Qui sommes-nous']],
-            ['Shop', ['LP', 'EP', 'CD', 'FANZINE', 'TAPE']],
+            ['Shop', ['LP', 'EP', 'CD', 'FANZINE', 'TAPE', 'Bandcamp']],
         ], $columns, 'unpublished pages are left out');
         self::assertCount(1, $crawler->filter('footer a[href="/catalog/lp"]'));
+        self::assertCount(1, $crawler->filter('footer a[href="https://kaleborroka.bandcamp.com"]'));
         self::assertSelectorTextContains('footer .kb-footer__about', 'Fait main, sans patron.');
         self::assertSelectorTextContains('footer .kb-footer__copyright', 'Make racists afraid again');
         self::assertSelectorTextContains('header .kb-header__strip', 'Punk · antifa · DIY');
@@ -70,6 +72,27 @@ class FooterTest extends WebTestCase
         self::assertSame('Les copains', $first->filter('.kb-footer__heading')->text());
         self::assertSame(['/catalog', 'https://kaleborroka.bandcamp.com'], $first->filter('a')->each(static fn ($link): ?string => $link->attr('href')));
         self::assertStringNotContainsString('Vide', $crawler->filter('footer')->text());
+    }
+
+    /**
+     * Read live: a section created after the column (app:catalog:import) is listed without
+     * anyone adding a link for it.
+     */
+    public function testAColumnCanListEveryCatalogueSection(): void
+    {
+        $this->entityManager()->persist((new FooterColumn())->setName('Rayons')->setSupportsListed(true)
+            ->addLink((new FooterLink())->setName('Occasions')->setUrl('/catalog')));
+        $this->entityManager()->flush();
+        $this->entityManager()->clear();
+        $sections = array_map(
+            static fn (Support $support): string => mb_strtoupper((string) $support->getName()),
+            $this->entityManager()->getRepository(Support::class)->findBy([], ['id' => 'ASC']),
+        );
+
+        $crawler = $this->client->request('GET', '/');
+
+        $column = $crawler->filter('footer nav.kb-footer__col')->reduce(static fn ($nav): bool => 'Rayons' === $nav->filter('.kb-footer__heading')->text());
+        self::assertSame([...$sections, 'Occasions'], $column->filter('a')->each(static fn ($link): string => $link->text()));
     }
 
     public function testTheStripAndTheFooterTextComeFromTheBackOffice(): void

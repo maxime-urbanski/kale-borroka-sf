@@ -32,6 +32,13 @@ class FooterColumn
     private int $position = 0;
 
     /**
+     * Every catalogue section (Support) first, read live: a section created later, by
+     * app:catalog:import for instance, is listed without a link of its own.
+     */
+    #[ORM\Column(options: ['default' => false])]
+    private bool $supportsListed = false;
+
+    /**
      * @var Collection<int, FooterLink>
      */
     #[ORM\OneToMany(targetEntity: FooterLink::class, mappedBy: 'column', cascade: ['persist'], orphanRemoval: true)]
@@ -69,6 +76,18 @@ class FooterColumn
     public function setPosition(?int $position): static
     {
         $this->position = (int) $position;
+
+        return $this;
+    }
+
+    public function isSupportsListed(): bool
+    {
+        return $this->supportsListed;
+    }
+
+    public function setSupportsListed(bool $supportsListed): static
+    {
+        $this->supportsListed = $supportsListed;
 
         return $this;
     }

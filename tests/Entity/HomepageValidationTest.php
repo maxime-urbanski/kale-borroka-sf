@@ -28,6 +28,7 @@ class HomepageValidationTest extends KernelTestCase
         yield 'protocol-relative' => ['//evil.example', false];
         yield 'backslash' => ['/\\evil.example', false];
         yield 'spaces' => ['/page/a b', false];
+        yield 'trailing newline' => ["/catalog\n", false];
     }
 
     #[DataProvider('urls')]

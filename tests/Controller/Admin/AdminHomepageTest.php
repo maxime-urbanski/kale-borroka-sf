@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller\Admin;
 
+use App\Entity\FooterLink;
 use App\Entity\Homepage;
 use App\Entity\Page;
 use App\Enum\HomeShelf;
@@ -73,6 +74,7 @@ class AdminHomepageTest extends WebTestCase
         self::assertSame([HomeShelf::ALL, HomeShelf::CD], $homepage->getLatestShelves());
         self::assertSame('Oi! · antifa', $homepage->getStripRight());
         self::assertSame('Fait à Bayonne.', $homepage->getFooterText());
+        self::assertSame('Gora herria', $homepage->getFooterTagline());
 
         $this->client->request('GET', '/');
         self::assertSelectorTextContains('#le-label', 'Pas de chef.');
@@ -102,6 +104,19 @@ class AdminHomepageTest extends WebTestCase
         $column = $crawler->filter('footer nav.kb-footer__col')->first();
         self::assertSame('Infos', $column->filter('.kb-footer__heading')->text());
         self::assertSame(['Conditions générales de vente', 'Bandcamp'], $column->filter('a')->each(static fn ($link): string => $link->text()));
+    }
+
+    /**
+     * Links are edited inside their column only.
+     */
+    public function testFooterLinksHaveNoPagesOfTheirOwn(): void
+    {
+        $link = $this->entityManager()->getRepository(FooterLink::class)->findOneBy([]);
+
+        foreach (['/admin/footer-link', \sprintf('/admin/footer-link/%d', $link?->getId()), \sprintf('/admin/footer-link/%d/edit', $link?->getId())] as $uri) {
+            $this->client->request('GET', $uri);
+            self::assertResponseStatusCodeSame(403, $uri);
+        }
     }
 
     public function testAFooterLinkLeadsSomewhere(): void

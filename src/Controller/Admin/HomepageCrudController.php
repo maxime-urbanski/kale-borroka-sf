@@ -178,7 +178,7 @@ class HomepageCrudController extends AbstractCrudController
             ->setColumns(12);
         yield TextField::new('footerTagline', 'Devise après le copyright')
             ->setRequired(false)
-            ->setHelp('« © année Kale Borroka Riot Records · devise », tout en bas. Vide : pas de devise.')
+            ->setHelp('Tout en bas : « © année Kale Borroka Riot Records · devise », le point ajouté d\'office. Vide : pas de devise.')
             ->setColumns(12);
     }
 }

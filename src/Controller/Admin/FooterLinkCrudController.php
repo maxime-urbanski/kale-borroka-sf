@@ -15,7 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
  * Entry form of the links collection in FooterColumnCrudController (page names below).
- * Not in the menu: links are created from their column.
+ * No page of its own: a link is created, edited and deleted in its column's form.
  *
  * @extends AbstractCrudController<FooterLink>
  */
@@ -33,20 +33,16 @@ class FooterLinkCrudController extends AbstractCrudController
     {
         return $crud
             ->setEntityLabelInSingular('Lien du footer')
-            ->setEntityLabelInPlural('Liens du footer')
-            ->setDefaultSort(['column' => 'ASC', 'position' => 'ASC']);
+            ->setEntityLabelInPlural('Liens du footer');
     }
 
     public function configureActions(Actions $actions): Actions
     {
-        return $actions->disable(Action::NEW);
+        return $actions->disable(Action::INDEX, Action::DETAIL, Action::NEW, Action::EDIT, Action::DELETE, Action::BATCH_DELETE);
     }
 
     public function configureFields(string $pageName): iterable
     {
-        if (!\in_array($pageName, [self::PAGE_IN_COLUMN_NEW, self::PAGE_IN_COLUMN_EDIT], true)) {
-            yield AssociationField::new('column', 'Colonne');
-        }
         yield TextField::new('name', 'Texte')
             ->setRequired(false)
             ->setHelp('Vide : le titre de la page ou le nom du rayon.')
