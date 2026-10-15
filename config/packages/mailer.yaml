@@ -1,6 +1,7 @@
 framework:
     mailer:
         dsn: '%env(MAILER_DSN)%'
+        message_bus: mail.bus
         # Every mail leaves from the SMTP account's own mailbox: OVH's Zimbra refuses to
         # relay any other sender, and a foreign domain would fail SPF/DMARC anyway.
         headers:

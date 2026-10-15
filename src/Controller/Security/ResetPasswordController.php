@@ -18,7 +18,6 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
@@ -46,8 +45,6 @@ class ResetPasswordController extends AbstractController
 
     /**
      * Display & process form to request a password reset.
-     *
-     * @throws TransportExceptionInterface
      */
     #[Route('', name: 'app_forgot_password_request', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function request(Request $request, MailerInterface $mailer, RateLimiterFactoryInterface $resetPasswordLimiter): Response
@@ -171,7 +168,8 @@ class ResetPasswordController extends AbstractController
     }
 
     /**
-     * @throws TransportExceptionInterface
+     * The mail is queued (messenger.yaml): an SMTP failure is retried by the worker, it no
+     * longer surfaces here.
      */
     private function processSendingPasswordResetEmail(string $emailFormData, MailerInterface $mailer): RedirectResponse
     {

@@ -1,12 +1,47 @@
 framework:
     messenger:
-        # Commands are handled synchronously, inside a database transaction: a handler that
-        # throws (e.g. insufficient stock on the third line of an order) rolls back everything
-        # it did, including the atomic stock updates run through DBAL.
-        # No transport: messages without routing are handled synchronously.
         default_bus: command.bus
         buses:
+            # Commands are handled synchronously, inside a database transaction: a handler that
+            # throws (e.g. insufficient stock on the third line of an order) rolls back everything
+            # it did, including the atomic stock updates run through DBAL.
+            # No transport: messages without routing are handled synchronously.
             command.bus:
                 middleware:
                     - doctrine_ping_connection
                     - doctrine_transaction
+            # What the mailer dispatches (framework.mailer.message_bus): no transaction of its
+            # own, so a mail queued while a command runs is queued (or not) with that command.
+            mail.bus: ~
+
+        # Mails leave through the `worker` service (compose.yaml: messenger:consume async), not
+        # during the request: the SMTP round-trip no longer shows in the response time (a reset
+        # for a known address now costs a few milliseconds more than an unknown one, not a
+        # whole SMTP exchange), and an SMTP outage is retried instead of being a 500. They are
+        # rendered before being queued (App\Mailer\RenderBeforeQueueMailer). The queue is a
+        # table (migration, auto_setup=0 in the DSN), no extra service.
+        failure_transport: failed
+        transports:
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                # 1 min, 3 min, 9 min, then to `failed` (messenger:failed:show / retry).
+                retry_strategy:
+                    max_retries: 3
+                    delay: 60000
+                    multiplier: 3
+            # Same table, another queue name. A failed mail keeps its body, reset link included:
+            # see docs/deployment.md (« Mails ») before retrying, and remove what is not retried.
+            failed:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: failed
+
+        routing:
+            Symfony\Component\Mailer\Messenger\SendEmailMessage: async
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                # Nothing is consumed in tests: assert on what was queued.
+                async: 'in-memory://'

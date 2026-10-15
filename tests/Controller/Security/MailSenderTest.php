@@ -46,7 +46,7 @@ class MailSenderTest extends WebTestCase
         ]);
         $this->client->submit($form);
 
-        self::assertEmailCount(1);
+        self::assertQueuedEmailCount(1);
         $email = self::getMailerMessage();
         self::assertInstanceOf(Email::class, $email);
         self::assertEquals([new Address('shop@example.org', 'Kale Borroka Records')], $email->getFrom());

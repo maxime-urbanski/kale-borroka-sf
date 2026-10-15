@@ -24,6 +24,34 @@ services:
         published: ${HTTP3_PORT:-443}
         protocol: udp
 
+  # Sends the queued mails (Messenger `async` transport, a table of the database), already
+  # rendered during the request (App\Mailer\RenderBeforeQueueMailer): same image as `php`, no
+  # web server. It stops by itself every hour or at 128 MB and is restarted, so
+  # a leak never builds up; a mail that keeps failing ends in the `failed` queue
+  # (bin/console messenger:failed:show). Its image and volumes come from the override files.
+  worker:
+    restart: unless-stopped
+    # The image's own entrypoint (docker-entrypoint) installs vendor/ and runs the migrations:
+    # `php` does it, the worker restarting every hour must not run them again.
+    entrypoint: ["docker-php-entrypoint"]
+    command: ["php", "bin/console", "messenger:consume", "async", "--time-limit=3600", "--memory-limit=128M", "-vv"]
+    # Starts once `php` has migrated the database.
+    depends_on:
+      php:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+    # The image's healthcheck probes the web server, which this container does not run. A
+    # CLI worker has no port: PHP answering is all there is to check, and `up --wait` (CI, the
+    # deploy script) needs a healthcheck to consider the service started.
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(0);"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@database:5432/${POSTGRES_DB:-app}?serverVersion=${POSTGRES_VERSION:-15}&charset=${POSTGRES_CHARSET:-utf8}
+
   ###> doctrine/doctrine-bundle ###
   database:
     image: postgres:${POSTGRES_VERSION:-15}-alpine
