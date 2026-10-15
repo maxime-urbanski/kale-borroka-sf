@@ -1,0 +1,496 @@
+// Mon compte (maquette 07): the account menu on the left from lg up, chips under the title
+// below; the dashboard's wantlist alert, latest orders, crates and detail panels.
+
+.kb-account {
+    display: grid;
+    grid-template-areas: "head" "nav" "main";
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding-top: 20px;
+    padding-bottom: 48px;
+
+    @include media-breakpoint-up(lg) {
+        grid-template-areas: "nav head" "nav main";
+        grid-template-columns: 260px minmax(0, 1fr);
+        grid-template-rows: auto 1fr;
+        column-gap: 56px;
+        row-gap: 40px;
+        padding-top: 40px;
+        padding-bottom: 88px;
+    }
+
+    // A page without a title in the head slot: no empty row (nor its gap) above the content.
+    &--headless {
+        grid-template-areas: "nav" "main";
+
+        @include media-breakpoint-up(lg) {
+            grid-template-areas: "nav main";
+            grid-template-rows: auto;
+        }
+    }
+
+    &__head {
+        grid-area: head;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 8px 24px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid $kb-noir;
+
+        @include media-breakpoint-up(lg) {
+            padding-bottom: 16px;
+        }
+    }
+
+    &__title {
+        margin: 0;
+        font-size: 3rem;
+        font-weight: 400;
+        line-height: 1;
+        overflow-wrap: anywhere;
+
+        @include media-breakpoint-up(lg) {
+            font-size: 5.5rem;
+            line-height: .95;
+        }
+    }
+
+    &__since {
+        font-family: $kb-font-mono;
+        font-size: .8125rem;
+        text-transform: uppercase;
+
+        @include media-breakpoint-down(lg) {
+            display: none;
+        }
+    }
+
+    &__main {
+        grid-area: main;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        min-width: 0;
+
+        @include media-breakpoint-up(lg) {
+            gap: 40px;
+        }
+    }
+
+    &__section-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0 16px;
+        margin-bottom: 16px;
+    }
+
+    &__section-title {
+        margin: 0;
+        font-size: 1.875rem;
+        font-weight: 400;
+        line-height: 1;
+
+        @include media-breakpoint-up(md) {
+            font-size: 2.5rem;
+        }
+    }
+
+    &__more {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        font-size: .875rem;
+        font-weight: 700;
+    }
+
+    &__empty {
+        margin: 0;
+        color: $kb-gris;
+    }
+
+    &__crates,
+    &__panels {
+        display: grid;
+        gap: 20px;
+
+        @include media-breakpoint-up(md) {
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+    }
+}
+
+// The account menu: a list with counters, chips scrolling sideways below lg.
+.kb-account-nav {
+    grid-area: nav;
+    display: flex;
+    gap: 6px;
+    margin-right: calc(var(--bs-gutter-x) * -.5);
+    padding-bottom: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    @include media-breakpoint-up(lg) {
+        flex-direction: column;
+        align-self: start;
+        gap: 0;
+        margin-right: 0;
+        padding-bottom: 0;
+        overflow: visible;
+        border-top: 3px solid $kb-noir;
+    }
+
+    &__link {
+        display: flex;
+        flex: none;
+        align-items: center;
+        gap: 12px;
+        height: 44px;
+        padding: 0 14px;
+        border: 2px solid $kb-noir;
+        background: transparent;
+        color: $kb-noir;
+        font-size: .875rem;
+        font-weight: 700;
+        text-align: left;
+        text-decoration: none;
+        white-space: nowrap;
+        cursor: pointer;
+
+        .bi {
+            display: none;
+            font-size: 1.125rem;
+        }
+
+        &:hover {
+            background: $kb-papier-2;
+            color: $kb-noir;
+        }
+
+        &[aria-current="page"] {
+            background: $kb-noir;
+            color: $kb-papier;
+        }
+
+        @include media-breakpoint-up(lg) {
+            width: 100%;
+            height: auto;
+            min-height: 52px;
+            border-width: 0 0 1px;
+            border-color: $kb-gris-filet;
+            font-size: .9375rem;
+
+            .bi {
+                display: inline-block;
+            }
+        }
+    }
+
+    &__label {
+        flex: 1;
+    }
+
+    &__count {
+        display: none;
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+
+        @include media-breakpoint-up(lg) {
+            display: inline;
+        }
+    }
+
+    &__logout {
+        display: flex;
+        flex: none;
+
+        @include media-breakpoint-up(lg) {
+            .kb-account-nav__link {
+                border-bottom: 0;
+            }
+        }
+    }
+}
+
+// What the wantlist holds in stock right now: the lever to buy again, hence the red shadow.
+.kb-account-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px 14px;
+    padding: 12px 14px;
+    border: 3px solid $kb-noir;
+    background: $kb-papier;
+    box-shadow: 5px 5px 0 $kb-rouge;
+    font-size: .875rem;
+    line-height: 1.4;
+
+    @include media-breakpoint-up(md) {
+        padding: 16px 20px;
+        box-shadow: $kb-shadow-rouge;
+        font-size: 1rem;
+    }
+
+    > .bi {
+        flex: none;
+        font-size: 1.125rem;
+
+        @include media-breakpoint-up(md) {
+            font-size: 1.375rem;
+        }
+    }
+
+    &__text {
+        flex: 1;
+        margin: 0;
+    }
+
+    &__link {
+        display: flex;
+        flex: none;
+        align-items: center;
+        gap: 6px;
+        min-height: 44px;
+        font-size: .875rem;
+        font-weight: 800;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+    }
+}
+
+// Latest orders: a table from md up.
+.kb-orders {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .9375rem;
+
+    th {
+        padding: 12px 16px;
+        background: $kb-noir;
+        color: $kb-papier;
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        font-weight: 500;
+        letter-spacing: .06em;
+        text-align: left;
+        text-transform: uppercase;
+    }
+
+    td {
+        padding: 14px 16px;
+        border-bottom: 1px solid $kb-gris-filet;
+    }
+
+    &__ref,
+    &__total {
+        font-family: $kb-font-mono;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    th.text-end,
+    &__total {
+        text-align: right;
+    }
+
+    a {
+        font-size: .875rem;
+        font-weight: 700;
+    }
+}
+
+// … and a list of links below.
+.kb-orders-list {
+    margin: 0;
+    border-top: 2px solid $kb-noir;
+
+    &__item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 6px 12px;
+        padding: 14px 0;
+        border-bottom: 1px solid $kb-gris-filet;
+        color: $kb-noir;
+        text-decoration: none;
+
+        > .kb-badge {
+            justify-self: start;
+        }
+
+        > .bi {
+            justify-self: end;
+        }
+    }
+
+    &__ref,
+    &__total {
+        font-family: $kb-font-mono;
+        font-size: .875rem;
+        font-weight: 600;
+    }
+
+    &__ref {
+        overflow-wrap: anywhere;
+    }
+
+    &__total {
+        white-space: nowrap;
+    }
+}
+
+// Collection and wantlist as crates of records: the latest four covers.
+.kb-crate {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    border: 3px solid $kb-noir;
+
+    @include media-breakpoint-up(md) {
+        gap: 16px;
+        padding: 24px;
+    }
+
+    &__head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0 12px;
+    }
+
+    &__title {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 400;
+        line-height: 1;
+
+        @include media-breakpoint-up(md) {
+            font-size: 2.25rem;
+        }
+    }
+
+    &__count {
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        text-transform: uppercase;
+
+        @include media-breakpoint-up(md) {
+            font-size: .8125rem;
+        }
+    }
+
+    &__covers {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin: 0;
+
+        @include media-breakpoint-up(md) {
+            gap: 10px;
+        }
+    }
+
+    &__cover {
+        display: flex;
+        align-items: flex-end;
+        aspect-ratio: 1;
+        overflow: hidden;
+        border: 2px solid $kb-noir;
+        background: $kb-noir;
+        color: $kb-papier;
+        text-decoration: none;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        &:hover {
+            color: $kb-papier;
+            box-shadow: 3px 3px 0 $kb-noir;
+        }
+    }
+
+    // No cover yet: the artist's name, stencilled on black.
+    &__name {
+        padding: 6px;
+        font-family: $kb-font-display;
+        font-size: .8125rem;
+        line-height: .95;
+        text-transform: uppercase;
+        overflow-wrap: anywhere;
+
+        @include media-breakpoint-down(md) {
+            font-size: .625rem;
+            padding: 4px;
+        }
+    }
+
+    &__slot {
+        aspect-ratio: 1;
+        border: 2px dashed $kb-gris-clair;
+    }
+
+    &__more {
+        display: flex;
+        align-self: flex-start;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px;
+        font-size: .875rem;
+        font-weight: 800;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+    }
+}
+
+// Account details and default address, on kraft.
+.kb-account-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 24px;
+    border: 2px solid $kb-noir;
+    background: $kb-papier-2;
+
+    &__title {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 400;
+        line-height: 1;
+    }
+
+    &__text {
+        margin: 0;
+        font-size: .9375rem;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    &__meta {
+        font-family: $kb-font-mono;
+        font-size: .8125rem;
+    }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: auto;
+
+        .btn {
+            font-size: .8125rem;
+            font-weight: 700;
+        }
+    }
+}

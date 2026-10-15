@@ -125,6 +125,15 @@ abstract class Article
         }
     }
 
+    /**
+     * Whether a customer can buy it right now (wantlist alert). AccountCounts counts the
+     * same rule in DQL.
+     */
+    public function isInStock(): bool
+    {
+        return $this->published && ($this->stock ?? 0) > 0;
+    }
+
     public function getCoverImage(): ?Image
     {
         return Image::first($this->images) ?? Image::first($this->getParentImages());

@@ -1,47 +1,34 @@
-{# @var user \App\Entity\User #}
-
+{#
+    Account menu (maquette 07): a list with counters from lg up, a row of chips below.
+    `counts`: App\Account\AccountTotals.
+#}
 {% set routes = [
-    {
-        name: 'Tableau de bord',
-        link: 'app_user_informations',
-        icon: 'bi-speedometer2'
-    },
-    {
-        name: 'Modifier mes informations',
-        link: 'app_user_informations_patch',
-        icon: 'bi-person-gear'
-    },
-    {
-        name: 'Modifier mon mot de passe',
-        link: 'app_user_informations_password_put',
-        icon: 'bi-person-lock'
-    },{
-        name: "Carnet d'adresse",
-        link: 'app_user_addresses_index',
-        icon: 'bi-building-add'
-    },
-    {
-        name: 'Mes commandes',
-        link: 'app_user_orders',
-        icon: 'bi-truck'
-    },
-    {
-        name: 'Ma collection',
-        link: 'app_user_collection',
-        icon: 'bi-database'
-    },
-    {
-        name: 'Ma wishlist',
-        link: 'app_user_wishlist',
-        icon: 'bi-eye'
-    }
+    {name: 'Tableau de bord', link: 'app_user_informations', icon: 'bi-grid'},
+    {name: 'Commandes', link: 'app_user_orders', icon: 'bi-receipt', count: counts.orders},
+    {name: 'Collection', link: 'app_user_collection', icon: 'bi-collection', count: counts.collection},
+    {name: 'Wantlist', link: 'app_user_wishlist', icon: 'bi-heart', count: counts.wantlist},
+    {name: 'Adresses', link: 'app_user_addresses_index', icon: 'bi-geo-alt', count: counts.addresses},
+    {name: 'Informations', link: 'app_user_informations_patch', icon: 'bi-person'},
+    {name: 'Mot de passe', link: 'app_user_informations_password_put', icon: 'bi-key'},
 ] %}
 
-<div class="d-flex flex-column border border-dark rounded-1 flex-shrink-0 px-5 py-3 bg-body">
+<nav class="kb-account-nav" aria-label="Mon compte">
     {% for route in routes %}
-        <a href="{{ path(route.link) }}" class="d-flex align-items-center my-2 text-decoration-none">
-            <i class="bi {{ route.icon }} fs-4 me-3"></i>
-            {{ route.name }}
+        <a href="{{ path(route.link) }}" class="kb-account-nav__link"
+           {%- if app.current_route == route.link %} aria-current="page"{% endif %}>
+            <i class="bi {{ route.icon }}" aria-hidden="true"></i>
+            <span class="kb-account-nav__label">{{ route.name }}</span>
+            {% if route.count is defined %}
+                <span class="kb-account-nav__count">{{ route.count }}</span>
+            {% endif %}
         </a>
     {% endfor %}
-</div>
+    {% include 'partials/_post_button.html.twig' with {
+        url: path('app_logout'),
+        token_id: 'logout',
+        form_class: 'kb-account-nav__logout',
+        class: 'kb-account-nav__link',
+        icon: 'bi-box-arrow-right',
+        text_btn: 'Déconnexion'
+    } %}
+</nav>

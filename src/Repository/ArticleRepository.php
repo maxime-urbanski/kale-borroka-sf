@@ -86,6 +86,39 @@ class ArticleRepository extends ServiceEntityRepository
     }
 
     /**
+     * Loads the pictures of already loaded articles and their parent (album and artist of a
+     * release, design of a merch variant) into the entity manager, as findForCart() does:
+     * a cover and its title then read them without a query.
+     *
+     * @param list<Article> $articles
+     */
+    public function preloadCovers(array $articles): void
+    {
+        if ([] === $articles) {
+            return;
+        }
+
+        $this->createQueryBuilder('article')
+            ->addSelect('image')
+            ->leftJoin('article.images', 'image')
+            ->where('article IN (:articles)')
+            ->setParameter('articles', $articles)
+            ->getQuery()
+            ->getResult();
+
+        foreach ([
+            Release::class => 'SELECT article, parent, parentImage, artist FROM %s article JOIN article.album parent LEFT JOIN parent.images parentImage LEFT JOIN parent.artist artist WHERE article IN (:articles)',
+            MerchVariant::class => 'SELECT article, parent, parentImage FROM %s article JOIN article.merch parent LEFT JOIN parent.images parentImage WHERE article IN (:articles)',
+        ] as $class => $dql) {
+            $ofClass = array_values(array_filter($articles, static fn (Article $article): bool => $article instanceof $class));
+
+            if ([] !== $ofClass) {
+                $this->getEntityManager()->createQuery(\sprintf($dql, $class))->setParameter('articles', $ofClass)->getResult();
+            }
+        }
+    }
+
+    /**
      * Stock of the published ones among these articles, by id: one scalar query, no entity
      * loaded (the navbar counts the cart on every page).
      *
