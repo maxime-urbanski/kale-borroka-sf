@@ -18,7 +18,7 @@ final class EntityCacheTag
      * (orders, wishlist, login) do not write to the pool for nothing. A template using a
      * tag missing here fails CachedTemplatesTest.
      */
-    public const array FRAGMENT_TAGS = ['album', 'article', 'homepage', 'page', 'social_network', 'style', 'support'];
+    public const array FRAGMENT_TAGS = ['album', 'article', 'footer_column', 'footer_link', 'homepage', 'page', 'social_network', 'style', 'support'];
 
     /**
      * @param class-string $class

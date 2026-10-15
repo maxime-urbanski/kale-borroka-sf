@@ -47,7 +47,7 @@ class HomepageCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Blocs de l\'accueil')
             ->setEntityLabelInPlural('Blocs de l\'accueil')
             ->setPageTitle(Crud::PAGE_EDIT, 'Blocs de l\'accueil')
-            ->setHelp(Crud::PAGE_EDIT, 'Les textes de la page d\'accueil, de haut en bas. Le disque à la une se règle dans « Encart à la une ».');
+            ->setHelp(Crud::PAGE_EDIT, 'Les textes de la page d\'accueil, de haut en bas, avec le bandeau et le footer de toutes les pages. Le disque à la une se règle dans « Encart à la une », les colonnes du footer dans « Colonnes du footer ».');
     }
 
     public function configureActions(Actions $actions): Actions
@@ -77,6 +77,18 @@ class HomepageCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        yield FormField::addTab('Bandeau du haut', 'fa fa-grip-lines');
+        yield BooleanField::new('stripShown', 'Afficher le bandeau')
+            ->setHelp('Bande noire au-dessus du menu, sur toutes les pages, sur grand écran seulement.')
+            ->renderAsSwitch(false)
+            ->setColumns(12);
+        yield TextField::new('stripLeft', 'Texte de gauche')
+            ->setRequired(false)
+            ->setColumns(6);
+        yield TextField::new('stripRight', 'Texte de droite')
+            ->setRequired(false)
+            ->setColumns(6);
+
         yield FormField::addTab('Dernières prod', 'fa fa-record-vinyl');
         yield BooleanField::new('productionsShown', 'Afficher la section')
             ->setHelp('Les productions du label, du plus grand numéro KBR au plus petit, sous l\'encart à la une.')
@@ -156,6 +168,13 @@ class HomepageCrudController extends AbstractCrudController
             ->allowMultipleChoices()
             ->renderExpanded()
             ->setHelp('Un bouton par rayon au-dessus des articles, le premier affiché d\'office. Un rayon vide n\'a pas de bouton ; un seul rayon, pas de bouton du tout. Pas de merch : un t-shirt n\'a pas encore de page.')
+            ->setColumns(12);
+
+        yield FormField::addTab('Footer', 'fa fa-align-left');
+        yield TextareaField::new('footerText', 'Texte sous le nom du label')
+            ->setRequired(false)
+            ->setNumOfRows(4)
+            ->setHelp('Sur toutes les pages. Texte brut ; les retours à la ligne sont gardés. Vide : pas de texte. Les colonnes de liens se règlent dans « Colonnes du footer ».')
             ->setColumns(12);
     }
 }

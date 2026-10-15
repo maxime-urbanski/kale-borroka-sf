@@ -170,6 +170,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::subMenu('Page d\'accueil', 'fas fa-house')->setSubItems([
             MenuItem::linkTo(HomepageCrudController::class, 'Blocs de l\'accueil', 'fas fa-table-cells-large'),
             MenuItem::linkTo(FeaturedReleaseCrudController::class, 'Encart à la une', 'fas fa-star'),
+            MenuItem::linkTo(FooterColumnCrudController::class, 'Colonnes du footer', 'fas fa-table-columns'),
             MenuItem::linkToUrl('Voir l\'accueil', 'fas fa-arrow-up-right-from-square', $this->generateUrl('app_homepage')),
         ]);
 

@@ -20,6 +20,10 @@
 <body>
 <a href="#contenu" class="kb-skip-link">Aller au contenu</a>
 <header class="kb-header">
+    {# Same for every visitor, unlike the navbar below (cart, login). #}
+    {% cache 'header_strip' tags(['homepage']) %}
+        {{ render(controller('App\\Controller\\Layout\\HeaderStripController')) }}
+    {% endcache %}
     {{ render(controller('App\\Controller\\MenuController::navbar')) }}
 </header>
 {% include 'layout/_toast.html.twig' %}
@@ -31,7 +35,7 @@
     {% endblock %}
 </main>
 {# Same for every visitor: the sub-request only runs on a cache miss. The year is in the key. #}
-{% cache 'footer_' ~ 'now'|date('Y') tags(['support', 'social_network', 'page']) %}
+{% cache 'footer_' ~ 'now'|date('Y') tags(['homepage', 'footer_column', 'footer_link', 'page', 'support', 'social_network']) %}
     {{ render(controller('App\\Controller\\Layout\\FooterController')) }}
 {% endcache %}
 </body>

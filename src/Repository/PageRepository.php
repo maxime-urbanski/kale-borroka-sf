@@ -20,27 +20,22 @@ class PageRepository extends ServiceEntityRepository
     }
 
     /**
-     * Published pages linked from the footer, by placement value, in their footer order.
+     * Published pages linked from the footer's bottom line, in their footer order.
      *
-     * @return array<string, Page[]>
+     * @return list<Page>
      */
-    public function findForFooter(): array
+    public function findForFooterBottom(): array
     {
-        /** @var Page[] $pages */
+        /** @var list<Page> $pages */
         $pages = $this->createQueryBuilder('page')
             ->where('page.published = true')
-            ->andWhere('page.footerPlacement != :none')
+            ->andWhere('page.footerPlacement = :bottom')
             ->orderBy('page.footerPosition', 'ASC')
             ->addOrderBy('page.title', 'ASC')
-            ->setParameter('none', FooterPlacement::NONE->value)
+            ->setParameter('bottom', FooterPlacement::BOTTOM->value)
             ->getQuery()
             ->getResult();
 
-        $byPlacement = [];
-        foreach ($pages as $page) {
-            $byPlacement[$page->getFooterPlacement()->value][] = $page;
-        }
-
-        return $byPlacement;
+        return $pages;
     }
 }

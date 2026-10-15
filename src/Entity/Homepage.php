@@ -12,10 +12,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * What the homepage says, edited from the back office (« Page d'accueil »). A single row;
- * read it through HomepageProviderInterface, which falls back to the defaults below.
+ * What the homepage says, edited from the back office (« Page d'accueil »), with the strip
+ * above the navbar and the footer's text, which every page shows. A single row; read it
+ * through HomepageProviderInterface, which falls back to the defaults below.
  * Schema.org: WebPage; the label block is a WebPageElement (headline, alternativeHeadline
- * for the line on the paper strip, text, and a link to a CMS page or an address).
+ * for the line on the paper strip, text, and a link to a CMS page or an address). The
+ * footer's columns are FooterColumn rows.
  */
 #[ORM\Entity(repositoryClass: HomepageRepository::class)]
 class Homepage
@@ -34,6 +36,18 @@ class Homepage
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]
     private ?int $id = null;
+
+    /** Black strip above the navbar, on wide screens. */
+    #[ORM\Column(options: ['default' => true])]
+    private bool $stripShown = true;
+
+    #[ORM\Column(length: 120, nullable: true)]
+    #[Assert\Length(max: 120)]
+    private ?string $stripLeft = 'Label & distro antifasciste depuis 2019';
+
+    #[ORM\Column(length: 120, nullable: true)]
+    #[Assert\Length(max: 120)]
+    private ?string $stripRight = 'Punk · antifa · DIY';
 
     #[ORM\Column(options: ['default' => true])]
     private bool $manifestoShown = true;
@@ -117,6 +131,10 @@ class Homepage
     #[Assert\Count(min: 1, minMessage: 'Choisissez au moins un rayon.')]
     private array $latestShelves = ['tout', 'vinyles', 'cd', 'k7', 'zines', 'occasion'];
 
+    /** Under the label's name in the footer. Plain text; line breaks are kept. */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $footerText = 'Label et distro indépendants. Punk, hardcore, oi! et tout ce qui fait du bruit contre l\'extrême droite. Fait main, sans patron.';
+
     #[Assert\Callback]
     public function validateSlogan(ExecutionContextInterface $context): void
     {
@@ -130,6 +148,42 @@ class Homepage
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function isStripShown(): bool
+    {
+        return $this->stripShown;
+    }
+
+    public function setStripShown(bool $stripShown): static
+    {
+        $this->stripShown = $stripShown;
+
+        return $this;
+    }
+
+    public function getStripLeft(): ?string
+    {
+        return $this->stripLeft;
+    }
+
+    public function setStripLeft(?string $stripLeft): static
+    {
+        $this->stripLeft = self::nullIfBlank($stripLeft);
+
+        return $this;
+    }
+
+    public function getStripRight(): ?string
+    {
+        return $this->stripRight;
+    }
+
+    public function setStripRight(?string $stripRight): static
+    {
+        $this->stripRight = self::nullIfBlank($stripRight);
+
+        return $this;
     }
 
     public function isManifestoShown(): bool
@@ -363,6 +417,18 @@ class Homepage
     public function setLatestShelves(array $latestShelves): static
     {
         $this->latestShelves = array_map(static fn (HomeShelf $shelf): string => $shelf->value, $latestShelves);
+
+        return $this;
+    }
+
+    public function getFooterText(): ?string
+    {
+        return $this->footerText;
+    }
+
+    public function setFooterText(?string $footerText): static
+    {
+        $this->footerText = self::nullIfBlank($footerText);
 
         return $this;
     }

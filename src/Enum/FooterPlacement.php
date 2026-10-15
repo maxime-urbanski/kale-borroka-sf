@@ -5,23 +5,20 @@ declare(strict_types=1);
 namespace App\Enum;
 
 /**
- * Where a CMS page is linked in the footer (templates/layout/_footer.html.twig).
+ * Whether a CMS page is linked from the footer's bottom line (templates/layout/_footer.html.twig).
+ * The footer's columns are FooterColumn rows, edited apart.
  */
 enum FooterPlacement: string
 {
     case NONE = 'none';
-    case ABOUT = 'about';
-    case SHOP = 'shop';
     /** Next to the copyright line: CGV, mentions légales… */
     case BOTTOM = 'bottom';
 
     public function label(): string
     {
         return match ($this) {
-            self::NONE => 'Pas dans le footer',
-            self::ABOUT => 'Colonne « À propos »',
-            self::SHOP => 'Colonne « Le shop »',
-            self::BOTTOM => 'Bandeau du bas (mentions légales, CGV…)',
+            self::NONE => 'Non',
+            self::BOTTOM => 'Oui, à côté du copyright (mentions légales, CGV…)',
         };
     }
 }

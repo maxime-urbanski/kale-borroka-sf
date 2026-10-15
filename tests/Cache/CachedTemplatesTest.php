@@ -20,6 +20,7 @@ class CachedTemplatesTest extends TestCase
     public static function cachedTemplates(): iterable
     {
         foreach ([
+            'layout/_strip.html.twig',
             'layout/_footer.html.twig',
             'layout/article/_section.html.twig',
             'layout/article/_article-grid.html.twig',
