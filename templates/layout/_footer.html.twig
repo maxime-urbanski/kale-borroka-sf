@@ -7,18 +7,19 @@
                 <p class="kb-footer__about">{{ homepage.footerText|nl2br }}</p>
             {% endif %}
         </div>
-        <div class="kb-footer__links">
-            {# FooterColumn rows, from « Colonnes du footer »; a column with no link to follow is left out. #}
-            {% for column in columns %}
-                {% set sections = column.supportsListed ? supports : [] %}
-                {% set links = column.shownLinks %}
-                {% if sections is not empty or links is not empty %}
+        {# FooterColumn rows, from « Colonnes du footer »; a column with nothing to follow is left out. #}
+        {% set shownColumns = columns|filter(column => column.shownLinks is not empty or (column.supportsListed and supports is not empty)) %}
+        {% if shownColumns is not empty or socialNetworks is not empty %}
+            <div class="kb-footer__links">
+                {% for column in shownColumns %}
                     <nav class="kb-footer__col" aria-labelledby="footer-col-{{ loop.index }}">
                         <span class="kb-footer__heading" id="footer-col-{{ loop.index }}">{{ column.name }}</span>
-                        {% for support in sections %}
-                            <a href="{{ path('app_catalog_list', {support: support.name}) }}" class="kb-footer__link">{{ support.name|upper }}</a>
-                        {% endfor %}
-                        {% for link in links %}
+                        {% if column.supportsListed %}
+                            {% for support in supports %}
+                                <a href="{{ path('app_catalog_list', {support: support.name}) }}" class="kb-footer__link">{{ support.name|upper }}</a>
+                            {% endfor %}
+                        {% endif %}
+                        {% for link in column.shownLinks %}
                             {% if link.page %}
                                 <a href="{{ path('app_page_show', {slug: link.page.slug}) }}" class="kb-footer__link">{{ link.name ?? link.page.title }}</a>
                             {% elseif link.support %}
@@ -28,28 +29,28 @@
                             {% endif %}
                         {% endfor %}
                     </nav>
+                {% endfor %}
+                {% if socialNetworks is not empty %}
+                    <div class="kb-footer__col">
+                        <span class="kb-footer__heading" id="footer-follow">Suivre</span>
+                        <ul class="kb-footer__socials list-unstyled mb-0" aria-labelledby="footer-follow">
+                            {% for social in socialNetworks %}
+                                <li>
+                                    <a href="{{ social.url }}" class="kb-footer__social" target="_blank" rel="noopener"
+                                       {%- if not social.file %} aria-label="{{ social.name }}"{% endif %}>
+                                        {% if social.file %}
+                                            <img src="{{ vich_uploader_asset(social.file) }}" alt="{{ social.name }}" width="22" height="22">
+                                        {% else %}
+                                            <i class="bi bi-link-45deg" aria-hidden="true"></i>
+                                        {% endif %}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 {% endif %}
-            {% endfor %}
-            {% if socialNetworks is not empty %}
-                <div class="kb-footer__col">
-                    <span class="kb-footer__heading" id="footer-follow">Suivre</span>
-                    <ul class="kb-footer__socials list-unstyled mb-0" aria-labelledby="footer-follow">
-                        {% for social in socialNetworks %}
-                            <li>
-                                <a href="{{ social.url }}" class="kb-footer__social" target="_blank" rel="noopener"
-                                   {%- if not social.file %} aria-label="{{ social.name }}"{% endif %}>
-                                    {% if social.file %}
-                                        <img src="{{ vich_uploader_asset(social.file) }}" alt="{{ social.name }}" width="22" height="22">
-                                    {% else %}
-                                        <i class="bi bi-link-45deg" aria-hidden="true"></i>
-                                    {% endif %}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
     </div>
     <div class="kb-footer__bottom">
         {% if bottomPages is not empty %}

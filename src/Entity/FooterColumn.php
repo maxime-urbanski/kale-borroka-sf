@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * A column of links in the footer (« À propos », « Shop »…), created from the back office
@@ -49,6 +50,19 @@ class FooterColumn
     public function __construct()
     {
         $this->links = new ArrayCollection();
+    }
+
+    /**
+     * A section listed by the column and linked again would show twice.
+     */
+    #[Assert\Callback]
+    public function validateSections(ExecutionContextInterface $context): void
+    {
+        if ($this->supportsListed && $this->links->exists(static fn (int $key, FooterLink $link): bool => null !== $link->getSupport())) {
+            $context->buildViolation('La colonne liste déjà tous les rayons : retirez les liens vers un rayon, ou décochez « Tous les rayons du catalogue ».')
+                ->atPath('links')
+                ->addViolation();
+        }
     }
 
     public function getId(): ?int

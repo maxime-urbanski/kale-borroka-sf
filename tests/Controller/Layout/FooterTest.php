@@ -7,6 +7,7 @@ namespace App\Tests\Controller\Layout;
 use App\Entity\FooterColumn;
 use App\Entity\FooterLink;
 use App\Entity\Homepage;
+use App\Entity\SocialNetwork;
 use App\Entity\Support;
 use App\Tests\DatabaseIsolationTrait;
 use Doctrine\ORM\EntityManagerInterface;
@@ -93,6 +94,18 @@ class FooterTest extends WebTestCase
 
         $column = $crawler->filter('footer nav.kb-footer__col')->reduce(static fn ($nav): bool => 'Rayons' === $nav->filter('.kb-footer__heading')->text());
         self::assertSame([...$sections, 'Occasions'], $column->filter('a')->each(static fn ($link): string => $link->text()));
+    }
+
+    public function testNothingToFollowLeavesNoEmptyArea(): void
+    {
+        foreach ([FooterColumn::class, SocialNetwork::class] as $class) {
+            $this->entityManager()->createQuery(\sprintf('DELETE FROM %s', $class))->execute();
+        }
+
+        $crawler = $this->client->request('GET', '/');
+
+        self::assertCount(1, $crawler->filter('footer .kb-footer__brand'));
+        self::assertCount(0, $crawler->filter('footer .kb-footer__links'));
     }
 
     public function testTheStripAndTheFooterTextComeFromTheBackOffice(): void

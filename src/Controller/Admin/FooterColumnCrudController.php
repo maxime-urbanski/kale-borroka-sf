@@ -58,7 +58,7 @@ class FooterColumnCrudController extends AbstractCrudController
             ->setRequired(false)
             ->setColumns(4);
         yield BooleanField::new('supportsListed', 'Tous les rayons du catalogue')
-            ->setHelp('En tête de colonne, un lien par rayon (LP, CD…), tenu à jour tout seul quand un rayon est ajouté. Inutile alors d\'ajouter un lien vers un rayon en dessous.')
+            ->setHelp('En tête de colonne, un lien par rayon (LP, CD…), tenu à jour tout seul quand un rayon est ajouté.')
             ->renderAsSwitch(false)
             ->setColumns(12);
         yield CollectionField::new('links', 'Liens')
