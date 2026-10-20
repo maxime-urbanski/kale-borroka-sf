@@ -78,6 +78,8 @@ class AddToWishlistController
         $wishlistItem = new WishlistItem();
         $wishlistItem->setWishlist($wishlist);
         $wishlistItem->setArticle($article);
+        // Asking for a record is asking to hear when it comes back.
+        $wishlistItem->setAlertEnabled(true);
         $wishlistItem->setAddedAt(
             new \DateTimeImmutable('now',
                 new \DateTimeZone('Europe/Paris'))

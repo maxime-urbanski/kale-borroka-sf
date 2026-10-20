@@ -58,7 +58,7 @@ class WantlistCollectionTest extends WebTestCase
         self::assertSelectorTextContains('.kb-watch__item', 'Épuisé');
         // Every button says what it acts on.
         $labels = $crawler->filter('.kb-want button, .kb-watch__item button')->each(static fn (Crawler $button): string => trim((string) $button->attr('aria-label')));
-        self::assertCount(3, $labels);
+        self::assertCount(5, $labels, 'alert switch, remove and cart, then alert switch and remove');
         self::assertNotContains('', $labels);
         self::assertCount(1, $crawler->filter(\sprintf('.kb-want form[action="/cart/add/%d"]', $inStock->getArticle()?->getId())));
         self::assertCount(2, $crawler->filter('form[action^="/wishlist/remove/"]'));

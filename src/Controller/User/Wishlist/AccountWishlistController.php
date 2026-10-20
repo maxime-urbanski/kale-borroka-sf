@@ -74,6 +74,7 @@ class AccountWishlistController
             'available' => $available,
             'watched' => $watched,
             'toAddTotal' => $total,
+            'alerts' => \count(array_filter($items, static fn (WishlistItem $item): bool => $item->isAlertEnabled())),
         ]));
     }
 }

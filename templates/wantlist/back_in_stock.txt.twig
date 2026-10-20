@@ -1,0 +1,19 @@
+{% autoescape false %}
+Salut,
+
+Un disque de ta wantlist est de nouveau disponible :
+
+{% if names.artist %}{{ names.artist }}
+{% endif %}{{ names.title }}
+{{ article.formatLabel }}{% if names.ref %} · {{ names.ref }}{% endif %} · {{ (article.price / 100)|format_currency('EUR', [], 'fr') }}
+
+{{ absolute_url(article_path(article)) }}
+
+Les exemplaires partent vite : on ne garde rien de côté.
+
+Tu reçois ce message parce que l'alerte de ce disque est active dans ta wantlist. Un seul e-mail par retour, jamais de relance. Pour la couper : {{ url('app_user_wishlist') }}
+
+--
+Kale Borroka Records · label & distro antifasciste depuis 2019
+{{ url('app_homepage') }}
+{% endautoescape %}

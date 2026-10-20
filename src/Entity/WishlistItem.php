@@ -10,6 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: WishlistItemRepository::class)]
 class WishlistItem
 {
+    /**
+     * E-mail the user when the record can be bought again (App\Wantlist\BackInStockAlert).
+     * Off for the records added before the alerts existed; AddToWishlistController turns it
+     * on for each record added since.
+     */
+    #[ORM\Column(options: ['default' => false])]
+    private bool $alertEnabled = false;
+
     #[ORM\Column]
     private ?\DateTimeImmutable $added_at = null;
 
@@ -55,6 +63,18 @@ class WishlistItem
     public function setWishlist(?Wishlist $wishlist): static
     {
         $this->wishlist = $wishlist;
+
+        return $this;
+    }
+
+    public function isAlertEnabled(): bool
+    {
+        return $this->alertEnabled;
+    }
+
+    public function setAlertEnabled(bool $alertEnabled): static
+    {
+        $this->alertEnabled = $alertEnabled;
 
         return $this;
     }

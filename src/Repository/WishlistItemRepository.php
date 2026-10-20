@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Article;
 use App\Entity\User;
 use App\Entity\WishlistItem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -67,5 +68,23 @@ class WishlistItemRepository extends ServiceEntityRepository
     public function allOfUser(User $user): array
     {
         return $this->latestOfUser($user, null);
+    }
+
+    /**
+     * The e-mail addresses of the users whose wantlist holds the article with its alert on.
+     *
+     * @return list<string>
+     */
+    public function emailsWithAlertOn(Article $article): array
+    {
+        return array_values(array_map(strval(...), $this->createQueryBuilder('wi')
+            ->select('u.email')
+            ->join('wi.wishlist', 'w')
+            ->join('w.user', 'u')
+            ->where('wi.article = :article')
+            ->andWhere('wi.alertEnabled = true')
+            ->setParameter('article', $article)
+            ->getQuery()
+            ->getSingleColumnResult()));
     }
 }
