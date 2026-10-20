@@ -61,6 +61,6 @@ class UserAddressController
             ]);
         }
 
-        return $addressBookPage->render($user, $form, $editing);
+        return $addressBookPage->render($user, $form, $editing, addresses: $addresses);
     }
 }

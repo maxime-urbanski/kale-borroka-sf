@@ -19,6 +19,7 @@ interface AddressBookPageInterface
      * when $editing is null, else the one being edited.
      *
      * @param FormInterface<mixed>|null $form
+     * @param array<Address>|null       $addresses the customer's addresses, when already loaded
      */
-    public function render(User $user, ?FormInterface $form = null, ?Address $editing = null, int $status = Response::HTTP_OK): Response;
+    public function render(User $user, ?FormInterface $form = null, ?Address $editing = null, int $status = Response::HTTP_OK, ?array $addresses = null): Response;
 }

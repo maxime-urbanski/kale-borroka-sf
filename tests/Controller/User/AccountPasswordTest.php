@@ -78,6 +78,8 @@ class AccountPasswordTest extends WebTestCase
 
         self::assertResponseRedirects('/mon-compte/editer-mot-de-passe');
         self::assertTrue($this->passwordIs(self::NEW_PASSWORD));
+        // Its own remember-me cookie, signed with the old hash, is replaced.
+        self::assertResponseHasCookie('REMEMBERME');
         $this->client->followRedirect();
         self::assertSelectorTextContains('body', 'Mot de passe changé');
 

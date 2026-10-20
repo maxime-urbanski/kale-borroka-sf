@@ -44,6 +44,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    /**
+     * The address asked for on the Informations page, until the link mailed to it is opened
+     * (App\Account\EmailChange). A new request replaces it, so only the latest link works.
+     */
+    #[ORM\Column(length: 180, nullable: true)]
+    private ?string $pendingEmail = null;
+
     #[ORM\Column(length: 100)]
     private ?string $lastname = null;
 
@@ -78,6 +85,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = self::normalizeEmail($email);
+
+        return $this;
+    }
+
+    public function getPendingEmail(): ?string
+    {
+        return $this->pendingEmail;
+    }
+
+    public function setPendingEmail(?string $pendingEmail): static
+    {
+        $this->pendingEmail = null === $pendingEmail ? null : self::normalizeEmail($pendingEmail);
 
         return $this;
     }

@@ -480,3 +480,13 @@
         color: $kb-encre-2;
     }
 }
+
+.kb-settings__pending {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    padding: 12px 14px;
+    border: 2px dashed $kb-noir;
+    font-size: .9375rem;
+    overflow-wrap: anywhere;
+}

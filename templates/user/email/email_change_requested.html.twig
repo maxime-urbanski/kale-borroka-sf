@@ -1,0 +1,11 @@
+{% extends 'email/_layout.html.twig' %}
+
+{# Sent to the current address by App\Account\EmailChange when a new one is asked for: `newEmail`. #}
+{% block preheader %}Quelqu’un a demandé que ton compte Kale Borroka change d’adresse e-mail.{% endblock %}
+
+{% block content %}
+    <h1 style="margin:0 0 20px;font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:36px;font-weight:400;line-height:1;text-transform:uppercase;">Changement demandé</h1>
+    <p style="margin:0 0 16px;">Salut,</p>
+    <p style="margin:0 0 24px;">Ton compte Kale Borroka Records a demandé à utiliser l’adresse <strong>{{ newEmail }}</strong>. Rien ne change tant que le lien envoyé là-bas n’est pas ouvert.</p>
+    <p style="margin:0;padding:12px 14px;border:2px dashed #111010;font-size:14px;"><strong>Ce n'est pas toi&nbsp;?</strong> Change ton mot de passe tout de suite&nbsp;: la demande est annulée et tes autres appareils sont déconnectés. <a href="{{ url('app_forgot_password_request') }}" style="color:#111010;">Choisir un nouveau mot de passe</a></p>
+{% endblock %}

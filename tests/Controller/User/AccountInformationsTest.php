@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Tests\Order\OrderTestTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Mime\Email;
 
@@ -32,6 +33,8 @@ class AccountInformationsTest extends WebTestCase
         $user = $this->user('test@test.fr');
         $this->userId = (int) $user->getId();
         $this->client->loginUser($user);
+        // The limiter state is in a cache pool that outlives the test.
+        self::service(\Symfony\Component\Cache\Adapter\AdapterInterface::class, 'cache.rate_limiter')->clear();
     }
 
     protected function tearDown(): void
@@ -71,12 +74,16 @@ class AccountInformationsTest extends WebTestCase
 
         self::assertSame('test@test.fr', $this->reloadUser()->getEmail(), 'not before the link is opened');
         $this->client->followRedirect();
-        self::assertSelectorTextContains('body', 'nouveau@test.fr');
+        self::assertSelectorTextContains('.kb-settings__pending', 'nouveau@test.fr');
 
         $this->client->request('GET', $link);
 
         self::assertResponseRedirects('/mon-compte/editer');
         self::assertSame('nouveau@test.fr', $this->reloadUser()->getEmail());
+        self::assertNull($this->reloadUser()->getPendingEmail());
+        // Every other device signs in again (their token holds the old identifier); this one
+        // gets a remember-me cookie for the new one.
+        self::assertResponseHasCookie('REMEMBERME');
         // The old address hears of it: someone else may have changed it.
         self::assertQueuedEmailCount(1);
         $notice = self::getMailerMessage();
@@ -98,6 +105,83 @@ class AccountInformationsTest extends WebTestCase
         $this->client->followRedirect();
         self::assertSelectorTextContains('body', 'Ce lien ne marche plus');
         self::assertSame('nouveau@test.fr', $this->reloadUser()->getEmail());
+    }
+
+    public function testAConfirmedEmailSignsTheOtherDevicesOut(): void
+    {
+        $this->client->request('GET', '/mon-compte');
+        $other = $this->sessionCookie();
+        $this->client->getCookieJar()->clear();
+        $this->client->loginUser($this->reloadUser());
+
+        $this->client->request('GET', $this->askForEmail('nouveau@test.fr'));
+        $this->client->request('GET', '/mon-compte/editer');
+        self::assertResponseIsSuccessful('this device stays signed in');
+
+        $this->client->getCookieJar()->set($other);
+        $this->client->request('GET', '/mon-compte/editer');
+        self::assertResponseRedirects('/login', null, 'the other device is signed out');
+    }
+
+    public function testANewRequestCancelsTheOlderLink(): void
+    {
+        $typo = $this->askForEmail('nouveua@test.fr');
+        $this->askForEmail('nouveau@test.fr');
+
+        $this->client->request('GET', $typo);
+
+        self::assertSame('test@test.fr', $this->reloadUser()->getEmail());
+        self::assertSame('nouveau@test.fr', $this->reloadUser()->getPendingEmail());
+    }
+
+    public function testChangingTheEmailAsksForThePassword(): void
+    {
+        foreach (['', 'mauvais'] as $password) {
+            $form = $this->form();
+            $form['user_information_form[email]'] = 'nouveau@test.fr';
+            $form['user_information_form[current_password]'] = $password;
+            $this->client->submit($form);
+
+            self::assertResponseStatusCodeSame(422);
+            self::assertSelectorExists('#user_information_form_current_password.is-invalid');
+            self::assertQueuedEmailCount(0);
+        }
+
+        // Names only: no password needed.
+        $form = $this->form();
+        $form['user_information_form[firstname]'] = 'Maialen';
+        $this->client->submit($form);
+        self::assertResponseRedirects('/mon-compte/editer');
+    }
+
+    public function testRequestsAreLimited(): void
+    {
+        $this->askForEmail('un@test.fr');
+        $this->askForEmail('deux@test.fr');
+        $this->askForEmail('trois@test.fr');
+
+        $form = $this->form();
+        $form['user_information_form[email]'] = 'quatre@test.fr';
+        $form['user_information_form[current_password]'] = 'password123';
+        $this->client->submit($form);
+
+        self::assertResponseStatusCodeSame(422);
+        self::assertSelectorTextContains('form[name="user_information_form"]', 'Trop de demandes');
+        self::assertQueuedEmailCount(0);
+    }
+
+    public function testAPasswordChangeCancelsAPendingEmail(): void
+    {
+        $link = $this->askForEmail('nouveau@test.fr');
+        $form = $this->client->request('GET', '/mon-compte/editer-mot-de-passe')->filter('form[name="update_password_form"]')->form();
+        $form['update_password_form[current_password]'] = 'password123';
+        $form['update_password_form[new_password][first]'] = 'Kale-Borroka-2026!';
+        $form['update_password_form[new_password][second]'] = 'Kale-Borroka-2026!';
+        $this->client->submit($form);
+
+        $this->client->request('GET', $link);
+
+        self::assertSame('test@test.fr', $this->reloadUser()->getEmail());
     }
 
     public function testATamperedLinkChangesNothing(): void
@@ -150,16 +234,34 @@ class AccountInformationsTest extends WebTestCase
     {
         $form = $this->form();
         $form['user_information_form[email]'] = $email;
+        $form['user_information_form[current_password]'] = 'password123';
         $this->client->submit($form);
 
         self::assertResponseRedirects('/mon-compte/editer');
-        self::assertQueuedEmailCount(1);
-        $mail = self::getMailerMessage();
-        self::assertInstanceOf(Email::class, $mail);
-        self::assertSame(mb_strtolower($email), $mail->getTo()[0]->getAddress());
-        self::assertSame(1, preg_match('~https?://\S+/mon-compte/confirmer-email\S+~', (string) $mail->getTextBody(), $match));
+        // The link to the new address, and a word to the current one, before anything changes.
+        self::assertQueuedEmailCount(2);
+        $mails = [];
+        foreach (self::getMailerMessages() as $mail) {
+            self::assertInstanceOf(Email::class, $mail);
+            $mails[$mail->getTo()[0]->getAddress()] = $mail;
+        }
+        self::assertArrayHasKey(mb_strtolower($email), $mails);
+        self::assertArrayHasKey((string) $this->reloadUser()->getEmail(), $mails);
+        self::assertEmailTextBodyContains($mails[(string) $this->reloadUser()->getEmail()], mb_strtolower($email));
+        self::assertSame(1, preg_match('~https?://\S+/mon-compte/confirmer-email\S+~', (string) $mails[mb_strtolower($email)]->getTextBody(), $match));
 
         return $match[0];
+    }
+
+    private function sessionCookie(): Cookie
+    {
+        foreach ($this->client->getCookieJar()->all() as $cookie) {
+            if (str_starts_with($cookie->getName(), 'MOCKSESSID') || 'PHPSESSID' === $cookie->getName()) {
+                return $cookie;
+            }
+        }
+
+        self::fail('no session cookie');
     }
 
     private function form(): Form

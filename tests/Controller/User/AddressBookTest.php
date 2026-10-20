@@ -219,6 +219,18 @@ class AddressBookTest extends WebTestCase
         self::assertSame($others[0]->getId(), $this->mainAddress()->getId(), 'the oldest one left');
     }
 
+    public function testTwoDefaultAddressesBreakNothing(): void
+    {
+        // What two parallel first addresses would leave behind.
+        $this->addAddress('Le local', main: true);
+        $this->entityManager()->flush();
+
+        $this->client->request('GET', '/mon-compte');
+        self::assertResponseIsSuccessful();
+        $this->client->request('GET', '/mon-compte/mes-adresses');
+        self::assertResponseIsSuccessful();
+    }
+
     private function addForm(): Form
     {
         return $this->client->request('GET', '/mon-compte/mes-adresses?ajouter')

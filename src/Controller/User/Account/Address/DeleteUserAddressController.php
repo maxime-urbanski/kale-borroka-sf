@@ -55,14 +55,18 @@ class DeleteUserAddressController
 
         $name = $address->getName();
 
-        if ($user->getDefaultAddress() === $address) {
-            $user->setDefaultAddress(null);
-        }
+        // One transaction: the account is never left without a default address.
+        $entityManager->wrapInTransaction(static function (EntityManagerInterface $entityManager) use ($user, $address, $userDefaultAddress): void {
+            // The foreign key from the account, whichever address it mirrors.
+            if ($user->getDefaultAddress() === $address) {
+                $user->setDefaultAddress(null);
+            }
 
-        // Orders keep their own copy of it (Order::$shippingAddress).
-        $entityManager->remove($address);
-        $entityManager->flush();
-        $userDefaultAddress->handOver($user);
+            // Orders keep their own copy of it (Order::$shippingAddress).
+            $entityManager->remove($address);
+            $entityManager->flush();
+            $userDefaultAddress->handOver($user);
+        });
 
         $session->getFlashBag()->add('success', 'Adresse « '.$name.' » supprimée.');
 

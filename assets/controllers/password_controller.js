@@ -84,9 +84,10 @@ export default class extends Controller {
     const differs = value !== '' && (finished ? value !== expected : !expected.startsWith(value))
 
     this.inputTarget.classList.toggle('is-invalid', differs)
-    this.inputTarget.toggleAttribute('aria-invalid', differs)
     if (differs) {
       this.inputTarget.setAttribute('aria-invalid', 'true')
+    } else {
+      this.inputTarget.removeAttribute('aria-invalid')
     }
     // Only rewritten when it changes, so it is announced once.
     const message = differs ? 'Les deux mots de passe diffèrent.' : ''

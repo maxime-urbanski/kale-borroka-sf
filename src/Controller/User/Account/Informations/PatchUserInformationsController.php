@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -55,6 +57,8 @@ final readonly class PatchUserInformationsController
         UserRepository $userRepository,
         EntityManagerInterface $entityManager,
         EmailChangeInterface $emailChange,
+        UserPasswordHasherInterface $passwordHasher,
+        RateLimiterFactoryInterface $emailChangeLimiter,
         FormFactoryInterface $formFactory,
         Environment $twig,
         RouterInterface $router,
@@ -68,23 +72,27 @@ final readonly class PatchUserInformationsController
         ]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() && $this->emailIsFree($userRepository, $user, $form)) {
+        if ($form->isSubmitted() && $form->isValid()) {
             // NotBlank on the DTO: a valid form has them all.
             \assert(null !== $updateUserInformation->lastname && null !== $updateUserInformation->firstname && null !== $updateUserInformation->email);
-            $user->setLastname($updateUserInformation->lastname);
-            $user->setFirstname($updateUserInformation->firstname);
-            $entityManager->flush();
+            $newEmail = User::normalizeEmail($updateUserInformation->email);
+            $changesEmail = $newEmail !== $user->getEmail();
 
-            $newEmail = mb_strtolower($updateUserInformation->email);
+            if (!$changesEmail || $this->mayChangeEmail($user, $form, $passwordHasher, $emailChangeLimiter, $userRepository)) {
+                $user->setLastname($updateUserInformation->lastname);
+                $user->setFirstname($updateUserInformation->firstname);
 
-            if ($newEmail !== $user->getEmail()) {
-                $emailChange->request($user, $newEmail);
-                $session->getFlashBag()->add('success', 'Informations enregistrées. On a envoyé un lien à '.$newEmail.' : ton adresse change dès que tu l’ouvres.');
-            } else {
-                $session->getFlashBag()->add('success', 'Informations enregistrées.');
+                if ($changesEmail) {
+                    $emailChange->request($user, $newEmail);
+                }
+
+                $entityManager->flush();
+                $session->getFlashBag()->add('success', $changesEmail
+                    ? 'Informations enregistrées. On a envoyé un lien à '.$newEmail.' : ton adresse change dès que tu l’ouvres.'
+                    : 'Informations enregistrées.');
+
+                return new RedirectResponse($router->generate('app_user_informations_patch'));
             }
-
-            return new RedirectResponse($router->generate('app_user_informations_patch'));
         }
 
         $content = $twig->render('user/informations.html.twig', [
@@ -93,6 +101,34 @@ final readonly class PatchUserInformationsController
         ]);
 
         return new Response($content, $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK);
+    }
+
+    /**
+     * The current password, then one of the requests the limiter allows (each one mails an
+     * address the customer typed), then an address no other account uses: in that order, so
+     * that probing which addresses have an account takes the password and is limited too.
+     *
+     * @param FormInterface<mixed> $form
+     */
+    private function mayChangeEmail(User $user, FormInterface $form, UserPasswordHasherInterface $passwordHasher, RateLimiterFactoryInterface $emailChangeLimiter, UserRepository $userRepository): bool
+    {
+        $password = $form->get('current_password');
+
+        if (!$passwordHasher->isPasswordValid($user, (string) $password->getData())) {
+            $password->addError(new FormError('' === (string) $password->getData()
+                ? 'Pour changer d’e-mail, indique ton mot de passe actuel.'
+                : 'Mot de passe actuel incorrect.'));
+
+            return false;
+        }
+
+        if (!$emailChangeLimiter->create((string) $user->getId())->consume()->isAccepted()) {
+            $form->get('email')->addError(new FormError('Trop de demandes de changement d’adresse : réessaie dans une heure.'));
+
+            return false;
+        }
+
+        return $this->emailIsFree($userRepository, $user, $form);
     }
 
     /**

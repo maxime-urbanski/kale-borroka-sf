@@ -1,0 +1,12 @@
+{% autoescape false %}
+Salut,
+
+Ton compte Kale Borroka Records a demandé à utiliser l'adresse {{ newEmail }}. Rien ne change tant que le lien envoyé là-bas n'est pas ouvert.
+
+Ce n'est pas toi ? Change ton mot de passe tout de suite : la demande est annulée et tes autres appareils sont déconnectés.
+{{ url('app_forgot_password_request') }}
+
+--
+Kale Borroka Records · label & distro antifasciste depuis 2019
+{{ url('app_homepage') }}
+{% endautoescape %}

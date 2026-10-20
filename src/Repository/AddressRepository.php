@@ -63,6 +63,9 @@ class AddressRepository extends ServiceEntityRepository
             ->where('a.users = :user')
             ->andWhere('a.isMainAddress = true')
             ->setParameter('user', $user)
+            // Two parallel first addresses may both be flagged: the oldest wins, no exception.
+            ->orderBy('a.id', 'ASC')
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
     }

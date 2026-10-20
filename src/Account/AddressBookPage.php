@@ -23,10 +23,10 @@ final readonly class AddressBookPage implements AddressBookPageInterface
     ) {
     }
 
-    public function render(User $user, ?FormInterface $form = null, ?Address $editing = null, int $status = Response::HTTP_OK): Response
+    public function render(User $user, ?FormInterface $form = null, ?Address $editing = null, int $status = Response::HTTP_OK, ?array $addresses = null): Response
     {
         return new Response($this->twig->render('user/addresses.html.twig', [
-            'addresses' => $this->addressRepository->getAllUserAddresses($user),
+            'addresses' => $addresses ?? $this->addressRepository->getAllUserAddresses($user),
             'form' => $form?->createView(),
             'editing' => $editing,
             'max' => self::MAX_ADDRESSES,
