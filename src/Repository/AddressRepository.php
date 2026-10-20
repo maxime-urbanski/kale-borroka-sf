@@ -39,6 +39,8 @@ class AddressRepository extends ServiceEntityRepository
     }
 
     /**
+     * The default address first, then in the order they were added.
+     *
      * @return array<Address>
      */
     public function getAllUserAddresses(User $user): array
@@ -46,6 +48,8 @@ class AddressRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('a')
             ->where('a.users = :user')
             ->setParameter('user', $user)
+            ->orderBy('a.isMainAddress', 'DESC')
+            ->addOrderBy('a.id', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -59,6 +63,9 @@ class AddressRepository extends ServiceEntityRepository
             ->where('a.users = :user')
             ->andWhere('a.isMainAddress = true')
             ->setParameter('user', $user)
+            // Two parallel first addresses may both be flagged: the oldest wins, no exception.
+            ->orderBy('a.id', 'ASC')
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
     }

@@ -1,0 +1,456 @@
+// Adresses, informations, mot de passe (maquettes 13 to 15): the account forms.
+
+// A required field says so with an asterisk next to its label; screen readers get the
+// input's `required` instead, so the asterisk is silent (alternative text "").
+.kb-required-marks .form-label.required::after {
+    content: " *";
+    content: " *" / "";
+}
+
+// Mes adresses: parcel labels. The default one sits on kraft with the offset shadow.
+.kb-addresses {
+    display: grid;
+    gap: 16px;
+    margin: 0;
+
+    @include media-breakpoint-up(md) {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 32px;
+    }
+}
+
+.kb-address {
+    display: flex;
+
+    > article {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: 12px;
+        min-width: 0;
+        padding: 16px 18px;
+        border: 3px solid $kb-noir;
+        background: $kb-papier;
+
+        @include media-breakpoint-up(md) {
+            padding: 20px 24px 24px;
+        }
+    }
+
+    &--default > article {
+        background: $kb-papier-2;
+        box-shadow: $kb-shadow;
+    }
+
+    // The card whose form is open under the grid.
+    &.is-editing > article {
+        outline: 2px dashed $kb-noir;
+        outline-offset: 6px;
+    }
+
+    &__name {
+        margin: 0;
+        font-size: 1.75rem;
+        line-height: 1;
+        text-transform: uppercase;
+        overflow-wrap: anywhere;
+
+        @include media-breakpoint-up(md) {
+            font-size: 2rem;
+        }
+    }
+
+    &__roles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 0;
+    }
+
+    &__text {
+        margin: 0;
+        padding-top: 12px;
+        border-top: 1px dashed $kb-noir;
+        font-size: .9375rem;
+        line-height: 1.55;
+        overflow-wrap: anywhere;
+
+        strong {
+            font-weight: 700;
+        }
+    }
+
+    &__phone {
+        font-family: $kb-font-mono;
+        font-size: .875rem;
+    }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px 16px;
+        margin-top: auto;
+        padding-top: 8px;
+    }
+
+    &__edit {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        @include media-breakpoint-down(md) {
+            flex: 1;
+        }
+    }
+
+    &__default .btn {
+        min-height: 44px;
+        padding-inline: 0;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    &__remove {
+        display: flex;
+        margin-left: auto;
+
+        // Below md the bin is a boxed button next to a full-width « Modifier ».
+        @include media-breakpoint-down(md) {
+            margin-left: 0;
+
+            .kb-iconbtn {
+                border: 2px solid $kb-noir;
+            }
+        }
+    }
+}
+
+// The empty slot of the grid, a solid black button below md.
+.kb-address-add {
+    display: flex;
+
+    &__link {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        min-height: 56px;
+        padding: 12px 20px;
+        background: $kb-noir;
+        color: $kb-papier;
+        font-size: .9375rem;
+        font-weight: 800;
+        letter-spacing: .06em;
+        text-align: center;
+        text-decoration: none;
+        text-transform: uppercase;
+
+        &:hover {
+            background: $kb-encre-2;
+            color: $kb-papier;
+        }
+
+        @include media-breakpoint-up(md) {
+            flex-direction: column;
+            min-height: 240px;
+            border: 3px dashed $kb-noir;
+            background: transparent;
+            color: $kb-noir;
+
+            .bi {
+                font-size: 2rem;
+            }
+
+            &:hover {
+                background: $kb-papier-2;
+                color: $kb-noir;
+            }
+        }
+    }
+}
+
+// Under the grid: the form of the address being added or edited, on kraft.
+.kb-address-form {
+    padding: 20px;
+    border: 3px solid $kb-noir;
+    background: $kb-papier-2;
+    scroll-margin-top: 24px;
+
+    @include media-breakpoint-up(md) {
+        padding: 32px;
+    }
+
+    &:focus {
+        outline: none;
+    }
+
+    &__head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 4px 16px;
+        margin-bottom: 20px;
+    }
+
+    &__title {
+        margin: 0;
+        font-size: 2rem;
+        line-height: 1;
+        text-transform: uppercase;
+        overflow-wrap: anywhere;
+
+        @include media-breakpoint-up(md) {
+            font-size: 2.75rem;
+        }
+    }
+
+    &__legend {
+        margin: 0;
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    &__grid {
+        display: grid;
+        gap: 16px;
+
+        @include media-breakpoint-up(md) {
+            grid-template-columns: 1fr 1fr;
+            gap: 18px 20px;
+        }
+
+        > div {
+            min-width: 0;
+        }
+
+        .mb-3 {
+            margin-bottom: 0 !important;
+        }
+    }
+
+    &__wide,
+    &__line,
+    &__actions {
+        grid-column: 1 / -1;
+    }
+
+    &__line {
+        display: grid;
+        gap: 16px;
+
+        @include media-breakpoint-up(md) {
+            grid-template-columns: 1fr 1fr 2fr;
+            gap: 20px;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 4px;
+        padding-top: 20px;
+        border-top: 2px solid $kb-noir;
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            @include media-breakpoint-down(md) {
+                flex: 1 1 100%;
+            }
+        }
+
+        // Saving first on small screens, where the buttons stack.
+        .btn-primary {
+            @include media-breakpoint-down(md) {
+                order: -1;
+            }
+        }
+    }
+
+    .form-text {
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        color: $kb-encre-2;
+    }
+}
+
+// Informations: numbered blocks, the number and title on the left from lg up, one button to
+// save them all.
+.kb-settings {
+    display: flex;
+    flex-direction: column;
+
+    &__block {
+        display: grid;
+        gap: 16px;
+        padding: 0 0 24px;
+
+        @include media-breakpoint-up(lg) {
+            grid-template-columns: 200px minmax(0, 1fr);
+            gap: 32px;
+            padding-bottom: 32px;
+        }
+
+        & + & {
+            padding-top: 24px;
+            border-top: 1px solid $kb-gris-filet;
+
+            @include media-breakpoint-up(lg) {
+                padding-top: 32px;
+            }
+        }
+    }
+
+    &__title {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin: 0;
+        font-size: 1.75rem;
+        line-height: 1;
+        text-transform: uppercase;
+
+        @include media-breakpoint-up(lg) {
+            flex-direction: column;
+            gap: 8px;
+            font-size: 2.25rem;
+        }
+    }
+
+    &__number {
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        font-weight: 600;
+        letter-spacing: .04em;
+    }
+
+    &__fields {
+        display: grid;
+        gap: 16px;
+
+        @include media-breakpoint-up(md) {
+            grid-template-columns: 1fr 1fr;
+            gap: 18px 20px;
+        }
+
+        > div {
+            min-width: 0;
+        }
+
+        .mb-3 {
+            margin-bottom: 0 !important;
+        }
+    }
+
+    &__wide {
+        grid-column: 1 / -1;
+    }
+
+    &__help {
+        display: flex;
+        gap: 6px;
+        color: $kb-encre-2;
+        font-size: .875rem;
+
+        &--mail::before {
+            content: "\f32f"; // bi-envelope
+            content: "\f32f" / "";
+            font-family: bootstrap-icons;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 20px;
+        border-top: 3px solid $kb-noir;
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            @include media-breakpoint-down(md) {
+                flex: 1;
+            }
+        }
+    }
+}
+
+// Mot de passe: the form on a card with the offset shadow.
+.kb-password-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 560px;
+
+    @include media-breakpoint-up(md) {
+        padding: 32px;
+        border: 3px solid $kb-noir;
+        background: $kb-papier;
+        box-shadow: $kb-shadow;
+    }
+
+    .kb-connect__label-row .form-label {
+        margin-bottom: 0;
+    }
+
+    &__submit {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+    }
+}
+
+// The confirmation's gap, written as one types: icon and text, never the colour alone.
+.kb-password-mismatch {
+    margin: 0;
+    color: $kb-rouge-fonce;
+    font-size: .875rem;
+    font-weight: 600;
+
+    &:not(:empty) {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 6px;
+
+        &::before {
+            content: "\f336"; // bi-exclamation-octagon-fill
+            content: "\f336" / "";
+            font-family: bootstrap-icons;
+            font-weight: normal;
+        }
+    }
+}
+
+.kb-settings__pending {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    padding: 12px 14px;
+    border: 2px dashed $kb-noir;
+    font-size: .9375rem;
+    overflow-wrap: anywhere;
+}
+
+.kb-password-card__intro {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}

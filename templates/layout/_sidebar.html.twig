@@ -12,7 +12,7 @@
     {name: 'Mot de passe', link: 'app_user_informations_password_put', icon: 'bi-key'},
 ] %}
 
-<nav class="kb-account-nav" aria-label="Mon compte">
+<nav class="kb-account-nav" aria-label="Mon compte" data-controller="account-nav">
     {% for route in routes %}
         <a href="{{ path(route.link) }}" class="kb-account-nav__link"
            {%- if app.current_route == route.link %} aria-current="page"{% endif %}>

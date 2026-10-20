@@ -9,7 +9,6 @@ use App\Validator\PasswordRequirements;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
@@ -20,7 +19,8 @@ class UpdatePasswordFormType extends AbstractType
     {
         $builder
             ->add('current_password', PasswordType::class, [
-                'label' => 'Ancien mot de passe',
+                'label' => 'Mot de passe actuel',
+                'attr' => ['autocomplete' => 'current-password'],
                 'constraints' => [new UserPassword(message: 'Mot de passe actuel incorrect.')],
             ])
             ->add('new_password', RepeatedType::class, [
@@ -29,15 +29,12 @@ class UpdatePasswordFormType extends AbstractType
                     'label' => 'Nouveau mot de passe',
                     'attr' => ['autocomplete' => 'new-password'],
                 ],
-                'second_options' => ['label' => 'Confirmez mot de passe'],
-                'invalid_message' => 'Les deux mots de passe ne correspondent pas.',
-                'constraints' => [new PasswordRequirements()],
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Modifier mon mot de passe',
-                'attr' => [
-                    'class' => 'btn-success',
+                'second_options' => [
+                    'label' => 'Confirmer le nouveau',
+                    'attr' => ['autocomplete' => 'new-password'],
                 ],
+                'invalid_message' => PasswordRequirements::MISMATCH,
+                'constraints' => [new PasswordRequirements()],
             ]);
     }
 

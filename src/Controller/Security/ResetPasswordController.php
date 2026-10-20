@@ -143,7 +143,8 @@ class ResetPasswordController extends AbstractController
                 $form->get('plainPassword')->getData()
             );
 
-            $user->setPassword($encodedPassword);
+            // Whoever asked for a new e-mail on this account loses that request too.
+            $user->setPassword($encodedPassword)->setPendingEmail(null);
             $this->entityManager->flush();
 
             // The session is cleaned up after the password has been changed.

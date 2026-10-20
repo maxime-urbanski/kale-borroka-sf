@@ -1,0 +1,47 @@
+{% extends 'user/user-dashboard.html.twig' %}
+
+{#
+    Informations (maquette 14): numbered blocks, a number and a title on the left, the fields
+    on the right, one button to save them. A new e-mail only counts once the link mailed to it
+    is opened (App\Account\EmailChange).
+#}
+{% block title %}Informations{% endblock %}
+
+{% block account_head %}
+    <nav class="kb-account__crumbs" aria-label="Fil d’Ariane">
+        <a href="{{ path('app_user_informations') }}">Mon compte</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Informations</span>
+    </nav>
+    <h1 class="kb-account__title">Informations</h1>
+    {% if user.createdAt %}
+        <span class="kb-account__since">Membre depuis {{ user.createdAt|date('m.Y', 'Europe/Paris') }}</span>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form, {attr: {class: 'kb-settings', novalidate: 'novalidate'}}) }}
+        <section class="kb-settings__block" aria-labelledby="bloc-identite">
+            <h2 class="kb-settings__title" id="bloc-identite"><span class="kb-settings__number">01</span> Identité</h2>
+            <div class="kb-settings__fields">
+                {{ form_row(form.firstname) }}
+                {{ form_row(form.lastname) }}
+                {{ form_row(form.email, {
+                    row_attr: {class: 'kb-settings__wide'},
+                    help_attr: {class: 'kb-settings__help kb-settings__help--mail'},
+                }) }}
+                {% if user.pendingEmail %}
+                    <p class="kb-settings__pending kb-settings__wide">
+                        <i class="bi bi-hourglass-split" aria-hidden="true"></i>
+                        <span>En attente de confirmation&nbsp;: <strong>{{ user.pendingEmail }}</strong>. Ouvre le lien reçu à cette adresse (valable 24&nbsp;heures).</span>
+                    </p>
+                {% endif %}
+            </div>
+        </section>
+        <div class="kb-settings__actions">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-check-lg" aria-hidden="true"></i>Enregistrer
+            </button>
+        </div>
+    {{ form_end(form) }}
+{% endblock %}

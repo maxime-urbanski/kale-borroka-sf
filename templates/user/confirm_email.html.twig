@@ -1,0 +1,34 @@
+{% extends 'user/user-dashboard.html.twig' %}
+
+{#
+    The link of an e-mail change, opened (ConfirmEmailChangeController): the current password,
+    and the address becomes the account's. `newEmail`: the pending address.
+#}
+{% block title %}Confirmer ton nouvel e-mail{% endblock %}
+
+{% block account_head %}
+    <nav class="kb-account__crumbs" aria-label="Fil d’Ariane">
+        <a href="{{ path('app_user_informations') }}">Mon compte</a>
+        <span aria-hidden="true">/</span>
+        <a href="{{ path('app_user_informations_patch') }}">Informations</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Nouvel e-mail</span>
+    </nav>
+    <h1 class="kb-account__title">Nouvel e-mail</h1>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form, {attr: {class: 'kb-password-card', novalidate: 'novalidate'}}) }}
+        <p class="kb-password-card__intro">Ton compte utilisera <strong>{{ newEmail }}</strong>. Pour confirmer que c’est bien toi, indique ton mot de passe.</p>
+        {# The account the password belongs to, for password managers. #}
+        <input type="email" name="username" value="{{ app.user.userIdentifier }}" autocomplete="username" hidden readonly>
+        {% include 'security/_password_field.html.twig' with {
+            field: form.current_password,
+            rules: false,
+            forgot: path('app_forgot_password_request'),
+        } only %}
+        <button type="submit" class="btn btn-primary btn-lg kb-password-card__submit">
+            <i class="bi bi-envelope-check" aria-hidden="true"></i>Confirmer l’adresse
+        </button>
+    {{ form_end(form) }}
+{% endblock %}

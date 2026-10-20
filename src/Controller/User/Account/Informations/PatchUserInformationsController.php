@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\User\Account\Informations;
 
+use App\Account\EmailChangeInterface;
 use App\Data\UpdateUserInformation;
 use App\Entity\User;
 use App\Form\UserInformationFormType;
 use App\Repository\UserRepository;
-use App\Service\UserDefaultAddressInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -26,6 +28,10 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
+/**
+ * Informations (maquette 14): the names are saved at once, a new e-mail waits for the link
+ * mailed to it (EmailChangeInterface).
+ */
 #[AsController]
 final readonly class PatchUserInformationsController
 {
@@ -48,43 +54,70 @@ final readonly class PatchUserInformationsController
         User $user,
         Request $request,
         UserRepository $userRepository,
-        UserDefaultAddressInterface $userDefaultAddress,
+        EntityManagerInterface $entityManager,
+        EmailChangeInterface $emailChange,
+        RateLimiterFactoryInterface $emailChangeLimiter,
         FormFactoryInterface $formFactory,
         Environment $twig,
         RouterInterface $router,
-    ): Response|RedirectResponse {
+    ): Response {
         /** @var Session $session */
         $session = $request->getSession();
 
         $updateUserInformation = new UpdateUserInformation($user);
         $form = $formFactory->create(UserInformationFormType::class, $updateUserInformation, [
-            'method' => 'patch',
+            'method' => Request::METHOD_PATCH,
         ]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() && $this->emailIsFree($userRepository, $user, $form)) {
-            // NotBlank / NotNull on the DTO: a valid form has them all.
-            \assert(null !== $updateUserInformation->lastname && null !== $updateUserInformation->firstname && null !== $updateUserInformation->email && null !== $updateUserInformation->address);
-            $user->setLastname($updateUserInformation->lastname);
-            $user->setFirstname($updateUserInformation->firstname);
-            $user->setEmail($updateUserInformation->email);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // NotBlank on the DTO: a valid form has them all.
+            \assert(null !== $updateUserInformation->lastname && null !== $updateUserInformation->firstname && null !== $updateUserInformation->email);
+            $newEmail = User::normalizeEmail($updateUserInformation->email);
+            $changesEmail = $newEmail !== $user->getEmail();
 
-            $userDefaultAddress->defaultAddress($user, $updateUserInformation->address);
+            if (!$changesEmail || $this->mayChangeEmail($user, $form, $emailChangeLimiter, $userRepository)) {
+                $user->setLastname($updateUserInformation->lastname);
+                $user->setFirstname($updateUserInformation->firstname);
 
-            $session->getFlashBag()->add(
-                'success',
-                'Informations modifiées.'
-            );
+                if ($changesEmail) {
+                    $emailChange->request($user, $newEmail);
+                }
 
-            return new RedirectResponse($router->generate('app_user_informations'));
+                $entityManager->flush();
+                $session->getFlashBag()->add('success', $changesEmail
+                    ? 'Informations enregistrées. On a envoyé un lien à '.$newEmail.' : ton adresse change dès que tu l’ouvres.'
+                    : 'Informations enregistrées.');
+
+                return new RedirectResponse($router->generate('app_user_informations_patch'));
+            }
         }
 
-        $content = $twig->render('user/_information_edit.html.twig', [
+        $content = $twig->render('user/informations.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
         ]);
 
-        return new Response($content);
+        return new Response($content, $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK);
+    }
+
+    /**
+     * One of the requests the limiter allows (each one mails an address the customer typed),
+     * then an address no other account uses: in that order, so that probing which addresses
+     * have an account is limited too. No password here: the page the link opens asks for it
+     * (ConfirmEmailChangeController).
+     *
+     * @param FormInterface<mixed> $form
+     */
+    private function mayChangeEmail(User $user, FormInterface $form, RateLimiterFactoryInterface $emailChangeLimiter, UserRepository $userRepository): bool
+    {
+        if (!$emailChangeLimiter->create((string) $user->getId())->consume()->isAccepted()) {
+            $form->get('email')->addError(new FormError('Trop de demandes de changement d’adresse : réessaie dans une heure.'));
+
+            return false;
+        }
+
+        return $this->emailIsFree($userRepository, $user, $form);
     }
 
     /**

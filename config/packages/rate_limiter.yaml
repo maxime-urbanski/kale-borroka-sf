@@ -8,3 +8,9 @@ framework:
             policy: sliding_window
             limit: 5
             interval: '15 minutes'
+        # Informations page: 3 new e-mails asked for per account within an hour. Each request
+        # mails an address the customer types, so the shop must not become a mail cannon.
+        email_change:
+            policy: sliding_window
+            limit: 3
+            interval: '1 hour'

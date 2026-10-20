@@ -3,6 +3,9 @@
 App\Entity\Address:
     home:
         name: Ma maison
+        firstname: Maxi
+        lastname: Loud
+        telephone: '+33 6 12 34 56 78'
         address: 10 rue AFA
         complement_address: ETG 3
         city: Baiona
@@ -13,6 +16,8 @@ App\Entity\Address:
 
     work:
         name: Coworking
+        firstname: Maxi
+        lastname: Loud
         address: 100 rue Floride
         city: Baiona
         zipcode: 64100
@@ -22,6 +27,8 @@ App\Entity\Address:
 
     home_user:
         name: Chez moi
+        firstname: Test
+        lastname: Test
         address: 5 rue des Tonneliers
         city: Donostia
         zipcode: 20003
@@ -31,6 +38,8 @@ App\Entity\Address:
 
     work_user:
         name: Coworking234
+        firstname: Test
+        lastname: Test
         address: 100 rue Floride
         city: Baiona
         zipcode: 64100

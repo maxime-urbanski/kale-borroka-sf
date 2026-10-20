@@ -4,27 +4,23 @@ declare(strict_types=1);
 
 namespace App\Data;
 
-use App\Entity\Address;
 use App\Entity\User;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class UpdateUserInformation
 {
-    #[Assert\NotBlank]
-    #[Assert\Length(max: 255)]
+    #[Assert\NotBlank(message: 'Indique ton nom.')]
+    #[Assert\Length(max: 100)]
     public ?string $lastname = null;
 
-    #[Assert\NotBlank]
-    #[Assert\Length(max: 255)]
+    #[Assert\NotBlank(message: 'Indique ton prénom.')]
+    #[Assert\Length(max: 100)]
     public ?string $firstname = null;
 
-    #[Assert\NotBlank]
-    #[Assert\Email]
+    #[Assert\NotBlank(message: 'Indique ton adresse e-mail.')]
+    #[Assert\Email(message: 'Cette adresse e-mail n’est pas valide.')]
     #[Assert\Length(max: 180)]
     public ?string $email = null;
-
-    #[Assert\NotNull(message: 'Choisissez une adresse de livraison.')]
-    public ?Address $address = null;
 
     public function __construct(
         private readonly User $user,
