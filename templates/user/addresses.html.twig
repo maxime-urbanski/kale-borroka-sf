@@ -1,0 +1,126 @@
+{% extends 'user/user-dashboard.html.twig' %}
+
+{#
+    Mes adresses (maquette 13): one card per address, like a parcel label; the default one on
+    kraft with the offset shadow. « Modifier » and « Ajouter » are links that open the form
+    under the cards (UserAddressController), so the page works without JavaScript.
+    `addresses`: the default first; `form`: the form being filled or null; `editing`: the
+    address it edits (null for a new one); `max`: how many a customer may keep.
+#}
+{% block title %}Adresses{% endblock %}
+
+{% block account_head %}
+    <nav class="kb-account__crumbs" aria-label="Fil d’Ariane">
+        <a href="{{ path('app_user_informations') }}">Mon compte</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Adresses</span>
+    </nav>
+    <h1 class="kb-account__title">Adresses</h1>
+    <span class="kb-account__since kb-account__since--always">
+        <span class="d-none d-lg-inline">{{ addresses|length }} enregistrée{{ addresses|length > 1 ? 's' }} · {{ max }} max</span>
+        <span class="d-lg-none" aria-hidden="true">{{ addresses|length }} / {{ max }}</span>
+    </span>
+{% endblock %}
+
+{% block content %}
+    {% set full = addresses|length >= max %}
+    <ul class="kb-addresses list-unstyled">
+        {% for address in addresses %}
+            {% set is_default = address.isMainAddress %}
+            {% set title_id = 'adresse-' ~ address.id %}
+            <li class="kb-address{{ is_default ? ' kb-address--default' }}{{ editing and editing.id == address.id ? ' is-editing' }}">
+                <article aria-labelledby="{{ title_id }}">
+                    <h2 class="kb-address__name" id="{{ title_id }}">{{ address.name }}</h2>
+                    {% if is_default %}
+                        <p class="kb-address__roles">
+                            <span class="kb-badge"><i class="bi bi-truck" aria-hidden="true"></i>Livraison par défaut</span>
+                        </p>
+                    {% endif %}
+                    <address class="kb-address__text">
+                        <strong>{{ address.firstname }} {{ address.lastname }}</strong><br>
+                        {{ address.address }}<br>
+                        {% if address.complementAddress %}{{ address.complementAddress }}<br>{% endif %}
+                        {{ address.zipcode }} {{ address.city }}<br>
+                        {{ address.country }}
+                        {% if address.telephone %}<br><span class="kb-address__phone">{{ address.telephone }}</span>{% endif %}
+                    </address>
+                    <div class="kb-address__actions">
+                        <a href="{{ path('app_user_addresses_index', {modifier: address.id}) }}#adresse-form"
+                           class="btn {{ is_default ? 'btn-dark' : 'btn-outline-dark' }} btn-sm kb-address__edit"
+                           aria-label="Modifier l’adresse {{ address.name }}">
+                            <i class="bi bi-pencil" aria-hidden="true"></i>Modifier
+                        </a>
+                        {% if not is_default %}
+                            {% include 'partials/_post_button.html.twig' with {
+                                token_id: 'address-' ~ address.id,
+                                url: path('app_user_addresses_patch_default_address', {id: address.id}),
+                                method: 'PATCH',
+                                form_class: 'kb-address__default',
+                                class: 'btn btn-link btn-sm',
+                                text_btn: 'Par défaut',
+                                label: 'Par défaut : livrer à ' ~ address.name
+                            } %}
+                        {% endif %}
+                        {% include 'partials/_post_button.html.twig' with {
+                            token_id: 'address-' ~ address.id,
+                            url: path('app_user_addresses_delete', {id: address.id}),
+                            method: 'DELETE',
+                            form_class: 'kb-address__remove',
+                            class: 'kb-iconbtn',
+                            icon: 'bi-trash3',
+                            label: 'Supprimer l’adresse ' ~ address.name
+                        } %}
+                    </div>
+                </article>
+            </li>
+        {% endfor %}
+        {% if not full and addresses is not empty %}
+            <li class="kb-address-add">
+                <a href="{{ path('app_user_addresses_index') }}?ajouter#adresse-form" class="kb-address-add__link">
+                    <i class="bi bi-plus-lg" aria-hidden="true"></i>Ajouter une adresse
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+
+    {% if full %}
+        <p class="kb-account__empty">Cinq adresses au plus : supprime-en une pour en ajouter une autre.</p>
+    {% endif %}
+
+    {% if form %}
+        <section class="kb-address-form kb-required-marks" id="adresse-form" aria-labelledby="adresse-form-title" tabindex="-1">
+            <div class="kb-address-form__head">
+                <h2 class="kb-address-form__title" id="adresse-form-title">
+                    {{ editing ? 'Modifier : ' ~ editing.name : 'Nouvelle adresse' }}
+                </h2>
+                <p class="kb-address-form__legend"><span aria-hidden="true">*</span> obligatoire</p>
+            </div>
+            {# The fragment brings the page shown with the errors back to the form. #}
+            {{ form_start(form, {
+                action: (editing ? path('app_user_addresses_patch_address', {id: editing.id}) : path('app_user_addresses_add')) ~ '#adresse-form',
+                attr: {class: 'kb-address-form__grid', novalidate: 'novalidate'},
+            }) }}
+                {{ form_row(form.name) }}
+                {{ form_row(form.country) }}
+                {{ form_row(form.firstname) }}
+                {{ form_row(form.lastname) }}
+                {{ form_row(form.address, {row_attr: {class: 'kb-address-form__wide'}}) }}
+                {{ form_row(form.complement_address, {row_attr: {class: 'kb-address-form__wide'}}) }}
+                <div class="kb-address-form__line">
+                    {{ form_row(form.zipcode) }}
+                    {{ form_row(form.city) }}
+                    {{ form_row(form.telephone, {row_attr: {class: 'kb-address-form__phone'}}) }}
+                </div>
+                <div class="kb-address-form__wide">
+                    {{ form_row(form.makeDefault) }}
+                </div>
+                <div class="kb-address-form__actions">
+                    <a href="{{ path('app_user_addresses_index') }}" class="btn btn-outline-dark">Annuler</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg" aria-hidden="true"></i>Enregistrer l’adresse
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </section>
+    {% endif %}
+{% endblock %}

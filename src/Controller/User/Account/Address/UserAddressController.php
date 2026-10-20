@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\User\Account\Address;
 
+use App\Account\AddressBookPageInterface;
 use App\Entity\User;
 use App\Form\UserAccountAddressFormType;
 use App\Repository\AddressRepository;
@@ -14,19 +15,15 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Twig\Environment;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 
+/**
+ * Mes adresses (maquette 13). `?modifier=<id>` opens the form of one of the customer's
+ * addresses under the cards, `?ajouter` an empty one (also shown when there is no address yet):
+ * links, so it works without JavaScript.
+ */
 #[AsController]
 class UserAddressController
 {
-    /**
-     * @throws SyntaxError
-     * @throws RuntimeError
-     * @throws LoaderError
-     */
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     #[Route(
         path: '/mon-compte/mes-adresses',
@@ -36,25 +33,34 @@ class UserAddressController
     public function __invoke(
         #[CurrentUser]
         User $user,
-        FormFactoryInterface $form,
-        Environment $twig,
+        Request $request,
+        FormFactoryInterface $formFactory,
         AddressRepository $addressRepository,
+        AddressBookPageInterface $addressBookPage,
     ): Response {
-        $userAddresses = $addressRepository->getAllUserAddresses($user);
-        $forms = [];
+        $addresses = $addressRepository->getAllUserAddresses($user);
+        $editing = null;
+        $form = null;
 
-        foreach ($userAddresses as $address) {
-            $formAddresses = $form->create(UserAccountAddressFormType::class, $address);
-            $forms[(int) $address->getId()] = $formAddresses->createView();
+        if ($request->query->has('modifier')) {
+            // Among the customer's own addresses only: another id opens nothing.
+            $id = $request->query->getInt('modifier');
+            $editing = array_find($addresses, static fn ($address): bool => $address->getId() === $id);
         }
 
-        $formAddNewAddress = $form->create(UserAccountAddressFormType::class);
-        $content = $twig->render('user/_user_addresses.html.twig', [
-            'userAddresses' => $userAddresses,
-            'forms' => $forms,
-            'formAdd' => $formAddNewAddress->createView(),
-        ]);
+        if (null !== $editing) {
+            $form = $formFactory->create(UserAccountAddressFormType::class, $editing, [
+                'method' => Request::METHOD_PATCH,
+                'is_default' => true === $editing->isIsMainAddress(),
+            ]);
+        } elseif (\count($addresses) < AddressBookPageInterface::MAX_ADDRESSES
+            && ([] === $addresses || $request->query->has('ajouter'))) {
+            $form = $formFactory->create(UserAccountAddressFormType::class, null, [
+                // The first address is the default one whatever the box says.
+                'is_default' => [] === $addresses,
+            ]);
+        }
 
-        return new Response($content);
+        return $addressBookPage->render($user, $form, $editing);
     }
 }

@@ -4,12 +4,13 @@
     the firewall (security.yaml). Same options as _obfuscation_link.html.twig, plus token_id
     and form_class (the form is the layout item: 'd-grid' makes the button fill it) and label (the button's
     accessible name, for an icon button or a text that needs its object: it must contain the
-    visible text).
+    visible text), method (PATCH or DELETE, sent as _method: framework.http_method_override).
 #}
 {% set icon_position = icon_position | default('left') %}
 
 <form method="post" action="{{ url }}" class="{{ form_class|default('d-inline-flex') }}">
     <input type="hidden" name="_token" value="{{ csrf_token(token_id) }}">
+    {% if method is defined %}<input type="hidden" name="_method" value="{{ method }}">{% endif %}
     <button type="submit" class="{{ class }}"{% if label is defined %} aria-label="{{ label }}"{% endif %}>
         {% if icon is defined and icon_position is same as "left" %}
             <i class="bi {{ icon }}" aria-hidden="true"></i>

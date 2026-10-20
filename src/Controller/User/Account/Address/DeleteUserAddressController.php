@@ -7,6 +7,7 @@ namespace App\Controller\User\Account\Address;
 use App\Entity\Address;
 use App\Entity\User;
 use App\Security\Voter\AddressVoter;
+use App\Service\UserDefaultAddressInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,34 +40,31 @@ class DeleteUserAddressController
         Request $request,
         RouterInterface $router,
         CsrfTokenManagerInterface $csrfTokenManager,
+        UserDefaultAddressInterface $userDefaultAddress,
     ): RedirectResponse {
         /** @var Session $session */
         $session = $request->getSession();
 
-        // Token sent by assets/controllers/address_controller.js. Checked here rather than with
+        // Posted by partials/_post_button.html.twig. Checked here rather than with
         // #[IsCsrfTokenValid], whose failure the firewall turns into a redirect to the login page.
-        if (!$csrfTokenManager->isTokenValid(new CsrfToken('address-'.$address->getId(), $request->headers->get('X-CSRF-Token')))) {
+        if (!$csrfTokenManager->isTokenValid(new CsrfToken('address-'.$address->getId(), $request->request->getString('_token')))) {
             $session->getFlashBag()->add('danger', 'La page a expiré : rechargez-la et recommencez.');
 
             return new RedirectResponse($router->generate('app_user_addresses_index'));
         }
 
-        $userDefaultAddress = $user->getDefaultAddress();
+        $name = $address->getName();
 
-        $sameAddress = $userDefaultAddress === $address;
-
-        if ($sameAddress) {
+        if ($user->getDefaultAddress() === $address) {
             $user->setDefaultAddress(null);
-            $entityManager->persist($user);
         }
 
+        // Orders keep their own copy of it (Order::$shippingAddress).
         $entityManager->remove($address);
         $entityManager->flush();
+        $userDefaultAddress->handOver($user);
 
-        $session->getFlashBag()->add(
-            'success',
-            'Adresse supprimée.'
-        );
+        $session->getFlashBag()->add('success', 'Adresse « '.$name.' » supprimée.');
 
         return new RedirectResponse($router->generate('app_user_addresses_index'));
     }

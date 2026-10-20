@@ -39,6 +39,8 @@ class AddressRepository extends ServiceEntityRepository
     }
 
     /**
+     * The default address first, then in the order they were added.
+     *
      * @return array<Address>
      */
     public function getAllUserAddresses(User $user): array
@@ -46,6 +48,8 @@ class AddressRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('a')
             ->where('a.users = :user')
             ->setParameter('user', $user)
+            ->orderBy('a.isMainAddress', 'DESC')
+            ->addOrderBy('a.id', 'ASC')
             ->getQuery()
             ->getResult();
     }

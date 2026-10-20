@@ -12,6 +12,9 @@ App\Entity\User:
 App\Entity\Address:
     address_customer_{1..8}:
         name: Maison
+        # No faker call here: it would shift the seeded values of every fixture loaded after.
+        firstname: Client
+        lastname: 'N°<current()>'
         address: '<streetAddress()>'
         city: '<city()>'
         zipcode: '<postcode()>'

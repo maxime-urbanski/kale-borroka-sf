@@ -67,7 +67,7 @@ class AccountSecurityTest extends WebTestCase
     public function testAnotherCustomersAddressCannotBeDeletedOrMadeDefault(): void
     {
         // No order points at it: nothing but the voter stands in the way of deleting it.
-        $victim = (new Address())->setName('Boulot')->setAddress('1 rue de la Paix')->setComplementAddress('')
+        $victim = (new Address())->setName('Boulot')->setFirstname('Ama')->setLastname('Lur')->setAddress('1 rue de la Paix')->setComplementAddress('')
             ->setZipcode('64100')->setCity('Bayonne')->setCountry('France')->setIsMainAddress(false)->setUsers($this->user('client1@kaleborroka.test'));
         $this->entityManager()->persist($victim);
         $this->entityManager()->flush();
@@ -75,9 +75,9 @@ class AccountSecurityTest extends WebTestCase
         // A valid token for that address in the attacker's session: only the voter is left.
         $token = $this->csrfToken('address-'.$id);
 
-        $this->client->request('DELETE', \sprintf('/mon-compte/mes-adresses/remove/%d', $id), server: ['HTTP_X_CSRF_TOKEN' => $token]);
+        $this->client->request('DELETE', \sprintf('/mon-compte/mes-adresses/remove/%d', $id), ['_token' => $token]);
         self::assertResponseStatusCodeSame(403);
-        $this->client->request('PATCH', \sprintf('/mon-compte/mes-adresses/update/default-address/0/%d', $id), server: ['HTTP_X_CSRF_TOKEN' => $token]);
+        $this->client->request('PATCH', \sprintf('/mon-compte/mes-adresses/default/%d', $id), ['_token' => $token]);
         self::assertResponseStatusCodeSame(403);
 
         $this->entityManager()->clear();
@@ -90,16 +90,16 @@ class AccountSecurityTest extends WebTestCase
     {
         $own = $this->addressOf('test@test.fr');
         $crawler = $this->client->request('GET', '/mon-compte/mes-adresses');
-        $token = $crawler->filter(\sprintf('[data-address-method-value="DELETE"][data-address-id-value="%d"]', $own->getId()))->attr('data-address-token-value');
+        $token = $crawler->filter(\sprintf('form[action$="/mon-compte/mes-adresses/remove/%d"] input[name="_token"]', $own->getId()))->attr('value');
 
-        $this->client->request('DELETE', \sprintf('/mon-compte/mes-adresses/remove/%d', $own->getId()), server: ['HTTP_X_CSRF_TOKEN' => 'forged']);
+        $this->client->request('DELETE', \sprintf('/mon-compte/mes-adresses/remove/%d', $own->getId()), ['_token' => 'forged']);
         self::assertResponseRedirects('/mon-compte/mes-adresses', null, 'back to the address book, not to the login page');
         $this->client->followRedirect();
         self::assertSelectorTextContains('body', 'La page a expiré');
         $this->entityManager()->clear();
         self::assertNotNull($this->entityManager()->find(Address::class, $own->getId()), 'a forged token deletes nothing');
 
-        $this->client->request('DELETE', \sprintf('/mon-compte/mes-adresses/remove/%d', $own->getId()), server: ['HTTP_X_CSRF_TOKEN' => (string) $token]);
+        $this->client->request('DELETE', \sprintf('/mon-compte/mes-adresses/remove/%d', $own->getId()), ['_token' => (string) $token]);
         self::assertResponseRedirects('/mon-compte/mes-adresses');
         $this->entityManager()->clear();
         self::assertNull($this->entityManager()->find(Address::class, $own->getId()));
@@ -200,9 +200,9 @@ class AccountSecurityTest extends WebTestCase
     private function ownAddressForm(): \Symfony\Component\DomCrawler\Form
     {
         $own = $this->addressOf('test@test.fr');
-        $crawler = $this->client->request('GET', '/mon-compte/mes-adresses');
+        $crawler = $this->client->request('GET', '/mon-compte/mes-adresses?modifier='.$own->getId());
 
-        return $crawler->filter(\sprintf('form[action$="/mon-compte/mes-adresses/update/%d"]', $own->getId()))->form();
+        return $crawler->filter(\sprintf('form[action$="/mon-compte/mes-adresses/update/%d#adresse-form"]', $own->getId()))->form();
     }
 
     private function addressOf(string $email): Address

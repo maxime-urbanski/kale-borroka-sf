@@ -8,7 +8,6 @@ use App\Entity\Address;
 use App\Entity\User;
 use App\Security\Voter\AddressVoter;
 use App\Service\UserDefaultAddressInterface;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -27,11 +26,10 @@ final readonly class PatchDefaultUserAddressController
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     #[IsGranted(AddressVoter::EDIT, subject: 'address')]
     #[Route(
-        path: '/mon-compte/mes-adresses/update/default-address/{userId}/{addressId}',
+        path: '/mon-compte/mes-adresses/default/{id}',
         name: 'app_user_addresses_patch_default_address',
         requirements: [
-            'userId' => Requirement::DIGITS,
-            'addressId' => Requirement::DIGITS,
+            'id' => Requirement::DIGITS,
         ],
         methods: [
             Request::METHOD_PATCH,
@@ -40,7 +38,6 @@ final readonly class PatchDefaultUserAddressController
     public function __invoke(
         #[CurrentUser]
         User $user,
-        #[MapEntity(mapping: ['addressId' => 'id'])]
         Address $address,
         UserDefaultAddressInterface $userDefaultAddress,
         Request $request,
@@ -50,9 +47,9 @@ final readonly class PatchDefaultUserAddressController
         /** @var Session $session */
         $session = $request->getSession();
 
-        // Token sent by assets/controllers/address_controller.js. Checked here rather than with
+        // Posted by partials/_post_button.html.twig. Checked here rather than with
         // #[IsCsrfTokenValid], whose failure the firewall turns into a redirect to the login page.
-        if (!$csrfTokenManager->isTokenValid(new CsrfToken('address-'.$address->getId(), $request->headers->get('X-CSRF-Token')))) {
+        if (!$csrfTokenManager->isTokenValid(new CsrfToken('address-'.$address->getId(), $request->request->getString('_token')))) {
             $session->getFlashBag()->add('danger', 'La page a expiré : rechargez-la et recommencez.');
 
             return new RedirectResponse($router->generate('app_user_addresses_index'));
@@ -60,10 +57,7 @@ final readonly class PatchDefaultUserAddressController
 
         $userDefaultAddress->defaultAddress($user, $address);
 
-        $session->getFlashBAg()->add(
-            'success',
-            'Adresse de livraison par défaut mise à jour.'
-        );
+        $session->getFlashBag()->add('success', '« '.$address->getName().' » est ton adresse de livraison par défaut.');
 
         return new RedirectResponse($router->generate('app_user_addresses_index'));
     }
