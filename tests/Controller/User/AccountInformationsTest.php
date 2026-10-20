@@ -134,24 +134,11 @@ class AccountInformationsTest extends WebTestCase
         self::assertSame('nouveau@test.fr', $this->reloadUser()->getPendingEmail());
     }
 
-    public function testChangingTheEmailAsksForThePassword(): void
+    public function testThePasswordStaysOnItsOwnPage(): void
     {
-        foreach (['', 'mauvais'] as $password) {
-            $form = $this->form();
-            $form['user_information_form[email]'] = 'nouveau@test.fr';
-            $form['user_information_form[current_password]'] = $password;
-            $this->client->submit($form);
+        $this->client->request('GET', '/mon-compte/editer');
 
-            self::assertResponseStatusCodeSame(422);
-            self::assertSelectorExists('#user_information_form_current_password.is-invalid');
-            self::assertQueuedEmailCount(0);
-        }
-
-        // Names only: no password needed.
-        $form = $this->form();
-        $form['user_information_form[firstname]'] = 'Maialen';
-        $this->client->submit($form);
-        self::assertResponseRedirects('/mon-compte/editer');
+        self::assertSelectorNotExists('form[name="user_information_form"] input[type="password"]');
     }
 
     public function testRequestsAreLimited(): void
@@ -162,7 +149,6 @@ class AccountInformationsTest extends WebTestCase
 
         $form = $this->form();
         $form['user_information_form[email]'] = 'quatre@test.fr';
-        $form['user_information_form[current_password]'] = 'password123';
         $this->client->submit($form);
 
         self::assertResponseStatusCodeSame(422);
@@ -234,7 +220,6 @@ class AccountInformationsTest extends WebTestCase
     {
         $form = $this->form();
         $form['user_information_form[email]'] = $email;
-        $form['user_information_form[current_password]'] = 'password123';
         $this->client->submit($form);
 
         self::assertResponseRedirects('/mon-compte/editer');

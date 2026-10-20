@@ -7,7 +7,6 @@ namespace App\Form;
 use App\Data\UpdateUserInformation;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -33,15 +32,6 @@ class UserInformationFormType extends AbstractType
                 'label' => 'E-mail',
                 'help' => 'Si tu le changes, on envoie un lien de confirmation à la nouvelle adresse.',
                 'attr' => ['autocomplete' => 'email', 'maxlength' => 180],
-            ])
-            // Checked by the controller, only when the e-mail changes: moving the account to
-            // another inbox is what a stolen session would do first.
-            ->add('current_password', PasswordType::class, [
-                'label' => 'Mot de passe actuel',
-                'help' => 'Seulement pour changer d’e-mail.',
-                'mapped' => false,
-                'required' => false,
-                'attr' => ['autocomplete' => 'current-password'],
             ]);
     }
 

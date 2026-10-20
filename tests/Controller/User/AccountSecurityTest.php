@@ -135,7 +135,6 @@ class AccountSecurityTest extends WebTestCase
         self::assertQueuedEmailCount(0);
 
         // Someone else's e-mail.
-        $values['user_information_form']['current_password'] = 'password123';
         $values['user_information_form']['email'] = 'client1@kaleborroka.test';
         $this->client->request($form->getMethod(), $form->getUri(), $values);
         self::assertSelectorTextContains('form[name="user_information_form"]', 'Un compte utilise déjà cette adresse e-mail.');
@@ -150,7 +149,6 @@ class AccountSecurityTest extends WebTestCase
         // A free one: mailed a link, the account keeps its address until it is opened
         // (AccountInformationsTest).
         $values['user_information_form']['email'] = 'nouveau@test.fr';
-        $values['user_information_form']['current_password'] = 'password123';
         $this->client->request($form->getMethod(), $form->getUri(), $values);
         self::assertResponseRedirects('/mon-compte/editer');
         self::assertQueuedEmailCount(2);

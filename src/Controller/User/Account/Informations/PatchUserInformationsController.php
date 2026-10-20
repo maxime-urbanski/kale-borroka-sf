@@ -18,7 +18,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
@@ -57,7 +56,6 @@ final readonly class PatchUserInformationsController
         UserRepository $userRepository,
         EntityManagerInterface $entityManager,
         EmailChangeInterface $emailChange,
-        UserPasswordHasherInterface $passwordHasher,
         RateLimiterFactoryInterface $emailChangeLimiter,
         FormFactoryInterface $formFactory,
         Environment $twig,
@@ -78,7 +76,7 @@ final readonly class PatchUserInformationsController
             $newEmail = User::normalizeEmail($updateUserInformation->email);
             $changesEmail = $newEmail !== $user->getEmail();
 
-            if (!$changesEmail || $this->mayChangeEmail($user, $form, $passwordHasher, $emailChangeLimiter, $userRepository)) {
+            if (!$changesEmail || $this->mayChangeEmail($user, $form, $emailChangeLimiter, $userRepository)) {
                 $user->setLastname($updateUserInformation->lastname);
                 $user->setFirstname($updateUserInformation->firstname);
 
@@ -104,24 +102,15 @@ final readonly class PatchUserInformationsController
     }
 
     /**
-     * The current password, then one of the requests the limiter allows (each one mails an
-     * address the customer typed), then an address no other account uses: in that order, so
-     * that probing which addresses have an account takes the password and is limited too.
+     * One of the requests the limiter allows (each one mails an address the customer typed),
+     * then an address no other account uses: in that order, so that probing which addresses
+     * have an account is limited too. No password here (it has its own page): the link only
+     * works logged in, the current address is told at once, and a password change cancels it.
      *
      * @param FormInterface<mixed> $form
      */
-    private function mayChangeEmail(User $user, FormInterface $form, UserPasswordHasherInterface $passwordHasher, RateLimiterFactoryInterface $emailChangeLimiter, UserRepository $userRepository): bool
+    private function mayChangeEmail(User $user, FormInterface $form, RateLimiterFactoryInterface $emailChangeLimiter, UserRepository $userRepository): bool
     {
-        $password = $form->get('current_password');
-
-        if (!$passwordHasher->isPasswordValid($user, (string) $password->getData())) {
-            $password->addError(new FormError('' === (string) $password->getData()
-                ? 'Pour changer d’e-mail, indique ton mot de passe actuel.'
-                : 'Mot de passe actuel incorrect.'));
-
-            return false;
-        }
-
         if (!$emailChangeLimiter->create((string) $user->getId())->consume()->isAccepted()) {
             $form->get('email')->addError(new FormError('Trop de demandes de changement d’adresse : réessaie dans une heure.'));
 

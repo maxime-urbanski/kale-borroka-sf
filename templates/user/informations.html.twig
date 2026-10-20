@@ -3,7 +3,7 @@
 {#
     Informations (maquette 14): numbered blocks, a number and a title on the left, the fields
     on the right, one button to save them. A new e-mail only counts once the link mailed to it
-    is opened (App\Account\EmailChange), and asks for the current password.
+    is opened (App\Account\EmailChange).
 #}
 {% block title %}Informations{% endblock %}
 
@@ -36,9 +36,6 @@
                         <span>En attente de confirmation&nbsp;: <strong>{{ user.pendingEmail }}</strong>. Ouvre le lien reçu à cette adresse (valable 24&nbsp;heures).</span>
                     </p>
                 {% endif %}
-                <div class="kb-settings__wide">
-                    {% include 'security/_password_field.html.twig' with {field: form.current_password, rules: false} only %}
-                </div>
             </div>
         </section>
         <div class="kb-settings__actions">
