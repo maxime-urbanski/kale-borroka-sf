@@ -2,9 +2,12 @@
 import {Controller} from "@hotwired/stimulus";
 
 // Password field: show/hide toggle, and the rules listed under it ticked as one types.
+// A confirmation field (confirms value: the id of the new password) says as one types that the
+// two differ: as soon as it stops being the start of the new password, or once it is left.
 // Without JavaScript the field and its rules still work; the toggle and the meter stay hidden.
 export default class extends Controller {
-  static targets = ['input', 'toggle', 'meter', 'rule']
+  static targets = ['input', 'toggle', 'meter', 'rule', 'mismatch']
+  static values = {confirms: String}
 
   connect() {
     if (this.hasToggleTarget) {
@@ -13,7 +16,19 @@ export default class extends Controller {
     if (this.hasMeterTarget) {
       this.meterTarget.hidden = false
     }
+    if (this.confirmsValue) {
+      this.original = document.getElementById(this.confirmsValue)
+      this.compareLater = () => this.compare(false)
+      this.compareNow = () => this.compare(true)
+      this.original?.addEventListener('input', this.compareLater)
+      this.inputTarget.addEventListener('blur', this.compareNow)
+    }
     this.check()
+  }
+
+  disconnect() {
+    this.original?.removeEventListener('input', this.compareLater)
+    this.inputTarget.removeEventListener('blur', this.compareNow)
   }
 
   toggle() {
@@ -24,6 +39,10 @@ export default class extends Controller {
   }
 
   check() {
+    if (this.confirmsValue) {
+      this.compare(false)
+    }
+
     if (!this.hasRuleTarget) {
       return
     }
@@ -51,6 +70,28 @@ export default class extends Controller {
       this.meterTarget.querySelectorAll('span').forEach((bar, index) => {
         bar.classList.toggle('is-on', index < score)
       })
+    }
+  }
+
+  // finished: the field was left, so a confirmation shorter than the password is a gap too.
+  compare(finished) {
+    if (!this.original || !this.hasMismatchTarget) {
+      return
+    }
+
+    const value = this.inputTarget.value
+    const expected = this.original.value
+    const differs = value !== '' && (finished ? value !== expected : !expected.startsWith(value))
+
+    this.inputTarget.classList.toggle('is-invalid', differs)
+    this.inputTarget.toggleAttribute('aria-invalid', differs)
+    if (differs) {
+      this.inputTarget.setAttribute('aria-invalid', 'true')
+    }
+    // Only rewritten when it changes, so it is announced once.
+    const message = differs ? 'Les deux mots de passe diffèrent.' : ''
+    if (this.mismatchTarget.textContent !== message) {
+      this.mismatchTarget.textContent = message
     }
   }
 }

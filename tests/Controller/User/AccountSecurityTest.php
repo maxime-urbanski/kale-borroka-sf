@@ -175,7 +175,7 @@ class AccountSecurityTest extends WebTestCase
         $form['update_password_form[new_password][second]'] = 'Kale-Borroka-2026!';
         $this->client->submit($form);
 
-        self::assertResponseRedirects('/mon-compte');
+        self::assertResponseRedirects('/mon-compte/editer-mot-de-passe');
         self::assertTrue($hasher->isPasswordValid($this->reloadUser($user), 'Kale-Borroka-2026!'));
     }
 

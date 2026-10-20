@@ -21,6 +21,11 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
 
+/**
+ * Mot de passe (maquette 15). The new hash also signs every other device out: their session
+ * holds the old one (Symfony compares it on each request), their remember-me cookie is signed
+ * with it. This device stays signed in, its token being saved with the new one.
+ */
 #[AsController]
 class PutUserPasswordController
 {
@@ -58,16 +63,16 @@ class PutUserPasswordController
             $entityManager->flush();
             $session->getFlashBag()->add(
                 'success',
-                'Mot de passe modifié'
+                'Mot de passe changé. Tes autres appareils sont déconnectés.'
             );
 
-            return new RedirectResponse($router->generate('app_user_informations'));
+            return new RedirectResponse($router->generate('app_user_informations_password_put'));
         }
 
-        $content = $twig->render('user/_password_edit.html.twig', [
+        $content = $twig->render('user/password.html.twig', [
             'form' => $form->createView(),
         ]);
 
-        return new Response($content);
+        return new Response($content, $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK);
     }
 }
