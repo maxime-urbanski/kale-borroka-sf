@@ -29,6 +29,8 @@ class AccountSecurityTest extends WebTestCase
         $this->client->disableReboot();
         $this->beginIsolation();
         $this->client->loginUser($this->user('test@test.fr'));
+        // The e-mail change limiter's state is in a cache pool that outlives the test.
+        self::service(\Symfony\Component\Cache\Adapter\AdapterInterface::class, 'cache.rate_limiter')->clear();
     }
 
     protected function tearDown(): void
@@ -50,7 +52,8 @@ class AccountSecurityTest extends WebTestCase
             'name' => 'Piraté',
         ]]);
 
-        self::assertResponseStatusCodeSame(403);
+        // Not found rather than forbidden: ids are sequential, a 403 would tell which exist.
+        self::assertResponseStatusCodeSame(404);
         self::assertSame($name, $this->reload($victim)->getName());
     }
 
@@ -76,9 +79,9 @@ class AccountSecurityTest extends WebTestCase
         $token = $this->csrfToken('address-'.$id);
 
         $this->client->request('DELETE', \sprintf('/mon-compte/mes-adresses/remove/%d', $id), ['_token' => $token]);
-        self::assertResponseStatusCodeSame(403);
+        self::assertResponseStatusCodeSame(404);
         $this->client->request('PATCH', \sprintf('/mon-compte/mes-adresses/default/%d', $id), ['_token' => $token]);
-        self::assertResponseStatusCodeSame(403);
+        self::assertResponseStatusCodeSame(404);
 
         $this->entityManager()->clear();
         $address = $this->entityManager()->find(Address::class, $id);

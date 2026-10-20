@@ -25,7 +25,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class DeleteUserAddressController
 {
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    #[IsGranted(AddressVoter::EDIT, subject: 'address')]
+    // Another customer's address: not found, as if it did not exist (ids are sequential).
+    #[IsGranted(AddressVoter::EDIT, subject: 'address', message: 'Adresse introuvable.', statusCode: 404)]
     #[Route(
         path: '/mon-compte/mes-adresses/remove/{id}',
         name: 'app_user_addresses_delete',
