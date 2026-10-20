@@ -180,7 +180,9 @@ class ResetPasswordTest extends WebTestCase
         ]));
 
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-        self::assertSelectorTextContains('form[name="change_password_form"]', 'Les deux mots de passe ne correspondent pas.');
+        // The words the confirmation field says as one types (password Stimulus controller).
+        self::assertSelectorTextContains('form[name="change_password_form"]', 'Les deux mots de passe diffèrent.');
+        self::assertSelectorExists('[data-password-confirms-value="change_password_form_plainPassword_first"] #change_password_form_plainPassword_second');
     }
 
     public function testAForgedTokenSendsBackToTheRequestForm(): void
