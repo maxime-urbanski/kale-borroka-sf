@@ -4,7 +4,8 @@
     Wantlist (maquette 11): « Dispo maintenant », big cards that can go to the cart, then
     « En veille », a dense list of what is sold out or offline. `available` and `watched`
     are lists of WishlistItem, `toAddTotal` the price of those not in the cart yet (cents); `alerts` the number of
-    records whose alert is on; `counts` is App\Account\AccountTotals.
+    sold-out records whose alert is on; `counts` is App\Account\AccountTotals.
+    A record on sale has the cart button only; a sold-out one has its alert switch in place of the cart.
 #}
 {% block title %}Wantlist{% endblock %}
 
@@ -70,7 +71,6 @@
                             <a href="{{ article_path(article) }}" class="kb-want__artist">{{ n.artist ?: n.title }}</a>
                             {% if n.artist %}<span class="kb-want__title">{{ n.title }}</span>{% endif %}
                             <span class="kb-want__meta">{{ article.formatLabel }}{% if n.ref %} · {{ n.ref }}{% endif %}</span>
-                            {% include 'user/_alert_switch.html.twig' with {item, who} only %}
                             <div class="kb-want__actions">
                                 <span class="kb-price kb-want__price">{{ (article.price / 100)|format_currency('EUR', [], 'fr') }}</span>
                                 {% include 'partials/_post_button.html.twig' with {

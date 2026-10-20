@@ -73,10 +73,9 @@ class WantlistAlertTest extends WebTestCase
     }
 
     /**
-     * The mail's « turn it off » link lands on the wantlist while the record is on sale: its
-     * card must have the switch too.
+     * A record on sale has no alert: its card offers the cart only.
      */
-    public function testARecordOnSaleHasItsSwitchToo(): void
+    public function testARecordOnSaleHasNoSwitchButTheCart(): void
     {
         [$item] = $this->wantlist();
         $item->getArticle()?->setStock(3)->setPublished(true);
@@ -85,21 +84,38 @@ class WantlistAlertTest extends WebTestCase
 
         $crawler = $this->wantlistPage();
 
-        self::assertCount(1, $crawler->filter('.kb-want')->filter(\sprintf('form[action="/wishlist/alert/%d"] [role="switch"]', $item->getArticle()?->getId())));
-        self::assertSelectorTextContains('.kb-account__since', 'alerte');
+        self::assertCount(0, $crawler->filter('.kb-want [role="switch"]'));
+        self::assertCount(1, $crawler->filter(\sprintf('.kb-want form[action="/cart/add/%d"] button', $item->getArticle()?->getId())));
     }
 
-    public function testTheHeaderCountsEveryAlertOn(): void
+    /**
+     * A sold-out record has the switch where the cart would be, and no cart button.
+     */
+    public function testASoldOutRecordHasTheSwitchInPlaceOfTheCart(): void
     {
-        foreach ($this->wantlist() as $item) {
-            $item->getArticle()?->setStock(3)->setPublished(true);
-            $item->setAlertEnabled(true);
-        }
-        $this->entityManager()->flush();
+        [$item] = $this->wantlist();
+        $this->soldOut($item);
+
+        $crawler = $this->wantlistPage();
+
+        self::assertCount(1, $crawler->filter(\sprintf('.kb-watch__item form[action="/wishlist/alert/%d"] [role="switch"]', $item->getArticle()?->getId())));
+        self::assertCount(0, $crawler->filter(\sprintf('form[action="/cart/add/%d"]', $item->getArticle()?->getId())));
+    }
+
+    /**
+     * The header counts the alerts that can still fire: sold-out records only.
+     */
+    public function testTheHeaderCountsOnlyTheSoldOutAlertsOn(): void
+    {
+        [$onSale, $soldOut] = $this->wantlist();
+        $onSale->getArticle()?->setStock(3)->setPublished(true);
+        $onSale->setAlertEnabled(true);
+        $soldOut->setAlertEnabled(true);
+        $this->soldOut($soldOut);
 
         $this->wantlistPage();
 
-        self::assertSelectorTextContains('.kb-account__since', '2 alertes actives');
+        self::assertSelectorTextContains('.kb-account__since', '1 alerte active');
     }
 
     public function testAForgedTokenChangesNothing(): void

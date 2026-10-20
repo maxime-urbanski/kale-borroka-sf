@@ -74,7 +74,8 @@ class AccountWishlistController
             'available' => $available,
             'watched' => $watched,
             'toAddTotal' => $total,
-            'alerts' => \count(array_filter($items, static fn (WishlistItem $item): bool => $item->isAlertEnabled())),
+            // Only a sold-out record can still trigger an alert: records on sale have none.
+            'alerts' => \count(array_filter($watched, static fn (WishlistItem $item): bool => $item->isAlertEnabled())),
         ]));
     }
 }
