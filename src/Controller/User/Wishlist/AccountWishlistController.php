@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Entity\WishlistItem;
 use App\Repository\ArticleRepository;
 use App\Repository\WishlistItemRepository;
+use App\Service\CartInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -45,6 +46,7 @@ class AccountWishlistController
         AccountCountsInterface $accountCounts,
         WishlistItemRepository $wishlistItemRepository,
         ArticleRepository $articleRepository,
+        CartInterface $cart,
     ): Response {
         $items = $wishlistItemRepository->allOfUser($user);
         $articleRepository->preloadCovers(array_values(array_filter(array_map(
@@ -55,9 +57,13 @@ class AccountWishlistController
         $available = $watched = [];
         $total = 0;
         foreach ($items as $item) {
-            if ($item->getArticle()?->isInStock()) {
+            $article = $item->getArticle();
+            if ($article?->isInStock()) {
                 $available[] = $item;
-                $total += (int) $item->getArticle()->getPrice();
+                // What « Tout ajouter au panier » would add: those not in the cart yet.
+                if (0 === $cart->quantityOf((int) $article->getId())) {
+                    $total += (int) $article->getPrice();
+                }
             } else {
                 $watched[] = $item;
             }
@@ -67,6 +73,7 @@ class AccountWishlistController
             'counts' => $accountCounts->of($user),
             'available' => $available,
             'watched' => $watched,
+            'toAddTotal' => $total,
         ]));
     }
 }

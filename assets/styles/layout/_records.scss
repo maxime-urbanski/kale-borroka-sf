@@ -99,6 +99,27 @@
         display: flex;
         flex-direction: column;
         gap: 6px;
+
+        // The title and « Tout ajouter au panier » side by side from md up.
+        &--split {
+            gap: 12px;
+
+            @include media-breakpoint-up(md) {
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px 20px;
+            }
+        }
+    }
+
+    &__all {
+        min-height: 52px;
+        font-size: .875rem;
+        font-weight: 800;
+        letter-spacing: .06em;
+        text-transform: uppercase;
     }
 
     &__title {

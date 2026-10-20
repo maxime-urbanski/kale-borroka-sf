@@ -3,7 +3,7 @@
 {#
     Wantlist (maquette 11): « Dispo maintenant », big cards that can go to the cart, then
     « En veille », a dense list of what is sold out or offline. `available` and `watched`
-    are lists of WishlistItem; `counts` is App\Account\AccountTotals.
+    are lists of WishlistItem, `toAddTotal` the price of those not in the cart yet (cents); `counts` is App\Account\AccountTotals.
 #}
 {% block title %}Wantlist{% endblock %}
 
@@ -26,10 +26,25 @@
 
     {% if available is not empty %}
         <section class="kb-wants" aria-labelledby="wants-available">
-            <h2 class="kb-wants__title" id="wants-available">
-                <span class="kb-wants__stamp">Dispo maintenant</span>
-                <span class="kb-wants__count">{{ available|length }}</span>
-            </h2>
+            <div class="kb-wants__head kb-wants__head--split">
+                <h2 class="kb-wants__title" id="wants-available">
+                    <span class="kb-wants__stamp">Dispo maintenant</span>
+                    <span class="kb-wants__count">{{ available|length }}</span>
+                </h2>
+                {% if toAddTotal > 0 %}
+                    {% include 'partials/_post_button.html.twig' with {
+                        token_id: 'cart',
+                        url: path('app_wishlist_add_all_to_cart'),
+                        class: 'btn btn-dark kb-wants__all',
+                        icon: 'bi-bag-plus',
+                        text_btn: 'Tout ajouter au panier · ' ~ (toAddTotal / 100)|format_currency('EUR', [], 'fr')
+                    } %}
+                {% else %}
+                    <a href="{{ path('app_cart_index') }}" class="btn btn-outline-dark kb-wants__all">
+                        <i class="bi bi-bag-check" aria-hidden="true"></i>Tout est dans ton panier
+                    </a>
+                {% endif %}
+            </div>
             <ul class="kb-wants__cards list-unstyled">
                 {% for item in available %}
                     {% set article = item.article %}
