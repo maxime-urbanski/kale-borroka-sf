@@ -24,9 +24,15 @@ interface EmailChangeInterface
     public function request(User $user, string $newEmail): void;
 
     /**
+     * Whether the link of the request still works for this account: null if so, else why
+     * not (expired, altered, replaced, already used, for another account).
+     */
+    public function check(User $user, Request $request): ?string;
+
+    /**
      * Applies the change the link carries (flushed), and tells the old address. Returns why
-     * not, if it cannot: a link expired, altered, replaced, already used or for another
-     * account, or an address taken in the meantime.
+     * not, if it cannot: check() failing, or an address taken in the meantime. The caller has
+     * checked the current password.
      */
     public function confirm(User $user, Request $request): ?string;
 }

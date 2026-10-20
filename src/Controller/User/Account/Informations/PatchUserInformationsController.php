@@ -104,8 +104,8 @@ final readonly class PatchUserInformationsController
     /**
      * One of the requests the limiter allows (each one mails an address the customer typed),
      * then an address no other account uses: in that order, so that probing which addresses
-     * have an account is limited too. No password here (it has its own page): the link only
-     * works logged in, the current address is told at once, and a password change cancels it.
+     * have an account is limited too. No password here: the page the link opens asks for it
+     * (ConfirmEmailChangeController).
      *
      * @param FormInterface<mixed> $form
      */

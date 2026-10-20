@@ -49,7 +49,8 @@ final readonly class EmailChange implements EmailChangeInterface
             ->textTemplate('user/email/confirm_email.txt.twig')
             ->context(['link' => $link]));
 
-        // Before anything changes: the owner can still stop it by changing the password.
+        // Nothing changes without the password (ConfirmEmailChangeController): if the request
+        // came from a session left open, this tells the owner to change it.
         $this->mailer->send(new TemplatedEmail()
             ->to((string) $user->getEmail())
             ->subject('Changement d’adresse e-mail demandé')
@@ -58,17 +59,25 @@ final readonly class EmailChange implements EmailChangeInterface
             ->context(['newEmail' => $newEmail]));
     }
 
+    public function check(User $user, Request $request): ?string
+    {
+        $valid = $this->uriSigner->checkRequest($request)
+            && null !== $user->getPendingEmail()
+            && hash_equals($user->getPendingEmail(), $request->query->getString('email'))
+            && hash_equals(self::fingerprint((string) $user->getEmail()), $request->query->getString('from'));
+
+        return $valid ? null : self::EXPIRED;
+    }
+
     public function confirm(User $user, Request $request): ?string
     {
-        $email = $request->query->getString('email');
+        $failure = $this->check($user, $request);
 
-        if (!$this->uriSigner->checkRequest($request)
-            || null === $user->getPendingEmail()
-            || !hash_equals($user->getPendingEmail(), $email)
-            || !hash_equals(self::fingerprint((string) $user->getEmail()), $request->query->getString('from'))) {
-            return self::EXPIRED;
+        if (null !== $failure) {
+            return $failure;
         }
 
+        $email = $request->query->getString('email');
         $owner = $this->userRepository->findOneByEmail($email);
 
         if (null !== $owner && $owner !== $user) {

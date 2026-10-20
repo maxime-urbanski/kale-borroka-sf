@@ -76,7 +76,7 @@ class AccountInformationsTest extends WebTestCase
         $this->client->followRedirect();
         self::assertSelectorTextContains('.kb-settings__pending', 'nouveau@test.fr');
 
-        $this->client->request('GET', $link);
+        $this->openLink($link);
 
         self::assertResponseRedirects('/mon-compte/editer');
         self::assertSame('nouveau@test.fr', $this->reloadUser()->getEmail());
@@ -92,14 +92,35 @@ class AccountInformationsTest extends WebTestCase
         self::assertEmailTextBodyContains($notice, 'nouveau@test.fr');
     }
 
+    public function testTheLinkAsksForThePasswordBeforeChangingAnything(): void
+    {
+        $link = $this->askForEmail('nouveau@test.fr');
+
+        $this->client->request('GET', $link);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('main', 'nouveau@test.fr');
+        self::assertSame('test@test.fr', $this->reloadUser()->getEmail(), 'opening the link alone changes nothing');
+
+        // A stolen session is not enough: it takes the password.
+        foreach (['', 'mauvais'] as $password) {
+            $this->openLink($link, $password);
+            self::assertResponseStatusCodeSame(422);
+            self::assertSelectorExists('#confirm_email_change_form_current_password.is-invalid');
+            self::assertSame('test@test.fr', $this->reloadUser()->getEmail());
+        }
+
+        $this->openLink($link);
+        self::assertSame('nouveau@test.fr', $this->reloadUser()->getEmail());
+    }
+
     public function testALinkWorksOnce(): void
     {
         $link = $this->askForEmail('nouveau@test.fr');
-        $this->client->request('GET', $link);
+        $this->openLink($link);
         $this->askForEmail('troisieme@test.fr');
 
         // The first link again: it was bound to the address it replaced.
-        $this->client->request('GET', $link);
+        $this->openLink($link);
 
         self::assertResponseRedirects('/mon-compte/editer');
         $this->client->followRedirect();
@@ -114,7 +135,7 @@ class AccountInformationsTest extends WebTestCase
         $this->client->getCookieJar()->clear();
         $this->client->loginUser($this->reloadUser());
 
-        $this->client->request('GET', $this->askForEmail('nouveau@test.fr'));
+        $this->openLink($this->askForEmail('nouveau@test.fr'));
         $this->client->request('GET', '/mon-compte/editer');
         self::assertResponseIsSuccessful('this device stays signed in');
 
@@ -128,7 +149,7 @@ class AccountInformationsTest extends WebTestCase
         $typo = $this->askForEmail('nouveua@test.fr');
         $this->askForEmail('nouveau@test.fr');
 
-        $this->client->request('GET', $typo);
+        $this->openLink($typo);
 
         self::assertSame('test@test.fr', $this->reloadUser()->getEmail());
         self::assertSame('nouveau@test.fr', $this->reloadUser()->getPendingEmail());
@@ -165,7 +186,7 @@ class AccountInformationsTest extends WebTestCase
         $form['update_password_form[new_password][second]'] = 'Kale-Borroka-2026!';
         $this->client->submit($form);
 
-        $this->client->request('GET', $link);
+        $this->openLink($link);
 
         self::assertSame('test@test.fr', $this->reloadUser()->getEmail());
     }
@@ -174,7 +195,7 @@ class AccountInformationsTest extends WebTestCase
     {
         $link = $this->askForEmail('nouveau@test.fr');
 
-        $this->client->request('GET', str_replace('nouveau%40test.fr', 'pirate%40test.fr', $link));
+        $this->openLink(str_replace('nouveau%40test.fr', 'pirate%40test.fr', $link));
 
         self::assertResponseRedirects('/mon-compte/editer');
         self::assertSame('test@test.fr', $this->reloadUser()->getEmail());
@@ -185,7 +206,7 @@ class AccountInformationsTest extends WebTestCase
         $link = $this->askForEmail('nouveau@test.fr');
         $this->client->loginUser($this->user('client1@kaleborroka.test'));
 
-        $this->client->request('GET', $link);
+        $this->openLink($link);
 
         self::assertSame('test@test.fr', $this->reloadUser()->getEmail());
         self::assertNotNull(self::service(\App\Repository\UserRepository::class)->findOneByEmail('client1@kaleborroka.test'));
@@ -197,7 +218,7 @@ class AccountInformationsTest extends WebTestCase
         $this->user('client1@kaleborroka.test')->setEmail('nouveau@test.fr');
         $this->entityManager()->flush();
 
-        $this->client->request('GET', $link);
+        $this->openLink($link);
 
         self::assertSame('test@test.fr', $this->reloadUser()->getEmail());
     }
@@ -207,7 +228,7 @@ class AccountInformationsTest extends WebTestCase
         $link = $this->askForEmail('nouveau@test.fr');
         $this->client->getCookieJar()->clear();
 
-        $this->client->request('GET', $link);
+        $this->openLink($link);
 
         self::assertResponseRedirects('/login');
         self::assertSame('test@test.fr', $this->reloadUser()->getEmail());
@@ -236,6 +257,21 @@ class AccountInformationsTest extends WebTestCase
         self::assertSame(1, preg_match('~https?://\S+/mon-compte/confirmer-email\S+~', (string) $mails[mb_strtolower($email)]->getTextBody(), $match));
 
         return $match[0];
+    }
+
+    /**
+     * Opens the link of the mail, then confirms with the password when it asks for it.
+     */
+    private function openLink(string $link, string $password = 'password123'): void
+    {
+        $crawler = $this->client->request('GET', $link);
+        $form = $crawler->filter('form[name="confirm_email_change_form"]');
+
+        if (0 === $form->count()) {
+            return;
+        }
+
+        $this->client->submit($form->form(), ['confirm_email_change_form[current_password]' => $password]);
     }
 
     private function sessionCookie(): Cookie
