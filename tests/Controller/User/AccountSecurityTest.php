@@ -131,24 +131,28 @@ class AccountSecurityTest extends WebTestCase
         $forged['user_information_form']['_token'] = 'forged';
         $forged['user_information_form']['email'] = 'attacker@example.com';
         $this->client->request($form->getMethod(), $form->getUri(), $forged);
-        self::assertResponseIsSuccessful();
-        self::assertSame('test@test.fr', $this->reloadUser($user)->getEmail());
+        self::assertResponseStatusCodeSame(422);
+        self::assertQueuedEmailCount(0);
 
         // Someone else's e-mail.
         $values['user_information_form']['email'] = 'client1@kaleborroka.test';
         $this->client->request($form->getMethod(), $form->getUri(), $values);
         self::assertSelectorTextContains('form[name="user_information_form"]', 'Un compte utilise déjà cette adresse e-mail.');
-        self::assertSame('test@test.fr', $this->reloadUser($user)->getEmail());
+        self::assertQueuedEmailCount(0);
 
         // Not an e-mail.
         $values['user_information_form']['email'] = 'pas-un-email';
         $this->client->request($form->getMethod(), $form->getUri(), $values);
-        self::assertSame('test@test.fr', $this->reloadUser($user)->getEmail());
+        self::assertResponseStatusCodeSame(422);
+        self::assertQueuedEmailCount(0);
 
+        // A free one: mailed a link, the account keeps its address until it is opened
+        // (AccountInformationsTest).
         $values['user_information_form']['email'] = 'nouveau@test.fr';
         $this->client->request($form->getMethod(), $form->getUri(), $values);
-        self::assertResponseRedirects('/mon-compte');
-        self::assertSame('nouveau@test.fr', $this->reloadUser($user)->getEmail());
+        self::assertResponseRedirects('/mon-compte/editer');
+        self::assertQueuedEmailCount(1);
+        self::assertSame('test@test.fr', $this->reloadUser($user)->getEmail());
     }
 
     public function testPasswordChangeRequiresTheCurrentPassword(): void

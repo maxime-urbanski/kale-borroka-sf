@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\User\Account\Informations;
 
+use App\Account\EmailChangeInterface;
 use App\Data\UpdateUserInformation;
 use App\Entity\User;
 use App\Form\UserInformationFormType;
 use App\Repository\UserRepository;
-use App\Service\UserDefaultAddressInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -26,6 +27,10 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
+/**
+ * Informations (maquette 14): the names are saved at once, a new e-mail waits for the link
+ * mailed to it (EmailChangeInterface).
+ */
 #[AsController]
 final readonly class PatchUserInformationsController
 {
@@ -48,43 +53,46 @@ final readonly class PatchUserInformationsController
         User $user,
         Request $request,
         UserRepository $userRepository,
-        UserDefaultAddressInterface $userDefaultAddress,
+        EntityManagerInterface $entityManager,
+        EmailChangeInterface $emailChange,
         FormFactoryInterface $formFactory,
         Environment $twig,
         RouterInterface $router,
-    ): Response|RedirectResponse {
+    ): Response {
         /** @var Session $session */
         $session = $request->getSession();
 
         $updateUserInformation = new UpdateUserInformation($user);
         $form = $formFactory->create(UserInformationFormType::class, $updateUserInformation, [
-            'method' => 'patch',
+            'method' => Request::METHOD_PATCH,
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid() && $this->emailIsFree($userRepository, $user, $form)) {
-            // NotBlank / NotNull on the DTO: a valid form has them all.
-            \assert(null !== $updateUserInformation->lastname && null !== $updateUserInformation->firstname && null !== $updateUserInformation->email && null !== $updateUserInformation->address);
+            // NotBlank on the DTO: a valid form has them all.
+            \assert(null !== $updateUserInformation->lastname && null !== $updateUserInformation->firstname && null !== $updateUserInformation->email);
             $user->setLastname($updateUserInformation->lastname);
             $user->setFirstname($updateUserInformation->firstname);
-            $user->setEmail($updateUserInformation->email);
+            $entityManager->flush();
 
-            $userDefaultAddress->defaultAddress($user, $updateUserInformation->address);
+            $newEmail = mb_strtolower($updateUserInformation->email);
 
-            $session->getFlashBag()->add(
-                'success',
-                'Informations modifiées.'
-            );
+            if ($newEmail !== $user->getEmail()) {
+                $emailChange->request($user, $newEmail);
+                $session->getFlashBag()->add('success', 'Informations enregistrées. On a envoyé un lien à '.$newEmail.' : ton adresse change dès que tu l’ouvres.');
+            } else {
+                $session->getFlashBag()->add('success', 'Informations enregistrées.');
+            }
 
-            return new RedirectResponse($router->generate('app_user_informations'));
+            return new RedirectResponse($router->generate('app_user_informations_patch'));
         }
 
-        $content = $twig->render('user/_information_edit.html.twig', [
+        $content = $twig->render('user/informations.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
         ]);
 
-        return new Response($content);
+        return new Response($content, $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK);
     }
 
     /**
