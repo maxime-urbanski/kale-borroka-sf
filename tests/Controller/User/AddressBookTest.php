@@ -8,6 +8,8 @@ use App\Account\AddressBookPageInterface;
 use App\Entity\Address;
 use App\Repository\AddressRepository;
 use App\Tests\Order\OrderTestTrait;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -217,6 +219,33 @@ class AddressBookTest extends WebTestCase
         $this->entityManager()->clear();
         self::assertNull($this->entityManager()->find(Address::class, $main->getId()));
         self::assertSame($others[0]->getId(), $this->mainAddress()->getId(), 'the oldest one left');
+    }
+
+    public function testAnAddWaitsForTheOneInProgressOnTheSameAccount(): void
+    {
+        $form = $this->addForm();
+        $this->fill($form, ['name' => 'Le local']);
+        $user = $this->user('test@test.fr');
+
+        // Another device in the middle of an add holds the account's row. NO KEY UPDATE, so that
+        // only the add's own lock waits for it (the foreign key check of an INSERT does not).
+        $connection = self::service(EntityManagerInterface::class)->getConnection();
+        $other = DriverManager::getConnection($connection->getParams());
+        $other->beginTransaction();
+        $other->executeStatement('SELECT id FROM "user" WHERE id = ? FOR NO KEY UPDATE', [$user->getId()]);
+        // This one would wait for its commit: give up quickly instead.
+        $connection->executeStatement("SET LOCAL lock_timeout = '200ms'");
+
+        try {
+            $this->client->submit($form);
+        } finally {
+            $other->rollBack();
+            $other->close();
+        }
+
+        // It waited, rather than count and insert next to the other one.
+        self::assertResponseStatusCodeSame(500);
+        self::assertSame(2, (int) $connection->fetchOne('SELECT COUNT(*) FROM address WHERE users_id = ?', [$user->getId()]));
     }
 
     public function testTwoDefaultAddressesBreakNothing(): void
