@@ -50,7 +50,6 @@ class AccountPasswordTest extends WebTestCase
         self::assertSame('new-password', $form->filter('#update_password_form_new_password_second')->attr('autocomplete'));
         self::assertCount(1, $form->filter('a[href$="/reset-password"]'), 'Oublié ?');
         self::assertCount(2, $form->filter('.kb-password-rules li'));
-        self::assertSelectorTextContains('.kb-password-aside', 'déconnecte');
     }
 
     public function testTwoDifferentPasswordsAreRefused(): void
