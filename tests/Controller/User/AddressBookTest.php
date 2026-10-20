@@ -9,6 +9,7 @@ use App\Entity\Address;
 use App\Repository\AddressRepository;
 use App\Tests\Order\OrderTestTrait;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -233,18 +234,23 @@ class AddressBookTest extends WebTestCase
         $other = DriverManager::getConnection($connection->getParams());
         $other->beginTransaction();
         $other->executeStatement('SELECT id FROM "user" WHERE id = ? FOR NO KEY UPDATE', [$user->getId()]);
-        // This one would wait for its commit: give up quickly instead.
-        $connection->executeStatement("SET LOCAL lock_timeout = '200ms'");
+        $this->client->catchExceptions(false);
 
         try {
+            // This one would wait for its commit (a few milliseconds in real life): here it
+            // gives up after 200ms, which shows it was waiting.
+            $connection->executeStatement("SET LOCAL lock_timeout = '200ms'");
             $this->client->submit($form);
+            self::fail('the add went through while another one held the account');
+        } catch (DriverException $exception) {
+            // 55P03, lock_not_available: it waited for the lock, rather than count and insert
+            // next to the other add.
+            self::assertSame('55P03', $exception->getSQLState());
         } finally {
             $other->rollBack();
             $other->close();
         }
 
-        // It waited, rather than count and insert next to the other one.
-        self::assertResponseStatusCodeSame(500);
         self::assertSame(2, (int) $connection->fetchOne('SELECT COUNT(*) FROM address WHERE users_id = ?', [$user->getId()]));
     }
 

@@ -25,6 +25,12 @@ final class PasswordRequirements extends Compound
      */
     public const string DIGIT_OR_SYMBOL = '[^\p{L}\p{M}\p{Z}\s]';
 
+    /**
+     * When a confirmation differs: the RepeatedType's invalid_message, and what the JS says as
+     * one types (passed to it by _password_field.html.twig), so the two never drift apart.
+     */
+    public const string MISMATCH = 'Les deux mots de passe diffèrent.';
+
     protected function getConstraints(array $options): array
     {
         return [

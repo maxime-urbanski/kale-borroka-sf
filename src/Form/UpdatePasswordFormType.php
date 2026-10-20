@@ -33,7 +33,7 @@ class UpdatePasswordFormType extends AbstractType
                     'label' => 'Confirmer le nouveau',
                     'attr' => ['autocomplete' => 'new-password'],
                 ],
-                'invalid_message' => 'Les deux mots de passe diffèrent.',
+                'invalid_message' => PasswordRequirements::MISMATCH,
                 'constraints' => [new PasswordRequirements()],
             ]);
     }

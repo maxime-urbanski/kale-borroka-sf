@@ -30,7 +30,7 @@ class ChangePasswordFormType extends AbstractType
                 'second_options' => [
                     'label' => 'Confirmer',
                 ],
-                'invalid_message' => 'Les deux mots de passe diffèrent.',
+                'invalid_message' => PasswordRequirements::MISMATCH,
                 // Instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,

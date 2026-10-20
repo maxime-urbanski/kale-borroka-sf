@@ -7,7 +7,7 @@ import {Controller} from "@hotwired/stimulus";
 // Without JavaScript the field and its rules still work; the toggle and the meter stay hidden.
 export default class extends Controller {
   static targets = ['input', 'toggle', 'meter', 'rule', 'mismatch']
-  static values = {confirms: String}
+  static values = {confirms: String, mismatch: String}
 
   connect() {
     if (this.hasToggleTarget) {
@@ -90,7 +90,7 @@ export default class extends Controller {
       this.inputTarget.removeAttribute('aria-invalid')
     }
     // Only rewritten when it changes, so it is announced once.
-    const message = differs ? 'Les deux mots de passe diffèrent.' : ''
+    const message = differs ? this.mismatchValue : ''
     if (this.mismatchTarget.textContent !== message) {
       this.mismatchTarget.textContent = message
     }
