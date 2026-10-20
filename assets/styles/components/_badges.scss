@@ -110,8 +110,20 @@
         background: $kb-papier-2;
     }
 
-    &[aria-pressed="true"] {
+    gap: 8px;
+    text-decoration: none;
+
+    &[aria-pressed="true"],
+    &[aria-current="true"] {
         background: $kb-noir;
         color: $kb-papier;
+    }
+
+    // Counter of a filter, in the metadata face.
+    &__count {
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        font-weight: 500;
+        letter-spacing: 0;
     }
 }

@@ -1,0 +1,16 @@
+{#
+    A record's cover for the wantlist and the collection: its picture, or the artist's name on
+    halftone when it has none. `decorative`: the name is written next to it, so the picture says
+    nothing (an empty alt). `artist` and `title` are the plain-text names.
+#}
+{% if article.coverImageName %}
+    <img src="{{ asset('upload/albums/' ~ article.coverImageName) }}"
+         alt="{{ decorative|default(false) ? '' : 'Pochette : ' ~ (artist ? artist ~ ', ') ~ title }}"
+         loading="lazy">
+{% else %}
+    <span class="kb-record__missing kb-cover-missing"
+          {%- if decorative|default(false) %} aria-hidden="true"{% else %} role="img" aria-label="Pochette à venir : {{ artist ? artist ~ ', ' }}{{ title }}"{% endif %}>
+        <span class="kb-record__ref">{{ ref|default('') }}</span>
+        <span class="kb-record__name" aria-hidden="true">{{ artist ?: title }}</span>
+    </span>
+{% endif %}

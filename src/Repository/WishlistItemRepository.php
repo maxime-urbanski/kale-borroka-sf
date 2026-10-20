@@ -42,7 +42,7 @@ class WishlistItemRepository extends ServiceEntityRepository
      *
      * @return list<WishlistItem>
      */
-    public function latestOfUser(User $user, int $limit): array
+    public function latestOfUser(User $user, ?int $limit): array
     {
         return $this->createQueryBuilder('wi')
             ->addSelect('a')
@@ -57,5 +57,15 @@ class WishlistItemRepository extends ServiceEntityRepository
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * Every wantlist item of the user: those in stock first, then the latest added.
+     *
+     * @return list<WishlistItem>
+     */
+    public function allOfUser(User $user): array
+    {
+        return $this->latestOfUser($user, null);
     }
 }
