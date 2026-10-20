@@ -47,6 +47,15 @@ class AccountDashboardTest extends WebTestCase
         self::assertSame('page', $crawler->filter('nav[aria-label="Mon compte"] a')->first()->attr('aria-current'));
     }
 
+    public function testTheMenuBringsTheCurrentPageIntoViewOnSmallScreens(): void
+    {
+        // Below lg the menu is a row of chips scrolling sideways: account-nav_controller.js
+        // scrolls it to the current one, which may sit past the right edge.
+        $this->client->request('GET', '/mon-compte/editer-mot-de-passe');
+
+        self::assertSelectorExists('nav[aria-label="Mon compte"][data-controller="account-nav"]');
+    }
+
     public function testTheMenuCountsTheCustomersOwnThings(): void
     {
         $crawler = $this->dashboard();
