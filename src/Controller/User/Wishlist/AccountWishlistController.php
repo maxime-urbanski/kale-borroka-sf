@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller\User\Wishlist;
 
+use App\Account\AccountCountsInterface;
+use App\Entity\Article;
 use App\Entity\User;
-use App\Repository\WishlistRepository;
-use App\Service\CustomPaginationInterface;
-use Doctrine\ORM\NonUniqueResultException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\WishlistItem;
+use App\Repository\ArticleRepository;
+use App\Repository\WishlistItemRepository;
+use App\Service\CartInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
@@ -21,22 +22,20 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
+/**
+ * Wantlist (maquette 11): what can be bought now, then what is on watch.
+ */
 #[AsController]
-class AccountWishlistController extends AbstractController
+class AccountWishlistController
 {
     /**
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
-     * @throws NonUniqueResultException
      */
     #[Route(
-        path: '/mon-compte/wishlist/{page}',
+        path: '/mon-compte/wishlist',
         name: 'app_user_wishlist',
-        requirements: [
-            'page' => '^(page-)'.Requirement::DIGITS,
-        ],
-        defaults: ['page' => 'page-1'],
         methods: [Request::METHOD_GET]
     )]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
@@ -44,18 +43,39 @@ class AccountWishlistController extends AbstractController
         #[CurrentUser]
         User $user,
         Environment $twig,
-        WishlistRepository $wishlistRepository,
-        CustomPaginationInterface $customPagination,
-        string $page,
+        AccountCountsInterface $accountCounts,
+        WishlistItemRepository $wishlistItemRepository,
+        ArticleRepository $articleRepository,
+        CartInterface $cart,
     ): Response {
-        $userWishlist = $wishlistRepository->getUserWishlist($user);
+        $items = $wishlistItemRepository->allOfUser($user);
+        $articleRepository->preloadCovers(array_values(array_filter(array_map(
+            static fn (WishlistItem $item): ?Article => $item->getArticle(),
+            $items,
+        ))));
 
-        $wishlistPaginate = $customPagination->pagination($userWishlist, $page, 6);
+        $available = $watched = [];
+        $total = 0;
+        foreach ($items as $item) {
+            $article = $item->getArticle();
+            if ($article?->isInStock()) {
+                $available[] = $item;
+                // What « Tout ajouter au panier » would add: those not in the cart yet.
+                if (0 === $cart->quantityOf((int) $article->getId())) {
+                    $total += (int) $article->getPrice();
+                }
+            } else {
+                $watched[] = $item;
+            }
+        }
 
-        $content = $twig->render('user/wantlist.html.twig', [
-            'pagination' => $wishlistPaginate,
-        ]);
-
-        return new Response($content);
+        return new Response($twig->render('user/wantlist.html.twig', [
+            'counts' => $accountCounts->of($user),
+            'available' => $available,
+            'watched' => $watched,
+            'toAddTotal' => $total,
+            // Only a sold-out record can still trigger an alert: records on sale have none.
+            'alerts' => \count(array_filter($watched, static fn (WishlistItem $item): bool => $item->isAlertEnabled())),
+        ]));
     }
 }

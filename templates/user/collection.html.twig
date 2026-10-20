@@ -1,12 +1,135 @@
 {% extends 'user/user-dashboard.html.twig' %}
 
-{% block content %}
-    {% set categories = ['', '', 'Produit', 'Support', 'Ajouter le'] %}
-    {% include 'user/_table_product.html.twig' with {
-        categories,
-        products: pagination.items[0] ?? [],
-        empty_message: 'Ta collection est vide !'
-    } %}
-    {{ knp_pagination_render(pagination, 'partials/_pagination.html.twig') }}
+{#
+    Collection (maquette 12): filters by support with counters, a search, covers or a list.
+    Everything is a link or a GET form: the state lives in the URL (`support`, `q`, `vue`).
+    `pagination` holds rows built by AccountUserCollectionController (item, article, artist,
+    title, ref, year).
+#}
+{% set labels = {lp: 'LP', ep: 'EP 7"', cd: 'CD', fanzine: 'Fanzine', tape: 'K7'} %}
+{% set query = {support: support ? support.value : null, q: search ?: null, vue: view == 'liste' ? 'liste' : null} %}
+
+{% block title %}Collection{% endblock %}
+
+{% block account_head %}
+    <nav class="kb-account__crumbs" aria-label="Fil d’Ariane">
+        <a href="{{ path('app_user_informations') }}">Mon compte</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Collection</span>
+    </nav>
+    <h1 class="kb-account__title">Ma collection</h1>
+    <span class="kb-account__since kb-account__since--always">{{ total }} disque{{ total > 1 ? 's' }}</span>
 {% endblock %}
 
+{% block content %}
+    {% if total == 0 %}
+        <p class="kb-account__empty">Ta collection est vide pour l’instant. <a href="{{ path('app_catalog') }}">Faire un tour au catalogue</a></p>
+    {% else %}
+        <div class="kb-collection__tools">
+            <nav class="kb-collection__filters" aria-label="Filtrer par support">
+                <a href="{{ path('app_user_collection', query|merge({support: null})) }}" class="kb-toggle"
+                   {%- if not support %} aria-current="true"{% endif %}>Tout <span class="kb-toggle__count">{{ total }}</span></a>
+                {% for type in supports %}
+                    {% set n = supportCounts[type.value] ?? 0 %}
+                    {% if n > 0 %}
+                        <a href="{{ path('app_user_collection', query|merge({support: type.value})) }}" class="kb-toggle"
+                           {%- if support is same as(type) %} aria-current="true"{% endif %}>{{ labels[type.value] }} <span class="kb-toggle__count">{{ n }}</span></a>
+                    {% endif %}
+                {% endfor %}
+            </nav>
+            <div class="kb-collection__find">
+                <form method="get" action="{{ path('app_user_collection') }}" role="search" class="kb-search">
+                    {% if support %}<input type="hidden" name="support" value="{{ support.value }}">{% endif %}
+                    {% if view == 'liste' %}<input type="hidden" name="vue" value="liste">{% endif %}
+                    <label for="collection-q" class="visually-hidden">Chercher dans ma collection</label>
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <input type="search" id="collection-q" name="q" value="{{ search }}" class="kb-search__input" placeholder="Artiste, titre, KBR#…" autocomplete="off">
+                    <button type="submit" class="kb-search__submit">Chercher</button>
+                </form>
+                <nav class="kb-views" aria-label="Affichage">
+                    <a href="{{ path('app_user_collection', query|merge({vue: null})) }}" class="kb-views__link" aria-label="Vue pochettes"
+                       {%- if view == 'grille' %} aria-current="true"{% endif %}><i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i></a>
+                    <a href="{{ path('app_user_collection', query|merge({vue: 'liste'})) }}" class="kb-views__link" aria-label="Vue liste"
+                       {%- if view == 'liste' %} aria-current="true"{% endif %}><i class="bi bi-list-ul" aria-hidden="true"></i></a>
+                </nav>
+            </div>
+        </div>
+
+        {% if filtered == 0 %}
+            <p class="kb-account__empty">Aucun disque ne correspond. <a href="{{ path('app_user_collection') }}">Tout afficher</a></p>
+        {% elseif view == 'liste' %}
+            <div class="kb-table-scroll">
+                <table class="kb-records">
+                    <caption class="visually-hidden">Ma collection</caption>
+                    <thead>
+                    <tr>
+                        <th scope="col"><span class="visually-hidden">Pochette</span></th>
+                        <th scope="col">Artiste · titre</th>
+                        <th scope="col">Support</th>
+                        <th scope="col">Réf.</th>
+                        <th scope="col">Sortie</th>
+                        <th scope="col">Ajouté le</th>
+                        <th scope="col"><span class="visually-hidden">Retirer</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in pagination %}
+                        {% set article = row.article %}
+                        <tr>
+                            <td class="kb-records__cover kb-record">
+                                {% include 'user/_record_cover.html.twig' with {article, artist: row.artist, title: row.title, ref: null, decorative: true} only %}
+                            </td>
+                            <td>
+                                <a href="{{ article_path(article) }}" class="kb-records__artist">{{ row.artist ?: row.title }}</a>
+                                {% if row.artist %}<br><span class="kb-records__title">{{ row.title }}</span>{% endif %}
+                            </td>
+                            <td class="kb-records__mono kb-records__format">{{ article.formatLabel }}</td>
+                            <td class="kb-records__mono">{{ row.ref ?? '—' }}</td>
+                            <td class="kb-records__mono">{{ row.year ?? '—' }}</td>
+                            <td class="kb-records__mono"><time datetime="{{ row.item.addedAt|date('Y-m-d', 'Europe/Paris') }}">{{ row.item.addedAt|date('d.m.Y', 'Europe/Paris') }}</time></td>
+                            <td class="text-end">
+                                {% include 'partials/_post_button.html.twig' with {
+                                    token_id: 'collection',
+                                    url: path('app_collection_remove', {productId: article.id}),
+                                    class: 'kb-iconbtn',
+                                    icon: 'bi-trash3',
+                                    label: 'Retirer ' ~ (row.artist ? row.artist ~ ', ') ~ row.title ~ ' de ma collection'
+                                } %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <ul class="kb-shelf list-unstyled">
+                {% for row in pagination %}
+                    {% set article = row.article %}
+                    <li class="kb-shelf__item">
+                        <a href="{{ article_path(article) }}" class="kb-shelf__cover kb-record">
+                            {% include 'user/_record_cover.html.twig' with {article, artist: row.artist, title: row.title, ref: row.ref} only %}
+                            <span class="visually-hidden">— voir la fiche</span>
+                        </a>
+                        <div class="kb-shelf__meta"><span class="kb-shelf__format">{{ article.formatLabel }}</span>{% if row.year %}<span>{{ row.year }}</span>{% endif %}</div>
+                        <span class="kb-shelf__artist">{{ row.artist ?: row.title }}</span>
+                        {% if row.artist %}<span class="kb-shelf__title">{{ row.title }}</span>{% endif %}
+                        <span class="kb-shelf__added">Ajouté le <time datetime="{{ row.item.addedAt|date('Y-m-d', 'Europe/Paris') }}">{{ row.item.addedAt|date('d.m.Y', 'Europe/Paris') }}</time></span>
+                        {% include 'partials/_post_button.html.twig' with {
+                            token_id: 'collection',
+                            url: path('app_collection_remove', {productId: article.id}),
+                            class: 'kb-shelf__remove',
+                            icon: 'bi-trash3',
+                            text_btn: 'Retirer',
+                            label: 'Retirer ' ~ (row.artist ? row.artist ~ ', ') ~ row.title ~ ' de ma collection'
+                        } %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if filtered > 0 %}
+            <p class="kb-collection__count">{{ filtered }} disque{{ filtered > 1 ? 's' }} {{ filtered == total ? '' : 'sur ' ~ total ~ ' ' }}affiché{{ filtered > 1 ? 's' }}</p>
+            {{ knp_pagination_render(pagination, 'partials/_pagination.html.twig') }}
+        {% endif %}
+    {% endif %}
+{% endblock %}

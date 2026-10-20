@@ -2,13 +2,15 @@
     One-click action that changes something: a POST form with a CSRF token. Cart, wishlist
     and collection tokens are checked by App\Security\ActionCsrfToken, the 'logout' one by
     the firewall (security.yaml). Same options as _obfuscation_link.html.twig, plus token_id
-    and form_class (the form is the layout item: 'd-grid' makes the button fill it).
+    and form_class (the form is the layout item: 'd-grid' makes the button fill it) and label (the button's
+    accessible name, for an icon button or a text that needs its object: it must contain the
+    visible text).
 #}
 {% set icon_position = icon_position | default('left') %}
 
 <form method="post" action="{{ url }}" class="{{ form_class|default('d-inline-flex') }}">
     <input type="hidden" name="_token" value="{{ csrf_token(token_id) }}">
-    <button type="submit" class="{{ class }}">
+    <button type="submit" class="{{ class }}"{% if label is defined %} aria-label="{{ label }}"{% endif %}>
         {% if icon is defined and icon_position is same as "left" %}
             <i class="bi {{ icon }}" aria-hidden="true"></i>
         {% endif %}

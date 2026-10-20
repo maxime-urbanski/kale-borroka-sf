@@ -20,9 +20,11 @@ App\Entity\WishlistItem:
     user_wishlist_item_red:
         wishlist: '@user_wishlist'
         article: '@release_QuartierMaudit_red'
+        alertEnabled: true
         added_at: '<(new \DateTimeImmutable(sprintf("-%d days", random_int(0, 180))))>'
 
     user_wishlist_item_book:
         wishlist: '@user_wishlist'
         article: '@book_1'
+        alertEnabled: false
         added_at: '<(new \DateTimeImmutable(sprintf("-%d days", random_int(0, 180))))>'

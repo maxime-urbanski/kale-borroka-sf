@@ -1,0 +1,36 @@
+{% extends 'email/_layout.html.twig' %}
+
+{#
+    Wantlist alert (App\Wantlist\BackInStockAlert): `article` is back on sale, `names` its
+    plain-text names (RecordNames). Rendered during the request that put it back.
+#}
+{% set article_url = absolute_url(article_path(article)) %}
+{% set wantlist_url = url('app_user_wishlist') %}
+
+{% block preheader %}{{ names.artist ? names.artist ~ ', ' }}{{ names.title }} est de nouveau dispo. Premier arrivé, premier servi.{% endblock %}
+
+{% block content %}
+    <h1 style="margin:0 0 20px;font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:36px;font-weight:400;line-height:1;text-transform:uppercase;">De retour en stock</h1>
+    <p style="margin:0 0 16px;">Salut,</p>
+    <p style="margin:0 0 20px;">Un disque de ta wantlist est de nouveau disponible&nbsp;:</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;border:2px solid #111010;">
+        <tr>
+            <td style="padding:16px 18px;">
+                {% if names.artist %}
+                    <p style="margin:0;font-weight:800;text-transform:uppercase;">{{ names.artist }}</p>
+                {% endif %}
+                <p style="margin:0 0 6px;">{{ names.title }}</p>
+                <p style="margin:0;font-family:'Courier New',Courier,monospace;font-size:13px;text-transform:uppercase;">{{ article.formatLabel }}{% if names.ref %} · {{ names.ref }}{% endif %} · {{ (article.price / 100)|format_currency('EUR', [], 'fr') }}</p>
+            </td>
+        </tr>
+    </table>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
+        <tr>
+            <td style="background-color:#c4161c;">
+                <a href="{{ article_url }}" style="display:inline-block;padding:16px 26px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;color:#f3eee4;">Voir le disque</a>
+            </td>
+        </tr>
+    </table>
+    <p style="margin:0 0 16px;">Les exemplaires partent vite&nbsp;: on ne garde rien de côté.</p>
+    <p style="margin:0;padding:12px 14px;border:2px dashed #111010;font-size:14px;">Tu reçois ce message parce que l'alerte de ce disque est active dans ta wantlist. Un seul e-mail par retour, jamais de relance. Pour la couper&nbsp;: <a href="{{ wantlist_url }}" style="color:#111010;">ta wantlist</a>.</p>
+{% endblock %}

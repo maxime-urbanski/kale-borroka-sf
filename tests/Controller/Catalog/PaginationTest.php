@@ -39,7 +39,6 @@ class PaginationTest extends WebTestCase
     {
         yield 'catalog' => ['/catalog/lp/page-0'];
         yield 'productions' => ['/production/page-0'];
-        yield 'wishlist' => ['/mon-compte/wishlist/page-0'];
         yield 'collection' => ['/mon-compte/collection/page-0'];
         yield 'leading zeros' => ['/production/page-00'];
     }

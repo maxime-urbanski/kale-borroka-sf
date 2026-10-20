@@ -1,10 +1,145 @@
 {% extends 'user/user-dashboard.html.twig' %}
 
+{#
+    Wantlist (maquette 11): « Dispo maintenant », big cards that can go to the cart, then
+    « En veille », a dense list of what is sold out or offline. `available` and `watched`
+    are lists of WishlistItem, `toAddTotal` the price of those not in the cart yet (cents); `alerts` the number of
+    sold-out records whose alert is on; `counts` is App\Account\AccountTotals.
+    A record on sale has the cart button only; a sold-out one has its alert switch in place of the cart.
+#}
+{% block title %}Wantlist{% endblock %}
+
+{% block account_head %}
+    <nav class="kb-account__crumbs" aria-label="Fil d’Ariane">
+        <a href="{{ path('app_user_informations') }}">Mon compte</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Wantlist</span>
+    </nav>
+    <h1 class="kb-account__title">Wantlist</h1>
+    <span class="kb-account__since kb-account__since--always">
+        {{ counts.wantlist }} disque{{ counts.wantlist > 1 ? 's' }} · {{ counts.wantlistInStock }} dispo
+        {%- if counts.wantlist > 0 %} · {{ alerts }} alerte{{ alerts > 1 ? 's' }} active{{ alerts > 1 ? 's' }}{% endif %}
+    </span>
+{% endblock %}
+
 {% block content %}
-    {% include 'user/_table_product.html.twig' with {
-        categories: ['', '', '', 'Produit', 'Prix', 'Quantité disponible'],
-        products: pagination.items[0],
-        empty_message: 'Rien dans ta wantlist !'
-    } %}
-    {{ knp_pagination_render(pagination, 'partials/_pagination.html.twig') }}
+    {% if available is empty and watched is empty %}
+        <p class="kb-account__empty">Rien dans ta wantlist pour l’instant. <a href="{{ path('app_catalog') }}">Faire un tour au catalogue</a></p>
+    {% endif %}
+
+    {% if available is not empty %}
+        <section class="kb-wants" aria-labelledby="wants-available">
+            <div class="kb-wants__head kb-wants__head--split">
+                <h2 class="kb-wants__title" id="wants-available">
+                    <span class="kb-wants__stamp">Dispo maintenant</span>
+                    <span class="kb-wants__count">{{ available|length }}</span>
+                </h2>
+                {% if toAddTotal > 0 %}
+                    {% include 'partials/_post_button.html.twig' with {
+                        token_id: 'cart',
+                        url: path('app_wishlist_add_all_to_cart'),
+                        class: 'btn btn-dark kb-wants__all',
+                        icon: 'bi-bag-plus',
+                        text_btn: 'Tout ajouter au panier · ' ~ (toAddTotal / 100)|format_currency('EUR', [], 'fr')
+                    } %}
+                {% else %}
+                    <a href="{{ path('app_cart_index') }}" class="btn btn-outline-dark kb-wants__all">
+                        <i class="bi bi-bag-check" aria-hidden="true"></i>Tout est dans ton panier
+                    </a>
+                {% endif %}
+            </div>
+            <ul class="kb-wants__cards list-unstyled">
+                {% for item in available %}
+                    {% set article = item.article %}
+                    {% set n = article_names(article) %}
+                    {% set who = (n.artist ? n.artist ~ ', ' : '') ~ n.title %}
+                    <li class="kb-want">
+                        <div class="kb-want__cover kb-record">
+                            {% include 'user/_record_cover.html.twig' with {article, artist: n.artist, title: n.title, ref: n.ref, decorative: true} only %}
+                        </div>
+                        <div class="kb-want__body">
+                            <ul class="kb-want__badges list-unstyled">
+                                {% if article.itemCondition is same as(constant('App\\Enum\\ItemCondition::USED')) %}
+                                    <li class="kb-badge kb-badge--papier"><i class="bi bi-arrow-repeat" aria-hidden="true"></i>Occasion</li>
+                                {% else %}
+                                    <li class="kb-badge"><i class="bi bi-check-lg" aria-hidden="true"></i>En stock</li>
+                                {% endif %}
+                                {% if article.stock <= 3 %}
+                                    <li class="kb-badge kb-badge--outline"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i>Plus que {{ article.stock }}</li>
+                                {% endif %}
+                            </ul>
+                            <a href="{{ article_path(article) }}" class="kb-want__artist">{{ n.artist ?: n.title }}</a>
+                            {% if n.artist %}<span class="kb-want__title">{{ n.title }}</span>{% endif %}
+                            <span class="kb-want__meta">{{ article.formatLabel }}{% if n.ref %} · {{ n.ref }}{% endif %}</span>
+                            <div class="kb-want__actions">
+                                <span class="kb-price kb-want__price">{{ (article.price / 100)|format_currency('EUR', [], 'fr') }}</span>
+                                {% include 'partials/_post_button.html.twig' with {
+                                    token_id: 'wishlist',
+                                    url: path('app_wishlist_remove', {productId: article.id}),
+                                    class: 'kb-iconbtn kb-iconbtn--boxed',
+                                    icon: 'bi-x-lg',
+                                    label: 'Retirer ' ~ who ~ ' de la wantlist'
+                                } %}
+                                {% include 'partials/_post_button.html.twig' with {
+                                    token_id: 'cart',
+                                    url: path('app_cart_add', {id: article.id}),
+                                    class: 'btn btn-primary',
+                                    icon: 'bi-bag-plus',
+                                    text_btn: 'Panier',
+                                    label: 'Ajouter ' ~ who ~ ' au panier'
+                                } %}
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% endif %}
+
+    {% if available is not empty and watched is not empty %}
+        <div class="kb-torn kb-wants__edge" aria-hidden="true"></div>
+    {% endif %}
+
+    {% if watched is not empty %}
+        <section class="kb-wants" aria-labelledby="wants-watched">
+            <div class="kb-wants__head">
+                <h2 class="kb-wants__title" id="wants-watched">En veille <span class="kb-wants__count">{{ watched|length }}</span></h2>
+                <p class="kb-wants__hint">On t’écrit dès qu’un exemplaire revient. Un e-mail par disque, jamais de relance.</p>
+            </div>
+            <ul class="kb-watch list-unstyled">
+                {% for item in watched %}
+                    {% set article = item.article %}
+                    {% set n = article_names(article) %}
+                    {% set who = (n.artist ? n.artist ~ ', ' : '') ~ n.title %}
+                    <li class="kb-watch__item">
+                        <div class="kb-watch__cover kb-record kb-record--grey">
+                            {% include 'user/_record_cover.html.twig' with {article, artist: n.artist, title: n.title, ref: null, decorative: true} only %}
+                        </div>
+                        <div class="kb-watch__what">
+                            {% if article.published %}
+                                <a href="{{ article_path(article) }}" class="kb-watch__artist">{{ n.artist ?: n.title }}</a>
+                            {% else %}
+                                <span class="kb-watch__artist">{{ n.artist ?: n.title }}</span>
+                            {% endif %}
+                            <span class="kb-watch__title">{% if n.artist %}{{ n.title }} {% endif %}<span class="kb-watch__format">· {{ article.formatLabel }}</span></span>
+                        </div>
+                        {% if article.published %}
+                            <span class="kb-badge kb-badge--pending"><i class="bi bi-x-octagon" aria-hidden="true"></i>Épuisé</span>
+                        {% else %}
+                            <span class="kb-badge kb-badge--refunded"><i class="bi bi-eye-slash" aria-hidden="true"></i>Pas en ligne</span>
+                        {% endif %}
+                        {% include 'user/_alert_switch.html.twig' with {item, who} only %}
+                        {% include 'partials/_post_button.html.twig' with {
+                            token_id: 'wishlist',
+                            url: path('app_wishlist_remove', {productId: article.id}),
+                            form_class: 'kb-watch__remove',
+                            class: 'kb-iconbtn',
+                            icon: 'bi-trash3',
+                            label: 'Retirer ' ~ who ~ ' de la wantlist'
+                        } %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% endif %}
 {% endblock %}

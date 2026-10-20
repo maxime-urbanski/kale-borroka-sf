@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
+use App\Catalog\RecordNames;
 use App\Catalog\TracklistLayout;
 use App\Entity\Article;
 use App\Entity\Book;
@@ -30,6 +31,8 @@ class CatalogExtension extends AbstractExtension
     {
         return [
             new TwigFunction('article_path', $this->articlePath(...)),
+            // `article_names(article)`: {artist, title, ref} in plain text, see RecordNames.
+            new TwigFunction('article_names', RecordNames::of(...)),
             // `tracklist_sides(tracks, release.format)`: the tracks grouped by side, see TracklistLayout.
             new TwigFunction('tracklist_sides', TracklistLayout::sides(...)),
         ];

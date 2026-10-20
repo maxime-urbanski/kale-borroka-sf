@@ -59,7 +59,7 @@ class UserCollectionItemsRepository extends ServiceEntityRepository
      *
      * @return list<UserCollectionItems>
      */
-    public function latestOfUser(User $user, int $limit): array
+    public function latestOfUser(User $user, ?int $limit): array
     {
         return $this->createQueryBuilder('ci')
             ->addSelect('a')
@@ -72,5 +72,15 @@ class UserCollectionItemsRepository extends ServiceEntityRepository
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * Every collection item of the user, the latest added first.
+     *
+     * @return list<UserCollectionItems>
+     */
+    public function allOfUser(User $user): array
+    {
+        return $this->latestOfUser($user, null);
     }
 }

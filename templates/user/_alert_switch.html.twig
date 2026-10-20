@@ -1,0 +1,18 @@
+{#
+    E-mail alert switch of a wantlist record (maquette 11): a POST form, its button a
+    role="switch" whose state is read aloud (aria-checked) and written out next to it.
+    `item`: WishlistItem; `who`: the record's name, plain text.
+#}
+{% set article = item.article %}
+{% set on = item.alertEnabled %}
+<form method="post" action="{{ path('app_wishlist_alert', {productId: article.id}) }}" class="kb-alert">
+    <input type="hidden" name="_token" value="{{ csrf_token('wishlist') }}">
+    <button type="submit" class="kb-switch" role="switch" aria-checked="{{ on ? 'true' : 'false' }}"
+            aria-label="Alerte e-mail pour {{ who }}" aria-describedby="alert-{{ article.id }}">
+        <span class="kb-switch__knob"></span>
+    </button>
+    <span class="kb-alert__text" id="alert-{{ article.id }}">
+        <strong>{{ on ? 'Alerte active' : 'Alerte coupée' }}</strong>
+        <span class="kb-alert__detail">{{ on ? 'Un e-mail à son retour' : 'Aucun e-mail' }}</span>
+    </span>
+</form>
