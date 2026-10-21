@@ -1,0 +1,21 @@
+/* Les-Tilleuls.coop — web fonts
+ * Neulis Alt is COMMERCIAL (Latinotype). The src below points at the
+ * licensed copy served from les-tilleuls.coop. If the render canvas blocks
+ * cross-origin fonts, the fallback stack (Poppins/system) still renders the
+ * geometric feel. Do not redistribute the Neulis woff2 — license it.
+ * Ubuntu is open (Ubuntu Font Licence).
+ */
+@font-face {
+  font-family: "Neulis Alt";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("https://les-tilleuls.coop/wp-content/themes/les-tilleuls/assets/fonts/NeulisAlt-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Ubuntu";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://les-tilleuls.coop/wp-content/themes/les-tilleuls/assets/fonts/ubuntu-400.woff2") format("woff2");
+}

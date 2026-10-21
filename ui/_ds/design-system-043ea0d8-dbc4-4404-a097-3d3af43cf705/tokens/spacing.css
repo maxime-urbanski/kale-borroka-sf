@@ -1,0 +1,45 @@
+/* Les-Tilleuls.coop — Spacing, radii, shape & elevation tokens
+ * Signature motif = the "tilleul leaf": rounded rectangle, 3 large-radius
+ * corners + 1 sharp corner. Rotate the sharp corner per placement.
+ */
+:root {
+  /* Spacing scale (8px base) */
+  --lt-space-1: 0.25rem;  /*  4px */
+  --lt-space-2: 0.5rem;   /*  8px */
+  --lt-space-3: 1rem;     /* 16px */
+  --lt-space-4: 1.5rem;   /* 24px */
+  --lt-space-5: 2rem;     /* 32px */
+  --lt-space-6: 3rem;     /* 48px */
+  --lt-space-7: 4rem;     /* 64px */
+
+  /* Radii */
+  --lt-radius-sm: 0.5rem;   /*  8px */
+  --lt-radius-md: 1rem;     /* 16px */
+  --lt-radius-lg: 1.5rem;   /* 24px */
+
+  /* Signature leaf radius — sharp corner bottom-right by default */
+  --lt-leaf:    2.5rem 2.5rem 0.25rem 2.5rem;
+  /* Rotations (pick by placement so the sharp corner points "into" the layout) */
+  --lt-leaf-tl: 0.25rem 2.5rem 2.5rem 2.5rem;  /* sharp top-left */
+  --lt-leaf-tr: 2.5rem 0.25rem 2.5rem 2.5rem;  /* sharp top-right (icon pictos) */
+  --lt-leaf-br: 2.5rem 2.5rem 0.25rem 2.5rem;  /* sharp bottom-right */
+  --lt-leaf-bl: 2.5rem 2.5rem 2.5rem 0.25rem;  /* sharp bottom-left (dark accent) */
+
+  /* Title underline accent (orange rule under headings) */
+  --lt-underline-w: 5.5rem;   /* ~88px */
+  --lt-underline-h: 4px;
+  --lt-underline-gap: 0.75rem;
+
+  /* Elevation */
+  --lt-shadow-card: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Idiomatic usage */
+.lt-leaf        { border-radius: var(--lt-leaf); }
+.lt-card        { background: var(--lt-white); border-radius: var(--lt-leaf-tl); box-shadow: var(--lt-shadow-card); padding: var(--lt-space-5); }
+.lt-underline::after { content: ""; display: block; width: var(--lt-underline-w); height: var(--lt-underline-h);
+                       margin-top: var(--lt-underline-gap); background: var(--lt-orange); }
+/* Orange arrow bullet list */
+.lt-bullets     { list-style: none; padding: 0; }
+.lt-bullets li  { position: relative; padding-left: var(--lt-space-5); margin-bottom: var(--lt-space-3); }
+.lt-bullets li::before { content: "\2192"; position: absolute; left: 0; color: var(--lt-orange); font-weight: var(--lt-weight-bold); }

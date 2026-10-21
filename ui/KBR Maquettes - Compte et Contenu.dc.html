@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="_ds/design-system-043ea0d8-dbc4-4404-a097-3d3af43cf705/_ds_bundle.js"></script>
+<style>body{margin:0;background:#cfc8bb}*{box-sizing:border-box}:focus-visible{outline:3px solid #111010!important;outline-offset:3px;box-shadow:0 0 0 3px #f3eee4}::placeholder{color:#5b5750;opacity:1}@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}a{color:#111010}a:hover{color:#c4161c}button,input{font-family:inherit}</style>
+</helmet>
+<div style="padding:80px;display:flex;flex-direction:column;gap:140px;font-family:'Archivo',system-ui,sans-serif;color:#111010">
+
+<!-- CONNEXION / INSCRIPTION -->
+<section style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:.1em;text-transform:uppercase">Maquette 08</span>
+    <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-size:80px;line-height:1;text-transform:uppercase">Connexion &amp; inscription</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5">Une seule page, deux colonnes : se connecter ou créer un compte, sans détour. Si on arrive depuis le panier, un bandeau le rappelle et le retour au tunnel est automatique. Inscription courte : e-mail, mot de passe, prénom, nom ; l'adresse vient plus tard dans le tunnel.</p>
+  </div>
+  <div style="display:flex;gap:64px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Desktop · 1440 · depuis le panier</span>
+      <div data-screen-label="Connexion desktop" style="width:1440px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" hint-size="100%,134px"></dc-import>
+        <div style="padding:40px 40px 0;display:flex;flex-direction:column;gap:20px">
+          <nav aria-label="Fil d'Ariane" style="display:flex;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.06em"><a href="#">Accueil</a><span>/</span><a href="#">Panier</a><span>/</span><span aria-current="page" style="font-weight:600">Connexion</span></nav>
+          <div role="status" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#111010;color:#f3eee4;font-size:16px"><i aria-hidden="true" class="bi bi-bag-check" style="font-size:20px"></i><span><strong>Ton panier est gardé au chaud (3 articles · 46,50 €).</strong> Connecte-toi ou crée un compte pour passer commande.</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;padding:40px 40px 96px">
+          <form style="display:flex;flex-direction:column;gap:20px;padding-right:56px;border-right:3px solid #111010">
+            <h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:72px;line-height:.95;text-transform:uppercase">Connexion</h1>
+            <p style="margin:0;font-size:17px;line-height:1.5;color:#3a3734">Tu as déjà un compte ? Retrouve ta collection, ta wantlist et tes commandes.</p>
+            <div role="alert" style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border:3px solid #c4161c;background:#f3eee4;color:#9e1116;font-size:15px;line-height:1.4"><i aria-hidden="true" class="bi bi-exclamation-octagon-fill" style="font-size:20px"></i><span><strong>Erreur :</strong> e-mail ou mot de passe incorrect.</span></div>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:15px">E-mail</span><span style="height:52px;border:2px solid #111010;display:flex;align-items:center;padding:0 16px;font-size:16px;background:#f3eee4">maialen@exemple.eus</span></label>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:700;font-size:15px">Mot de passe</span><a href="#" style="font-size:14px;font-weight:600;min-height:32px;display:flex;align-items:center">Mot de passe oublié ?</a></span><span style="height:52px;border:3px solid #c4161c;display:flex;align-items:center;padding:0 6px 0 16px;font-size:18px;letter-spacing:.2em;background:#f3eee4">••••••••<button type="button" aria-label="Afficher le mot de passe" style="margin-left:auto;width:44px;height:40px;background:none;border:0;font-size:18px;letter-spacing:0"><i aria-hidden="true" class="bi bi-eye"></i></button></span></label>
+            <label style="display:flex;align-items:center;gap:12px;min-height:44px;font-size:15px"><span style="width:22px;height:22px;border:2px solid #111010;background:#111010;color:#f3eee4;display:grid;place-items:center;font-size:14px"><i aria-hidden="true" class="bi bi-check-lg"></i></span>Rester connecté·e</label>
+            <button style="height:58px;display:flex;align-items:center;justify-content:center;gap:10px;background:#c4161c;color:#f3eee4;border:0;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.06em;cursor:pointer" style-hover="background:#9e1116">Se connecter et continuer <i aria-hidden="true" class="bi bi-arrow-right"></i></button>
+          </form>
+          <form style="display:flex;flex-direction:column;gap:20px;padding-left:56px">
+            <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:72px;line-height:.95;text-transform:uppercase">Nouveau ici ?</h2>
+            <p style="margin:0;font-size:17px;line-height:1.5;color:#3a3734">Un compte, c'est le suivi de tes commandes, une wantlist qui te prévient quand un disque revient en stock, et ta collection en ligne.</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:15px">Prénom</span><span style="height:52px;border:2px solid #111010;background:#f3eee4"></span></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:15px">Nom</span><span style="height:52px;border:2px solid #111010;background:#f3eee4"></span></label>
+            </div>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:15px">E-mail</span><span style="height:52px;border:2px solid #111010;background:#f3eee4"></span></label>
+            <label style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-weight:700;font-size:15px">Mot de passe</span>
+              <span style="height:52px;border:2px solid #111010;display:flex;align-items:center;padding:0 6px 0 16px;font-size:18px;letter-spacing:.2em;background:#f3eee4">••••••<button type="button" aria-label="Afficher le mot de passe" style="margin-left:auto;width:44px;height:40px;background:none;border:0;font-size:18px;letter-spacing:0"><i aria-hidden="true" class="bi bi-eye"></i></button></span>
+              <span style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:4px"><span style="height:6px;background:#111010"></span><span style="height:6px;background:#111010"></span><span style="height:6px;background:#d8d1c4"></span><span style="height:6px;background:#d8d1c4"></span></span>
+              <span style="display:flex;flex-direction:column;gap:2px;font-family:'IBM Plex Mono',monospace;font-size:13px">
+                <span><i aria-hidden="true" class="bi bi-check-lg"></i> 12 caractères minimum</span>
+                <span style="color:#5b5750"><i aria-hidden="true" class="bi bi-dash"></i> Un chiffre ou un symbole</span>
+              </span>
+            </label>
+            <label style="display:flex;align-items:flex-start;gap:12px;min-height:44px;font-size:15px;line-height:1.4"><span style="width:22px;height:22px;flex:none;border:2px solid #111010;margin-top:1px"></span><span>Recevoir la lettre du label (une par sortie, pas plus).</span></label>
+            <label style="display:flex;align-items:flex-start;gap:12px;min-height:44px;font-size:15px;line-height:1.4"><span style="width:22px;height:22px;flex:none;border:2px solid #111010;background:#111010;color:#f3eee4;display:grid;place-items:center;font-size:14px;margin-top:1px"><i aria-hidden="true" class="bi bi-check-lg"></i></span><span>J'accepte les <a href="#">conditions générales de vente</a> et la <a href="#">politique de confidentialité</a>.</span></label>
+            <button style="height:58px;display:flex;align-items:center;justify-content:center;gap:10px;background:#111010;color:#f3eee4;border:0;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.06em;cursor:pointer">Créer mon compte</button>
+          </form>
+        </div>
+        <dc-import name="KbrFooter" hint-size="100%,300px"></dc-import>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Mobile · 390 · connexion</span>
+      <div data-screen-label="Connexion mobile" style="width:390px;height:844px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" mobile="{{true}}" hint-size="100%,67px"></dc-import>
+        <div role="tablist" style="display:grid;grid-template-columns:1fr 1fr;border-bottom:3px solid #111010">
+          <button role="tab" aria-selected="true" style="height:56px;background:#111010;color:#f3eee4;border:0;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.06em">Connexion</button>
+          <button role="tab" aria-selected="false" style="height:56px;background:none;border:0;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.06em">Créer un compte</button>
+        </div>
+        <form style="padding:24px 20px;display:flex;flex-direction:column;gap:18px">
+          <h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:52px;line-height:.95;text-transform:uppercase">Connexion</h1>
+          <div role="status" style="display:flex;gap:10px;padding:12px 14px;border:2px solid #111010;background:#e8e1d3;font-size:14px;line-height:1.4"><i aria-hidden="true" class="bi bi-bag-check" style="font-size:18px"></i><span>Ton panier (3 articles) est conservé.</span></div>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:15px">E-mail</span><span style="height:52px;border:2px solid #111010;display:flex;align-items:center;padding:0 14px;font-size:16px">maialen@exemple.eus</span></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:15px">Mot de passe</span><span style="height:52px;border:2px solid #111010;display:flex;align-items:center;padding:0 4px 0 14px;font-size:18px;letter-spacing:.2em">••••••••<button type="button" aria-label="Afficher" style="margin-left:auto;width:44px;height:44px;background:none;border:0;font-size:18px;letter-spacing:0"><i aria-hidden="true" class="bi bi-eye"></i></button></span></label>
+          <a href="#" style="align-self:flex-start;min-height:44px;display:flex;align-items:center;font-size:15px;font-weight:600">Mot de passe oublié ?</a>
+          <button style="height:56px;display:flex;align-items:center;justify-content:center;gap:10px;background:#c4161c;color:#f3eee4;border:0;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.06em">Se connecter <i aria-hidden="true" class="bi bi-arrow-right"></i></button>
+          <p style="margin:8px 0 0;font-size:15px;line-height:1.5;text-align:center">Pas encore de compte ? <a href="#" style="font-weight:700">Créer un compte</a></p>
+        </form>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Mobile · 390 · inscription</span>
+      <div data-screen-label="Inscription mobile" style="width:390px;height:844px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" mobile="{{true}}" hint-size="100%,67px"></dc-import>
+        <div role="tablist" style="display:grid;grid-template-columns:1fr 1fr;border-bottom:3px solid #111010">
+          <button role="tab" aria-selected="false" style="height:56px;background:none;border:0;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.06em">Connexion</button>
+          <button role="tab" aria-selected="true" style="height:56px;background:#111010;color:#f3eee4;border:0;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.06em">Créer un compte</button>
+        </div>
+        <form style="padding:20px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:14px">Prénom</span><span style="height:48px;border:2px solid #111010"></span></label>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:14px">Nom</span><span style="height:48px;border:2px solid #111010"></span></label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:14px">E-mail</span><span style="height:48px;border:3px solid #c4161c;display:flex;align-items:center;padding:0 14px;font-size:16px">maialen@exemple</span><span style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#9e1116"><i aria-hidden="true" class="bi bi-exclamation-octagon-fill"></i>Adresse e-mail incomplète.</span></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:14px">Mot de passe</span><span style="height:48px;border:2px solid #111010;display:flex;align-items:center;padding:0 14px;font-size:18px;letter-spacing:.2em">••••••</span><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">12 caractères min. · 1 chiffre ou symbole</span></label>
+          <label style="display:flex;align-items:flex-start;gap:12px;min-height:44px;font-size:14px;line-height:1.4"><span style="width:24px;height:24px;flex:none;border:2px solid #111010"></span>Recevoir la lettre du label (une par sortie).</label>
+          <label style="display:flex;align-items:flex-start;gap:12px;min-height:44px;font-size:14px;line-height:1.4"><span style="width:24px;height:24px;flex:none;border:2px solid #111010;background:#111010;color:#f3eee4;display:grid;place-items:center"><i aria-hidden="true" class="bi bi-check-lg"></i></span><span>J'accepte les <a href="#">CGV</a> et la <a href="#">politique de confidentialité</a>.</span></label>
+          <button style="height:56px;background:#111010;color:#f3eee4;border:0;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.06em">Créer mon compte</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MOT DE PASSE OUBLIÉ -->
+<section style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:.1em;text-transform:uppercase">Maquette 09</span>
+    <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-size:80px;line-height:1;text-transform:uppercase">Mot de passe oublié</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5">Trois états : demande, e-mail envoyé (message neutre, sans révéler si le compte existe), nouveau mot de passe. Même gabarit centré, carte « tract » sur fond tramé.</p>
+  </div>
+  <div style="display:flex;gap:40px;align-items:flex-start">
+    <sc-for list="{{pwd}}" as="p" hint-placeholder-count="3">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">{{p.cap}}</span>
+        <div data-screen-label="{{p.cap}}" style="width:560px;height:640px;background:#e8e1d3 url(tex-halftone.svg);display:flex;align-items:center;justify-content:center;padding:40px;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+          <div style="position:relative;width:100%;background:#f3eee4;border:3px solid #111010;box-shadow:10px 10px 0 #111010;padding:36px 32px;display:flex;flex-direction:column;gap:18px">
+            <div style="position:absolute;top:-14px;left:50%;margin-left:-60px;width:120px;height:30px;background:rgba(243,238,228,.85);border:1px solid #d8d1c4;transform:rotate(-4deg)"></div>
+            <span style="align-self:flex-start;display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase"><i aria-hidden="true" class="bi {{p.icon}}" style="font-size:18px"></i>{{p.step}}</span>
+            <h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:52px;line-height:.95;text-transform:uppercase">{{p.t}}</h1>
+            <p style="margin:0;font-size:16px;line-height:1.55">{{p.d}}</p>
+            <sc-if value="{{p.email}}" hint-placeholder-val="{{false}}">
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:15px">E-mail du compte</span><span style="height:52px;border:2px solid #111010;display:flex;align-items:center;padding:0 14px;font-size:16px">maialen@exemple.eus</span></label>
+            </sc-if>
+            <sc-if value="{{p.newpwd}}" hint-placeholder-val="{{false}}">
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:15px">Nouveau mot de passe</span><span style="height:52px;border:2px solid #111010;display:flex;align-items:center;padding:0 14px;font-size:18px;letter-spacing:.2em">••••••••••••</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px"><i aria-hidden="true" class="bi bi-check-lg"></i> 12 caractères · <i aria-hidden="true" class="bi bi-check-lg"></i> 1 chiffre</span></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:15px">Confirmer</span><span style="height:52px;border:2px solid #111010;display:flex;align-items:center;padding:0 14px;font-size:18px;letter-spacing:.2em">••••••••••••</span></label>
+            </sc-if>
+            <sc-if value="{{p.sent}}" hint-placeholder-val="{{false}}">
+              <div style="display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:2px dashed #111010;font-size:14px;line-height:1.5"><strong>Rien reçu ?</strong>Vérifie les spams. Le lien expire dans 1 heure.</div>
+            </sc-if>
+            <button style="height:56px;display:flex;align-items:center;justify-content:center;gap:10px;background:{{p.bbg}};color:{{p.bfg}};border:2px solid #111010;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.06em">{{p.cta}}</button>
+            <a href="#" style="align-self:center;min-height:44px;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px"><i aria-hidden="true" class="bi bi-arrow-left"></i>Retour à la connexion</a>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<!-- PAGE DE CONTENU -->
+<section style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:.1em;text-transform:uppercase">Maquette 10</span>
+    <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-size:80px;line-height:1;text-transform:uppercase">Modèle page de contenu</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5">Un seul gabarit Twig pour À propos, CGV, mentions légales, livraison. En-tête « affiche », colonne de lecture à 68 caractères, sommaire collant généré depuis les H2, styles pour tout ce que l'éditeur CMS peut produire (titres, listes, citation, image, tableau, encadré).</p>
+  </div>
+  <div style="display:flex;gap:64px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Desktop · 1440 · exemple « Le label »</span>
+      <div data-screen-label="Contenu desktop" style="width:1440px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" hint-size="100%,134px"></dc-import>
+        <header style="background:#111010 url(tex-grain.svg);color:#f3eee4;padding:40px 40px 72px;display:flex;flex-direction:column;gap:24px">
+          <nav aria-label="Fil d'Ariane" style="display:flex;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.06em"><a href="#" style="color:#f3eee4">Accueil</a><span>/</span><span aria-current="page" style="font-weight:600">Le label</span></nav>
+          <span style="display:flex;align-items:center;gap:12px;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#d8d1c4"><span style="display:flex;width:36px;height:10px"><span style="flex:1;background:#c4161c"></span><span style="flex:1;background:#00843d"></span><span style="flex:1;background:#f3eee4"></span></span>À propos · mis à jour le 12.09.2026</span>
+          <h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:136px;line-height:.88;text-transform:uppercase;max-width:1100px">Le label, <span style="color:#111010;background:#f3eee4;padding:0 14px">la distro</span>, la bande.</h1>
+          <p style="margin:0;font-size:22px;line-height:1.5;max-width:56ch;color:#d8d1c4;text-wrap:pretty">Né en 2012 dans un local de répét' de Bayonne, Kale Borroka Riot Records sort des disques punk, et fait tourner ceux des copains.</p>
+        </header>
+        <div style="height:18px;background:url(tex-torn.svg) repeat-x;background-size:200px 18px"></div>
+        <div style="display:grid;grid-template-columns:260px minmax(0,720px) 1fr;gap:72px;padding:56px 40px 96px">
+          <nav aria-label="Sommaire" style="position:sticky;top:24px;align-self:start;display:flex;flex-direction:column;border-top:3px solid #111010">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:12px 0 8px">Sommaire</span>
+            <sc-for list="{{toc}}" as="t" hint-placeholder-count="5"><a href="#" aria-current="{{t.cur}}" style="display:flex;gap:12px;align-items:center;min-height:44px;border-bottom:1px solid #8a857c;text-decoration:none;font-weight:{{t.w}};font-size:15px;border-left:4px solid {{t.bl}};padding-left:{{t.pl}}"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">{{t.n}}</span>{{t.t}}</a></sc-for>
+          </nav>
+          <article style="display:flex;flex-direction:column;gap:22px;font-size:18px;line-height:1.7">
+            <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:48px;line-height:1;text-transform:uppercase;display:flex;align-items:baseline;gap:16px"><span style="font-family:'IBM Plex Mono',monospace;font-size:16px;color:#c4161c">01</span>D'où on vient</h2>
+            <p style="margin:0;text-wrap:pretty"><span style="float:left;font-family:'Anton',Impact,sans-serif;font-size:96px;line-height:.8;margin:6px 12px 0 0">A</span>u départ, il y avait un groupe qui ne trouvait personne pour presser son premier 7". On a monté une asso, collecté des sous dans les concerts et sorti <a href="#">KBR#001</a> à 300 exemplaires, pochettes pliées à la main.</p>
+            <p style="margin:0;text-wrap:pretty">Quatorze ans plus tard, le principe n'a pas bougé : <strong>chaque disque vendu paie le suivant</strong>. Personne n'est salarié, tout le monde a un boulot à côté.</p>
+            <blockquote style="margin:16px 0;padding:24px 0 24px 32px;border-left:8px solid #111010;font-family:'Anton',Impact,sans-serif;font-size:44px;line-height:1.05;text-transform:uppercase">« Pas de patron, pas de pub, pas de fachos. Le reste se discute. »<cite style="display:block;margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:13px;font-style:normal;letter-spacing:.06em">— Charte du label, 2012</cite></blockquote>
+            <h2 style="margin:24px 0 0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:48px;line-height:1;text-transform:uppercase;display:flex;align-items:baseline;gap:16px"><span style="font-family:'IBM Plex Mono',monospace;font-size:16px;color:#c4161c">02</span>Ce qu'on défend</h2>
+            <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{values}}" as="v" hint-placeholder-count="4"><li style="display:grid;grid-template-columns:28px 1fr;gap:10px"><span style="font-family:'Anton',Impact,sans-serif;font-size:20px;line-height:1.5;color:#c4161c">✕</span><span>{{v}}</span></li></sc-for>
+            </ul>
+            <figure style="margin:16px 0;display:flex;flex-direction:column;gap:10px">
+              <div style="aspect-ratio:16/9;background:#e8e1d3 url(tex-halftone.svg);border:3px solid #111010;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.06em"><span style="display:flex;align-items:center;gap:8px;background:#f3eee4;padding:6px 10px;border:2px solid #111010"><i aria-hidden="true" class="bi bi-image"></i>Photo · concert au Gaztetxe</span></div>
+              <figcaption style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:#5b5750">Release party KBR#020, Gaztetxe de Bayonne, 2024. Photo : Ane L.</figcaption>
+            </figure>
+            <h2 style="margin:24px 0 0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:48px;line-height:1;text-transform:uppercase;display:flex;align-items:baseline;gap:16px"><span style="font-family:'IBM Plex Mono',monospace;font-size:16px;color:#c4161c">03</span>Envoyer sa prod</h2>
+            <p style="margin:0;text-wrap:pretty">On écoute tout ce qu'on reçoit. Pour la distro, on prend en dépôt-vente avec les conditions suivantes :</p>
+            <table style="width:100%;border-collapse:collapse;font-size:16px;line-height:1.4">
+              <thead><tr style="background:#111010;color:#f3eee4;font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.06em;text-align:left"><th style="padding:10px 14px;font-weight:500">Support</th><th style="padding:10px 14px;font-weight:500">Quantité</th><th style="padding:10px 14px;font-weight:500">Reversé au groupe</th></tr></thead>
+              <tbody><sc-for list="{{depot}}" as="d" hint-placeholder-count="3"><tr style="border-bottom:1px solid #8a857c"><td style="padding:10px 14px">{{d.s}}</td><td style="padding:10px 14px;font-family:'IBM Plex Mono',monospace">{{d.q}}</td><td style="padding:10px 14px;font-family:'IBM Plex Mono',monospace">{{d.r}}</td></tr></sc-for></tbody>
+            </table>
+            <aside style="display:flex;gap:14px;padding:20px 22px;border:3px solid #111010;background:#e8e1d3;box-shadow:6px 6px 0 #111010;font-size:16px;line-height:1.55"><i aria-hidden="true" class="bi bi-envelope-paper" style="font-size:22px"></i><span><strong>Contact démo :</strong> un lien d'écoute (Bandcamp, dossier partagé) à <a href="#" style="font-weight:700">demos@kaleborroka.eus</a>. Pas de fichiers en pièce jointe, merci.</span></aside>
+            <div style="display:flex;justify-content:space-between;gap:20px;border-top:3px solid #111010;padding-top:20px;margin-top:24px;font-size:15px">
+              <a href="#" style="display:flex;align-items:center;gap:8px;min-height:44px;font-weight:700"><i aria-hidden="true" class="bi bi-arrow-left"></i>Livraison &amp; retours</a>
+              <a href="#" style="display:flex;align-items:center;gap:8px;min-height:44px;font-weight:700">Contact<i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+            </div>
+          </article>
+          <div></div>
+        </div>
+        <dc-import name="KbrFooter" hint-size="100%,300px"></dc-import>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:32px">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Mobile · 390 · variante juridique (CGV)</span>
+        <div data-screen-label="Contenu mobile CGV" style="width:390px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+          <dc-import name="KbrHeader" mobile="{{true}}" hint-size="100%,67px"></dc-import>
+          <header style="padding:24px 20px 20px;display:flex;flex-direction:column;gap:12px;border-bottom:3px solid #111010">
+            <nav aria-label="Fil d'Ariane" style="display:flex;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase"><a href="#">Accueil</a><span>/</span><span aria-current="page" style="font-weight:600">CGV</span></nav>
+            <h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:46px;line-height:.95;text-transform:uppercase">Conditions générales de vente</h1>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#5b5750">En vigueur au 01.09.2026 · 8 articles</span>
+          </header>
+          <div style="border-bottom:2px solid #111010;margin:0 20px">
+            <button aria-expanded="false" style="width:100%;height:56px;display:flex;justify-content:space-between;align-items:center;background:none;border:0;padding:0;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.06em">Sommaire<i aria-hidden="true" class="bi bi-chevron-down"></i></button>
+          </div>
+          <article style="padding:24px 20px 40px;display:flex;flex-direction:column;gap:16px;font-size:16px;line-height:1.65">
+            <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:28px;line-height:1.05;text-transform:uppercase;display:flex;gap:10px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#c4161c">ART. 1</span>Objet</h2>
+            <p style="margin:0;text-wrap:pretty">Les présentes conditions régissent les ventes conclues sur le site entre l'association Kale Borroka Riot Records et toute personne effectuant un achat.</p>
+            <h2 style="margin:8px 0 0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:28px;line-height:1.05;text-transform:uppercase;display:flex;gap:10px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#c4161c">ART. 2</span>Prix</h2>
+            <p style="margin:0;text-wrap:pretty">Les prix sont indiqués en euros, toutes taxes comprises, hors frais de livraison. Les frais sont affichés avant la validation de la commande.</p>
+            <h3 style="margin:4px 0 0;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.04em">2.1 Précommandes</h3>
+            <ol style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px">
+              <li>Le paiement est encaissé à la commande.</li>
+              <li>L'expédition a lieu à la date de sortie annoncée.</li>
+            </ol>
+            <aside style="display:flex;gap:10px;padding:14px;border:2px dashed #111010;font-size:15px;line-height:1.5"><i aria-hidden="true" class="bi bi-info-circle-fill" style="font-size:18px"></i><span>Droit de rétractation de 14 jours, sauf disques descellés.</span></aside>
+          </article>
+          <a href="#" aria-label="Revenir en haut" style="display:flex;align-items:center;justify-content:center;gap:8px;height:52px;margin:0 20px 32px;border:2px solid #111010;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.06em;text-decoration:none"><i aria-hidden="true" class="bi bi-arrow-up"></i>Haut de page</a>
+          <dc-import name="KbrFooter" mobile="{{true}}" hint-size="100%,420px"></dc-import>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() { document.documentElement.lang = 'fr'; }
+  renderVals() {
+    const pwd = [
+      { cap: '1 · Demande', step: 'Étape 1 / 3', icon: 'bi-key', t: 'Mot de passe oublié ?', d: 'Indique l\u2019e-mail de ton compte. On t\u2019envoie un lien pour en choisir un nouveau.', email: true, newpwd: false, sent: false, cta: 'Envoyer le lien', bbg: '#111010', bfg: '#f3eee4' },
+      { cap: '2 · E-mail envoyé', step: 'Étape 2 / 3', icon: 'bi-envelope-check', t: 'Regarde ta boîte mail.', d: 'Si un compte existe pour maialen@exemple.eus, un lien de réinitialisation vient de partir.', email: false, newpwd: false, sent: true, cta: 'Renvoyer le lien', bbg: 'transparent', bfg: '#111010' },
+      { cap: '3 · Nouveau mot de passe', step: 'Étape 3 / 3', icon: 'bi-shield-lock', t: 'Nouveau mot de passe', d: 'Choisis-en un solide. Tu seras connecté·e juste après.', email: false, newpwd: true, sent: false, cta: 'Enregistrer et me connecter', bbg: '#c4161c', bfg: '#f3eee4' }
+    ];
+    const toc = ['D\u2019où on vient', 'Ce qu\u2019on défend', 'Envoyer sa prod', 'L\u2019équipe', 'Nous trouver'].map((t, i) => ({
+      t, n: String(i + 1).padStart(2, '0'), cur: i === 0 ? 'true' : 'false', w: i === 0 ? 800 : 500, bl: i === 0 ? '#c4161c' : 'transparent', pl: i === 0 ? '10px' : '0'
+    }));
+    return {
+      pwd, toc,
+      values: ['Des prix bas, fixés avec les groupes : un LP ne dépasse pas 22 €.', 'Aucun groupe, aucun label lié à l\u2019extrême droite, même « juste pour le son ».', 'Des pressages en petites séries, en France et au Pays basque.', 'Des concerts à prix libre, des tables de distro dans les squats et les gaztetxe.'],
+      depot: [{ s: 'Vinyle LP / EP', q: '5 à 10 ex.', r: '70 %' }, { s: 'CD, K7', q: '5 à 15 ex.', r: '70 %' }, { s: 'Fanzine', q: '5 à 20 ex.', r: '80 %' }]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+/* Les-Tilleuls.coop — Color tokens
+ * Brand values CONFIRMED against the live theme CSS custom properties
+ * (les-tilleuls.coop/wp-content/themes/les-tilleuls/assets/css/style.css):
+ *   --primary-color:#ee4322  --secondary-color:#414956
+ *   --grey-extra-light:#f0eded  (+ greys #e0dede #9ca3af #878d97)
+ * Table-state tints are deck-only (no site equivalent); pixel-sampled.
+ */
+:root {
+  /* Brand */
+  --lt-orange: #ee4322;          /* --primary-color — vermilion. logo, accents, CTAs, arrows */
+  --lt-orange-hover: #d63a1c;    /* derived pressed/hover (-8% L) */
+  --lt-orange-tint: #fde7e2;     /* derived faint background wash */
+  --lt-secondary: #414956;       /* --secondary-color — slate. headings + dark "leaf" accent */
+  --lt-ink: var(--lt-secondary); /* alias: heading/ink color */
+
+  /* Neutrals (official grey scale) */
+  --lt-white: #ffffff;
+  --lt-grey-extra-light: #f0eded; /* --grey-extra-light — table stripe, soft panels */
+  --lt-grey-light: #e0dede;       /* borders, dividers */
+  --lt-grey: #9ca3af;             /* muted text */
+  --lt-grey-dark: #878d97;        /* secondary text */
+  --lt-text: #5d5d5d;             /* body copy (deck-sampled; site leans on greys above) */
+
+  /* Aliases for layout intent */
+  --lt-surface-alt: var(--lt-grey-extra-light);
+  --lt-border: var(--lt-grey-light);
+  --lt-text-muted: var(--lt-grey-dark);
+
+  /* Semantic — table/status states (deck-only, pixel-exact) */
+  --lt-negative-bg: #f4cccc;     /* "Perdu" loss row */
+  --lt-negative-fg: #c0392b;
+  --lt-info-bg: #cfe2f3;         /* "Reporté" deferred row */
+  --lt-info-fg: #2e5e8c;
+  /* No green: "wins"/totals are carried by --lt-orange on neutral rows. */
+}

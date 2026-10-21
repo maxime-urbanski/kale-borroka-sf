@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>:focus-visible{outline:3px solid #111010!important;outline-offset:3px;box-shadow:0 0 0 3px #f3eee4}::placeholder{color:#5b5750;opacity:1}@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}</style>
+</helmet>
+<article style="display:flex;flex-direction:column;gap:12px;font-family:'Archivo',system-ui,sans-serif;color:#111010;min-width:0">
+  <div role="img" aria-label="Pochette : {{it.artist}}, {{it.title}}" style="position:relative;aspect-ratio:1/1;border:2px solid #111010;overflow:hidden;background:{{bg}};container-type:inline-size">
+    <div style="position:absolute;inset:0;padding:9%;display:flex;flex-direction:column;justify-content:space-between;color:{{fg}};background-image:{{pat}};filter:{{face}};opacity:{{faceOp}}">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:max(9px,4.6cqw);letter-spacing:.08em;text-transform:uppercase">{{kbr}}</span>
+      <span style="display:flex;flex-direction:column;gap:4cqw">
+        <span style="font-family:'Anton',Impact,sans-serif;font-size:15cqw;line-height:.9;text-transform:uppercase;text-wrap:balance">{{it.artist}}</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:max(9px,4.6cqw);text-transform:uppercase;letter-spacing:.04em">{{it.title}}</span>
+      </span>
+    </div>
+    <div style="position:absolute;top:8px;right:8px;display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+      <sc-for list="{{badges}}" as="b" hint-placeholder-count="0">
+        <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 7px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:{{b.bg}};color:{{b.fg}};border:1.5px solid #111010"><i aria-hidden="true" class="bi {{b.i}}"></i>{{b.t}}</span>
+      </sc-for>
+    </div>
+    <sc-if value="{{sold}}" hint-placeholder-val="{{false}}">
+      <div style="position:absolute;inset:0;display:grid;place-items:center">
+        <span style="transform:rotate(-12deg);border:3px solid #c4161c;outline:1.5px solid #c4161c;outline-offset:3px;color:#c4161c;background:#f3eee4;font-family:'Anton',Impact,sans-serif;font-size:max(18px,13cqw);letter-spacing:.06em;padding:2px 14px;text-transform:uppercase">Épuisé</span>
+      </div>
+    </sc-if>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+    <div style="display:flex;justify-content:space-between;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#5b5750">
+      <span style="font-weight:600;color:#111010">{{it.format}}</span>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{it.label}}</span>
+    </div>
+    <a href="#" style="font-weight:800;font-size:16px;line-height:1.25;color:#111010;text-decoration:none;text-transform:uppercase;letter-spacing:.01em">{{it.artist}}</a>
+    <span style="font-size:15px;line-height:1.3;color:#3a3734">{{it.title}}</span>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px">
+      <span style="font-family:'Anton',Impact,sans-serif;font-size:22px;letter-spacing:.02em;text-decoration:{{priceDeco}}">{{it.price}} €</span>
+      <sc-if value="{{avail}}" hint-placeholder-val="{{true}}">
+        <button aria-label="Ajouter {{it.artist}}, {{it.title}} ({{it.format}}) au panier" style="width:44px;height:44px;display:grid;place-items:center;background:#111010;color:#f3eee4;border:0;border-radius:0;font-size:18px;cursor:pointer" style-hover="background:#c4161c"><i aria-hidden="true" class="bi bi-bag-plus"></i></button>
+      </sc-if>
+      <sc-if value="{{sold}}" hint-placeholder-val="{{false}}">
+        <button type="button" aria-label="M'alerter du retour en stock : {{it.title}}" style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#111010;background:none;border:2px solid #111010;padding:0 10px;display:flex;align-items:center;gap:6px;height:44px;cursor:pointer"><i aria-hidden="true" class="bi bi-bell"></i>M'alerter</button>
+      </sc-if>
+    </div>
+  </div>
+</article>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:260,&quot;height&quot;:420},&quot;item&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const it = this.props.item || { artist: 'Artiste', title: 'Titre', format: 'LP', price: '0,00', label: 'Label' };
+    const C = [
+      { bg: '#111010', fg: '#f3eee4' },
+      { bg: '#c4161c', fg: '#f3eee4' },
+      { bg: '#f3eee4', fg: '#111010', pat: 'url(tex-halftone.svg)' },
+      { bg: '#111010', fg: '#e8e1d3' },
+      { bg: '#e8e1d3', fg: '#c4161c', pat: 'url(tex-halftone.svg)' },
+      { bg: '#5b5750', fg: '#f3eee4' }
+    ];
+    const c = C[(it.cv || 0) % C.length];
+    const B = {
+      limit: { t: it.ltd ? 'Ltd ' + it.ltd + ' ex.' : 'Édition limitée', i: 'bi-hash', bg: '#111010', fg: '#f3eee4' },
+      used: { t: 'Occasion', i: 'bi-arrow-repeat', bg: '#f3eee4', fg: '#111010' },
+      new: { t: 'Nouveau', i: 'bi-asterisk', bg: '#c4161c', fg: '#f3eee4' },
+      pre: { t: 'Précommande', i: 'bi-clock', bg: '#f3eee4', fg: '#111010' }
+    };
+    const b = it.badges || [];
+    const sold = b.includes('sold');
+    return {
+      it, bg: c.bg, fg: c.fg, pat: c.pat || 'url(tex-grain.svg)',
+      face: sold ? 'grayscale(1)' : 'none', faceOp: sold ? 0.4 : 1,
+      badges: b.filter(x => B[x]).map(x => B[x]),
+      sold, avail: !sold, kbr: it.kbr || it.label,
+      priceDeco: sold ? 'line-through' : 'none'
+    };
+  }
+}
+</script>
+</body>
+</html>
