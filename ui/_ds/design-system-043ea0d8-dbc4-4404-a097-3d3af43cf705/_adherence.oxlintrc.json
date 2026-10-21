@@ -1,0 +1,162 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": []
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Neulis Alt|Ubuntu))/i]",
+        "message": "Font not provided by the design system. Available: Neulis Alt, Ubuntu."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {},
+    "tokens": [
+      "--lt-border",
+      "--lt-font-body",
+      "--lt-font-display",
+      "--lt-grey",
+      "--lt-grey-dark",
+      "--lt-grey-extra-light",
+      "--lt-grey-light",
+      "--lt-info-bg",
+      "--lt-info-fg",
+      "--lt-ink",
+      "--lt-leading-normal",
+      "--lt-leading-tight",
+      "--lt-leaf",
+      "--lt-leaf-bl",
+      "--lt-leaf-br",
+      "--lt-leaf-tl",
+      "--lt-leaf-tr",
+      "--lt-negative-bg",
+      "--lt-negative-fg",
+      "--lt-orange",
+      "--lt-orange-hover",
+      "--lt-orange-tint",
+      "--lt-radius-lg",
+      "--lt-radius-md",
+      "--lt-radius-sm",
+      "--lt-secondary",
+      "--lt-shadow-card",
+      "--lt-space-1",
+      "--lt-space-2",
+      "--lt-space-3",
+      "--lt-space-4",
+      "--lt-space-5",
+      "--lt-space-6",
+      "--lt-space-7",
+      "--lt-surface-alt",
+      "--lt-text",
+      "--lt-text-body",
+      "--lt-text-display",
+      "--lt-text-h1",
+      "--lt-text-h2",
+      "--lt-text-h3",
+      "--lt-text-label",
+      "--lt-text-muted",
+      "--lt-text-small",
+      "--lt-text-stat",
+      "--lt-tracking-label",
+      "--lt-underline-gap",
+      "--lt-underline-h",
+      "--lt-underline-w",
+      "--lt-weight-bold",
+      "--lt-weight-medium",
+      "--lt-weight-regular",
+      "--lt-white"
+    ],
+    "tokenKinds": {
+      "--lt-orange": "color",
+      "--lt-orange-hover": "color",
+      "--lt-orange-tint": "color",
+      "--lt-secondary": "color",
+      "--lt-ink": "color",
+      "--lt-white": "color",
+      "--lt-grey-extra-light": "color",
+      "--lt-grey-light": "color",
+      "--lt-grey": "color",
+      "--lt-grey-dark": "color",
+      "--lt-text": "font",
+      "--lt-surface-alt": "color",
+      "--lt-border": "color",
+      "--lt-text-muted": "font",
+      "--lt-negative-bg": "color",
+      "--lt-negative-fg": "color",
+      "--lt-info-bg": "color",
+      "--lt-info-fg": "color",
+      "--lt-font-display": "font",
+      "--lt-font-body": "font",
+      "--lt-weight-regular": "font",
+      "--lt-weight-medium": "font",
+      "--lt-weight-bold": "font",
+      "--lt-text-display": "font",
+      "--lt-text-stat": "font",
+      "--lt-text-h1": "font",
+      "--lt-text-h2": "font",
+      "--lt-text-h3": "font",
+      "--lt-text-body": "font",
+      "--lt-text-small": "font",
+      "--lt-text-label": "font",
+      "--lt-leading-tight": "font",
+      "--lt-leading-normal": "font",
+      "--lt-tracking-label": "font",
+      "--lt-space-1": "spacing",
+      "--lt-space-2": "spacing",
+      "--lt-space-3": "spacing",
+      "--lt-space-4": "spacing",
+      "--lt-space-5": "spacing",
+      "--lt-space-6": "spacing",
+      "--lt-space-7": "spacing",
+      "--lt-radius-sm": "radius",
+      "--lt-radius-md": "radius",
+      "--lt-radius-lg": "radius",
+      "--lt-leaf": "other",
+      "--lt-leaf-tl": "other",
+      "--lt-leaf-tr": "other",
+      "--lt-leaf-br": "other",
+      "--lt-leaf-bl": "other",
+      "--lt-underline-w": "spacing",
+      "--lt-underline-h": "spacing",
+      "--lt-underline-gap": "spacing",
+      "--lt-shadow-card": "shadow"
+    },
+    "fontFamilies": [
+      "Neulis Alt",
+      "Ubuntu"
+    ]
+  }
+}

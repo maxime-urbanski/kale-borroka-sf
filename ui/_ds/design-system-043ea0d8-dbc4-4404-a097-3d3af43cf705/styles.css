@@ -1,0 +1,46 @@
+/* Les-Tilleuls.coop design system — entry stylesheet.
+ * Rendered designs receive this file's @import closure. Everything below is
+ * reachable from here: fonts, then tokens, then base element styles.
+ */
+@import "./fonts/fonts.css";
+@import "./tokens/colors.css";
+@import "./tokens/typography.css";
+@import "./tokens/spacing.css";
+
+/* Base */
+html { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: inherit; }
+
+body {
+  margin: 0;
+  font-family: var(--lt-font-body);
+  font-size: var(--lt-text-body);
+  line-height: var(--lt-leading-normal);
+  color: var(--lt-text);
+  background: var(--lt-white);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--lt-font-display);
+  font-weight: var(--lt-weight-medium);
+  line-height: var(--lt-leading-tight);
+  color: var(--lt-ink);
+  margin: 0 0 var(--lt-space-3);
+}
+h1 { font-size: var(--lt-text-h1); }
+h2 { font-size: var(--lt-text-h2); }
+h3 { font-size: var(--lt-text-h3); }
+
+a { color: var(--lt-orange); }
+a:hover { color: var(--lt-orange-hover); }
+
+/* Primary action — pill button with the brand orange */
+.lt-btn {
+  display: inline-flex; align-items: center; gap: var(--lt-space-2);
+  font-family: var(--lt-font-display); font-weight: var(--lt-weight-medium);
+  text-transform: uppercase; letter-spacing: var(--lt-tracking-label);
+  color: var(--lt-white); background: var(--lt-orange);
+  border: 0; border-radius: var(--lt-leaf-tr); padding: var(--lt-space-3) var(--lt-space-5);
+  cursor: pointer;
+}
+.lt-btn:hover { background: var(--lt-orange-hover); }

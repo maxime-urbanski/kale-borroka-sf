@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="_ds/design-system-043ea0d8-dbc4-4404-a097-3d3af43cf705/_ds_bundle.js"></script>
+<style>body{margin:0;background:#cfc8bb}*{box-sizing:border-box}:focus-visible{outline:3px solid #111010!important;outline-offset:3px;box-shadow:0 0 0 3px #f3eee4}::placeholder{color:#5b5750;opacity:1}@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}a{color:#111010}a:hover{color:#c4161c}button{font-family:inherit}</style>
+</helmet>
+<div style="padding:80px;display:flex;flex-direction:column;gap:140px;font-family:'Archivo',system-ui,sans-serif;color:#111010">
+
+<!-- ACCUEIL -->
+<section style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:.1em;text-transform:uppercase">Maquette 01</span>
+    <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-size:80px;line-height:1;text-transform:uppercase">Accueil</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5">La prochaine sortie en affiche, les dernières prod numérotées, le manifeste, puis les arrivages distro filtrables par support en un tap.</p>
+  </div>
+  <div style="display:flex;gap:64px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Desktop · 1440</span>
+      <div data-screen-label="Accueil desktop" style="width:1440px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" mega="{{true}}" hint-size="100%,134px"></dc-import>
+        <section style="position:relative;background:#e8e1d3 url(tex-grain.svg);border-bottom:3px solid #111010;padding:72px 40px 80px;display:grid;grid-template-columns:540px 1fr;gap:72px;align-items:center">
+          <div style="position:relative">
+            <div style="aspect-ratio:1/1;background:#c4161c url(tex-grain.svg);border:3px solid #111010;box-shadow:14px 14px 0 #111010;padding:40px;display:flex;flex-direction:column;justify-content:space-between;color:#111010">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:16px;letter-spacing:.1em">KBR#024</span>
+              <span style="display:flex;flex-direction:column;gap:12px"><span style="font-family:'Anton',Impact,sans-serif;font-size:150px;line-height:.85;text-transform:uppercase">Hautsa</span><span style="font-family:'IBM Plex Mono',monospace;font-size:16px;text-transform:uppercase;letter-spacing:.06em">Kale Hotsak — LP 12"</span></span>
+            </div>
+            <div style="position:absolute;top:-16px;left:48px;width:150px;height:36px;background:rgba(243,238,228,.78);transform:rotate(-7deg)"></div>
+            <div style="position:absolute;bottom:-6px;right:-30px;width:130px;height:36px;background:rgba(243,238,228,.78);transform:rotate(-38deg)"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:24px;max-width:640px">
+            <span style="align-self:flex-start;transform:rotate(-3deg);border:3px solid #c4161c;outline:1.5px solid #c4161c;outline-offset:3px;color:#c4161c;font-family:'Anton',Impact,sans-serif;font-size:22px;letter-spacing:.08em;padding:4px 14px;text-transform:uppercase">Précommande · sortie le 14.11</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:.1em;text-transform:uppercase">Prochaine sortie du label</span>
+            <h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:120px;line-height:.98;text-transform:uppercase">Hautsa<br><span style="color:#c4161c">Kale Hotsak</span></h1>
+            <p style="margin:0;font-size:19px;line-height:1.55;max-width:52ch;text-wrap:pretty">Dix titres enregistrés live, sans retouche. Premier album du quatuor, entre oi! mélodique et punk basque à l'ancienne.</p>
+            <dl style="margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 24px;font-family:'IBM Plex Mono',monospace;font-size:14px;text-transform:uppercase;letter-spacing:.04em">
+              <dt style="color:#5b5750">Format</dt><dd style="margin:0">LP 12" · 33 tours</dd>
+              <dt style="color:#5b5750">Vinyle</dt><dd style="margin:0">Rouge transparent</dd>
+              <dt style="color:#5b5750">Tirage</dt><dd style="margin:0">300 ex. numérotés à la main</dd>
+            </dl>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <button style="height:56px;padding:0 28px;display:flex;align-items:center;gap:10px;background:#c4161c;color:#f3eee4;border:0;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.06em;cursor:pointer" style-hover="background:#9e1116"><i aria-hidden="true" class="bi bi-bag-plus"></i>Précommander — 22,00 €</button>
+              <a href="#" style="height:56px;padding:0 24px;display:flex;align-items:center;gap:10px;border:2px solid #111010;color:#111010;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.06em;text-decoration:none">Écouter sur Bandcamp <i aria-hidden="true" class="bi bi-box-arrow-up-right"></i></a>
+            </div>
+          </div>
+        </section>
+        <section style="padding:72px 40px">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:36px">
+            <h2 style="margin:0;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:56px;line-height:1;padding:10px 20px 8px;text-transform:uppercase;letter-spacing:.02em;transform:rotate(-1.2deg)">Dernières prod</h2>
+            <a href="#" style="display:flex;align-items:center;gap:8px;min-height:44px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:14px">Tout le catalogue du label <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px">
+            <sc-for list="{{prods}}" as="p" hint-placeholder-count="4"><dc-import name="KbrCard" item="{{p}}" hint-size="100%,440px"></dc-import></sc-for>
+          </div>
+        </section>
+        <section style="background:#111010 url(tex-grain.svg);color:#f3eee4;padding:88px 40px;display:grid;grid-template-columns:1.35fr 1fr;gap:72px;align-items:end">
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <span style="display:flex;align-items:center;gap:12px;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#d8d1c4"><span style="display:flex;width:36px;height:10px"><span style="flex:1;background:#c4161c"></span><span style="flex:1;background:#00843d"></span><span style="flex:1;background:#f3eee4"></span></span>Le label</span>
+            <h2 style="margin:0;display:flex;flex-direction:column;align-items:flex-start;gap:6px;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:92px;line-height:1;text-transform:uppercase"><span>Pas de patron.</span><span>Pas de pub.</span><span style="color:#111010;background:#f3eee4;padding:4px 12px 0;margin-top:8px">Pas de fachos.</span></h2>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <p style="margin:0;font-size:18px;line-height:1.6;color:#d8d1c4;text-wrap:pretty">On presse les disques des groupes qu'on aime, on distribue ceux des copains et on fait tourner les zines. Chaque vente finance la prochaine sortie.</p>
+            <a href="#" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:44px;color:#f3eee4;font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:14px">Lire le manifeste <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+          </div>
+        </section>
+        <section style="padding:72px 40px 88px">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:24px">
+            <h2 style="margin:0;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:56px;line-height:1;padding:10px 20px 8px;text-transform:uppercase;letter-spacing:.02em;transform:rotate(1deg)">Derniers articles</h2>
+            <a href="#" style="display:flex;align-items:center;gap:8px;min-height:44px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:14px">Tous les arrivages <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:32px">
+            <sc-for list="{{chips}}" as="c" hint-placeholder-count="7"><button aria-pressed="{{c.pr}}" style="height:44px;padding:0 18px;border:2px solid #111010;background:{{c.bg}};color:{{c.fg}};font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.05em;cursor:pointer">{{c.t}}</button></sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:24px">
+            <sc-for list="{{latest}}" as="p" hint-placeholder-count="6"><dc-import name="KbrCard" item="{{p}}" hint-size="100%,340px"></dc-import></sc-for>
+          </div>
+        </section>
+        <dc-import name="KbrFooter" hint-size="100%,300px"></dc-import>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Mobile · 390</span>
+      <div data-screen-label="Accueil mobile" style="width:390px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" mobile="{{true}}" hint-size="100%,67px"></dc-import>
+        <section style="background:#e8e1d3 url(tex-grain.svg);border-bottom:3px solid #111010;padding:28px 20px 36px;display:flex;flex-direction:column;gap:20px">
+          <div style="aspect-ratio:1/1;background:#c4161c url(tex-grain.svg);border:3px solid #111010;box-shadow:8px 8px 0 #111010;padding:22px;display:flex;flex-direction:column;justify-content:space-between;margin-right:8px">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em">KBR#024</span>
+            <span style="font-family:'Anton',Impact,sans-serif;font-size:84px;line-height:.85;text-transform:uppercase">Hautsa</span>
+          </div>
+          <span style="align-self:flex-start;transform:rotate(-3deg);border:3px solid #c4161c;color:#c4161c;font-family:'Anton',Impact,sans-serif;font-size:16px;letter-spacing:.08em;padding:3px 10px;text-transform:uppercase;margin-top:8px">Précommande · 14.11</span>
+          <h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:60px;line-height:1;text-transform:uppercase">Hautsa<br><span style="color:#c4161c">Kale Hotsak</span></h1>
+          <p style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.6;text-transform:uppercase">LP 12" · Rouge transparent<br>300 ex. numérotés</p>
+          <button style="height:56px;display:flex;align-items:center;justify-content:center;gap:10px;background:#c4161c;color:#f3eee4;border:0;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.06em"><i aria-hidden="true" class="bi bi-bag-plus"></i>Précommander — 22,00 €</button>
+        </section>
+        <section style="padding:36px 0 36px 20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding-right:20px;margin-bottom:20px">
+            <h2 style="margin:0;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:34px;line-height:1;padding:8px 14px 6px;text-transform:uppercase;transform:rotate(-1.2deg)">Dernières prod</h2>
+            <a href="#" aria-label="Toutes nos productions" style="width:44px;height:44px;display:grid;place-items:center;border:2px solid #111010;font-size:18px"><i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+          </div>
+          <div style="display:flex;gap:16px;overflow:hidden;padding-right:20px">
+            <sc-for list="{{prods}}" as="p" hint-placeholder-count="3"><div style="flex:none;width:168px"><dc-import name="KbrCard" item="{{p}}" hint-size="100%,300px"></dc-import></div></sc-for>
+          </div>
+        </section>
+        <section style="background:#111010 url(tex-grain.svg);color:#f3eee4;padding:44px 20px;display:flex;flex-direction:column;gap:18px">
+          <span style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#d8d1c4"><span style="display:flex;width:30px;height:8px"><span style="flex:1;background:#c4161c"></span><span style="flex:1;background:#00843d"></span><span style="flex:1;background:#f3eee4"></span></span>Le label</span>
+          <h2 style="margin:0;display:flex;flex-direction:column;align-items:flex-start;gap:4px;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:48px;line-height:1;text-transform:uppercase"><span>Pas de patron. Pas de pub.</span><span style="color:#111010;background:#f3eee4;padding:3px 8px 0;margin-top:6px">Pas de fachos.</span></h2>
+          <a href="#" style="display:flex;align-items:center;gap:8px;min-height:44px;color:#f3eee4;font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:14px">Lire le manifeste <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+        </section>
+        <section style="padding:36px 20px 44px;display:flex;flex-direction:column;gap:20px">
+          <h2 style="align-self:flex-start;margin:0;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:34px;line-height:1;padding:8px 14px 6px;text-transform:uppercase;transform:rotate(1deg)">Derniers articles</h2>
+          <div style="display:flex;gap:8px;overflow:hidden;margin-right:-20px">
+            <sc-for list="{{chips}}" as="c" hint-placeholder-count="5"><button aria-pressed="{{c.pr}}" style="flex:none;height:44px;padding:0 16px;border:2px solid #111010;background:{{c.bg}};color:{{c.fg}};font-weight:700;font-size:14px;text-transform:uppercase">{{c.t}}</button></sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px 16px">
+            <sc-for list="{{latest4}}" as="p" hint-placeholder-count="4"><dc-import name="KbrCard" item="{{p}}" hint-size="100%,300px"></dc-import></sc-for>
+          </div>
+          <a href="#" style="height:52px;display:flex;align-items:center;justify-content:center;gap:8px;border:2px solid #111010;font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:14px;text-decoration:none">Tous les arrivages <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+        </section>
+        <dc-import name="KbrFooter" mobile="{{true}}" hint-size="100%,420px"></dc-import>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Mobile · menu ouvert</span>
+      <div data-screen-label="Menu mobile" style="width:390px;height:844px;background:#111010 url(tex-grain.svg);color:#f3eee4;display:flex;flex-direction:column;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <div style="display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 8px 0 20px;border-bottom:1px solid #3a3734">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.1em;text-transform:uppercase">Menu</span>
+          <button aria-label="Fermer le menu" style="width:44px;height:44px;display:grid;place-items:center;background:#f3eee4;color:#111010;border:0;font-size:22px"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+        </div>
+        <nav style="display:flex;flex-direction:column;padding:8px 20px">
+          <a href="#" style="display:flex;justify-content:space-between;align-items:center;min-height:64px;border-bottom:1px solid #3a3734;color:#f3eee4;text-decoration:none;font-family:'Anton',Impact,sans-serif;font-size:36px;text-transform:uppercase">Nos productions <i aria-hidden="true" class="bi bi-arrow-right" style="font-size:22px"></i></a>
+          <button style="display:flex;justify-content:space-between;align-items:center;min-height:64px;background:none;border:0;color:#c4161c;padding:0;font-family:'Anton',Impact,sans-serif;font-size:36px;text-transform:uppercase;text-align:left" aria-expanded="true"><span style="color:#f3eee4;border-bottom:4px solid #c4161c">Catalogue</span><i aria-hidden="true" class="bi bi-dash-lg" style="font-size:22px;color:#f3eee4"></i></button>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;padding:4px 0 16px;border-bottom:1px solid #3a3734">
+            <sc-for list="{{formats}}" as="f" hint-placeholder-count="8"><a href="#" style="display:flex;justify-content:space-between;align-items:center;min-height:48px;color:#f3eee4;text-decoration:none;font-size:17px;font-weight:600">{{f.n}}<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#b9b2a6">{{f.c}}</span></a></sc-for>
+          </div>
+          <a href="#" style="display:flex;align-items:center;gap:12px;min-height:56px;color:#f3eee4;text-decoration:none;font-size:17px;font-weight:700;border-bottom:1px solid #3a3734"><i aria-hidden="true" class="bi bi-person" style="font-size:20px"></i>Connexion / Inscription</a>
+          <a href="#" style="display:flex;align-items:center;gap:12px;min-height:56px;color:#f3eee4;text-decoration:none;font-size:17px;font-weight:700"><i aria-hidden="true" class="bi bi-bag" style="font-size:20px"></i>Panier <span style="padding:1px 7px;background:#c4161c;font-family:'IBM Plex Mono',monospace;font-size:12px">3</span></a>
+        </nav>
+        <div style="margin-top:auto;padding:20px;display:flex;gap:8px;border-top:1px solid #3a3734">
+          <a href="#" aria-label="Instagram" style="width:44px;height:44px;display:grid;place-items:center;border:2px solid #f3eee4;color:#f3eee4"><i aria-hidden="true" class="bi bi-instagram"></i></a>
+          <a href="#" aria-label="Facebook" style="width:44px;height:44px;display:grid;place-items:center;border:2px solid #f3eee4;color:#f3eee4"><i aria-hidden="true" class="bi bi-facebook"></i></a>
+          <a href="#" aria-label="Bandcamp" style="width:44px;height:44px;display:grid;place-items:center;border:2px solid #f3eee4;color:#f3eee4"><i aria-hidden="true" class="bi bi-vinyl"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATALOGUE -->
+<section style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:.1em;text-transform:uppercase">Maquette 02</span>
+    <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-size:80px;line-height:1;text-transform:uppercase">Catalogue par support</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5">Onglets de supports pour sauter de LP à K7 sans repasser par le menu. Filtres en accordéon, pastilles retirables, compteurs par valeur. Sur mobile, panneau latéral avec bouton de résultats collant.</p>
+  </div>
+  <div style="display:flex;gap:64px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Desktop · 1440</span>
+      <div data-screen-label="Catalogue desktop" style="width:1440px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" active="cat" hint-size="100%,134px"></dc-import>
+        <div style="padding:28px 40px 0;display:flex;flex-direction:column;gap:20px">
+          <nav aria-label="Fil d'Ariane" style="display:flex;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.06em"><a href="#">Accueil</a><span>/</span><a href="#">Catalogue</a><span>/</span><span aria-current="page" style="font-weight:600">Vinyles LP</span></nav>
+          <div style="display:flex;align-items:baseline;gap:20px"><h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:88px;line-height:.95;text-transform:uppercase">Vinyles LP</h1><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;text-transform:uppercase">148 références</span></div>
+          <div style="display:flex;border-bottom:3px solid #111010">
+            <sc-for list="{{tabs}}" as="t" hint-placeholder-count="8"><a href="#" aria-current="{{t.cur}}" style="display:flex;align-items:center;height:48px;padding:0 18px;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.05em;text-decoration:none;background:{{t.bg}};color:{{t.fg}}">{{t.t}}</a></sc-for>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:290px 1fr;gap:48px;padding:32px 40px 72px">
+          <aside style="display:flex;flex-direction:column">
+            <sc-for list="{{filters}}" as="f" hint-placeholder-count="6">
+              <div style="border-top:2px solid #111010">
+                <button aria-expanded="{{f.open}}" style="width:100%;height:52px;display:flex;justify-content:space-between;align-items:center;background:none;border:0;padding:0;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:#111010;cursor:pointer">{{f.t}}<span style="display:flex;align-items:center;gap:10px"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500">{{f.n}}</span><i aria-hidden="true" class="bi {{f.icon}}"></i></span></button>
+                <div style="display:{{f.disp}};flex-direction:column;padding-bottom:14px">
+                  <sc-for list="{{f.opts}}" as="o" hint-placeholder-count="3">
+                    <label style="display:flex;align-items:center;gap:12px;min-height:40px;font-size:15px;cursor:pointer"><span role="checkbox" aria-checked="{{o.ac}}" tabindex="0" style="width:22px;height:22px;flex:none;border:2px solid #111010;background:{{o.bg}};color:#f3eee4;display:grid;place-items:center;font-size:14px"><i aria-hidden="true" class="bi bi-check-lg" style="visibility:{{o.vis}}"></i></span><span style="flex:1;font-weight:{{o.w}}">{{o.t}}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5b5750">{{o.c}}</span></label>
+                  </sc-for>
+                  <sc-if value="{{f.price}}" hint-placeholder-val="{{false}}">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                      <label style="display:flex;flex-direction:column;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase">Min<span style="height:44px;border:2px solid #111010;display:flex;align-items:center;padding:0 12px;font-family:'Archivo',sans-serif;font-size:15px;text-transform:none">0 €</span></label>
+                      <label style="display:flex;flex-direction:column;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase">Max<span style="height:44px;border:2px solid #111010;display:flex;align-items:center;padding:0 12px;font-family:'Archivo',sans-serif;font-size:15px;text-transform:none">30 €</span></label>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{f.toggle}}" hint-placeholder-val="{{false}}">
+                    <label style="display:flex;align-items:center;justify-content:space-between;min-height:44px;font-size:15px">Masquer les épuisés<span style="width:48px;height:28px;background:#111010;padding:3px;display:flex;justify-content:flex-end"><span style="width:22px;height:22px;background:#f3eee4"></span></span></label>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </aside>
+          <div style="display:flex;flex-direction:column;gap:28px;min-width:0">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:24px">
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                <sc-for list="{{pills}}" as="p" hint-placeholder-count="3"><button aria-label="Retirer le filtre {{p}}" style="height:44px;padding:0 10px 0 16px;display:flex;align-items:center;gap:10px;background:#111010;color:#f3eee4;border:0;font-weight:700;font-size:14px;cursor:pointer">{{p}}<i aria-hidden="true" class="bi bi-x-lg" style="font-size:13px"></i></button></sc-for>
+                <button style="height:44px;padding:0 12px;background:none;border:0;font-weight:700;font-size:14px;text-decoration:underline;text-underline-offset:4px;cursor:pointer">Tout effacer</button>
+              </div>
+              <label style="display:flex;align-items:center;gap:12px;font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;flex:none">Trier<span style="height:44px;min-width:200px;border:2px solid #111010;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-family:'Archivo',sans-serif;font-size:15px;text-transform:none;font-weight:600">Nouveautés <i aria-hidden="true" class="bi bi-chevron-down"></i></span></label>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:40px 28px">
+              <sc-for list="{{cat}}" as="p" hint-placeholder-count="12"><dc-import name="KbrCard" item="{{p}}" hint-size="100%,400px"></dc-import></sc-for>
+            </div>
+            <nav aria-label="Pagination" style="display:flex;justify-content:space-between;align-items:center;border-top:2px solid #111010;padding-top:24px">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase">1–12 sur 42 résultats</span>
+              <div style="display:flex;gap:6px">
+                <span aria-disabled="true" style="width:44px;height:44px;display:grid;place-items:center;border:2px solid #b9b2a6;color:#8a857c"><i aria-hidden="true" class="bi bi-arrow-left"></i></span>
+                <sc-for list="{{pages}}" as="pg" hint-placeholder-count="5"><a href="#" aria-current="{{pg.cur}}" aria-label="Page {{pg.t}}" style="min-width:44px;height:44px;display:grid;place-items:center;border:2px solid {{pg.bd}};background:{{pg.bg}};color:{{pg.fg}};font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;text-decoration:none">{{pg.t}}</a></sc-for>
+                <a href="#" aria-label="Page suivante" style="width:44px;height:44px;display:grid;place-items:center;border:2px solid #111010;color:#111010"><i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+              </div>
+            </nav>
+          </div>
+        </div>
+        <dc-import name="KbrFooter" hint-size="100%,300px"></dc-import>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Mobile · 390</span>
+      <div data-screen-label="Catalogue mobile" style="width:390px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" mobile="{{true}}" hint-size="100%,67px"></dc-import>
+        <div style="padding:20px 20px 0;display:flex;flex-direction:column;gap:10px">
+          <nav aria-label="Fil d'Ariane" style="display:flex;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase"><a href="#">Catalogue</a><span>/</span><span aria-current="page" style="font-weight:600">LP</span></nav>
+          <div style="display:flex;align-items:baseline;justify-content:space-between"><h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:52px;line-height:1;text-transform:uppercase">Vinyles LP</h1><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">42 RÉS.</span></div>
+        </div>
+        <div style="position:sticky;top:0;background:#f3eee4;padding:14px 20px;display:grid;grid-template-columns:1fr 1fr;gap:10px;border-bottom:2px solid #111010">
+          <button style="height:48px;display:flex;align-items:center;justify-content:center;gap:8px;background:#111010;color:#f3eee4;border:0;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.05em"><i aria-hidden="true" class="bi bi-sliders"></i>Filtres (3)</button>
+          <button style="height:48px;display:flex;align-items:center;justify-content:center;gap:8px;background:none;border:2px solid #111010;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.05em"><i aria-hidden="true" class="bi bi-arrow-down-up"></i>Nouveautés</button>
+        </div>
+        <div style="display:flex;gap:8px;padding:14px 0 0 20px;overflow:hidden">
+          <sc-for list="{{pills}}" as="p" hint-placeholder-count="3"><button style="flex:none;height:44px;padding:0 10px 0 14px;display:flex;align-items:center;gap:8px;background:#111010;color:#f3eee4;border:0;font-weight:700;font-size:14px">{{p}}<i aria-hidden="true" class="bi bi-x-lg" style="font-size:12px"></i></button></sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px 16px;padding:20px">
+          <sc-for list="{{cat6}}" as="p" hint-placeholder-count="6"><dc-import name="KbrCard" item="{{p}}" hint-size="100%,300px"></dc-import></sc-for>
+        </div>
+        <nav aria-label="Pagination" style="display:flex;justify-content:space-between;align-items:center;padding:8px 20px 36px">
+          <span aria-disabled="true" style="width:48px;height:48px;display:grid;place-items:center;border:2px solid #b9b2a6;color:#8a857c"><i aria-hidden="true" class="bi bi-arrow-left"></i></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;text-transform:uppercase">Page 1 / 4</span>
+          <a href="#" aria-label="Page suivante" style="width:48px;height:48px;display:grid;place-items:center;background:#111010;color:#f3eee4"><i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+        </nav>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Mobile · panneau filtres</span>
+      <div data-screen-label="Filtres mobile" style="width:390px;height:844px;display:flex;box-shadow:0 30px 60px rgba(17,16,16,.25);background:#f3eee4">
+        <div style="width:44px;background:rgba(17,16,16,.72)"></div>
+        <div style="flex:1;display:flex;flex-direction:column;background:#f3eee4;border-left:3px solid #111010;min-width:0">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 8px 12px 20px;border-bottom:3px solid #111010">
+            <span style="font-family:'Anton',Impact,sans-serif;font-size:32px;text-transform:uppercase">Filtres</span>
+            <button aria-label="Fermer les filtres" style="width:44px;height:44px;display:grid;place-items:center;background:none;border:2px solid #111010;font-size:18px"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:0 20px">
+            <sc-for list="{{filtersM}}" as="f" hint-placeholder-count="5">
+              <div style="border-bottom:2px solid #111010">
+                <button aria-expanded="{{f.open}}" style="width:100%;height:56px;display:flex;justify-content:space-between;align-items:center;background:none;border:0;padding:0;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.05em;color:#111010">{{f.t}}<span style="display:flex;align-items:center;gap:10px"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500">{{f.n}}</span><i aria-hidden="true" class="bi {{f.icon}}"></i></span></button>
+                <div style="display:{{f.disp}};flex-direction:column;padding-bottom:12px">
+                  <sc-for list="{{f.opts}}" as="o" hint-placeholder-count="3">
+                    <label style="display:flex;align-items:center;gap:12px;min-height:44px;font-size:16px"><span role="checkbox" aria-checked="{{o.ac}}" tabindex="0" style="width:24px;height:24px;flex:none;border:2px solid #111010;background:{{o.bg}};color:#f3eee4;display:grid;place-items:center"><i aria-hidden="true" class="bi bi-check-lg" style="visibility:{{o.vis}}"></i></span><span style="flex:1;font-weight:{{o.w}}">{{o.t}}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5b5750">{{o.c}}</span></label>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:10px;padding:14px 20px;border-top:3px solid #111010;background:#f3eee4">
+            <button style="height:52px;padding:0 16px;background:none;border:2px solid #111010;font-weight:800;font-size:14px;text-transform:uppercase">Effacer</button>
+            <button style="height:52px;background:#c4161c;color:#f3eee4;border:0;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.05em">Voir 42 résultats</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FICHE DISQUE -->
+<section style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:.1em;text-transform:uppercase">Maquette 03</span>
+    <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-size:80px;line-height:1;text-transform:uppercase">Fiche article — disque</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5">Le pressage au premier plan (couleur, tirage, réf.), stock bas signalé par icône + texte, wantlist et collection en boutons POST (connecté). Sur mobile, barre d'achat collante.</p>
+  </div>
+  <div style="display:flex;gap:64px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Desktop · 1440 · connecté</span>
+      <div data-screen-label="Fiche disque desktop" style="width:1440px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" active="prod" logged="{{true}}" hint-size="100%,134px"></dc-import>
+        <div style="padding:24px 40px 0"><nav aria-label="Fil d'Ariane" style="display:flex;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.06em"><a href="#">Accueil</a><span>/</span><a href="#">Nos productions</a><span>/</span><span aria-current="page" style="font-weight:600">KBR#024 Hautsa — Kale Hotsak</span></nav></div>
+        <div style="display:grid;grid-template-columns:620px 1fr;gap:72px;padding:32px 40px 72px">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="aspect-ratio:1/1;background:#c4161c url(tex-grain.svg);border:3px solid #111010;padding:44px;display:flex;flex-direction:column;justify-content:space-between">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:16px;letter-spacing:.1em">KBR#024</span>
+              <span style="font-family:'Anton',Impact,sans-serif;font-size:170px;line-height:.85;text-transform:uppercase">Hautsa</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,96px);gap:12px">
+              <span style="aspect-ratio:1/1;background:#c4161c;border:3px solid #111010;outline:3px solid #c4161c;outline-offset:2px"></span>
+              <span style="aspect-ratio:1/1;background:#111010 url(tex-grain.svg);border:2px solid #111010"></span>
+              <span style="aspect-ratio:1/1;background:#e8e1d3 url(tex-halftone.svg);border:2px solid #111010"></span>
+              <span style="aspect-ratio:1/1;background:#f3eee4;border:2px solid #111010;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase">Vinyle</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:22px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <span style="padding:6px 10px;background:#111010;color:#f3eee4;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">LP 12"</span>
+              <span style="padding:4px 10px;border:2px solid #111010;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">KBR#024</span>
+              <span style="padding:4px 10px;border:2px solid #111010;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;display:flex;gap:6px;align-items:center"><i aria-hidden="true" class="bi bi-hash"></i>Limité à 300 ex.</span>
+            </div>
+            <div>
+              <h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:104px;line-height:.9;text-transform:uppercase">Hautsa</h1>
+              <p style="margin:8px 0 0;font-weight:800;font-size:32px;line-height:1.15">Kale Hotsak</p>
+            </div>
+            <div style="display:flex;gap:8px"><a href="#" style="font-size:15px;font-weight:600">Punk</a><span>·</span><a href="#" style="font-size:15px;font-weight:600">Oi!</a><span>·</span><a href="#" style="font-size:15px;font-weight:600">Euskal punk</a></div>
+            <div style="display:flex;align-items:baseline;gap:16px;border-top:3px solid #111010;padding-top:20px"><span style="font-family:'Anton',Impact,sans-serif;font-size:60px;line-height:1">22,00 €</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase">TTC · expédié sous 48 h</span></div>
+            <div role="status" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px dashed #111010;font-weight:600;font-size:15px;align-self:flex-start"><i aria-hidden="true" class="bi bi-exclamation-triangle-fill"></i>Plus que 27 exemplaires sur 300</div>
+            <form style="display:flex;gap:12px">
+              <div style="display:flex;border:2px solid #111010;height:56px"><button type="button" aria-label="Diminuer" style="width:52px;background:none;border:0;font-size:18px"><i aria-hidden="true" class="bi bi-dash-lg"></i></button><span style="width:52px;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;border-left:2px solid #111010;border-right:2px solid #111010">1</span><button type="button" aria-label="Augmenter" style="width:52px;background:none;border:0;font-size:18px"><i aria-hidden="true" class="bi bi-plus-lg"></i></button></div>
+              <button style="flex:1;height:56px;display:flex;align-items:center;justify-content:center;gap:10px;background:#c4161c;color:#f3eee4;border:0;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.06em;cursor:pointer" style-hover="background:#9e1116"><i aria-hidden="true" class="bi bi-bag-plus"></i>Ajouter au panier</button>
+            </form>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <button style="height:48px;display:flex;align-items:center;justify-content:center;gap:8px;background:none;border:2px solid #111010;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer"><i aria-hidden="true" class="bi bi-heart"></i>Ajouter à la wantlist</button>
+              <button style="height:48px;display:flex;align-items:center;justify-content:center;gap:8px;background:#111010;color:#f3eee4;border:2px solid #111010;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer"><i aria-hidden="true" class="bi bi-check2-square"></i>Dans ma collection</button>
+            </div>
+            <dl style="margin:0;display:grid;grid-template-columns:150px 1fr;font-family:'IBM Plex Mono',monospace;font-size:14px;text-transform:uppercase;letter-spacing:.03em">
+              <sc-for list="{{press}}" as="r" hint-placeholder-count="7"><dt style="padding:9px 0;border-bottom:1px solid #b9b2a6;color:#5b5750">{{r.k}}</dt><dd style="margin:0;padding:9px 0;border-bottom:1px solid #b9b2a6;font-weight:500">{{r.v}}</dd></sc-for>
+            </dl>
+          </div>
+        </div>
+        <div style="background:#e8e1d3 url(tex-grain.svg);border-top:3px solid #111010;border-bottom:3px solid #111010;padding:64px 40px;display:grid;grid-template-columns:1fr 1fr;gap:72px">
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:44px;text-transform:uppercase">Le disque</h2>
+            <p style="margin:0;font-size:18px;line-height:1.65;max-width:60ch;text-wrap:pretty">Enregistré en deux jours dans une salle de répét', mixé à l'arrache et c'est tant mieux. Hautsa chante en euskara et en français, entre refrains de stade et colère froide.</p>
+            <p style="margin:0;font-size:18px;line-height:1.65;max-width:60ch;text-wrap:pretty">Pochette sérigraphiée à la main, insert avec paroles et traductions, code de téléchargement.</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:44px;text-transform:uppercase">Tracklist</h2>
+            <ol style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column">
+              <sc-for list="{{tracks}}" as="t" hint-placeholder-count="10"><li style="display:grid;grid-template-columns:48px 1fr auto;gap:12px;padding:10px 0;border-bottom:1px solid #8a857c;font-size:16px"><span style="font-family:'IBM Plex Mono',monospace;font-weight:600">{{t.n}}</span><span>{{t.t}}</span><span style="font-family:'IBM Plex Mono',monospace;color:#3a3734">{{t.d}}</span></li></sc-for>
+            </ol>
+          </div>
+        </div>
+        <section style="padding:64px 40px 32px">
+          <h2 style="margin:0 0 28px;display:inline-block;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:40px;line-height:1;padding:8px 16px 6px;text-transform:uppercase;transform:rotate(-1deg)">Autres pressages</h2>
+          <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:28px">
+            <sc-for list="{{pressings}}" as="p" hint-placeholder-count="3"><dc-import name="KbrCard" item="{{p}}" hint-size="100%,360px"></dc-import></sc-for>
+          </div>
+        </section>
+        <section style="padding:32px 40px 80px">
+          <h2 style="margin:0 0 28px;display:inline-block;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:40px;line-height:1;padding:8px 16px 6px;text-transform:uppercase;transform:rotate(.8deg)">Du même label</h2>
+          <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:28px">
+            <sc-for list="{{sameLabel}}" as="p" hint-placeholder-count="5"><dc-import name="KbrCard" item="{{p}}" hint-size="100%,360px"></dc-import></sc-for>
+          </div>
+        </section>
+        <dc-import name="KbrFooter" hint-size="100%,300px"></dc-import>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Mobile · 390 · connecté</span>
+      <div data-screen-label="Fiche disque mobile" style="position:relative;width:390px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" mobile="{{true}}" hint-size="100%,67px"></dc-import>
+        <div style="padding:16px 20px 0">
+          <div style="aspect-ratio:1/1;background:#c4161c url(tex-grain.svg);border:3px solid #111010;padding:24px;display:flex;flex-direction:column;justify-content:space-between">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em">KBR#024</span>
+            <span style="font-family:'Anton',Impact,sans-serif;font-size:92px;line-height:.85;text-transform:uppercase">Hautsa</span>
+          </div>
+          <div style="display:flex;justify-content:center;gap:8px;padding:12px 0"><span style="width:24px;height:4px;background:#111010"></span><span style="width:12px;height:4px;background:#b9b2a6"></span><span style="width:12px;height:4px;background:#b9b2a6"></span><span style="width:12px;height:4px;background:#b9b2a6"></span></div>
+        </div>
+        <div style="padding:4px 20px 24px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span style="padding:5px 8px;background:#111010;color:#f3eee4;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600">LP 12"</span>
+            <span style="padding:3px 8px;border:2px solid #111010;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600">KBR#024</span>
+            <span style="padding:3px 8px;border:2px solid #111010;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600">LTD 300 EX.</span>
+          </div>
+          <div><h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:60px;line-height:.9;text-transform:uppercase">Hautsa</h1><p style="margin:6px 0 0;font-weight:800;font-size:22px">Kale Hotsak</p></div>
+          <div style="font-size:15px;font-weight:600">Punk · Oi! · Euskal punk</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:2px dashed #111010;font-weight:600;font-size:14px"><i aria-hidden="true" class="bi bi-exclamation-triangle-fill"></i>Plus que 27 exemplaires sur 300</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button style="height:48px;display:flex;align-items:center;justify-content:center;gap:6px;background:none;border:2px solid #111010;font-weight:700;font-size:13px;text-transform:uppercase"><i aria-hidden="true" class="bi bi-heart"></i>Wantlist</button>
+            <button style="height:48px;display:flex;align-items:center;justify-content:center;gap:6px;background:#111010;color:#f3eee4;border:2px solid #111010;font-weight:700;font-size:13px;text-transform:uppercase"><i aria-hidden="true" class="bi bi-check2-square"></i>Collection</button>
+          </div>
+          <dl style="margin:0;display:grid;grid-template-columns:110px 1fr;font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase">
+            <sc-for list="{{press}}" as="r" hint-placeholder-count="7"><dt style="padding:8px 0;border-bottom:1px solid #b9b2a6;color:#5b5750">{{r.k}}</dt><dd style="margin:0;padding:8px 0;border-bottom:1px solid #b9b2a6">{{r.v}}</dd></sc-for>
+          </dl>
+          <div style="border-top:2px solid #111010;border-bottom:2px solid #111010">
+            <button aria-expanded="true" style="width:100%;height:56px;display:flex;justify-content:space-between;align-items:center;background:none;border:0;padding:0;font-family:'Anton',Impact,sans-serif;font-size:26px;text-transform:uppercase">Tracklist<i aria-hidden="true" class="bi bi-dash-lg" style="font-size:18px"></i></button>
+            <ol style="margin:0 0 12px;padding:0;list-style:none">
+              <sc-for list="{{tracks5}}" as="t" hint-placeholder-count="5"><li style="display:grid;grid-template-columns:40px 1fr auto;gap:8px;padding:9px 0;border-top:1px solid #b9b2a6;font-size:15px"><span style="font-family:'IBM Plex Mono',monospace;font-weight:600">{{t.n}}</span><span>{{t.t}}</span><span style="font-family:'IBM Plex Mono',monospace">{{t.d}}</span></li></sc-for>
+            </ol>
+          </div>
+          <div style="border-bottom:2px solid #111010"><button aria-expanded="false" style="width:100%;height:56px;display:flex;justify-content:space-between;align-items:center;background:none;border:0;padding:0;font-family:'Anton',Impact,sans-serif;font-size:26px;text-transform:uppercase">Le disque<i aria-hidden="true" class="bi bi-plus-lg" style="font-size:18px"></i></button></div>
+        </div>
+        <div style="padding:8px 0 110px 20px">
+          <h2 style="margin:0 0 16px;display:inline-block;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:28px;padding:6px 12px 4px;text-transform:uppercase;transform:rotate(-1deg)">Autres pressages</h2>
+          <div style="display:flex;gap:16px;overflow:hidden">
+            <sc-for list="{{pressings}}" as="p" hint-placeholder-count="3"><div style="flex:none;width:160px"><dc-import name="KbrCard" item="{{p}}" hint-size="100%,290px"></dc-import></div></sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:0;background:#111010;color:#f3eee4;padding:12px 16px 12px 20px;display:flex;align-items:center;gap:14px">
+          <span style="font-family:'Anton',Impact,sans-serif;font-size:30px;line-height:1">22,00 €</span>
+          <button style="flex:1;height:52px;display:flex;align-items:center;justify-content:center;gap:8px;background:#c4161c;color:#f3eee4;border:0;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.05em"><i aria-hidden="true" class="bi bi-bag-plus"></i>Ajouter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FICHE MERCH -->
+<section style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:.1em;text-transform:uppercase">Maquette 04</span>
+    <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-size:80px;line-height:1;text-transform:uppercase">Fiche article — merch</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5">Sélecteur de taille en grandes cases carrées ; taille épuisée barrée et libellée (pas seulement grisée). Le bouton d'ajout reste désactivé tant qu'aucune taille n'est choisie.</p>
+  </div>
+  <div style="display:flex;gap:64px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Desktop · 1440</span>
+      <div data-screen-label="Fiche merch desktop" style="width:1440px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" active="cat" hint-size="100%,134px"></dc-import>
+        <div style="padding:24px 40px 0"><nav aria-label="Fil d'Ariane" style="display:flex;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.06em"><a href="#">Accueil</a><span>/</span><a href="#">Catalogue</a><span>/</span><a href="#">Merch</a><span>/</span><span aria-current="page" style="font-weight:600">T-shirt Logo</span></nav></div>
+        <div style="display:grid;grid-template-columns:620px 1fr;gap:72px;padding:32px 40px 80px">
+          <div style="aspect-ratio:1/1;background:#111010 url(tex-grain.svg);border:3px solid #111010;padding:44px;display:flex;flex-direction:column;justify-content:space-between;color:#f3eee4">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:16px;letter-spacing:.1em">MERCH · LABEL</span>
+            <span style="font-family:'Anton',Impact,sans-serif;font-size:120px;line-height:.88;text-transform:uppercase">T-shirt<br><span style="color:#c4161c">Logo</span></span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:22px">
+            <div style="display:flex;gap:8px"><span style="padding:6px 10px;background:#111010;color:#f3eee4;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Merch</span><span style="padding:4px 10px;border:2px solid #111010;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;text-transform:uppercase">Sérigraphie</span></div>
+            <div><h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:96px;line-height:.9;text-transform:uppercase">T-shirt Logo</h1><p style="margin:8px 0 0;font-weight:800;font-size:28px">Kale Borroka Riot Records</p></div>
+            <div style="display:flex;align-items:baseline;gap:16px;border-top:3px solid #111010;padding-top:20px"><span style="font-family:'Anton',Impact,sans-serif;font-size:60px;line-height:1">18,00 €</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase">TTC</span></div>
+            <fieldset style="margin:0;padding:0;border:0;display:flex;flex-direction:column;gap:12px">
+              <legend style="display:flex;justify-content:space-between;width:100%;padding:0;margin-bottom:12px"><span style="font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.06em">Taille</span><a href="#" style="font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px"><i aria-hidden="true" class="bi bi-rulers"></i>Guide des tailles</a></legend>
+              <div style="display:grid;grid-template-columns:repeat(6,64px);gap:10px">
+                <sc-for list="{{sizes}}" as="s" hint-placeholder-count="6"><button aria-pressed="{{s.on}}" aria-disabled="{{s.off}}" style="position:relative;height:64px;border:2px solid {{s.bd}};background:{{s.bg}};color:{{s.fg}};font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:600;text-decoration:{{s.deco}};cursor:pointer;overflow:hidden">{{s.t}}</button></sc-for>
+              </div>
+              <span style="font-size:15px;display:flex;align-items:center;gap:8px"><i aria-hidden="true" class="bi bi-check-circle-fill"></i>Taille M — en stock. <span style="color:#3a3734">XXL épuisée.</span></span>
+            </fieldset>
+            <form style="display:flex;gap:12px">
+              <div style="display:flex;border:2px solid #111010;height:56px"><button type="button" aria-label="Diminuer" style="width:52px;background:none;border:0;font-size:18px"><i aria-hidden="true" class="bi bi-dash-lg"></i></button><span style="width:52px;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;border-left:2px solid #111010;border-right:2px solid #111010">1</span><button type="button" aria-label="Augmenter" style="width:52px;background:none;border:0;font-size:18px"><i aria-hidden="true" class="bi bi-plus-lg"></i></button></div>
+              <button style="flex:1;height:56px;display:flex;align-items:center;justify-content:center;gap:10px;background:#c4161c;color:#f3eee4;border:0;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.06em;cursor:pointer"><i aria-hidden="true" class="bi bi-bag-plus"></i>Ajouter au panier — M</button>
+            </form>
+            <dl style="margin:0;display:grid;grid-template-columns:150px 1fr;font-family:'IBM Plex Mono',monospace;font-size:14px;text-transform:uppercase">
+              <dt style="padding:9px 0;border-bottom:1px solid #b9b2a6;color:#5b5750">Matière</dt><dd style="margin:0;padding:9px 0;border-bottom:1px solid #b9b2a6">100 % coton bio, 180 g</dd>
+              <dt style="padding:9px 0;border-bottom:1px solid #b9b2a6;color:#5b5750">Impression</dt><dd style="margin:0;padding:9px 0;border-bottom:1px solid #b9b2a6">Sérigraphie 2 couleurs</dd>
+              <dt style="padding:9px 0;border-bottom:1px solid #b9b2a6;color:#5b5750">Coupe</dt><dd style="margin:0;padding:9px 0;border-bottom:1px solid #b9b2a6">Unisexe, droite</dd>
+            </dl>
+          </div>
+        </div>
+        <section style="padding:0 40px 80px">
+          <h2 style="margin:0 0 28px;display:inline-block;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:40px;line-height:1;padding:8px 16px 6px;text-transform:uppercase;transform:rotate(-1deg)">Autre merch</h2>
+          <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:28px">
+            <sc-for list="{{merch}}" as="p" hint-placeholder-count="4"><dc-import name="KbrCard" item="{{p}}" hint-size="100%,360px"></dc-import></sc-for>
+          </div>
+        </section>
+        <dc-import name="KbrFooter" hint-size="100%,300px"></dc-import>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Mobile · 390 · aucune taille choisie</span>
+      <div data-screen-label="Fiche merch mobile" style="position:relative;width:390px;height:844px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" mobile="{{true}}" hint-size="100%,67px"></dc-import>
+        <div style="padding:16px 20px;display:flex;flex-direction:column;gap:16px">
+          <div style="aspect-ratio:1/1;background:#111010 url(tex-grain.svg);border:3px solid #111010;padding:24px;display:flex;align-items:flex-end;color:#f3eee4"><span style="font-family:'Anton',Impact,sans-serif;font-size:64px;line-height:.88;text-transform:uppercase">T-shirt<br><span style="color:#c4161c">Logo</span></span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:40px;line-height:1;text-transform:uppercase">T-shirt Logo</h1><span style="font-family:'Anton',Impact,sans-serif;font-size:28px">18 €</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.06em">Taille</span><a href="#" style="font-size:14px;font-weight:600;min-height:44px;display:flex;align-items:center">Guide des tailles</a></div>
+          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px">
+            <sc-for list="{{sizesNone}}" as="s" hint-placeholder-count="6"><button style="height:52px;border:2px solid {{s.bd}};background:{{s.bg}};color:{{s.fg}};font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;text-decoration:{{s.deco}};padding:0">{{s.t}}</button></sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:0;background:#111010;color:#f3eee4;padding:12px 16px 12px 20px;display:flex;align-items:center;gap:14px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;color:#d8d1c4;flex:none">Choisis<br>une taille</span>
+          <button disabled="disabled" style="flex:1;height:52px;display:flex;align-items:center;justify-content:center;gap:8px;background:#3a3734;color:#b9b2a6;border:0;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.05em"><i aria-hidden="true" class="bi bi-bag-plus"></i>Ajouter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() { document.documentElement.lang = 'fr'; }
+  renderVals() {
+    const prods = [
+      { artist: 'Hautsa', title: 'Kale Hotsak', format: 'LP', price: '22,00', label: 'Kale Borroka', kbr: 'KBR#024', cv: 1, badges: ['pre'] },
+      { artist: 'Les Pavés Mouillés', title: 'Sous la plage', format: 'EP 7"', price: '7,00', label: 'Kale Borroka', kbr: 'KBR#023', cv: 0, badges: ['limit'], ltd: 200 },
+      { artist: 'Piztia', title: 'Gau Beltza', format: 'LP', price: '20,00', label: 'Kale Borroka', kbr: 'KBR#022', cv: 4, badges: ['sold'] },
+      { artist: 'Mugaz Gaindi', title: 'Ez da amaitu', format: 'CD', price: '9,00', label: 'Kale Borroka', kbr: 'KBR#021', cv: 3 }
+    ];
+    const latest = [
+      { artist: 'Burdina', title: 'Herri Txikia', format: 'CD', price: '10,00', label: 'Herri Hotsa', cv: 2, badges: ['new'] },
+      { artist: 'Sirène Noire', title: 'Demo 2026', format: 'K7', price: '6,00', label: 'Autoprod', cv: 3, badges: ['new'] },
+      { artist: 'Eskuz', title: 'Aurrera Beti', format: 'LP', price: '15,00', label: 'Txapa Records', cv: 1, badges: ['used'] },
+      { artist: 'Zirrikitu', title: 'Fanzine n°12', format: 'Fanzine', price: '3,00', label: 'Distro', cv: 5 },
+      { artist: 'Les Rats Taupes', title: 'Rien à perdre', format: 'EP 7"', price: '6,50', label: 'Pogo Distro', cv: 2, badges: ['limit'], ltd: 150 },
+      { artist: 'Gorria', title: 'Sweat Hautsa', format: 'Merch', price: '35,00', label: 'Hautsa', cv: 4 }
+    ];
+    const lp = (artist, title, price, label, cv, badges, kbr, ltd) => ({ artist, title, format: 'LP', price, label, cv, badges, kbr, ltd });
+    const cat = [
+      lp('Hautsa', 'Kale Hotsak', '22,00', 'Kale Borroka', 1, ['pre'], 'KBR#024'),
+      lp('Piztia', 'Gau Beltza', '20,00', 'Kale Borroka', 4, ['sold'], 'KBR#022'),
+      lp('Kontrol Ez', 'Ihesa', '21,00', 'Kale Borroka', 5, ['limit'], 'KBR#020', 250),
+      lp('Eskuz', 'Aurrera Beti', '15,00', 'Kale Borroka', 2, ['used'], 'KBR#017'),
+      lp('Sutondo', 'Ke Beltza', '19,00', 'Kale Borroka', 0, [], 'KBR#019'),
+      lp('Les Pavés Mouillés', 'Grève générale', '18,00', 'Kale Borroka', 3, [], 'KBR#016'),
+      lp('Hezurrak', 'Gure Bidea', '20,00', 'Kale Borroka', 1, ['limit'], 'KBR#015', 300),
+      lp('Txori Beltzak', 'Hegan', '17,00', 'Kale Borroka', 4, [], 'KBR#014'),
+      lp('Burdina', 'Lur Gorria', '19,50', 'Kale Borroka', 5, ['sold'], 'KBR#012'),
+      lp('Zarata', 'Ez Etsi', '16,00', 'Kale Borroka', 2, [], 'KBR#011'),
+      lp('Mugaz Gaindi', 'Lehen Hitza', '18,00', 'Kale Borroka', 0, ['used'], 'KBR#009'),
+      lp('Sirène Noire', 'Marée basse', '20,00', 'Kale Borroka', 3, [], 'KBR#008')
+    ];
+    const chk = (t, c, on) => ({ t, c, ac: on ? 'true' : 'false', bg: on ? '#111010' : 'transparent', vis: on ? 'visible' : 'hidden', w: on ? 700 : 400 });
+    const F = (t, open, n, opts, extra) => Object.assign({ t, open: open ? 'true' : 'false', n, opts: open ? opts : [], disp: open ? 'flex' : 'none', icon: open ? 'bi-dash-lg' : 'bi-plus-lg', price: false, toggle: false }, extra || {});
+    const filters = [
+      F('Style', true, '1', [chk('Punk', '92', true), chk('Oi!', '31'), chk('Hardcore', '44'), chk('Ska-punk', '12'), chk('Crust', '9'), chk('Post-punk', '17')]),
+      F('Label', true, '1', [chk('Kale Borroka', '24', true), chk('Herri Hotsa', '12'), chk('Txapa Records', '8'), chk('Pogo Distro', '6')]),
+      F('Artiste', false, '', []),
+      F('Prix', true, '', [], { price: true }),
+      F('État', false, '', []),
+      F('Disponibilité', true, '', [], { toggle: true })
+    ];
+    const filtersM = [
+      F('Support', false, 'LP', []),
+      F('Style', true, '1', [chk('Punk', '92', true), chk('Oi!', '31'), chk('Hardcore', '44'), chk('Crust', '9')]),
+      F('Label', true, '1', [chk('Kale Borroka', '24', true), chk('Herri Hotsa', '12'), chk('Txapa Records', '8')]),
+      F('Artiste', false, '', []), F('Prix', false, '', []), F('État', false, '', [])
+    ];
+    const tabs = ['Tout', 'LP', 'EP / 7"', 'CD', 'K7', 'Fanzines', 'Livres', 'Merch'].map(t => ({ t, cur: t === 'LP' ? 'page' : 'false', bg: t === 'LP' ? '#111010' : 'transparent', fg: t === 'LP' ? '#f3eee4' : '#111010' }));
+    const chips = ['Tout', 'Vinyles', 'CD', 'K7', 'Zines', 'Merch', 'Occasion'].map((t, i) => ({ t, pr: i === 0 ? 'true' : 'false', bg: i === 0 ? '#111010' : 'transparent', fg: i === 0 ? '#f3eee4' : '#111010' }));
+    const pages = ['1', '2', '3', '4'].map(t => ({ t, cur: t === '1' ? 'page' : 'false', bg: t === '1' ? '#111010' : 'transparent', fg: t === '1' ? '#f3eee4' : '#111010', bd: '#111010' }));
+    const tr = [['A1', 'Kale Hotsak', '2:41'], ['A2', 'Ez Gaude Salgai', '2:12'], ['A3', 'Nuit debout', '3:05'], ['A4', 'Harri eta Lore', '2:37'], ['A5', 'Sans patron', '1:58'], ['B1', 'Gaztetxe', '2:49'], ['B2', 'Mémoire vive', '3:14'], ['B3', 'Herria', '2:26'], ['B4', 'Bihar Arte', '2:55'], ['B5', 'Dernier métro', '4:02']].map(a => ({ n: a[0], t: a[1], d: a[2] }));
+    const press = [['Réf.', 'KBR#024'], ['Label', 'Kale Borroka'], ['Sortie', '2026'], ['Format', 'LP 12" · 33 tours'], ['Vinyle', 'Rouge transparent'], ['Édition', '1re édition, numérotée'], ['Tirage', 'Limité à 300 ex.']].map(a => ({ k: a[0], v: a[1] }));
+    const pressings = [
+      { artist: 'Hautsa', title: 'Kale Hotsak', format: 'LP noir', price: '20,00', label: 'Kale Borroka', kbr: 'KBR#024B', cv: 0, badges: ['sold'] },
+      { artist: 'Hautsa', title: 'Kale Hotsak', format: 'CD', price: '10,00', label: 'Kale Borroka', kbr: 'KBR#024CD', cv: 3 },
+      { artist: 'Hautsa', title: 'Kale Hotsak', format: 'K7', price: '7,00', label: 'Kale Borroka', kbr: 'KBR#024K7', cv: 5, badges: ['limit'], ltd: 100 }
+    ];
+    const sz = (sel) => ['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(t => {
+      const off = t === 'XXL', on = t === sel;
+      return { t, on: on ? 'true' : 'false', off: off ? 'true' : 'false', bg: on ? '#111010' : 'transparent', fg: off ? '#8a857c' : on ? '#f3eee4' : '#111010', bd: off ? '#b9b2a6' : '#111010', deco: off ? 'line-through' : 'none' };
+    });
+    const merch = [
+      { artist: 'Kale Borroka', title: 'Sweat capuche', format: 'Merch', price: '35,00', label: 'Label', cv: 3 },
+      { artist: 'Hautsa', title: 'T-shirt Kale Hotsak', format: 'Merch', price: '16,00', label: 'Hautsa', cv: 1 },
+      { artist: 'Kale Borroka', title: 'Tote bag', format: 'Merch', price: '10,00', label: 'Label', cv: 2 },
+      { artist: 'Piztia', title: 'Patch brodé', format: 'Merch', price: '5,00', label: 'Piztia', cv: 4, badges: ['sold'] }
+    ];
+    return {
+      prods, latest, latest4: latest.slice(0, 4), cat, cat6: cat.slice(0, 6),
+      filters, filtersM, tabs, chips, pages, pills: ['Punk', 'Kale Borroka', '0 – 30 €'],
+      formats: [{ n: 'Vinyles LP', c: '148' }, { n: 'EP / 7"', c: '64' }, { n: 'CD', c: '212' }, { n: 'Cassettes', c: '57' }, { n: 'Fanzines', c: '38' }, { n: 'Livres', c: '21' }, { n: 'Merch', c: '44' }, { n: 'Tout voir', c: '→' }],
+      tracks: tr, tracks5: tr.slice(0, 5), press, pressings, sameLabel: prods.slice(1).concat(cat.slice(2, 4)),
+      sizes: sz('M'), sizesNone: sz(''), merch
+    };
+  }
+}
+</script>
+</body>
+</html>

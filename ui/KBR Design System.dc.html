@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="_ds/design-system-043ea0d8-dbc4-4404-a097-3d3af43cf705/_ds_bundle.js"></script>
+<style>body{margin:0;background:#f3eee4}*{box-sizing:border-box}:focus-visible{outline:3px solid #111010!important;outline-offset:3px;box-shadow:0 0 0 3px #f3eee4}::placeholder{color:#5b5750;opacity:1}@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}a{color:#111010}a:hover{color:#c4161c}button{font-family:inherit}</style>
+</helmet>
+<div style="font-family:'Archivo',system-ui,sans-serif;color:#111010;background:#f3eee4">
+  <header style="background:#111010 url(tex-grain.svg);color:#f3eee4;padding:56px clamp(20px,5vw,72px) 64px;display:flex;flex-wrap:wrap;gap:40px;align-items:center">
+    <div style="background:#f3eee4;padding:8px;flex:none"><img src="uploads/logo-631dd26c.jpg" alt="Kale Borroka Riot Records" style="width:160px;display:block"></div>
+    <div style="display:flex;flex-direction:column;gap:12px;flex:1;min-width:280px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#d8d1c4">Refonte UI/UX · v1 · octobre 2026</span>
+      <h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:clamp(56px,8vw,112px);line-height:1;text-transform:uppercase;display:flex;flex-direction:column;align-items:flex-start;gap:10px"><span>Mini design system</span><span style="color:#111010;background:#f3eee4;padding:4px 10px 0">Kale Borroka</span></h1>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:8px">
+        <a href="KBR Maquettes - Boutique.dc.html" style="min-height:44px;display:flex;align-items:center;gap:8px;color:#f3eee4;font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:14px">Maquettes boutique <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+        <a href="KBR Maquettes - Parcours.dc.html" style="min-height:44px;display:flex;align-items:center;gap:8px;color:#f3eee4;font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:14px">Maquettes parcours <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+        <a href="KBR Maquettes - Compte et Contenu.dc.html" style="min-height:44px;display:flex;align-items:center;gap:8px;color:#f3eee4;font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:14px">Connexion &amp; contenu <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+  </header>
+  <div style="height:18px;background:url(tex-torn.svg) repeat-x;background-size:200px 18px"></div>
+
+  <main id="contenu" style="max-width:1280px;margin:0 auto;padding:48px clamp(20px,5vw,72px) 96px;display:flex;flex-direction:column;gap:96px">
+
+    <section style="display:flex;flex-direction:column;gap:28px">
+      <h2 style="margin:0;align-self:flex-start;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:48px;line-height:1;padding:8px 18px 6px;text-transform:uppercase;transform:rotate(-1deg)">01 · Palette</h2>
+      <p style="margin:0;font-size:18px;line-height:1.55;max-width:70ch">Trois encres, comme une sérigraphie : noir, papier, rouge. Le rouge sert aux actions d'achat et aux tampons, jamais au texte courant ni comme seul signal. Le vert ikurriña n'apparaît qu'en filet de 3 couleurs.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px">
+        <sc-for list="{{colors}}" as="c" hint-placeholder-count="8">
+          <div style="border:2px solid #111010;display:flex;flex-direction:column">
+            <div style="height:120px;background:{{c.hex}};border-bottom:2px solid #111010;display:flex;align-items:flex-end;padding:10px;color:{{c.on}};font-family:'Anton',Impact,sans-serif;font-size:28px">Aa</div>
+            <div style="padding:12px;display:flex;flex-direction:column;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:12px">
+              <strong style="font-family:'Archivo',sans-serif;font-size:15px">{{c.name}}</strong>
+              <span>{{c.tok}}</span><span>{{c.hex}}</span><span style="color:#3a3734">{{c.use}}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:15px">
+        <thead><tr style="background:#111010;color:#f3eee4;font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;text-align:left"><th style="padding:10px 14px;font-weight:500">Paire</th><th style="padding:10px 14px;font-weight:500">Ratio</th><th style="padding:10px 14px;font-weight:500">Usage autorisé</th></tr></thead>
+        <tbody><sc-for list="{{contrast}}" as="r" hint-placeholder-count="5"><tr style="border-bottom:1px solid #8a857c"><td style="padding:10px 14px">{{r.p}}</td><td style="padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-weight:600">{{r.r}}</td><td style="padding:10px 14px">{{r.u}}</td></tr></sc-for></tbody>
+      </table>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:28px">
+      <h2 style="margin:0;align-self:flex-start;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:48px;line-height:1;padding:8px 18px 6px;text-transform:uppercase;transform:rotate(1deg)">02 · Typographie</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+        <div style="border:2px solid #111010;padding:20px;display:flex;flex-direction:column;gap:8px"><span style="font-family:'Anton',Impact,sans-serif;font-size:72px;line-height:1">AFFICHE</span><strong>Anton — Regular 400</strong><span style="font-size:14px;line-height:1.5">Titres, prix, numéros. Toujours en capitales. OFL, woff2 auto-hébergé : <code style="font-family:'IBM Plex Mono',monospace">anton-v25-latin-ext-regular.woff2</code></span></div>
+        <div style="border:2px solid #111010;padding:20px;display:flex;flex-direction:column;gap:8px"><span style="font-size:44px;line-height:1.1;font-weight:800">Texte lisible</span><strong>Archivo — 400 / 600 / 800</strong><span style="font-size:14px;line-height:1.5">Texte courant, boutons, formulaires. Grotesque dense, très lisible à 15 px. OFL.</span></div>
+        <div style="border:2px solid #111010;padding:20px;display:flex;flex-direction:column;gap:8px"><span style="font-family:'IBM Plex Mono',monospace;font-size:34px;line-height:1.2">KBR#024 · LTD 300</span><strong>IBM Plex Mono — 400 / 600</strong><span style="font-size:14px;line-height:1.5">Métadonnées : réf., pressage, statuts, compteurs. Effet « tract tapé à la machine ». OFL.</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;border-top:3px solid #111010">
+        <sc-for list="{{scale}}" as="s" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:center;padding:14px 0;border-bottom:1px solid #8a857c"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase">{{s.k}}</span><span style="font-family:{{s.f}};font-size:{{s.px}};font-weight:{{s.w}};line-height:1.15;text-transform:{{s.tt}}">{{s.ex}}</span></div></sc-for>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:28px">
+      <h2 style="margin:0;align-self:flex-start;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:48px;line-height:1;padding:8px 18px 6px;text-transform:uppercase;transform:rotate(-1deg)">03 · Espaces, traits, angles</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <strong style="font-size:15px;text-transform:uppercase;letter-spacing:.06em">Espacements · base 4</strong>
+          <sc-for list="{{space}}" as="s" hint-placeholder-count="8"><div style="display:flex;align-items:center;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:13px"><span style="width:60px">{{s.k}}</span><span style="height:14px;width:{{s.w}};background:#111010"></span><span>{{s.w}}</span></div></sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <strong style="font-size:15px;text-transform:uppercase;letter-spacing:.06em">Traits</strong>
+          <div style="display:flex;align-items:center;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:13px"><span style="flex:1;border-top:1px solid #8a857c"></span>1 px · séparateurs de liste</div>
+          <div style="display:flex;align-items:center;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:13px"><span style="flex:1;border-top:2px solid #111010"></span>2 px · champs, cartes, boutons</div>
+          <div style="display:flex;align-items:center;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:13px"><span style="flex:1;border-top:3px solid #111010"></span>3 px · structure (en-têtes, titres)</div>
+          <div style="display:flex;align-items:center;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:13px"><span style="flex:1;border-top:2px dashed #111010"></span>2 px tirets · avertissement, ajout</div>
+          <strong style="font-size:15px;text-transform:uppercase;letter-spacing:.06em;margin-top:10px">Angles</strong>
+          <span style="font-size:15px;line-height:1.5">Rayon 0 partout. La profondeur vient d'une ombre portée pleine, décalée, sans flou : <code style="font-family:'IBM Plex Mono',monospace">6px 6px 0 #111010</code> (ou rouge pour une alerte positive).</span>
+          <div style="display:flex;gap:20px"><span style="width:90px;height:60px;border:3px solid #111010;box-shadow:6px 6px 0 #111010"></span><span style="width:90px;height:60px;border:3px solid #111010;box-shadow:6px 6px 0 #c4161c"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:28px">
+      <h2 style="margin:0;align-self:flex-start;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:48px;line-height:1;padding:8px 18px 6px;text-transform:uppercase;transform:rotate(1deg)">04 · Textures &amp; signes</h2>
+      <p style="margin:0;font-size:18px;line-height:1.55;max-width:70ch">Trois SVG de moins de 400 octets chacun, en tuiles. Jamais derrière du texte courant de moins de 18 px.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px">
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="height:150px;border:2px solid #111010;background:#e8e1d3 url(tex-grain.svg)"></div><strong>Grain xérox</strong><code style="font-family:'IBM Plex Mono',monospace;font-size:12px">tex-grain.svg · fonds de section</code></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="height:150px;border:2px solid #111010;background:#f3eee4 url(tex-halftone.svg)"></div><strong>Trame</strong><code style="font-family:'IBM Plex Mono',monospace;font-size:12px">tex-halftone.svg · états vides, pochettes manquantes</code></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="height:150px;border:2px solid #111010;background:#f3eee4;display:flex;align-items:flex-start"><div style="height:18px;width:100%;background:url(tex-torn.svg) repeat-x;background-size:200px 18px"></div></div><strong>Bord déchiré</strong><code style="font-family:'IBM Plex Mono',monospace;font-size:12px">tex-torn.svg · haut du pied de page</code></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="height:150px;border:2px solid #111010;display:grid;place-items:center;background:#f3eee4"><span style="background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-size:34px;padding:6px 14px 4px;text-transform:uppercase;transform:rotate(-1.2deg)">Banderole</span></div><strong>Titre banderole</strong><code style="font-family:'IBM Plex Mono',monospace;font-size:12px">rotation ±1° max</code></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="height:150px;border:2px solid #111010;display:grid;place-items:center;background:#f3eee4"><span style="transform:rotate(-6deg);border:3px solid #c4161c;outline:1.5px solid #c4161c;outline-offset:3px;color:#c4161c;font-family:'Anton',Impact,sans-serif;font-size:28px;letter-spacing:.08em;padding:2px 14px">ÉPUISÉ</span></div><strong>Tampon</strong><code style="font-family:'IBM Plex Mono',monospace;font-size:12px">épuisé, précommande, vide</code></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="height:150px;border:2px solid #111010;display:grid;place-items:center;background:#e8e1d3;position:relative"><span style="width:110px;height:110px;background:#111010;border:2px solid #111010"></span><span style="position:absolute;top:30px;left:50%;margin-left:-60px;width:120px;height:28px;background:rgba(243,238,228,.8);transform:rotate(-6deg)"></span></div><strong>Scotch</strong><code style="font-family:'IBM Plex Mono',monospace;font-size:12px">mise en avant (1 par écran)</code></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="height:150px;border:2px solid #111010;display:grid;place-items:center;background:#f3eee4"><span style="display:flex;width:90px;height:18px"><span style="flex:1;background:#c4161c"></span><span style="flex:1;background:#00843d"></span><span style="flex:1;background:#f3eee4;border:1px solid #111010"></span></span></div><strong>Filet ikurriña</strong><code style="font-family:'IBM Plex Mono',monospace;font-size:12px">accent décoratif uniquement</code></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="height:150px;border:2px solid #111010;display:grid;place-items:center;background:#f3eee4"><span style="width:120px;height:120px;background:#e8e1d3 url(tex-halftone.svg);border:2px solid #111010;display:flex;flex-direction:column;justify-content:space-between;padding:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase"><i aria-hidden="true" class="bi bi-vinyl" style="font-size:22px"></i>Pochette<br>à venir</span></div><strong>Pochette manquante</strong><code style="font-family:'IBM Plex Mono',monospace;font-size:12px">placeholder carré</code></div>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:28px">
+      <h2 style="margin:0;align-self:flex-start;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:48px;line-height:1;padding:8px 18px 6px;text-transform:uppercase;transform:rotate(-1deg)">05 · Composants</h2>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <strong style="font-size:15px;text-transform:uppercase;letter-spacing:.06em">Boutons</strong>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+          <button style="height:56px;padding:0 26px;display:flex;align-items:center;gap:10px;background:#c4161c;color:#f3eee4;border:0;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.06em" style-hover="background:#9e1116"><i aria-hidden="true" class="bi bi-bag-plus"></i>Achat · primaire</button>
+          <button style="height:56px;padding:0 26px;background:#111010;color:#f3eee4;border:0;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.06em">Secondaire</button>
+          <button style="height:56px;padding:0 24px;background:none;color:#111010;border:2px solid #111010;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.06em">Contour</button>
+          <button style="height:56px;padding:0 24px;background:none;color:#111010;border:2px solid #111010;outline:3px solid #111010;outline-offset:3px;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.06em">Focus clavier</button>
+          <button disabled="disabled" style="height:56px;padding:0 24px;background:#d8d1c4;color:#5b5750;border:2px solid #b9b2a6;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:8px"><i aria-hidden="true" class="bi bi-x-octagon"></i>Épuisé</button>
+          <button aria-label="Ajouter au panier" style="width:44px;height:44px;display:grid;place-items:center;background:#111010;color:#f3eee4;border:0;font-size:18px"><i aria-hidden="true" class="bi bi-bag-plus"></i></button>
+        </div>
+        <span style="font-size:14px;color:#3a3734">Hauteurs : 44 (icône/compact), 48 (standard), 56 (achat). Focus : contour 3 px noir décalé de 3 px (papier sur fond noir).</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px">
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:14px">E-mail</span><span style="height:48px;border:2px solid #111010;display:flex;align-items:center;padding:0 14px;font-size:16px;background:#f3eee4">maialen@exemple.eus</span></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:14px">Code postal</span><span style="height:48px;border:3px solid #c4161c;display:flex;align-items:center;padding:0 14px;font-size:16px;background:#f3eee4">641</span><span style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#9e1116"><i aria-hidden="true" class="bi bi-exclamation-octagon-fill"></i>Erreur : 5 chiffres attendus.</span></label>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <span style="font-weight:700;font-size:14px">Cases &amp; radios</span>
+          <label style="display:flex;align-items:center;gap:12px;min-height:40px"><span style="width:22px;height:22px;border:2px solid #111010;background:#111010;color:#f3eee4;display:grid;place-items:center;font-size:14px"><i aria-hidden="true" class="bi bi-check-lg"></i></span>Punk</label>
+          <label style="display:flex;align-items:center;gap:12px;min-height:40px"><i aria-hidden="true" class="bi bi-record-circle-fill" style="font-size:22px"></i>Colissimo suivi</label>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:14px">Quantité</span><div style="display:flex;border:2px solid #111010;height:48px;width:150px"><button aria-label="Diminuer" style="flex:1;background:none;border:0"><i aria-hidden="true" class="bi bi-dash-lg"></i></button><span style="width:48px;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-weight:600;border-left:2px solid #111010;border-right:2px solid #111010">1</span><button aria-label="Augmenter" style="flex:1;background:none;border:0"><i aria-hidden="true" class="bi bi-plus-lg"></i></button></div></div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <strong style="font-size:15px;text-transform:uppercase;letter-spacing:.06em">Badges &amp; statuts</strong>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <sc-for list="{{badges}}" as="b" hint-placeholder-count="12"><span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:2px {{b.bs}} #111010;background:{{b.bg}};color:{{b.fg}};font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em"><i aria-hidden="true" class="bi {{b.i}}"></i>{{b.t}}</span></sc-for>
+        </div>
+        <span style="font-size:14px;color:#3a3734">Chaque état a une icône et un libellé : la couleur seule ne porte jamais l'information.</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <strong style="font-size:15px;text-transform:uppercase;letter-spacing:.06em">Cartes article</strong>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:28px">
+          <sc-for list="{{cards}}" as="p" hint-placeholder-count="4"><dc-import name="KbrCard" item="{{p}}" hint-size="100%,360px"></dc-import></sc-for>
+          <div style="display:flex;flex-direction:column;gap:12px" aria-busy="true">
+            <span style="aspect-ratio:1/1;background:#e8e1d3 url(tex-halftone.svg);border:2px solid #b9b2a6"></span>
+            <span style="height:12px;width:40%;background:#d8d1c4"></span><span style="height:16px;width:80%;background:#d8d1c4"></span><span style="height:14px;width:60%;background:#d8d1c4"></span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase">Chargement…</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:32px">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <strong style="font-size:15px;text-transform:uppercase;letter-spacing:.06em">Fil d'Ariane &amp; pagination</strong>
+          <nav style="display:flex;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase"><a href="#">Accueil</a><span>/</span><a href="#">Catalogue</a><span>/</span><span aria-current="page" style="font-weight:600">K7</span></nav>
+          <div style="display:flex;gap:6px">
+            <span style="width:44px;height:44px;display:grid;place-items:center;border:2px solid #b9b2a6;color:#8a857c"><i aria-hidden="true" class="bi bi-arrow-left"></i></span>
+            <a href="#" style="width:44px;height:44px;display:grid;place-items:center;background:#111010;color:#f3eee4;font-family:'IBM Plex Mono',monospace;font-weight:600;text-decoration:none">1</a>
+            <a href="#" style="width:44px;height:44px;display:grid;place-items:center;border:2px solid #111010;font-family:'IBM Plex Mono',monospace;font-weight:600;text-decoration:none">2</a>
+            <span style="width:30px;height:44px;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace">…</span>
+            <a href="#" style="width:44px;height:44px;display:grid;place-items:center;border:2px solid #111010;font-family:'IBM Plex Mono',monospace;font-weight:600;text-decoration:none">13</a>
+            <a href="#" style="width:44px;height:44px;display:grid;place-items:center;border:2px solid #111010"><i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+          </div>
+          <strong style="font-size:15px;text-transform:uppercase;letter-spacing:.06em;margin-top:12px">Accordéon de filtres + pastilles</strong>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><span style="height:44px;padding:0 10px 0 16px;display:flex;align-items:center;gap:10px;background:#111010;color:#f3eee4;font-weight:700;font-size:14px">Oi! <i aria-hidden="true" class="bi bi-x-lg" style="font-size:12px"></i></span><span style="height:44px;padding:0 10px 0 16px;display:flex;align-items:center;gap:10px;background:#111010;color:#f3eee4;font-weight:700;font-size:14px">Occasion <i aria-hidden="true" class="bi bi-x-lg" style="font-size:12px"></i></span></div>
+          <div style="border-top:2px solid #111010;border-bottom:2px solid #111010">
+            <div style="height:52px;display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.06em">Style <i aria-hidden="true" class="bi bi-dash-lg"></i></div>
+            <label style="display:flex;align-items:center;gap:12px;min-height:40px"><span style="width:22px;height:22px;border:2px solid #111010;background:#111010;color:#f3eee4;display:grid;place-items:center;font-size:14px"><i aria-hidden="true" class="bi bi-check-lg"></i></span><span style="flex:1;font-weight:700">Oi!</span><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">31</span></label>
+            <label style="display:flex;align-items:center;gap:12px;min-height:40px;padding-bottom:8px"><span style="width:22px;height:22px;border:2px solid #111010"></span><span style="flex:1">Crust</span><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">9</span></label>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <strong style="font-size:15px;text-transform:uppercase;letter-spacing:.06em">Notifications</strong>
+          <sc-for list="{{alerts}}" as="a" hint-placeholder-count="4"><div role="{{a.role}}" style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border:{{a.bd}};background:{{a.bg}};color:{{a.fg}};font-size:15px;line-height:1.4"><i aria-hidden="true" class="bi {{a.i}}" style="font-size:20px"></i><span><strong>{{a.t}}</strong> {{a.d}}</span></div></sc-for>
+        </div>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:28px">
+      <h2 style="margin:0;align-self:flex-start;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:48px;line-height:1;padding:8px 18px 6px;text-transform:uppercase;transform:rotate(1deg)">06 · États 404 / 500</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px">
+        <div style="background:#111010 url(tex-grain.svg);color:#f3eee4;padding:36px;display:flex;flex-direction:column;gap:14px;border:3px solid #111010">
+          <span style="font-family:'Anton',Impact,sans-serif;font-size:120px;line-height:.85">404</span>
+          <span style="font-family:'Anton',Impact,sans-serif;font-size:34px;text-transform:uppercase">Affiche arrachée.</span>
+          <p style="margin:0;font-size:16px;line-height:1.5;color:#d8d1c4">Cette page a été décollée ou n'a jamais été posée. Le reste du mur est encore là.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap"><a href="#" style="height:48px;padding:0 18px;display:flex;align-items:center;background:#f3eee4;color:#111010;font-weight:800;font-size:13px;text-transform:uppercase;text-decoration:none">Accueil</a><a href="#" style="height:48px;padding:0 18px;display:flex;align-items:center;border:2px solid #f3eee4;color:#f3eee4;font-weight:800;font-size:13px;text-transform:uppercase;text-decoration:none">Catalogue</a></div>
+        </div>
+        <div style="background:#e8e1d3 url(tex-halftone.svg);padding:36px;display:flex;flex-direction:column;gap:14px;border:3px solid #111010">
+          <span style="align-self:flex-start;background:#f3eee4;font-family:'Anton',Impact,sans-serif;font-size:120px;line-height:.85;padding:0 8px">500</span>
+          <span style="align-self:flex-start;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-size:34px;text-transform:uppercase;padding:2px 10px">La photocopieuse a calé.</span>
+          <p style="margin:0;font-size:16px;line-height:1.5;background:#f3eee4;padding:8px 10px">Erreur de notre côté. Ton panier est sauvegardé ; réessaie dans quelques minutes.</p>
+          <a href="#" style="align-self:flex-start;height:48px;padding:0 18px;display:flex;align-items:center;background:#111010;color:#f3eee4;font-weight:800;font-size:13px;text-transform:uppercase;text-decoration:none">Réessayer</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:28px">
+      <h2 style="margin:0;align-self:flex-start;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:48px;line-height:1;padding:8px 18px 6px;text-transform:uppercase;transform:rotate(-1deg)">07 · Correspondance Bootstrap 5</h2>
+      <p style="margin:0;font-size:18px;line-height:1.55;max-width:70ch">À placer dans <code style="font-family:'IBM Plex Mono',monospace">assets/styles/_variables.scss</code> avant l'import de Bootstrap. Polices en woff2 dans <code style="font-family:'IBM Plex Mono',monospace">assets/fonts/</code>, déclarées par <code style="font-family:'IBM Plex Mono',monospace">@font-face</code> local (CSP OK).</p>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:640px">
+          <thead><tr style="background:#111010;color:#f3eee4;font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;text-align:left"><th style="padding:10px 14px;font-weight:500">Variable SCSS</th><th style="padding:10px 14px;font-weight:500">Valeur</th></tr></thead>
+          <tbody><sc-for list="{{bs}}" as="v" hint-placeholder-count="16"><tr style="border-bottom:1px solid #8a857c"><td style="padding:8px 14px;font-family:'IBM Plex Mono',monospace;font-weight:600">{{v.k}}</td><td style="padding:8px 14px;font-family:'IBM Plex Mono',monospace">{{v.v}}</td></tr></sc-for></tbody>
+        </table>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px">
+        <div style="border:2px solid #111010;padding:20px;display:flex;flex-direction:column;gap:8px"><strong style="text-transform:uppercase;letter-spacing:.05em">Bootstrap restylé</strong><span style="font-size:15px;line-height:1.6">btn, form-control, form-check, badge, breadcrumb, pagination, alert, accordion, offcanvas (filtres + menu mobile), dropdown (méga-menu), table, nav-tabs (supports), toast, placeholder (chargement), progress (seuil de livraison).</span></div>
+        <div style="border:2px solid #111010;padding:20px;display:flex;flex-direction:column;gap:8px"><strong style="text-transform:uppercase;letter-spacing:.05em">Sur mesure (SCSS + Stimulus)</strong><span style="font-size:15px;line-height:1.6"><code style="font-family:'IBM Plex Mono',monospace">.kb-card</code> carte article · <code style="font-family:'IBM Plex Mono',monospace">.kb-stamp</code> tampon · <code style="font-family:'IBM Plex Mono',monospace">.kb-banner</code> titre banderole · <code style="font-family:'IBM Plex Mono',monospace">.kb-size-picker</code> · <code style="font-family:'IBM Plex Mono',monospace">quantity_controller</code> · <code style="font-family:'IBM Plex Mono',monospace">filters_controller</code> (pastilles ↔ cases) · <code style="font-family:'IBM Plex Mono',monospace">sticky-buy_controller</code>.</span></div>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:28px">
+      <h2 style="margin:0;align-self:flex-start;background:#c4161c;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:48px;line-height:1;padding:8px 18px 6px;text-transform:uppercase;transform:rotate(1deg)">08 · Recommandations UX</h2>
+      <ol style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;border-top:3px solid #111010">
+        <sc-for list="{{recos}}" as="r" hint-placeholder-count="10"><li style="display:grid;grid-template-columns:72px 1fr 120px;gap:20px;padding:18px 0;border-bottom:1px solid #8a857c;align-items:start"><span style="font-family:'Anton',Impact,sans-serif;font-size:40px;line-height:1">{{r.n}}</span><span style="display:flex;flex-direction:column;gap:4px"><strong style="font-size:17px">{{r.t}}</strong><span style="font-size:15px;line-height:1.5;color:#3a3734">{{r.d}}</span></span><span style="justify-self:end;display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:2px solid #111010;background:{{r.bg}};color:{{r.fg}};font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;text-transform:uppercase">{{r.i}}</span></li></sc-for>
+      </ol>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:28px">
+      <h2 style="margin:0;align-self:flex-start;background:#111010;color:#f3eee4;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:48px;line-height:1;padding:8px 18px 6px;text-transform:uppercase;transform:rotate(-1deg)">09 · Accessibilité</h2>
+      <p style="margin:0;font-size:18px;line-height:1.55;max-width:70ch">Objectif RGAA 4.1 / WCAG 2.2 niveau AA. Ces règles s'appliquent à chaque gabarit Twig et contrôleur Stimulus.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;padding:24px;border:2px solid #111010">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.06em;width:100%">Focus visible · double anneau, lisible sur papier comme sur noir</span>
+        <span style="height:48px;padding:0 20px;display:flex;align-items:center;border:2px solid #111010;font-weight:800;font-size:14px;text-transform:uppercase;outline:3px solid #111010;outline-offset:3px;box-shadow:0 0 0 3px #f3eee4">Sur papier</span>
+        <span style="background:#111010;padding:16px"><span style="height:48px;padding:0 20px;display:flex;align-items:center;background:#c4161c;color:#f3eee4;font-weight:800;font-size:14px;text-transform:uppercase;outline:3px solid #111010;outline-offset:3px;box-shadow:0 0 0 3px #f3eee4">Sur noir</span></span>
+        <code style="font-family:'IBM Plex Mono',monospace;font-size:13px">:focus-visible { outline:3px solid #111010; outline-offset:3px; box-shadow:0 0 0 3px #f3eee4 }</code>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px">
+        <sc-for list="{{a11y}}" as="a" hint-placeholder-count="10">
+          <div style="border-top:3px solid #111010;padding-top:14px;display:flex;flex-direction:column;gap:8px">
+            <span style="display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.04em"><i aria-hidden="true" class="bi {{a.i}}" style="font-size:20px"></i>{{a.t}}</span>
+            <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:15px;line-height:1.5">
+              <sc-for list="{{a.r}}" as="r" hint-placeholder-count="3"><li>{{r}}</li></sc-for>
+            </ul>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() { document.documentElement.lang = 'fr'; }
+  renderVals() {
+    const colors = [
+      { name: 'Noir encre', tok: '--kb-noir', hex: '#111010', on: '#f3eee4', use: 'Texte, structure, fonds forts' },
+      { name: 'Papier', tok: '--kb-papier', hex: '#f3eee4', on: '#111010', use: 'Fond principal' },
+      { name: 'Papier kraft', tok: '--kb-papier-2', hex: '#e8e1d3', on: '#111010', use: 'Fonds de section, panneaux' },
+      { name: 'Rouge sérigraphie', tok: '--kb-rouge', hex: '#c4161c', on: '#f3eee4', use: 'Achat, tampons, compteur' },
+      { name: 'Rouge foncé', tok: '--kb-rouge-fonce', hex: '#9e1116', on: '#f3eee4', use: 'Survol, texte d\u2019erreur' },
+      { name: 'Gris photocopie', tok: '--kb-gris', hex: '#5b5750', on: '#f3eee4', use: 'Texte secondaire' },
+      { name: 'Gris trait', tok: '--kb-gris-clair', hex: '#b9b2a6', on: '#111010', use: 'Désactivé, filets' },
+      { name: 'Vert ikurriña', tok: '--kb-vert', hex: '#00843d', on: '#f3eee4', use: 'Filet décoratif seul' }
+    ];
+    const contrast = [
+      { p: 'Noir sur papier', r: '17,4 : 1', u: 'Tout texte' },
+      { p: 'Gris photocopie sur papier', r: '6,4 : 1', u: 'Texte secondaire, métadonnées' },
+      { p: 'Papier sur rouge', r: '5,2 : 1', u: 'Boutons d\u2019achat, pastille panier' },
+      { p: 'Rouge sur papier', r: '5,2 : 1', u: 'Tampons, liens survolés' },
+      { p: 'Rouge foncé sur papier', r: '7,4 : 1', u: 'Messages d\u2019erreur' },
+      { p: 'Rouge sur noir', r: '3,1 : 1', u: 'Titres ≥ 32 px uniquement' }
+    ];
+    const A = "'Anton',Impact,sans-serif", B = "'Archivo',sans-serif", M = "'IBM Plex Mono',monospace";
+    const scale = [
+      { k: 'Display · 120/88', px: '96px', f: A, w: 400, tt: 'uppercase', ex: 'Kale Hotsak' },
+      { k: 'H1 · 88 (mob. 52)', px: '72px', f: A, w: 400, tt: 'uppercase', ex: 'Vinyles LP' },
+      { k: 'H2 · 56 (mob. 34)', px: '56px', f: A, w: 400, tt: 'uppercase', ex: 'Dernières prod' },
+      { k: 'H3 · 40 (mob. 28)', px: '40px', f: A, w: 400, tt: 'uppercase', ex: 'Tracklist' },
+      { k: 'Prix · 60 / 22', px: '44px', f: A, w: 400, tt: 'none', ex: '22,00 €' },
+      { k: 'Lead · 19 Archivo', px: '19px', f: B, w: 400, tt: 'none', ex: 'Dix titres enregistrés live, sans retouche.' },
+      { k: 'Body · 16 Archivo', px: '16px', f: B, w: 400, tt: 'none', ex: 'Pochette sérigraphiée à la main, insert avec paroles.' },
+      { k: 'Meta · 13 Plex Mono', px: '13px', f: M, w: 500, tt: 'uppercase', ex: 'LP 12" · Rouge transparent · Ltd 300 ex.' }
+    ];
+    const space = [['1', '4px'], ['2', '8px'], ['3', '12px'], ['4', '16px'], ['5', '24px'], ['6', '32px'], ['7', '48px'], ['8', '72px']].map(a => ({ k: a[0], w: a[1] }));
+    const bd = (t, i, bg, fg, bs) => ({ t, i, bg, fg, bs: bs || 'solid' });
+    const badges = [
+      bd('LP 12"', 'bi-vinyl', '#111010', '#f3eee4'), bd('CD', 'bi-disc', '#111010', '#f3eee4'), bd('K7', 'bi-cassette', '#111010', '#f3eee4'), bd('Fanzine', 'bi-journal', '#111010', '#f3eee4'),
+      bd('Épuisé', 'bi-x-octagon', '#c4161c', '#f3eee4'), bd('Occasion', 'bi-arrow-repeat', '#f3eee4', '#111010'), bd('Ltd 300 ex.', 'bi-hash', '#111010', '#f3eee4'), bd('Nouveau', 'bi-asterisk', '#c4161c', '#f3eee4'),
+      bd('En attente', 'bi-hourglass-split', 'transparent', '#111010', 'dashed'), bd('Payée', 'bi-check-lg', 'transparent', '#111010'), bd('En préparation', 'bi-box-seam', '#e8e1d3', '#111010'),
+      bd('Expédiée', 'bi-truck', '#111010', '#f3eee4'), bd('Annulée', 'bi-x-circle', 'transparent', '#9e1116'), bd('Remboursée', 'bi-arrow-counterclockwise', 'transparent', '#111010', 'dotted')
+    ];
+    const cards = [
+      { artist: 'Hautsa', title: 'Kale Hotsak', format: 'LP', price: '22,00', label: 'Kale Borroka', kbr: 'KBR#024', cv: 1, badges: ['limit'], ltd: 300 },
+      { artist: 'Piztia', title: 'Gau Beltza', format: 'LP', price: '20,00', label: 'Kale Borroka', kbr: 'KBR#022', cv: 4, badges: ['sold'] },
+      { artist: 'Eskuz', title: 'Aurrera Beti', format: 'LP', price: '15,00', label: 'Txapa Records', cv: 0, badges: ['used'] },
+      { artist: 'Sirène Noire', title: 'Demo 2026', format: 'K7', price: '6,00', label: 'Autoprod', cv: 2, badges: ['new'] }
+    ];
+    const alerts = [
+      { role: 'status', i: 'bi-check-circle-fill', t: 'Ajouté au panier.', d: 'Hautsa — Kale Hotsak (LP).', bg: '#111010', fg: '#f3eee4', bd: '2px solid #111010' },
+      { role: 'alert', i: 'bi-exclamation-octagon-fill', t: 'Erreur :', d: 'le paiement a été refusé. Aucun montant débité.', bg: '#f3eee4', fg: '#9e1116', bd: '3px solid #c4161c' },
+      { role: 'status', i: 'bi-exclamation-triangle-fill', t: 'Attention :', d: 'plus que 2 exemplaires en stock.', bg: '#f3eee4', fg: '#111010', bd: '2px dashed #111010' },
+      { role: 'status', i: 'bi-info-circle-fill', t: 'Info :', d: 'expéditions suspendues du 20 au 27 décembre.', bg: '#e8e1d3', fg: '#111010', bd: '2px solid #111010' }
+    ];
+    const bs = [
+      ['$black / $body-color', '#111010'], ['$body-bg / $light', '#f3eee4'], ['$primary / $danger', '#c4161c'], ['$dark', '#111010'], ['$secondary', '#5b5750'],
+      ['$border-radius (+ -sm, -lg, -pill)', '0'], ['$enable-shadows / $enable-gradients', 'false'], ['$border-width', '2px'], ['$border-color', '#111010'],
+      ['$font-family-sans-serif', '"Archivo", system-ui, sans-serif'], ['$headings-font-family', '"Anton", Impact, sans-serif'], ['$headings-font-weight', '400'],
+      ['$font-family-monospace', '"IBM Plex Mono", ui-monospace, monospace'], ['$font-size-base', '1rem (16px)'], ['$spacer', '1rem — $spacers étendus à 4.5rem (72px)'],
+      ['$btn-padding-y / -x', '.75rem / 1.5rem → hauteur 48px'], ['$btn-font-weight', '800 + text-transform via .btn'], ['$input-height', '3rem'],
+      ['$focus-ring-width / -color / -offset', '3px / #111010 / 3px (outline, pas de box-shadow)'], ['$box-shadow', '6px 6px 0 #111010'],
+      ['$pagination-border-width', '2px'], ['$accordion-border-width', '0 (filets 2px custom)'], ['$offcanvas-horizontal-width', 'min(340px, 88vw)']
+    ].map(a => ({ k: a[0], v: a[1] }));
+    const I = (t) => ({ t, i: t, bg: t === 'Fort' ? '#c4161c' : t === 'Moyen' ? '#111010' : 'transparent', fg: t === 'Faible' ? '#111010' : '#f3eee4' });
+    const recos = [
+      ['Barre d\u2019achat collante sur mobile', 'Prix + « Ajouter » toujours visibles sur la fiche : la majorité du trafic arrive des réseaux sur mobile, directement sur une fiche.', 'Fort'],
+      ['Recherche globale dans l\u2019en-tête', 'Le public de la scène cherche un groupe précis. Recherche sur artiste, titre, label et réf. KBR, avec suggestions.', 'Fort'],
+      ['Connexion annoncée avant le tunnel', 'Dire dans le panier que la connexion est requise, puis garder le panier après connexion ou inscription. Évite l\u2019abandon surprise.', 'Fort'],
+      ['Jauge de livraison offerte chiffrée', '« Plus que 13,50 € » + barre : panier moyen plus élevé, frais jamais découverts au dernier moment.', 'Fort'],
+      ['Onglets de supports dans le catalogue', 'Passer de LP à K7 en un clic sans rouvrir le menu, avec filtres conservés.', 'Moyen'],
+      ['Alertes wantlist « en stock »', 'Afficher sur le tableau de bord et par e-mail quand un disque de la wantlist revient (occasion, repress).', 'Moyen'],
+      ['Pressages regroupés sur la fiche', 'Bloc « Autres pressages » en tête des articles liés : couleur, tirage, épuisé ou non.', 'Moyen'],
+      ['Épuisé : « M\u2019alerter » au lieu d\u2019une impasse', 'Remplacer le bouton désactivé par une inscription au retour en stock (si existant) ou un lien vers les autres pressages.', 'Moyen'],
+      ['Compteurs dans les filtres', 'Afficher le nombre de résultats par valeur et masquer les valeurs à 0 pour éviter les recherches vides.', 'Faible'],
+      ['En-tête de tunnel réduit', 'Supprimer la navigation pendant la commande ; garder logo, étapes et retour au panier.', 'Faible']
+    ].map((r, i) => Object.assign({ n: String(i + 1).padStart(2, '0'), t: r[0], d: r[1] }, I(r[2])));
+    const a11y = [
+      { t: 'Contraste', i: 'bi-circle-half', r: ['Texte ≥ 4,5:1, grands titres ≥ 3:1 (voir tableau 01).', 'Rouge sur noir : titres de 32 px et plus uniquement.', 'Jamais de texte courant sur trame ; grain limité à 15 % d\u2019opacité.'] },
+      { t: 'Couleur jamais seule', i: 'bi-palette', r: ['Épuisé : tampon + prix barré + bouton « M\u2019alerter ».', 'Erreur : icône + préfixe « Erreur : » + bordure 3 px.', 'Statuts de commande : icône + libellé + style de bordure distinct.'] },
+      { t: 'Cibles tactiles', i: 'bi-hand-index', r: ['44 × 44 px minimum, y compris liens de pied de page et pastilles.', 'Espacement ≥ 8 px entre deux cibles adjacentes.'] },
+      { t: 'Clavier', i: 'bi-keyboard', r: ['Lien d\u2019évitement « Aller au contenu » en premier.', 'Méga-menu : bouton aria-expanded, Échap ferme, focus rendu au bouton.', 'Panneaux (filtres, menu) en offcanvas Bootstrap : focus piégé, Échap ferme.'] },
+      { t: 'Formulaires', i: 'bi-input-cursor-text', r: ['Chaque champ a un label visible, jamais un simple placeholder.', 'Erreurs reliées par aria-describedby, résumé en tête si plusieurs.', 'autocomplete renseigné (email, current-password, new-password, address-line1…).'] },
+      { t: 'Contrôles natifs', i: 'bi-ui-checks', r: ['Filtres, tailles, livraison : vrais input checkbox/radio stylés.', 'Quantité : input number + boutons − / + étiquetés.', 'Actions POST (panier, wantlist, collection) : <button>, jamais <a>.'] },
+      { t: 'Lecteurs d\u2019écran', i: 'bi-soundwave', r: ['Pochettes : alt « Pochette : Artiste, Titre ».', 'Icônes décoratives aria-hidden ; boutons-icônes avec aria-label explicite.', 'Ajout au panier annoncé via une région aria-live (toast Stimulus).'] },
+      { t: 'Structure', i: 'bi-diagram-3', r: ['<html lang="fr">, un seul h1 par page, titres hiérarchiques.', 'Landmarks : header, nav étiquetées, main#contenu, footer.', 'Fil d\u2019Ariane en nav + aria-current="page" ; pagination idem.'] },
+      { t: 'Mouvement & zoom', i: 'bi-arrows-angle-expand', r: ['prefers-reduced-motion respecté ; aucune animation automatique.', 'Lisible à 200 % et en 320 px de large sans défilement horizontal.', 'Les rotations décoratives (±1°) ne s\u2019appliquent jamais à du texte courant.'] },
+      { t: 'Contenus', i: 'bi-translate', r: ['Titres basques balisés lang="eu" (ex. <span lang="eu">Kale Hotsak</span>).', 'Durées de tracklist en <time datetime="PT2M41S">.', 'Liens explicites hors contexte : pas de « cliquez ici ».'] }
+    ];
+    return { colors, contrast, scale, space, badges, cards, alerts, bs, recos, a11y };
+  }
+}
+</script>
+</body>
+</html>

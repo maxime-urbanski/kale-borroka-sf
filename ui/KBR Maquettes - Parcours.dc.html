@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="_ds/design-system-043ea0d8-dbc4-4404-a097-3d3af43cf705/_ds_bundle.js"></script>
+<style>body{margin:0;background:#cfc8bb}*{box-sizing:border-box}:focus-visible{outline:3px solid #111010!important;outline-offset:3px;box-shadow:0 0 0 3px #f3eee4}::placeholder{color:#5b5750;opacity:1}@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}a{color:#111010}a:hover{color:#c4161c}button{font-family:inherit}</style>
+</helmet>
+<div style="padding:80px;display:flex;flex-direction:column;gap:140px;font-family:'Archivo',system-ui,sans-serif;color:#111010">
+
+<!-- PANIER -->
+<section style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:.1em;text-transform:uppercase">Maquette 05</span>
+    <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-size:80px;line-height:1;text-transform:uppercase">Panier</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5">Jauge de livraison offerte chiffrée, quantité et retrait en boutons POST, connexion annoncée avant le clic sur « Commander ».</p>
+  </div>
+  <div style="display:flex;gap:64px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Desktop · 1440</span>
+      <div data-screen-label="Panier desktop" style="width:1440px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" hint-size="100%,134px"></dc-import>
+        <div style="padding:40px 40px 88px;display:grid;grid-template-columns:1fr 420px;gap:56px;align-items:start">
+          <div style="display:flex;flex-direction:column">
+            <div style="display:flex;align-items:baseline;gap:16px;border-bottom:3px solid #111010;padding-bottom:16px"><h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:88px;line-height:.95;text-transform:uppercase">Panier</h1><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;text-transform:uppercase">3 articles</span></div>
+            <div role="alert" style="display:flex;align-items:center;gap:12px;margin-top:20px;padding:12px 16px;background:#111010;color:#f3eee4;font-size:15px"><i aria-hidden="true" class="bi bi-info-circle-fill"></i>« Gau Beltza » vient d'être épuisé et a été retiré de ton panier.<button aria-label="Fermer" style="margin-left:auto;width:36px;height:36px;background:none;border:0;color:#f3eee4"><i aria-hidden="true" class="bi bi-x-lg"></i></button></div>
+            <sc-for list="{{lines}}" as="l" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:120px 1fr 160px 120px 48px;gap:24px;align-items:center;padding:24px 0;border-bottom:1px solid #8a857c">
+                <span style="aspect-ratio:1/1;background:{{l.bg}};border:2px solid #111010;display:flex;align-items:flex-end;padding:10px;color:{{l.fg}};font-family:'Anton',Impact,sans-serif;font-size:20px;line-height:.9;text-transform:uppercase">{{l.artist}}</span>
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#5b5750">{{l.meta}}</span>
+                  <a href="#" style="font-weight:800;font-size:18px;text-transform:uppercase;text-decoration:none">{{l.artist}}</a>
+                  <span style="font-size:16px">{{l.title}}</span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#3a3734">{{l.unit}} € / unité</span>
+                </div>
+                <div style="display:flex;border:2px solid #111010;height:48px;width:150px"><button aria-label="Diminuer" style="flex:1;background:none;border:0"><i aria-hidden="true" class="bi bi-dash-lg"></i></button><span style="width:48px;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;border-left:2px solid #111010;border-right:2px solid #111010">{{l.q}}</span><button aria-label="Augmenter" style="flex:1;background:none;border:0"><i aria-hidden="true" class="bi bi-plus-lg"></i></button></div>
+                <span style="font-family:'Anton',Impact,sans-serif;font-size:26px;text-align:right">{{l.total}} €</span>
+                <button aria-label="Retirer {{l.title}}" style="width:48px;height:48px;display:grid;place-items:center;background:none;border:2px solid #111010;font-size:18px;cursor:pointer" style-hover="background:#111010;color:#f3eee4"><i aria-hidden="true" class="bi bi-trash3"></i></button>
+              </div>
+            </sc-for>
+            <a href="#" style="margin-top:24px;display:flex;align-items:center;gap:8px;min-height:44px;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.06em"><i aria-hidden="true" class="bi bi-arrow-left"></i>Continuer à fouiller les bacs</a>
+          </div>
+          <aside style="border:3px solid #111010;background:#e8e1d3 url(tex-grain.svg);padding:28px;display:flex;flex-direction:column;gap:20px;box-shadow:10px 10px 0 #111010">
+            <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:36px;text-transform:uppercase">Récap</h2>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <span style="font-size:15px;font-weight:600"><i aria-hidden="true" class="bi bi-truck" style="margin-right:8px"></i>Plus que <strong>13,50 €</strong> pour la livraison offerte</span>
+              <div role="progressbar" aria-valuenow="46.5" aria-valuemin="0" aria-valuemax="60" style="height:14px;border:2px solid #111010;background:#f3eee4"><div style="width:77%;height:100%;background:#111010"></div></div>
+              <span style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:12px"><span>46,50 €</span><span>60 €</span></span>
+            </div>
+            <dl style="margin:0;display:grid;grid-template-columns:1fr auto;gap:10px;font-size:16px;border-top:2px solid #111010;padding-top:16px">
+              <dt>Sous-total</dt><dd style="margin:0;font-family:'IBM Plex Mono',monospace;font-weight:600">46,50 €</dd>
+              <dt>Livraison</dt><dd style="margin:0;font-size:14px;color:#3a3734">à l'étape suivante</dd>
+            </dl>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;border-top:3px solid #111010;padding-top:16px"><span style="font-weight:800;text-transform:uppercase;letter-spacing:.06em">Total</span><span style="font-family:'Anton',Impact,sans-serif;font-size:44px">46,50 €</span></div>
+            <button style="height:60px;display:flex;align-items:center;justify-content:center;gap:10px;background:#c4161c;color:#f3eee4;border:0;font-weight:800;font-size:17px;text-transform:uppercase;letter-spacing:.06em;cursor:pointer">Commander <i aria-hidden="true" class="bi bi-arrow-right"></i></button>
+            <span style="font-size:14px;display:flex;gap:8px;line-height:1.4"><i aria-hidden="true" class="bi bi-person-lock"></i>Connexion ou création de compte à l'étape suivante. Ton panier est conservé.</span>
+          </aside>
+        </div>
+        <dc-import name="KbrFooter" hint-size="100%,300px"></dc-import>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Mobile · 390</span>
+      <div data-screen-label="Panier mobile" style="position:relative;width:390px;height:844px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" mobile="{{true}}" hint-size="100%,67px"></dc-import>
+        <div style="padding:20px 20px 0">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;border-bottom:3px solid #111010;padding-bottom:10px"><h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:52px;line-height:1;text-transform:uppercase">Panier</h1><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">3 ARTICLES</span></div>
+          <div style="padding:14px 0;display:flex;flex-direction:column;gap:6px;border-bottom:1px solid #8a857c"><span style="font-size:14px;font-weight:600"><i aria-hidden="true" class="bi bi-truck" style="margin-right:6px"></i>Plus que 13,50 € pour la livraison offerte</span><div style="height:10px;border:2px solid #111010"><div style="width:77%;height:100%;background:#111010"></div></div></div>
+          <sc-for list="{{lines}}" as="l" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:84px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid #8a857c">
+              <span style="aspect-ratio:1/1;background:{{l.bg}};border:2px solid #111010;display:flex;align-items:flex-end;padding:6px;color:{{l.fg}};font-family:'Anton',Impact,sans-serif;font-size:14px;line-height:.9;text-transform:uppercase">{{l.artist}}</span>
+              <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                <div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:800;font-size:15px;text-transform:uppercase">{{l.artist}}</span><span style="font-family:'Anton',Impact,sans-serif;font-size:20px">{{l.total}} €</span></div>
+                <span style="font-size:14px">{{l.title}} · <span style="font-family:'IBM Plex Mono',monospace;font-size:12px">{{l.meta}}</span></span>
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div style="display:flex;border:2px solid #111010;height:44px"><button aria-label="Diminuer" style="width:44px;background:none;border:0"><i aria-hidden="true" class="bi bi-dash-lg"></i></button><span style="width:36px;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-weight:600">{{l.q}}</span><button aria-label="Augmenter" style="width:44px;background:none;border:0"><i aria-hidden="true" class="bi bi-plus-lg"></i></button></div>
+                  <button aria-label="Retirer" style="width:44px;height:44px;display:grid;place-items:center;background:none;border:2px solid #111010"><i aria-hidden="true" class="bi bi-trash3"></i></button>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:0;background:#111010;color:#f3eee4;padding:14px 20px 16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase">Sous-total</span><span style="font-family:'Anton',Impact,sans-serif;font-size:30px">46,50 €</span></div>
+          <button style="height:54px;display:flex;align-items:center;justify-content:center;gap:10px;background:#c4161c;color:#f3eee4;border:0;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.06em">Commander <i aria-hidden="true" class="bi bi-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Mobile · panier vide</span>
+      <div data-screen-label="Panier vide" style="width:390px;height:844px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25);display:flex;flex-direction:column">
+        <dc-import name="KbrHeader" mobile="{{true}}" cart="0" hint-size="100%,67px"></dc-import>
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:24px;padding:32px 24px;background:#e8e1d3 url(tex-halftone.svg)">
+          <div style="background:#f3eee4;border:3px solid #111010;padding:28px 24px;display:flex;flex-direction:column;gap:16px;box-shadow:8px 8px 0 #111010;position:relative">
+            <div style="position:absolute;top:-14px;left:50%;margin-left:-60px;width:120px;height:30px;background:rgba(243,238,228,.85);border:1px solid #d8d1c4;transform:rotate(-4deg)"></div>
+            <span style="align-self:flex-start;transform:rotate(-4deg);border:3px solid #c4161c;color:#c4161c;font-family:'Anton',Impact,sans-serif;font-size:18px;letter-spacing:.1em;padding:2px 10px">VIDE</span>
+            <h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:46px;line-height:.95;text-transform:uppercase">Rien dans<br>le panier.</h1>
+            <p style="margin:0;font-size:16px;line-height:1.5">Les bacs, eux, sont pleins. Commence par les dernières sorties du label.</p>
+            <a href="#" style="height:52px;display:flex;align-items:center;justify-content:center;gap:8px;background:#111010;color:#f3eee4;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.06em;text-decoration:none">Voir les dernières prod</a>
+            <a href="#" style="height:52px;display:flex;align-items:center;justify-content:center;border:2px solid #111010;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.06em;text-decoration:none">Fouiller le catalogue</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TUNNEL -->
+<section style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:.1em;text-transform:uppercase">Maquette 06</span>
+    <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-size:80px;line-height:1;text-transform:uppercase">Tunnel — étape Livraison</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5">En-tête réduit (pas de navigation qui fait fuir), étapes numérotées, adresse par défaut présélectionnée, frais affichés avant de continuer. Moyens de paiement : à compléter.</p>
+  </div>
+  <div style="display:flex;gap:64px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Desktop · 1440</span>
+      <div data-screen-label="Tunnel desktop" style="width:1440px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <header style="display:flex;align-items:center;justify-content:space-between;padding:10px 40px;border-bottom:3px solid #111010">
+          <img src="uploads/logo-631dd26c.jpg" alt="Kale Borroka Riot Records" style="height:64px;mix-blend-mode:multiply;display:block">
+          <ol style="list-style:none;margin:0;padding:0;display:flex;align-items:center;gap:12px">
+            <sc-for list="{{steps}}" as="s" hint-placeholder-count="3"><li aria-current="{{s.cur}}" style="display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.05em;color:{{s.tc}}"><span style="width:40px;height:40px;display:grid;place-items:center;border:2px solid {{s.bd}};background:{{s.bg}};color:{{s.fg}};font-family:'Anton',Impact,sans-serif;font-size:20px">{{s.n}}</span>{{s.t}}<span style="width:56px;height:2px;background:#111010;display:{{s.line}}"></span></li></sc-for>
+          </ol>
+          <a href="#" style="display:flex;align-items:center;gap:8px;min-height:44px;font-weight:700;font-size:14px"><i aria-hidden="true" class="bi bi-arrow-left"></i>Retour au panier</a>
+        </header>
+        <div style="padding:48px 40px 88px;display:grid;grid-template-columns:1fr 400px;gap:56px;align-items:start">
+          <form style="display:flex;flex-direction:column;gap:40px">
+            <fieldset style="margin:0;padding:0;border:0;display:flex;flex-direction:column;gap:16px">
+              <legend style="font-family:'Anton',Impact,sans-serif;font-size:40px;text-transform:uppercase;margin-bottom:16px;padding:0">1. Adresse de livraison</legend>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+                <label style="position:relative;border:3px solid #111010;background:#f3eee4;padding:18px;display:flex;flex-direction:column;gap:4px;font-size:15px;line-height:1.45;box-shadow:6px 6px 0 #111010"><span style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;padding:2px 6px;background:#111010;color:#f3eee4">Par défaut</span><i aria-hidden="true" class="bi bi-record-circle-fill" style="font-size:22px"></i></span><strong>Maialen Etxeberria</strong>12 rue des Tanneurs<br>64100 Bayonne<br>France</label>
+                <label style="border:2px solid #111010;padding:18px;display:flex;flex-direction:column;gap:4px;font-size:15px;line-height:1.45"><span style="display:flex;justify-content:flex-end;margin-bottom:6px"><i aria-hidden="true" class="bi bi-circle" style="font-size:22px"></i></span><strong>Maialen E. — boulot</strong>3 place du Marché<br>64500 Saint-Jean-de-Luz<br>France</label>
+                <button type="button" style="border:2px dashed #111010;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.05em;min-height:160px"><i aria-hidden="true" class="bi bi-plus-lg" style="font-size:24px"></i>Nouvelle adresse</button>
+              </div>
+            </fieldset>
+            <fieldset style="margin:0;padding:0;border:0;display:flex;flex-direction:column">
+              <legend style="font-family:'Anton',Impact,sans-serif;font-size:40px;text-transform:uppercase;margin-bottom:16px;padding:0">2. Mode de livraison</legend>
+              <sc-for list="{{ship}}" as="s" hint-placeholder-count="3">
+                <label style="display:grid;grid-template-columns:32px 1fr auto;gap:16px;align-items:center;padding:18px 20px;border:{{s.bdw}} solid #111010;margin-bottom:-2px;background:{{s.bg}};cursor:pointer"><i aria-hidden="true" class="bi {{s.icon}}" style="font-size:22px"></i><span style="display:flex;flex-direction:column;gap:2px"><strong style="font-size:17px">{{s.t}}</strong><span style="font-size:14px;color:#3a3734">{{s.d}}</span></span><span style="font-family:'Anton',Impact,sans-serif;font-size:24px">{{s.p}}</span></label>
+              </sc-for>
+            </fieldset>
+            <div style="display:flex;justify-content:space-between;align-items:center;border-top:3px solid #111010;padding-top:24px">
+              <a href="#" style="display:flex;align-items:center;gap:8px;min-height:44px;font-weight:700"><i aria-hidden="true" class="bi bi-arrow-left"></i>Panier</a>
+              <button style="height:60px;padding:0 32px;display:flex;align-items:center;gap:10px;background:#c4161c;color:#f3eee4;border:0;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.06em">Continuer vers le récapitulatif <i aria-hidden="true" class="bi bi-arrow-right"></i></button>
+            </div>
+          </form>
+          <aside style="border:3px solid #111010;padding:24px;display:flex;flex-direction:column;gap:16px;background:#e8e1d3 url(tex-grain.svg)">
+            <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:30px;text-transform:uppercase">Ta commande</h2>
+            <sc-for list="{{lines}}" as="l" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center"><span style="aspect-ratio:1/1;background:{{l.bg}};border:2px solid #111010"></span><span style="display:flex;flex-direction:column;font-size:14px"><strong style="text-transform:uppercase">{{l.artist}}</strong><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">{{l.meta}} · ×{{l.q}}</span></span><span style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px">{{l.total}} €</span></div></sc-for>
+            <dl style="margin:0;display:grid;grid-template-columns:1fr auto;gap:8px;border-top:2px solid #111010;padding-top:14px;font-size:15px">
+              <dt>Sous-total</dt><dd style="margin:0;font-family:'IBM Plex Mono',monospace">46,50 €</dd>
+              <dt>Colissimo suivi</dt><dd style="margin:0;font-family:'IBM Plex Mono',monospace">6,90 €</dd>
+            </dl>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;border-top:3px solid #111010;padding-top:14px"><strong style="text-transform:uppercase">Total</strong><span style="font-family:'Anton',Impact,sans-serif;font-size:36px">53,40 €</span></div>
+          </aside>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Mobile · 390</span>
+      <div data-screen-label="Tunnel mobile" style="position:relative;width:390px;height:844px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <header style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px 6px 14px;border-bottom:3px solid #111010"><img src="uploads/logo-631dd26c.jpg" alt="Kale Borroka" style="height:48px;mix-blend-mode:multiply"><a href="#" aria-label="Retour au panier" style="width:44px;height:44px;display:grid;place-items:center;font-size:20px"><i aria-hidden="true" class="bi bi-x-lg"></i></a></header>
+        <div style="padding:16px 20px;display:flex;flex-direction:column;gap:8px;border-bottom:2px solid #111010">
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase"><span style="font-weight:600">Étape 1 / 3 — Livraison</span><span>Ensuite : récap</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px"><span style="height:6px;background:#111010"></span><span style="height:6px;background:#b9b2a6"></span><span style="height:6px;background:#b9b2a6"></span></div>
+        </div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:14px">
+          <h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:32px;text-transform:uppercase">Adresse</h1>
+          <label style="border:3px solid #111010;padding:14px;display:grid;grid-template-columns:1fr auto;gap:4px;font-size:15px;line-height:1.4"><span><strong>Maialen Etxeberria</strong><br>12 rue des Tanneurs, 64100 Bayonne</span><i aria-hidden="true" class="bi bi-record-circle-fill" style="font-size:22px"></i></label>
+          <button style="height:48px;background:none;border:2px dashed #111010;font-weight:800;font-size:13px;text-transform:uppercase">+ Autre adresse</button>
+          <h2 style="margin:8px 0 0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:32px;text-transform:uppercase">Livraison</h2>
+          <div>
+            <sc-for list="{{ship}}" as="s" hint-placeholder-count="3"><label style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:14px;border:{{s.bdw}} solid #111010;margin-bottom:-2px;background:{{s.bg}}"><span style="display:flex;flex-direction:column"><strong style="font-size:15px">{{s.t}}</strong><span style="font-size:13px;color:#3a3734">{{s.d}}</span></span><span style="font-family:'Anton',Impact,sans-serif;font-size:20px">{{s.p}}</span></label></sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:0;background:#111010;color:#f3eee4;padding:14px 20px 16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase">Total · 3 articles</span><span style="font-family:'Anton',Impact,sans-serif;font-size:28px">53,40 €</span></div>
+          <button style="height:54px;background:#c4161c;color:#f3eee4;border:0;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.06em">Continuer <i aria-hidden="true" class="bi bi-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPTE -->
+<section style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:.1em;text-transform:uppercase">Maquette 07</span>
+    <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-size:80px;line-height:1;text-transform:uppercase">Mon compte — tableau de bord</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5">Commandes avec statut icône + texte, collection et wantlist comme des bacs de disques. La wantlist signale ce qui est dispo maintenant : c'est le levier de réachat.</p>
+  </div>
+  <div style="display:flex;gap:64px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Desktop · 1440</span>
+      <div data-screen-label="Compte desktop" style="width:1440px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" logged="{{true}}" hint-size="100%,134px"></dc-import>
+        <div style="padding:40px 40px 88px;display:grid;grid-template-columns:260px 1fr;gap:56px;align-items:start">
+          <nav aria-label="Mon compte" style="display:flex;flex-direction:column;border-top:3px solid #111010">
+            <sc-for list="{{accNav}}" as="n" hint-placeholder-count="7"><a href="#" aria-current="{{n.cur}}" style="display:flex;align-items:center;gap:12px;min-height:52px;padding:0 14px;border-bottom:1px solid #8a857c;text-decoration:none;font-weight:700;font-size:15px;background:{{n.bg}};color:{{n.fg}}"><i aria-hidden="true" class="bi {{n.i}}" style="font-size:18px"></i><span style="flex:1">{{n.t}}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:12px">{{n.c}}</span></a></sc-for>
+            <button style="display:flex;align-items:center;gap:12px;min-height:52px;padding:0 14px;background:none;border:0;font-weight:700;font-size:15px;text-align:left"><i aria-hidden="true" class="bi bi-box-arrow-right" style="font-size:18px"></i>Déconnexion</button>
+          </nav>
+          <div style="display:flex;flex-direction:column;gap:40px;min-width:0">
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #111010;padding-bottom:16px">
+              <h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:88px;line-height:.95;text-transform:uppercase">Kaixo, Maialen</h1>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase">Membre depuis 2019</span>
+            </div>
+            <div role="status" style="display:flex;align-items:center;gap:14px;padding:16px 20px;border:3px solid #111010;background:#f3eee4;box-shadow:6px 6px 0 #c4161c"><i aria-hidden="true" class="bi bi-heart-fill" style="font-size:22px"></i><span style="flex:1;font-size:16px"><strong>2 disques de ta wantlist sont en stock</strong> — Burdina « Lur Gorria » (occasion) et Sutondo « Ke Beltza ».</span><a href="#" style="font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.05em;min-height:44px;display:flex;align-items:center;gap:6px">Voir <i aria-hidden="true" class="bi bi-arrow-right"></i></a></div>
+            <section style="display:flex;flex-direction:column;gap:16px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:40px;text-transform:uppercase">Dernières commandes</h2><a href="#" style="font-weight:700;font-size:14px;min-height:44px;display:flex;align-items:center">Toutes les commandes</a></div>
+              <table style="width:100%;border-collapse:collapse;font-size:15px">
+                <thead><tr style="background:#111010;color:#f3eee4;font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.06em;text-align:left"><th style="padding:12px 16px;font-weight:500">N°</th><th style="padding:12px 16px;font-weight:500">Date</th><th style="padding:12px 16px;font-weight:500">Articles</th><th style="padding:12px 16px;font-weight:500">Statut</th><th style="padding:12px 16px;font-weight:500;text-align:right">Total</th><th style="padding:12px 16px"></th></tr></thead>
+                <tbody>
+                  <sc-for list="{{orders}}" as="o" hint-placeholder-count="4"><tr style="border-bottom:1px solid #8a857c"><td style="padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-weight:600">{{o.n}}</td><td style="padding:14px 16px">{{o.d}}</td><td style="padding:14px 16px">{{o.a}}</td><td style="padding:14px 16px"><span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:2px {{o.bs}} #111010;background:{{o.bg}};color:{{o.fg}};font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em"><i aria-hidden="true" class="bi {{o.i}}"></i>{{o.s}}</span></td><td style="padding:14px 16px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:600">{{o.t}}</td><td style="padding:14px 16px;text-align:right"><a href="#" style="font-weight:700;font-size:14px">Détail</a></td></tr></sc-for>
+                </tbody>
+              </table>
+            </section>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
+              <sc-for list="{{crates}}" as="c" hint-placeholder-count="2">
+                <section style="border:3px solid #111010;padding:24px;display:flex;flex-direction:column;gap:16px">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:36px;text-transform:uppercase">{{c.t}}</h2><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase">{{c.n}}</span></div>
+                  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+                    <sc-for list="{{c.covers}}" as="v" hint-placeholder-count="4"><span style="aspect-ratio:1/1;background:{{v.bg}};border:2px solid #111010;display:flex;align-items:flex-end;padding:6px;color:{{v.fg}};font-family:'Anton',Impact,sans-serif;font-size:13px;line-height:.9;text-transform:uppercase">{{v.a}}</span></sc-for>
+                  </div>
+                  <a href="#" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:44px;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.05em">{{c.cta}} <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+                </section>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
+              <section style="background:#e8e1d3 url(tex-grain.svg);border:2px solid #111010;padding:24px;display:flex;flex-direction:column;gap:10px">
+                <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:28px;text-transform:uppercase">Informations</h2>
+                <p style="margin:0;font-size:15px;line-height:1.6">Maialen Etxeberria<br>maialen@exemple.eus</p>
+                <div style="display:flex;gap:10px"><a href="#" style="height:44px;padding:0 16px;display:flex;align-items:center;border:2px solid #111010;font-weight:700;font-size:13px;text-transform:uppercase;text-decoration:none">Modifier</a><a href="#" style="height:44px;padding:0 16px;display:flex;align-items:center;border:2px solid #111010;font-weight:700;font-size:13px;text-transform:uppercase;text-decoration:none">Changer le mot de passe</a></div>
+              </section>
+              <section style="background:#e8e1d3 url(tex-grain.svg);border:2px solid #111010;padding:24px;display:flex;flex-direction:column;gap:10px">
+                <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:28px;text-transform:uppercase">Adresse par défaut</h2>
+                <p style="margin:0;font-size:15px;line-height:1.6">12 rue des Tanneurs, 64100 Bayonne<br><span style="font-family:'IBM Plex Mono',monospace;font-size:13px">+ 1 autre adresse</span></p>
+                <a href="#" style="align-self:flex-start;height:44px;padding:0 16px;display:flex;align-items:center;border:2px solid #111010;font-weight:700;font-size:13px;text-transform:uppercase;text-decoration:none">Carnet d'adresses</a>
+              </section>
+            </div>
+          </div>
+        </div>
+        <dc-import name="KbrFooter" hint-size="100%,300px"></dc-import>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em">Mobile · 390</span>
+      <div data-screen-label="Compte mobile" style="width:390px;background:#f3eee4;overflow:hidden;box-shadow:0 30px 60px rgba(17,16,16,.25)">
+        <dc-import name="KbrHeader" mobile="{{true}}" logged="{{true}}" hint-size="100%,67px"></dc-import>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:20px">
+          <h1 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:48px;line-height:1;text-transform:uppercase;border-bottom:3px solid #111010;padding-bottom:10px">Kaixo, Maialen</h1>
+          <div style="display:flex;gap:6px;overflow:hidden;margin-right:-20px">
+            <sc-for list="{{accNav}}" as="n" hint-placeholder-count="5"><a href="#" style="flex:none;height:44px;padding:0 14px;display:flex;align-items:center;gap:6px;border:2px solid #111010;background:{{n.bg}};color:{{n.fg}};font-weight:700;font-size:14px;text-decoration:none">{{n.t}}</a></sc-for>
+          </div>
+          <div role="status" style="display:flex;gap:10px;padding:12px 14px;border:3px solid #111010;box-shadow:5px 5px 0 #c4161c;font-size:14px;line-height:1.4"><i aria-hidden="true" class="bi bi-heart-fill" style="font-size:18px"></i><span><strong>2 disques de ta wantlist sont en stock.</strong> <a href="#">Voir</a></span></div>
+          <h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:30px;text-transform:uppercase">Commandes</h2>
+          <div style="display:flex;flex-direction:column;border-top:2px solid #111010">
+            <sc-for list="{{orders3}}" as="o" hint-placeholder-count="3"><a href="#" style="display:grid;grid-template-columns:1fr auto;gap:6px;padding:14px 0;border-bottom:1px solid #8a857c;text-decoration:none"><span style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px">{{o.n}} · {{o.d}}</span><span style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px">{{o.t}}</span><span style="justify-self:start;display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border:2px {{o.bs}} #111010;background:{{o.bg}};color:{{o.fg}};font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;text-transform:uppercase"><i aria-hidden="true" class="bi {{o.i}}"></i>{{o.s}}</span><i aria-hidden="true" class="bi bi-chevron-right"></i></a></sc-for>
+          </div>
+          <sc-for list="{{crates}}" as="c" hint-placeholder-count="2">
+            <section style="border:3px solid #111010;padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:28px;text-transform:uppercase">{{c.t}}</h2><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase">{{c.n}}</span></div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px"><sc-for list="{{c.covers}}" as="v" hint-placeholder-count="4"><span style="aspect-ratio:1/1;background:{{v.bg}};border:2px solid #111010"></span></sc-for></div>
+            </section>
+          </sc-for>
+        </div>
+        <dc-import name="KbrFooter" mobile="{{true}}" hint-size="100%,420px"></dc-import>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() { document.documentElement.lang = 'fr'; }
+  renderVals() {
+    const lines = [
+      { artist: 'Hautsa', title: 'Kale Hotsak', meta: 'LP · KBR#024 · rouge', unit: '22,00', q: 1, total: '22,00', bg: '#c4161c', fg: '#111010' },
+      { artist: 'Les Pavés Mouillés', title: 'Sous la plage', meta: 'EP 7" · KBR#023', unit: '7,00', q: 2, total: '14,00', bg: '#111010', fg: '#f3eee4' },
+      { artist: 'Burdina', title: 'Herri Txikia', meta: 'CD · Herri Hotsa', unit: '10,50', q: 1, total: '10,50', bg: '#e8e1d3', fg: '#c4161c' }
+    ];
+    const steps = [['1', 'Livraison'], ['2', 'Récapitulatif'], ['3', 'Paiement']].map((s, i) => ({
+      n: s[0], t: s[1], cur: i === 0 ? 'step' : 'false',
+      bg: i === 0 ? '#111010' : 'transparent', fg: i === 0 ? '#f3eee4' : '#5b5750', bd: i === 0 ? '#111010' : '#8a857c',
+      tc: i === 0 ? '#111010' : '#5b5750', line: i < 2 ? 'block' : 'none'
+    }));
+    const ship = [
+      { t: 'Colissimo suivi', d: 'Livré en 2 à 4 jours ouvrés, avec numéro de suivi', p: '6,90 €', icon: 'bi-record-circle-fill', bg: '#e8e1d3', bdw: '3px' },
+      { t: 'Lettre suivie', d: 'Jusqu\u2019à 2 disques ou 4 CD/K7, 3 à 5 jours', p: '4,50 €', icon: 'bi-circle', bg: 'transparent', bdw: '2px' },
+      { t: 'Remise en main propre', d: 'Sur un concert ou au local, on te recontacte', p: 'Gratuit', icon: 'bi-circle', bg: 'transparent', bdw: '2px' }
+    ];
+    const ST = {
+      wait: { s: 'En attente', i: 'bi-hourglass-split', bg: 'transparent', fg: '#111010', bs: 'dashed' },
+      paid: { s: 'Payée', i: 'bi-check-lg', bg: 'transparent', fg: '#111010', bs: 'solid' },
+      prep: { s: 'En préparation', i: 'bi-box-seam', bg: '#e8e1d3', fg: '#111010', bs: 'solid' },
+      sent: { s: 'Expédiée', i: 'bi-truck', bg: '#111010', fg: '#f3eee4', bs: 'solid' },
+      refund: { s: 'Remboursée', i: 'bi-arrow-counterclockwise', bg: 'transparent', fg: '#111010', bs: 'dotted' }
+    };
+    const orders = [
+      Object.assign({ n: '#2026-0412', d: '28.09.2026', a: '3 articles', t: '53,40 €' }, ST.prep),
+      Object.assign({ n: '#2026-0388', d: '11.09.2026', a: '1 article', t: '24,90 €' }, ST.sent),
+      Object.assign({ n: '#2026-0301', d: '02.07.2026', a: '2 articles', t: '31,00 €' }, ST.paid),
+      Object.assign({ n: '#2026-0177', d: '14.03.2026', a: '1 article', t: '9,00 €' }, ST.refund)
+    ];
+    const cv = (a, bg, fg) => ({ a, bg, fg });
+    const crates = [
+      { t: 'Collection', n: '86 disques', cta: 'Parcourir ma collection', covers: [cv('Piztia', '#111010', '#f3eee4'), cv('Eskuz', '#c4161c', '#111010'), cv('Zarata', '#e8e1d3', '#c4161c'), cv('Hautsa', '#5b5750', '#f3eee4')] },
+      { t: 'Wantlist', n: '12 disques · 2 dispo', cta: 'Voir ma wantlist', covers: [cv('Burdina', '#c4161c', '#111010'), cv('Sutondo', '#111010', '#c4161c'), cv('Hezurrak', '#f3eee4', '#111010'), cv('Txori B.', '#111010', '#f3eee4')] }
+    ];
+    const nav = [['Tableau de bord', 'bi-grid', ''], ['Commandes', 'bi-receipt', '14'], ['Collection', 'bi-collection', '86'], ['Wantlist', 'bi-heart', '12'], ['Adresses', 'bi-geo-alt', '2'], ['Informations', 'bi-person', ''], ['Mot de passe', 'bi-key', '']];
+    const accNav = nav.map((n, i) => ({ t: n[0], i: n[1], c: n[2], cur: i === 0 ? 'page' : 'false', bg: i === 0 ? '#111010' : 'transparent', fg: i === 0 ? '#f3eee4' : '#111010' }));
+    return { lines, steps, ship, orders, orders3: orders.slice(0, 3), crates, accNav };
+  }
+}
+</script>
+</body>
+</html>

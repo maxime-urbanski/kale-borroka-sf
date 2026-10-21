@@ -1,0 +1,39 @@
+/* Les-Tilleuls.coop — Typography tokens
+ * Families CONFIRMED from live theme @font-face:
+ *   headings/display = Neulis Alt (NeulisAlt-Medium.woff2, weight 500)
+ *   body            = Ubuntu (ubuntu-400.woff2, weight 400)
+ * Neulis Alt is a commercial typeface (Latinotype) — license it for production;
+ * the fallback stack keeps the geometric feel where it isn't available.
+ * Scale is web-oriented (rem @16px); deck point sizes noted for reference.
+ */
+:root {
+  --lt-font-display: "Neulis Alt", "Neulis", "Poppins", system-ui, sans-serif; /* headings */
+  --lt-font-body: "Ubuntu", system-ui, -apple-system, "Segoe UI", sans-serif;  /* body */
+
+  --lt-weight-regular: 400;  /* Ubuntu body */
+  --lt-weight-medium: 500;   /* Neulis Alt headings */
+  --lt-weight-bold: 700;
+
+  /* Type scale */
+  --lt-text-display: 3.5rem;   /* 56px — hero title ("AG") */
+  --lt-text-stat: 2.75rem;     /* 44px — big figures, sommaire numbers 01–05 */
+  --lt-text-h1: 2.25rem;       /* 36px — section title */
+  --lt-text-h2: 1.75rem;       /* 28px */
+  --lt-text-h3: 1.25rem;       /* 20px */
+  --lt-text-body: 1.125rem;    /* 18px — bullets/body */
+  --lt-text-small: 0.875rem;   /* 14px */
+  --lt-text-label: 0.8125rem;  /* 13px — uppercase eyebrow/labels */
+
+  --lt-leading-tight: 1.1;     /* headings */
+  --lt-leading-normal: 1.5;    /* body */
+  --lt-tracking-label: 0.08em; /* uppercase labels */
+}
+
+/* Idiomatic usage */
+.lt-h1     { font-family: var(--lt-font-display); font-weight: var(--lt-weight-medium);
+             font-size: var(--lt-text-h1); line-height: var(--lt-leading-tight); color: var(--lt-ink); }
+.lt-body   { font-family: var(--lt-font-body); font-weight: var(--lt-weight-regular);
+             font-size: var(--lt-text-body); line-height: var(--lt-leading-normal); color: var(--lt-text); }
+.lt-label  { font-family: var(--lt-font-display); font-weight: var(--lt-weight-medium);
+             font-size: var(--lt-text-label); line-height: 1.2;
+             text-transform: uppercase; letter-spacing: var(--lt-tracking-label); color: var(--lt-orange); }

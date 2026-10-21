@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>:focus-visible{outline:3px solid #111010!important;outline-offset:3px;box-shadow:0 0 0 3px #f3eee4}::placeholder{color:#5b5750;opacity:1}@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}</style>
+</helmet>
+<footer style="font-family:'Archivo',system-ui,sans-serif;color:#f3eee4">
+  <div style="height:48px;margin-bottom:-1px;background:url(tex-burnt.svg) repeat-x bottom;background-size:600px 48px"></div>
+  <div style="background:#111010 url(tex-grain.svg);padding:{{pad}};display:grid;grid-template-columns:{{cols}};gap:40px;text-align:{{ta}}">
+    <div style="display:flex;flex-direction:column;align-items:{{al}};gap:14px;max-width:360px;justify-self:{{js}}">
+      <span style="display:flex;flex-direction:column;align-items:{{brandAlign}};gap:8px;font-family:'Anton',Impact,sans-serif;font-size:34px;line-height:1.1;text-transform:uppercase;letter-spacing:.02em"><span style="padding:0 8px">Kale Borroka</span><span style="color:#f3eee4;background:#c4161c;padding:2px 8px 0">Riot Records</span></span>
+      <p style="margin:0;font-size:15px;line-height:1.55;color:#d8d1c4">Label et distro indépendants. Punk, hardcore, oi! et tout ce qui fait du bruit contre l'extrême droite. Fait main, sans patron.</p>
+    </div>
+    <nav aria-label="À propos" style="display:flex;flex-direction:column;align-items:{{al}};gap:2px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#b9b2a6;margin-bottom:6px">À propos</span>
+      <a href="#" style="color:#f3eee4;text-decoration:none;font-size:15px;min-height:44px;display:flex;align-items:center">Le label</a>
+      <a href="#" style="color:#f3eee4;text-decoration:none;font-size:15px;min-height:44px;display:flex;align-items:center">Envoyer sa prod</a>
+      <a href="#" style="color:#f3eee4;text-decoration:none;font-size:15px;min-height:44px;display:flex;align-items:center">Contact</a>
+    </nav>
+    <nav aria-label="Shop" style="display:flex;flex-direction:column;align-items:{{al}};gap:2px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#b9b2a6;margin-bottom:6px">Shop</span>
+      <a href="#" style="color:#f3eee4;text-decoration:none;font-size:15px;min-height:44px;display:flex;align-items:center">Nos productions</a>
+      <a href="#" style="color:#f3eee4;text-decoration:none;font-size:15px;min-height:44px;display:flex;align-items:center">Catalogue</a>
+      <a href="#" style="color:#f3eee4;text-decoration:none;font-size:15px;min-height:44px;display:flex;align-items:center">Livraison &amp; retours</a>
+    </nav>
+    <div style="display:flex;flex-direction:column;align-items:{{al}};gap:10px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#b9b2a6">Suivre</span>
+      <div style="display:flex;gap:8px">
+        <a href="#" aria-label="Instagram" style="width:44px;height:44px;display:grid;place-items:center;border:2px solid #f3eee4;color:#f3eee4;font-size:18px"><i aria-hidden="true" class="bi bi-instagram"></i></a>
+        <a href="#" aria-label="Facebook" style="width:44px;height:44px;display:grid;place-items:center;border:2px solid #f3eee4;color:#f3eee4;font-size:18px"><i aria-hidden="true" class="bi bi-facebook"></i></a>
+        <a href="#" aria-label="Mastodon" style="width:44px;height:44px;display:grid;place-items:center;border:2px solid #f3eee4;color:#f3eee4;font-size:18px"><i aria-hidden="true" class="bi bi-mastodon"></i></a>
+        <a href="#" aria-label="Bandcamp" style="width:44px;height:44px;display:grid;place-items:center;border:2px solid #f3eee4;color:#f3eee4;font-size:18px"><i aria-hidden="true" class="bi bi-vinyl"></i></a>
+      </div>
+    </div>
+  </div>
+  <div style="background:#111010;border-top:1px solid #3a3734;padding:{{padBottom}};display:flex;flex-wrap:wrap;justify-content:{{al}};gap:8px 24px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#b9b2a6">
+    <nav aria-label="Informations légales" style="display:flex;flex-wrap:nowrap;gap:{{linkGap}}">
+      <a href="#" style="color:#d8d1c4;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center">CGV</a>
+      <a href="#" style="color:#d8d1c4;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center">Mentions légales</a>
+      <a href="#" style="color:#d8d1c4;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center">Confidentialité</a>
+    </nav>
+    <span style="order:{{copyOrder}}">© 2026 Kale Borroka Riot Records</span>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:320},&quot;mobile&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const m = !!this.props.mobile;
+    return {
+      pad: m ? '32px 20px' : '48px 40px',
+      padBottom: m ? '16px 20px' : '16px 40px',
+      brandAlign: m ? 'center' : 'flex-start',
+      linkGap: m ? '16px' : '24px', copyOrder: m ? 1 : -1,
+      al: m ? 'center' : 'flex-start', ta: m ? 'center' : 'left', js: m ? 'center' : 'start',
+      cols: m ? '1fr' : '2fr 1fr 1fr 1.2fr'
+    };
+  }
+}
+</script>
+</body>
+</html>
