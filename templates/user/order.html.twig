@@ -1,46 +1,153 @@
 {% extends 'user/user-dashboard.html.twig' %}
 
-{% block content %}
-    {% for order in orders %}
-        <div class="row my-5 mx-3 bg-body rounded">
-            <div class="col border-bottom">
-                <h5 class="text-center fw-bolder mt-3">
-                    Commande du {{ order.createdAt|date("m/d/Y", "Europe/Paris") }}
-                </h5>
-            </div>
-            <div class="row">
-                <div class="d-flex justify-content-between align-items-center w-100 py-3">
-                    <p class="fw-bolder mb-0">Ref: <span class="fw-light">{{ order.reference }}</span></p>
-                    <span class="kb-badge kb-badge--outline">{{ order.status.label }}</span>
-                </div>
-                <div class="col-6 py-4 px-5">
-                    {% for detail in order.orderDetails %}
-                        <p>
-                            <a href="{{ article_path(detail.product) }}">
-                                {{ detail.productName }}
-                            </a>
-                            <br>
-                            Quantité: {{ detail.quantity }}
-                        </p>
-                    {% endfor %}
-                </div>
-                <div class="col-6 my-auto">
-                    <h5 class="text-center">
-                        Prix:
-                        <span class="fw-light">
-                            {{ (order.totalPrice / 100) |format_currency('EUR') }}
-                        </span>
-                    </h5>
-                </div>
-            </div>
-        </div>
-    {% else %}
-        <div class="row justify-content-center align-items-center h-100">
-            <div class="col">
-                <p class="fw-light fst-italic text-center">Pas de commande effectuée.</p>
-            </div>
-        </div>
-    {% endfor %}
+{#
+    Mes commandes (maquette 16): « En cours » (`ongoing`, a list of Order) always whole, then
+    « Terminées » (`finished`, paginated by 9). `awaitingPayment` counts the pending ones: they
+    turn kraft and say how to pay. A table from md up, cards below. `counts` is App\Account\AccountTotals.
+#}
+{% block title %}Commandes{% endblock %}
+
+{% block account_head %}
+    <nav class="kb-account__crumbs" aria-label="Fil d’Ariane">
+        <a href="{{ path('app_user_informations') }}">Mon compte</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Commandes</span>
+    </nav>
+    <h1 class="kb-account__title">Commandes</h1>
+    <span class="kb-account__since kb-account__since--always">
+        {{ counts.orders }} commande{{ counts.orders > 1 ? 's' }}{% if counts.orders > 1 %} · la plus récente en premier{% endif %}
+    </span>
 {% endblock %}
 
+{% block content %}
+    {% if ongoing is empty and finished.totalItemCount == 0 %}
+        <div class="kb-orders-empty">
+            <div class="kb-orders-empty__card kb-tape">
+                <span class="kb-stamp kb-orders-empty__stamp" aria-hidden="true">Vide</span>
+                <h2 class="kb-orders-empty__title">Pas encore <br>de commande.</h2>
+                <p class="kb-orders-empty__text">Ta première est peut-être dans les dernières sorties du label. Les bacs t’attendent.</p>
+                <div class="kb-orders-empty__actions">
+                    <a href="{{ path('app_production') }}" class="btn btn-dark">Voir les dernières prod</a>
+                    <a href="{{ path('app_catalog') }}" class="btn btn-outline-dark">Fouiller le catalogue</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
+    {% if ongoing is not empty %}
+        {% set count = ongoing|length ~ (awaitingPayment > 0 ? ' · dont ' ~ awaitingPayment ~ ' attend' ~ (awaitingPayment > 1 ? 'ent') ~ ' ton paiement') %}
+        {{ _self.group('en-cours', 'En cours', count, ongoing|length, ongoing) }}
+    {% endif %}
+
+    {% if finished.totalItemCount > 0 %}
+        {% set pages = (finished.totalItemCount / finished.itemNumberPerPage)|round(0, 'ceil') %}
+        {% set count = finished.totalItemCount ~ (pages > 1 ? ' · page ' ~ finished.currentPageNumber ~ ' sur ' ~ pages) %}
+        {% set short = finished.totalItemCount ~ (pages > 1 ? ' · p. ' ~ finished.currentPageNumber ~ '/' ~ pages) %}
+        {{ _self.group('terminees', 'Terminées', count, short, finished, finished) }}
+    {% endif %}
+{% endblock %}
+
+{#
+    One crate of orders: a table from md up, a list of cards below. `pagination`: the finished
+    orders' KnpPaginator page, null for the ongoing ones.
+#}
+{% macro group(id, title, count, short, orders, pagination = null) %}
+    <section class="kb-orders-group" id="{{ id }}" aria-labelledby="{{ id }}-titre">
+        <h2 class="kb-orders-group__title" id="{{ id }}-titre">
+            {{ title }}
+            <span class="kb-orders-group__count d-none d-md-inline">{{ count }}</span>
+            <span class="kb-orders-group__count d-md-none">{{ short }}</span>
+        </h2>
+
+        <table class="kb-orders kb-orders--full d-none d-md-table">
+            <caption class="visually-hidden">Commandes {{ title|lower }}</caption>
+            <thead>
+            <tr>
+                <th scope="col">N°</th>
+                <th scope="col">Date</th>
+                <th scope="col">Articles</th>
+                <th scope="col">Statut</th>
+                <th scope="col" class="text-end">Total</th>
+                <th scope="col"><span class="visually-hidden">Action</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+                {% set pending = order.status is same as(constant('App\\Enum\\OrderStatus::PENDING')) %}
+                <tr{% if pending %} class="kb-orders__waiting"{% endif %}>
+                    <td class="kb-orders__ref">{{ order.reference }}</td>
+                    <td class="kb-orders__date">{{ order.createdAt|date('d.m.Y', 'Europe/Paris') }}</td>
+                    <td>
+                        <span class="kb-orders__items">
+                            {{ _self.covers(order) }}
+                            {{ order.itemCount }} article{{ order.itemCount > 1 ? 's' }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="kb-orders__status">
+                            {% include 'partials/_order_status.html.twig' with {status: order.status} only %}
+                            {% if pending %}
+                                <strong class="kb-orders__next"><i class="bi bi-arrow-return-right" aria-hidden="true"></i>Le lien de paiement arrive par mail</strong>
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td class="kb-orders__total">{{ (order.totalPrice / 100)|format_currency('EUR', [], 'fr') }}</td>
+                    <td class="text-end">
+                        {% if pending %}
+                            <a href="{{ path('app_user_order', {orderReference: order.reference}) }}#paiement" class="btn btn-dark kb-orders__pay">
+                                Comment payer<span class="visually-hidden"> la commande {{ order.reference }}</span>
+                                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('app_user_order', {orderReference: order.reference}) }}" class="kb-orders__detail">Détail<span class="visually-hidden"> de la commande {{ order.reference }}</span></a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <ul class="kb-order-cards d-md-none list-unstyled">
+            {% for order in orders %}
+                {% set pending = order.status is same as(constant('App\\Enum\\OrderStatus::PENDING')) %}
+                <li>
+                    <a href="{{ path('app_user_order', {orderReference: order.reference}) ~ (pending ? '#paiement') }}" class="kb-order-card{{ pending ? ' kb-order-card--waiting' }}">
+                        <span class="kb-order-card__ref">
+                            {{ order.reference }}
+                            <span class="kb-order-card__meta">{{ order.createdAt|date('d.m.Y', 'Europe/Paris') }} · {{ order.itemCount }} article{{ order.itemCount > 1 ? 's' }}</span>
+                        </span>
+                        <span class="kb-order-card__total">{{ (order.totalPrice / 100)|format_currency('EUR', [], 'fr') }}</span>
+                        <i class="bi bi-chevron-right kb-order-card__go" aria-hidden="true"></i>
+                        <span class="kb-order-card__status">
+                            {% include 'partials/_order_status.html.twig' with {status: order.status, small: true} only %}
+                            {% if pending %}<strong>→ Lien de paiement par mail</strong>{% endif %}
+                        </span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        {% if pagination %}
+            {% set first = (pagination.currentPageNumber - 1) * pagination.itemNumberPerPage + 1 %}
+            {% set last = min(first + pagination.items|length - 1, pagination.totalItemCount) %}
+            <div class="kb-orders-group__pages">
+                <span class="kb-orders-group__range">{{ first }}–{{ last }} sur {{ pagination.totalItemCount }} terminée{{ pagination.totalItemCount > 1 ? 's' }}</span>
+                {{ knp_pagination_render(pagination, 'partials/_pagination.html.twig') }}
+            </div>
+        {% endif %}
+    </section>
+{% endmacro %}
+
+{# Up to three covers of the order, stacked like records in a crate: decorative, the count says it. #}
+{% macro covers(order) %}
+    <span class="kb-orders__covers" aria-hidden="true">
+        {% for line in order.orderDetails|slice(0, 3) %}
+            <span class="kb-record kb-orders__cover">
+                {% if line.product %}
+                    {% set n = article_names(line.product) %}
+                    {% include 'user/_record_cover.html.twig' with {article: line.product, artist: n.artist, title: n.title, ref: null, decorative: true} only %}
+                {% endif %}
+            </span>
+        {% endfor %}
+    </span>
+{% endmacro %}

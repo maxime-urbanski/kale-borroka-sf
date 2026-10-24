@@ -1,15 +1,15 @@
 {#
     Order status badge: an icon and the label for every status, the border style and the
     fill on top (design system: colour never carries the state alone). `status`: App\Enum\OrderStatus.
+    `small` or `large` for the list cards and the order's page.
 #}
-{% set badges = {
-    pending: ['kb-badge--pending', 'bi-hourglass-split'],
-    paid: ['kb-badge--outline', 'bi-check-lg'],
-    preparing: ['kb-badge--kraft', 'bi-box-seam'],
-    shipped: ['', 'bi-truck'],
-    delivered: ['kb-badge--outline', 'bi-house-check'],
-    cancelled: ['kb-badge--cancelled', 'bi-x-lg'],
-    refunded: ['kb-badge--refunded', 'bi-arrow-counterclockwise'],
+{% set modifiers = {
+    pending: 'kb-badge--pending',
+    paid: 'kb-badge--outline',
+    preparing: 'kb-badge--kraft',
+    shipped: '',
+    delivered: 'kb-badge--outline',
+    cancelled: 'kb-badge--cancelled',
+    refunded: 'kb-badge--refunded',
 } %}
-{% set badge = badges[status.value] %}
-<span class="kb-badge {{ badge[0] }}{{ small|default(false) ? ' kb-badge--sm' }}"><i class="bi {{ badge[1] }}" aria-hidden="true"></i>{{ status.label }}</span>
+<span class="kb-badge {{ modifiers[status.value] }}{{ small|default(false) ? ' kb-badge--sm' }}{{ large|default(false) ? ' kb-badge--lg' }}"><i class="bi {{ status.icon }}" aria-hidden="true"></i>{{ status.label }}</span>

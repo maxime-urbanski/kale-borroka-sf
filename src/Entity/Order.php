@@ -225,6 +225,24 @@ class Order
         return $this->orderDetails;
     }
 
+    /**
+     * How many items the order holds: the quantities of its lines.
+     */
+    public function getItemCount(): int
+    {
+        return array_sum($this->orderDetails->map(static fn (OrderDetails $line): int => (int) $line->getQuantity())->getValues());
+    }
+
+    /**
+     * The articles of the lines, in their order (a line always has one once saved).
+     *
+     * @return list<Article>
+     */
+    public function getProducts(): array
+    {
+        return array_values(array_filter($this->orderDetails->map(static fn (OrderDetails $line): ?Article => $line->getProduct())->getValues()));
+    }
+
     public function addOrderDetail(OrderDetails $orderDetail): static
     {
         if (!$this->orderDetails->contains($orderDetail)) {

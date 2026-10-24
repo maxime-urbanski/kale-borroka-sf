@@ -6,7 +6,10 @@ namespace App\Repository;
 
 use App\Entity\Order;
 use App\Entity\User;
+use App\Enum\OrderStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -40,5 +43,67 @@ class OrderRepository extends ServiceEntityRepository
             ->getResult();
 
         return array_map(static fn (array $row): array => ['order' => $row[0], 'items' => (int) $row['items']], $rows);
+    }
+
+    /**
+     * The buyer's orders still moving (OrderStatus::ongoing()), newest first, with their lines.
+     *
+     * @return list<Order>
+     */
+    public function ongoingOfBuyer(User $buyer): array
+    {
+        /* @var list<Order> */
+        return $this->ofBuyer($buyer, OrderStatus::ongoing())
+            ->addSelect('d', 'p')
+            ->leftJoin('o.orderDetails', 'd')
+            ->leftJoin('d.product', 'p')
+            ->addOrderBy('d.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * The buyer's finished orders (OrderStatus::finished()), newest first: a query for the
+     * paginator, without their lines (loadLines() once the page is known).
+     */
+    public function finishedOfBuyerQuery(User $buyer): Query
+    {
+        return $this->ofBuyer($buyer, OrderStatus::finished())->getQuery();
+    }
+
+    /**
+     * Loads the lines of these orders and their articles in one query.
+     *
+     * @param list<Order> $orders
+     */
+    public function loadLines(array $orders): void
+    {
+        if ([] === $orders) {
+            return;
+        }
+
+        $this->createQueryBuilder('o')
+            ->addSelect('d', 'p')
+            ->leftJoin('o.orderDetails', 'd')
+            ->leftJoin('d.product', 'p')
+            ->where('o IN (:orders)')
+            ->setParameter('orders', $orders)
+            ->orderBy('d.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param list<OrderStatus> $statuses
+     */
+    private function ofBuyer(User $buyer, array $statuses): QueryBuilder
+    {
+        return $this->createQueryBuilder('o')
+            ->where('o.buyer = :buyer')
+            ->andWhere('o.status IN (:statuses)')
+            ->setParameter('buyer', $buyer)
+            ->setParameter('statuses', $statuses)
+            ->orderBy('o.created_at', 'DESC')
+            ->addOrderBy('o.id', 'DESC');
     }
 }

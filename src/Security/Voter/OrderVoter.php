@@ -14,7 +14,9 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * A customer sees and cancels their own orders only — cancelling only while unpaid.
- * Admins see every order; whether they can cancel it is up to the workflow.
+ * Admins see every order; whether they can cancel it is up to the workflow. OWN is the buyer
+ * alone: the account's order pages, which mix in the viewer's collection and counters (admins
+ * see orders in the back office).
  *
  * @extends Voter<string, Order>
  */
@@ -22,6 +24,7 @@ class OrderVoter extends Voter
 {
     public const string VIEW = 'ORDER_VIEW';
     public const string CANCEL = 'ORDER_CANCEL';
+    public const string OWN = 'ORDER_OWN';
 
     public function __construct(
         private readonly Security $security,
@@ -30,7 +33,7 @@ class OrderVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return \in_array($attribute, [self::VIEW, self::CANCEL], true) && $subject instanceof Order;
+        return \in_array($attribute, [self::VIEW, self::CANCEL, self::OWN], true) && $subject instanceof Order;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
@@ -39,6 +42,10 @@ class OrderVoter extends Voter
 
         if (!$user instanceof User) {
             return false;
+        }
+
+        if (self::OWN === $attribute) {
+            return $subject->getBuyer() === $user;
         }
 
         if ($this->security->isGranted('ROLE_ADMIN')) {
