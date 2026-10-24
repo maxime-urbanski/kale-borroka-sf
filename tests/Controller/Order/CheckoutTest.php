@@ -55,7 +55,7 @@ class CheckoutTest extends WebTestCase
         self::assertResponseRedirects();
         $this->client->followRedirect();
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h3', 'Merci pour votre commande');
+        self::assertSelectorTextContains('h1', 'Commande reçue');
 
         $order = $this->entityManager()->getRepository(Order::class)->findOneBy([], ['id' => 'DESC']);
         self::assertNotNull($order);

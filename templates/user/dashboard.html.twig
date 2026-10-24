@@ -83,7 +83,7 @@
                         <td>{% include 'partials/_order_status.html.twig' with {status: order.status} only %}</td>
                         <td class="kb-orders__total">{{ (order.totalPrice / 100)|format_currency('EUR', [], 'fr') }}</td>
                         <td class="text-end">
-                            <a href="{{ path('app_order_overview', {orderReference: order.reference}) }}">Détail<span class="visually-hidden"> de la commande {{ order.reference }}</span></a>
+                            <a href="{{ path('app_user_order', {orderReference: order.reference}) }}">Détail<span class="visually-hidden"> de la commande {{ order.reference }}</span></a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -93,7 +93,7 @@
                 {% for row in orders|slice(0, 3) %}
                     {% set order = row.order %}
                     <li>
-                        <a href="{{ path('app_order_overview', {orderReference: order.reference}) }}" class="kb-orders-list__item">
+                        <a href="{{ path('app_user_order', {orderReference: order.reference}) }}" class="kb-orders-list__item">
                             <span class="kb-orders-list__ref">{{ order.reference }} · {{ order.createdAt|date('d.m.Y', 'Europe/Paris') }}</span>
                             <span class="kb-orders-list__total">{{ (order.totalPrice / 100)|format_currency('EUR', [], 'fr') }}</span>
                             {% include 'partials/_order_status.html.twig' with {status: order.status, small: true} only %}

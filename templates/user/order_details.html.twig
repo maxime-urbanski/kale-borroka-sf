@@ -1,0 +1,316 @@
+{% extends 'user/user-dashboard.html.twig' %}
+
+{#
+    Détail d'une commande (maquette 17), opened with the thank-you banner right after the checkout
+    (`thanks`, maquette 18) in place of the block saying what comes next. `inStock`: the articles
+    of a finished order that can go back into the cart; `toCollect`: those of a delivered one not
+    in the collection yet (App\Account\OrderArticles). `contactEmail`: the label's, from the shop
+    settings, null when none is set. `counts` is App\Account\AccountTotals.
+#}
+{% block title %}Commande {{ order.reference }}{% endblock %}
+
+{% block content %}
+    {% set status = order.status.value %}
+    {% set progress = order_progress(order) %}
+    {% set paidOn = order.paidAt ? order.paidAt|date('d.m.Y', 'Europe/Paris') %}
+    {% set items = order.itemCount ~ ' article' ~ (order.itemCount > 1 ? 's') %}
+    {% set mailto = contactEmail ? 'mailto:' ~ contactEmail ~ '?subject=' ~ ('Commande ' ~ order.reference)|url_encode %}
+
+    {% if thanks %}
+        <section class="kb-order-thanks" aria-labelledby="merci-titre">
+            <div class="kb-order-thanks__top">
+                <span class="kb-stamp kb-order-thanks__stamp" aria-hidden="true">Reçue</span>
+                <span class="kb-order__meta">Commande enregistrée · {{ order.createdAt|date('d.m.Y', 'Europe/Paris') }}</span>
+            </div>
+            <h1 class="kb-order-thanks__title" id="merci-titre">Commande reçue. Eskerrik asko{{ user.firstname ? ', ' ~ user.firstname }} !</h1>
+            <p class="kb-order-thanks__text">
+                On t’écrit sur <strong>{{ user.email }}</strong>. Rien n’est débité pour l’instant : on vérifie le stock
+                à la main, puis on t’envoie le lien de paiement. Voici la suite, pas à pas.
+            </p>
+            {{ _self.payment_steps(true) }}
+            <div class="kb-order-thanks__foot">
+                {{ _self.reference(order.reference) }}
+                <a href="{{ path('app_catalog') }}" class="kb-order__link">Continuer à fouiller les bacs <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+            </div>
+        </section>
+    {% endif %}
+
+    <header class="kb-order__head">
+        <div class="kb-order__nav">
+            <nav class="kb-account__crumbs" aria-label="Fil d’Ariane">
+                <a href="{{ path('app_user_informations') }}">Mon compte</a>
+                <span aria-hidden="true">/</span>
+                <a href="{{ path('app_user_orders') }}">Commandes</a>
+                <span aria-hidden="true">/</span>
+                <span aria-current="page">{{ order.reference }}</span>
+            </nav>
+            <a href="{{ path('app_user_orders') }}" class="kb-order__link"><i class="bi bi-arrow-left" aria-hidden="true"></i>Toutes les commandes</a>
+        </div>
+        <div class="kb-order__id">
+            <div class="kb-order__name">
+                <{{ thanks ? 'h2' : 'h1' }} class="kb-order__title">
+                    <span class="kb-order__word">Commande</span>
+                    <span class="kb-order__ref">{{ order.reference }}</span>
+                </{{ thanks ? 'h2' : 'h1' }}>
+                <span class="kb-order__meta">Passée le {{ order.createdAt|date('d.m.Y', 'Europe/Paris') }} · {{ items }}</span>
+            </div>
+            <div class="kb-order__summary">
+                {% include 'partials/_order_status.html.twig' with {status: order.status, large: true} only %}
+                <span class="kb-order__total">
+                    <span class="kb-order__total-label">Total</span>
+                    <span class="kb-price">{{ (order.totalPrice / 100)|format_currency('EUR', [], 'fr') }}</span>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <section class="kb-order-progress{{ progress.left ? ' kb-order-progress--left' }}" aria-labelledby="progression-titre">
+        <h2 class="visually-hidden" id="progression-titre">Où en est ta commande</h2>
+        <ol class="kb-order-steps list-unstyled">
+            {% for step in progress.steps %}
+                {% set next = progress.steps[loop.index0 + 1] ?? null %}
+                <li class="kb-order-step kb-order-step--{{ step.state }}{{ next and next.state in ['done', 'current'] ? ' kb-order-step--linked' }}"
+                    {%- if step.state == 'current' %} aria-current="step"{% endif %}>
+                    <span class="kb-order-step__mark"><i class="bi {{ step.status.icon }}" aria-hidden="true"></i></span>
+                    <span class="kb-order-step__text">
+                        <span class="kb-order-step__label">
+                            {{- step.status.label -}}
+                            <span class="visually-hidden"> ({{ {done: 'étape passée', current: 'étape actuelle', todo: 'à venir', off: 'non atteinte', unknown: 'non connue'}[step.state] }})</span>
+                        </span>
+                        {% if step.state == 'current' %}<span class="kb-order-step__now">Maintenant</span>{% endif %}
+                        {% if step.date %}<span class="kb-order-step__date">{{ step.date|date('d.m.Y', 'Europe/Paris') }}</span>{% endif %}
+                    </span>
+                </li>
+            {% endfor %}
+        </ol>
+        {% if progress.left %}
+            <div class="kb-order-out">
+                <span class="kb-stamp kb-order-out__stamp"><i class="bi {{ order.status.icon }}" aria-hidden="true"></i>{{ order.status.label }}</span>
+                <p class="kb-order-out__text">{{ progress.left }}</p>
+            </div>
+        {% endif %}
+    </section>
+
+    <div class="kb-order__body">
+        <div class="kb-order__main">
+            {% if not thanks %}
+                {% set action = {
+                    pending: ['bi-hourglass-split', 'On vérifie le stock à la main', 'Pas de paiement en ligne pour l’instant : on passe chaque disque en revue dans les bacs, puis on t’envoie un lien de paiement par mail. Rien à faire de ton côté d’ici là.'],
+                    paid: ['bi-check-lg', 'Paiement reçu', 'Paiement reçu le ' ~ paidOn ~ ', milesker ! On emballe bientôt tes disques, à la main.'],
+                    preparing: ['bi-box-seam', 'On prépare ton colis', 'Paiement reçu le ' ~ paidOn ~ ', milesker ! On emballe tes disques à la main, coins protégés.'],
+                    shipped: ['bi-truck', 'Ton colis est en route', 'Il a quitté le local. Le transporteur s’occupe du reste.'],
+                    delivered: ['bi-house-check', 'Bien arrivé ?', 'Range ces disques dans ta collection pour en garder la trace, ou repasse par les bacs : il y a du neuf.'],
+                    cancelled: ['bi-x-lg', 'Commande annulée', progress.left ~ ' Si c’est une erreur, écris-nous avec la référence.'],
+                    refunded: ['bi-arrow-counterclockwise', 'Commande remboursée', 'Le montant de cette commande t’a été remboursé. Une question ? Écris-nous avec la référence.'],
+                }[status] %}
+                <section class="kb-order-action"{% if status == 'pending' %} id="paiement"{% endif %} aria-labelledby="action-titre">
+                    <h2 class="kb-order-action__title" id="action-titre"><i class="bi {{ action[0] }}" aria-hidden="true"></i>{{ action[1] }}</h2>
+                    <p class="kb-order-action__text">{{ action[2] }}</p>
+
+                    {% if status == 'pending' %}
+                        {{ _self.payment_steps(false) }}
+                        {{ _self.reference(order.reference) }}
+                    {% elseif status == 'shipped' and order.delivery %}
+                        <p class="kb-order-action__carrier">
+                            <i class="bi bi-truck" aria-hidden="true"></i>
+                            <span><strong>{{ order.delivery.name }}</strong><br>{{ order.delivery.description }}</span>
+                        </p>
+                    {% elseif status == 'delivered' %}
+                        <div class="kb-order-action__row">
+                            {% if toCollect is not empty %}
+                                {% include 'partials/_post_button.html.twig' with {
+                                    token_id: 'collection',
+                                    url: path('app_user_order_collect', {orderReference: order.reference}),
+                                    class: 'btn btn-dark',
+                                    icon: 'bi-collection',
+                                    text_btn: 'Ajouter à ma collection'
+                                } %}
+                            {% else %}
+                                <a href="{{ path('app_user_collection') }}" class="kb-order__link"><i class="bi bi-collection" aria-hidden="true"></i>Déjà dans ta collection</a>
+                            {% endif %}
+                            <a href="{{ path('app_catalog') }}" class="kb-order__link">Repasser par les bacs <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                        </div>
+                    {% elseif status in ['cancelled', 'refunded'] and mailto %}
+                        <a href="{{ mailto }}" class="kb-order__link"><i class="bi bi-envelope" aria-hidden="true"></i>Écrire au label à propos de {{ order.reference }}</a>
+                    {% endif %}
+                </section>
+            {% endif %}
+
+            <table class="kb-order-lines">
+                <caption class="kb-order-lines__caption">
+                    <span class="kb-order-lines__title">Articles</span>
+                    <span class="kb-order-lines__count">· {{ items }}</span>
+                </caption>
+                <thead>
+                <tr>
+                    <th scope="col">Article</th>
+                    <th scope="col">Réf.</th>
+                    <th scope="col" class="text-end">Qté × prix</th>
+                    <th scope="col" class="text-end">Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for line in order.orderDetails %}
+                    {% set article = line.product %}
+                    {% set gone = article is null or not article.published %}
+                    {% set n = article ? article_names(article) : {artist: '', title: line.productName} %}
+                    {% set name = (n.artist ? n.artist ~ ' — ') ~ n.title %}
+                    {% set quantity = line.quantity ~ ' × ' ~ (line.unitPrice / 100)|format_currency('EUR', [], 'fr') %}
+                    <tr>
+                        <td class="kb-order-line">
+                            <span class="kb-record kb-order-line__cover{{ gone ? ' kb-record--grey' }}">
+                                {% if article %}
+                                    {% include 'user/_record_cover.html.twig' with {article, artist: n.artist, title: n.title, ref: null, decorative: true} only %}
+                                {% endif %}
+                            </span>
+                            <span class="kb-order-line__what">
+                                {% if gone %}
+                                    <strong class="kb-order-line__name">{{ name }}</strong>
+                                {% else %}
+                                    <a href="{{ article_path(article) }}" class="kb-order-line__name">{{ name }}</a>
+                                {% endif %}
+                                {% if article %}<span class="kb-order-line__format">{{ article.formatLabel }}</span>{% endif %}
+                                <span class="kb-order-line__mobile">{{ line.sku }} · {{ quantity }}</span>
+                                {% if gone %}
+                                    <span class="kb-order-line__gone"><i class="bi bi-archive" aria-hidden="true"></i>Retiré du catalogue</span>
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td class="kb-order-lines__sku">{{ line.sku }}</td>
+                        <td class="kb-order-lines__quantity">{{ quantity }}</td>
+                        <td class="kb-order-lines__total">{{ (line.price / 100)|format_currency('EUR', [], 'fr') }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="kb-order-side">
+            <section class="kb-order-recap" aria-labelledby="recap-titre">
+                <h2 class="kb-order-side__title" id="recap-titre">Récap</h2>
+                <dl class="kb-order-recap__lines">
+                    <dt>Sous-total</dt>
+                    <dd>{{ ((order.totalPrice - order.shippingPrice) / 100)|format_currency('EUR', [], 'fr') }}</dd>
+                    <dt>Livraison{{ order.delivery ? ' · ' ~ order.delivery.name }}</dt>
+                    <dd{% if order.shippingPrice == 0 %} class="kb-order-recap__free"{% endif %}>
+                        {{- order.shippingPrice > 0 ? (order.shippingPrice / 100)|format_currency('EUR', [], 'fr') : 'Offerte' -}}
+                    </dd>
+                </dl>
+                <div class="kb-order-recap__total">
+                    <strong>Total</strong>
+                    <span class="kb-price">{{ (order.totalPrice / 100)|format_currency('EUR', [], 'fr') }}</span>
+                </div>
+            </section>
+
+            <section class="kb-order-side__part" aria-labelledby="livraison-titre">
+                <h2 class="kb-order-side__title kb-order-side__title--sm" id="livraison-titre">Livraison</h2>
+                {% if order.shippingAddress %}
+                    <address class="kb-order-side__address">{{ order.shippingAddress|nl2br }}</address>
+                {% endif %}
+                {% if order.delivery %}
+                    <p class="kb-order-side__fact">
+                        <i class="bi bi-truck" aria-hidden="true"></i>
+                        <span><strong>{{ order.delivery.name }}</strong><br><span class="kb-order-side__muted">{{ order.delivery.description }}</span></span>
+                    </p>
+                {% endif %}
+            </section>
+
+            {% set refunded = order.paymentStatus is same as(constant('App\\Enum\\PaymentStatus::REFUNDED')) %}
+            {% set payment = status == 'pending'
+                ? ['bi-hourglass-split', 'En attente de paiement', 'Lien de paiement envoyé par mail après vérification du stock.']
+                : (refunded
+                    ? ['bi-arrow-counterclockwise', 'Payée le ' ~ paidOn ~ ', puis remboursée', order.payment ? order.payment.name]
+                    : (status == 'cancelled'
+                        ? ['bi-x-lg', 'Aucun paiement encaissé', 'Commande annulée avant paiement.']
+                        : ['bi-check-lg', 'Payée le ' ~ paidOn, order.payment ? order.payment.name])) %}
+            <section class="kb-order-side__part" aria-labelledby="paiement-titre">
+                <h2 class="kb-order-side__title kb-order-side__title--sm" id="paiement-titre">Paiement</h2>
+                <p class="kb-order-side__fact">
+                    <i class="bi {{ payment[0] }}" aria-hidden="true"></i>
+                    <span><strong>{{ payment[1] }}</strong>{% if payment[2] %}<br><span class="kb-order-side__muted">{{ payment[2] }}</span>{% endif %}</span>
+                </p>
+            </section>
+
+            {% if mailto %}
+                <section class="kb-order-contact" aria-labelledby="contact-titre">
+                    <h2 class="kb-order-contact__title" id="contact-titre">Une question sur cette commande ?</h2>
+                    <a href="{{ mailto }}" class="kb-order__link"><i class="bi bi-envelope" aria-hidden="true"></i>Écris-nous</a>
+                    <span class="kb-order-contact__meta">{{ contactEmail }} · objet : Commande {{ order.reference }}</span>
+                    {% if status in ['pending', 'paid', 'preparing'] %}
+                        <p class="kb-order-contact__text">Besoin d’annuler ? Écris-nous aussi : ça ne se fait pas depuis ton compte.</p>
+                    {% endif %}
+                </section>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if status in ['delivered', 'cancelled', 'refunded'] %}
+        {% set lines = order.orderDetails|length %}
+        <section class="kb-order-again" aria-labelledby="encore-titre">
+            <div class="kb-order-again__text">
+                <h2 class="kb-order-again__title" id="encore-titre">Remettre ces disques dans le panier</h2>
+                <p class="kb-order-again__hint">
+                    {%- if inStock is empty -%}
+                        Plus rien de cette commande n’est en stock.
+                    {%- else -%}
+                        {{ inStock|length }} sur {{ lines }} encore en stock.
+                    {%- endif -%}
+                </p>
+            </div>
+            {% if inStock is not empty %}
+                {% include 'partials/_post_button.html.twig' with {
+                    token_id: 'cart',
+                    url: path('app_user_order_reorder', {orderReference: order.reference}),
+                    form_class: 'kb-order-again__form',
+                    class: 'btn btn-primary btn-lg',
+                    icon: 'bi-bag-plus',
+                    text_btn: inStock|length == lines ? 'Tout remettre au panier' : (inStock|length > 1 ? 'Ajouter les ' ~ inStock|length ~ ' dispo' : 'Ajouter le seul dispo')
+                } %}
+            {% endif %}
+        </section>
+    {% endif %}
+{% endblock %}
+
+{#
+    How a pending order gets paid, by hand: the stock is checked first, then the link is mailed.
+    `columns`: three columns from md up (the thank-you banner), a list otherwise.
+#}
+{% macro payment_steps(columns) %}
+    <ol class="kb-pay-steps{{ columns ? ' kb-pay-steps--columns' }} list-unstyled">
+        {% for step in [
+            ['On vérifie le stock', 'À la main, disque par disque. Rien n’est débité.'],
+            ['Tu reçois le lien de paiement', 'Par mail, avec le montant exact et la référence.'],
+            ['Tu paies en indiquant la référence', 'La commande passe « Payée » et on prépare ton colis.'],
+        ] %}
+            <li class="kb-pay-step{{ loop.first ? ' kb-pay-step--current' }}"{% if loop.first %} aria-current="step"{% endif %}>
+                <span class="kb-pay-step__number" aria-hidden="true">{{ loop.index }}</span>
+                <span class="kb-pay-step__text">
+                    <strong class="kb-pay-step__title">
+                        {{- step[0] -}}
+                        <span class="visually-hidden"> ({{ loop.first ? 'en cours' : 'à venir' }})</span>
+                    </strong>
+                    {% if loop.first %}<span class="kb-order-step__now" aria-hidden="true">En cours</span>{% endif %}
+                    <span class="kb-pay-step__detail">{{ step[1] }}</span>
+                </span>
+            </li>
+        {% endfor %}
+    </ol>
+{% endmacro %}
+
+{#
+    The reference to write in the payment's note. Copying it is a bonus (clipboard_controller.js):
+    without JavaScript the button stays hidden and the reference can be selected.
+#}
+{% macro reference(reference) %}
+    <div class="kb-order-ref" data-controller="clipboard">
+        <span class="kb-order-ref__box">
+            <span class="kb-order-ref__label">Référence à indiquer</span>
+            <span class="kb-order-ref__value" data-clipboard-target="source">{{ reference }}</span>
+        </span>
+        <button type="button" class="kb-order-ref__copy" data-clipboard-target="button" data-action="clipboard#copy" hidden>
+            <i class="bi bi-copy" aria-hidden="true" data-clipboard-target="icon"></i>
+            <span data-clipboard-target="label">Copier</span><span class="visually-hidden"> la référence</span>
+        </button>
+        <span class="kb-order-ref__status" role="status" data-clipboard-target="status"></span>
+    </div>
+{% endmacro %}

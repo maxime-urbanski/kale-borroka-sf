@@ -5,7 +5,7 @@ import {Controller} from "@hotwired/stimulus";
 // From lg up the menu is a column and nothing scrolls. Without JavaScript the row stays at its start.
 export default class extends Controller {
   connect() {
-    const current = this.element.querySelector('[aria-current="page"]')
+    const current = this.element.querySelector('[aria-current="page"], [aria-current="true"]')
 
     if (!current || this.element.scrollWidth <= this.element.clientWidth) {
       return

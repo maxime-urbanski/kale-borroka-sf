@@ -1,10 +1,11 @@
 {#
-    Account menu (maquette 07): a list with counters from lg up, a row of chips below.
+    Account menu (maquette 07): a list with counters from lg up, a row of chips below. `within`:
+    the routes of pages under an entry (an order under « Commandes »), which mark it current too.
     `counts`: App\Account\AccountTotals.
 #}
 {% set routes = [
     {name: 'Tableau de bord', link: 'app_user_informations', icon: 'bi-grid'},
-    {name: 'Commandes', link: 'app_user_orders', icon: 'bi-receipt', count: counts.orders},
+    {name: 'Commandes', link: 'app_user_orders', icon: 'bi-receipt', count: counts.orders, within: ['app_user_order']},
     {name: 'Collection', link: 'app_user_collection', icon: 'bi-collection', count: counts.collection},
     {name: 'Wantlist', link: 'app_user_wishlist', icon: 'bi-heart', count: counts.wantlist},
     {name: 'Adresses', link: 'app_user_addresses_index', icon: 'bi-geo-alt', count: counts.addresses},
@@ -15,7 +16,7 @@
 <nav class="kb-account-nav" aria-label="Mon compte" data-controller="account-nav">
     {% for route in routes %}
         <a href="{{ path(route.link) }}" class="kb-account-nav__link"
-           {%- if app.current_route == route.link %} aria-current="page"{% endif %}>
+           {%- if app.current_route == route.link %} aria-current="page"{% elseif app.current_route in route.within|default([]) %} aria-current="true"{% endif %}>
             <i class="bi {{ route.icon }}" aria-hidden="true"></i>
             <span class="kb-account-nav__label">{{ route.name }}</span>
             {% if route.count is defined %}

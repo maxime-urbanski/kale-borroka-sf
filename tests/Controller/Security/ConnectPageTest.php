@@ -97,7 +97,7 @@ class ConnectPageTest extends WebTestCase
         $order = $this->entityManager()->getRepository(Order::class)->findOneBy([]);
         self::assertNotNull($order);
 
-        $this->client->request('GET', \sprintf('/order/%s/overview', $order->getReference()));
+        $this->client->request('GET', '/mon-compte/mes-commandes/'.$order->getReference());
         self::assertResponseRedirects('/login');
         $this->client->followRedirect();
 

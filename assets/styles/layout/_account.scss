@@ -175,7 +175,8 @@
             color: $kb-noir;
         }
 
-        &[aria-current="page"] {
+        &[aria-current="page"],
+        &[aria-current="true"] {
             background: $kb-noir;
             color: $kb-papier;
         }

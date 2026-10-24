@@ -8,7 +8,9 @@ use App\Entity\Article;
 use App\Entity\Order;
 use App\Entity\Page;
 use App\Entity\Release;
+use App\Enum\OrderTransition;
 use App\Enum\SupportType;
+use App\Order\Command\ApplyOrderTransition;
 use App\Tests\Order\OrderTestTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -85,7 +87,18 @@ class EveryPageRendersTest extends WebTestCase
         [$release] = $this->releasesWithStock(5);
         $router = self::service(RouterInterface::class);
         $article = $this->articleUri($release);
-        $pages = [$article, $router->generate('app_cart_index'), $router->generate('app_user_wishlist'), $router->generate('app_user_collection')];
+        // A delivered order offers both of its buttons: back into the cart and into the collection.
+        $order = $this->placeOrder($this->user('test@test.fr'), [self::idOf($release) => 1]);
+        foreach ([OrderTransition::PAY, OrderTransition::SHIP, OrderTransition::DELIVER] as $transition) {
+            $this->bus()->dispatch(new ApplyOrderTransition((int) $order->getId(), $transition));
+        }
+        $pages = [
+            $article,
+            $router->generate('app_cart_index'),
+            $router->generate('app_user_wishlist'),
+            $router->generate('app_user_collection'),
+            $router->generate('app_user_order', ['orderReference' => $order->getReference()]),
+        ];
 
         $errors = [];
         $done = [$router->generate('app_logout') => true];
@@ -112,8 +125,8 @@ class EveryPageRendersTest extends WebTestCase
             }
         }
 
-        // cart +, −, remove, empty; wishlist and collection add then remove.
-        self::assertGreaterThanOrEqual(8, \count($done) - 1, 'buttons submitted: '.implode(', ', array_keys($done)));
+        // cart +, −, remove, empty; wishlist and collection add then remove; an order back into the cart and the collection.
+        self::assertGreaterThanOrEqual(10, \count($done) - 1, 'buttons submitted: '.implode(', ', array_keys($done)));
         self::assertSame([], $errors);
     }
 

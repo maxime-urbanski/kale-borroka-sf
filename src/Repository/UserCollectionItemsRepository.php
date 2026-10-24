@@ -75,6 +75,33 @@ class UserCollectionItemsRepository extends ServiceEntityRepository
     }
 
     /**
+     * Which of these articles the user's collection already holds.
+     *
+     * @param list<Article> $articles
+     *
+     * @return list<int> their ids
+     */
+    public function collectedAmong(User $user, array $articles): array
+    {
+        if ([] === $articles) {
+            return [];
+        }
+
+        /** @var list<int|string> $ids */
+        $ids = $this->createQueryBuilder('ci')
+            ->select('IDENTITY(ci.article)')
+            ->join('ci.collection', 'c')
+            ->where('c.user = :user')
+            ->andWhere('ci.article IN (:articles)')
+            ->setParameter('user', $user)
+            ->setParameter('articles', $articles)
+            ->getQuery()
+            ->getSingleColumnResult();
+
+        return array_map(intval(...), $ids);
+    }
+
+    /**
      * Every collection item of the user, the latest added first.
      *
      * @return list<UserCollectionItems>

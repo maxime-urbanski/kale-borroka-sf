@@ -32,6 +32,50 @@ enum OrderStatus: string
     }
 
     /**
+     * Bootstrap icon of the status: its badge and its step on the order's timeline.
+     */
+    public function icon(): string
+    {
+        return match ($this) {
+            self::PENDING => 'bi-hourglass-split',
+            self::PAID => 'bi-check-lg',
+            self::PREPARING => 'bi-box-seam',
+            self::SHIPPED => 'bi-truck',
+            self::DELIVERED => 'bi-house-check',
+            self::CANCELLED => 'bi-x-lg',
+            self::REFUNDED => 'bi-arrow-counterclockwise',
+        };
+    }
+
+    /**
+     * Statuses of the normal cycle, in order: the timeline of an order's page (OrderProgress).
+     *
+     * @return list<self>
+     */
+    public static function cycle(): array
+    {
+        return [self::PENDING, self::PAID, self::PREPARING, self::SHIPPED, self::DELIVERED];
+    }
+
+    /**
+     * Still moving, as « Mes commandes » groups them: the rest is over (delivered, cancelled, refunded).
+     *
+     * @return list<self>
+     */
+    public static function ongoing(): array
+    {
+        return [self::PENDING, self::PAID, self::PREPARING, self::SHIPPED];
+    }
+
+    /**
+     * @return list<self>
+     */
+    public static function finished(): array
+    {
+        return [self::DELIVERED, self::CANCELLED, self::REFUNDED];
+    }
+
+    /**
      * Whether the order's items have been taken out of stock.
      */
     public function holdsStock(): bool

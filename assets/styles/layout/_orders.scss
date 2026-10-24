@@ -1,0 +1,1285 @@
+// Mes commandes (maquette 16), détail d'une commande (maquette 17) and the thank-you banner
+// after the checkout (maquette 18). The table of the dashboard (.kb-orders) is the base of the list.
+
+// The list: two crates, « En cours » then « Terminées ».
+.kb-orders-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    @include media-breakpoint-up(md) {
+        gap: 14px;
+    }
+
+    &__title {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0 20px;
+        margin: 0;
+        font-size: 1.875rem;
+        font-weight: 400;
+        line-height: 1;
+
+        @include media-breakpoint-up(md) {
+            font-size: 2.5rem;
+        }
+    }
+
+    &__count {
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        letter-spacing: 0;
+
+        @include media-breakpoint-up(md) {
+            font-size: .8125rem;
+        }
+    }
+
+    &__pages {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0 20px;
+
+        #nav-pagination {
+            padding: 12px 0 0 !important;
+        }
+
+        .pagination {
+            margin: 0;
+        }
+    }
+
+    &__range {
+        padding-top: 12px;
+        font-family: $kb-font-mono;
+        font-size: .8125rem;
+        text-transform: uppercase;
+    }
+}
+
+.kb-orders--full {
+    th,
+    td {
+        padding-inline: 10px;
+    }
+
+    td {
+        vertical-align: middle;
+    }
+}
+
+.kb-orders {
+    &__date {
+        font-family: $kb-font-mono;
+        font-size: .875rem;
+        white-space: nowrap;
+    }
+
+    // Waiting for the customer's payment: kraft, and what to do next in plain words.
+    &__waiting td {
+        background: $kb-papier-2;
+    }
+
+    &__items {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    &__covers {
+        display: flex;
+        flex: none;
+        padding-left: 20px;
+
+        // Covers from xl up: below, the columns need the room.
+        @include media-breakpoint-down(xl) {
+            display: none;
+        }
+    }
+
+    &__cover.kb-record {
+        flex: none;
+        width: 34px;
+        height: 34px;
+        margin-left: -20px;
+        box-shadow: 2px 2px 0 $kb-noir;
+
+        .kb-record__ref,
+        .kb-record__name {
+            display: none;
+        }
+    }
+
+    &__status {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    &__next {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: .875rem;
+    }
+
+    a.kb-orders__pay {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px;
+        padding-inline: 14px;
+        font-size: .8125rem;
+        text-align: left;
+    }
+
+    &__detail {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+    }
+}
+
+// … and cards below md.
+.kb-order-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+}
+
+.kb-order-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 20px;
+    align-items: center;
+    gap: 8px 10px;
+    padding: 14px;
+    border: 2px solid $kb-noir;
+    color: $kb-noir;
+    text-decoration: none;
+
+    &:hover {
+        background: $kb-papier-2;
+        color: $kb-noir;
+    }
+
+    &--waiting {
+        border-width: 3px;
+        background: $kb-papier-2;
+        box-shadow: 5px 5px 0 $kb-noir;
+    }
+
+    &__ref {
+        font-family: $kb-font-mono;
+        font-size: .8125rem;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    &__meta {
+        display: block;
+        font-weight: 400;
+    }
+
+    &__total {
+        font-family: $kb-font-display;
+        font-size: 1.625rem;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    &__go {
+        grid-row: span 2;
+    }
+
+    &__status {
+        grid-column: 1 / 3;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px 10px;
+        font-size: .8125rem;
+    }
+}
+
+// No order yet: a note taped on halftone.
+.kb-orders-empty {
+    display: flex;
+    justify-content: center;
+    padding: 28px 4px;
+    background-color: $kb-papier-2;
+
+    @include media-breakpoint-up(md) {
+        padding: 72px 40px;
+    }
+
+    &__card {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        width: 100%;
+        max-width: 560px;
+        padding: 28px 22px;
+        border: 3px solid $kb-noir;
+        background: $kb-papier;
+        box-shadow: 8px 8px 0 $kb-noir;
+
+        @include media-breakpoint-up(md) {
+            gap: 18px;
+            padding: 36px 32px;
+        }
+    }
+
+    &__stamp {
+        align-self: flex-start;
+        font-size: 1.125rem;
+        transform: rotate(-4deg);
+    }
+
+    &__title {
+        margin: 0;
+        font-size: 2.625rem;
+        font-weight: 400;
+        line-height: .95;
+
+        @include media-breakpoint-up(md) {
+            font-size: 3.5rem;
+        }
+    }
+
+    &__text {
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.5;
+
+        @include media-breakpoint-up(md) {
+            font-size: 1.0625rem;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        @include media-breakpoint-up(md) {
+            flex-direction: row;
+        }
+
+        .btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 52px;
+            font-size: .875rem;
+            font-weight: 800;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+    }
+}
+
+// The order's page.
+.kb-order {
+    &__head {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding-bottom: 16px;
+        border-bottom: 3px solid $kb-noir;
+    }
+
+    &__nav {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 4px 24px;
+
+        .kb-account__crumbs {
+            flex: 0 1 auto;
+            flex-wrap: wrap;
+        }
+    }
+
+    &__link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px;
+        font-size: .9375rem;
+        font-weight: 700;
+    }
+
+    &__id {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px 32px;
+    }
+
+    &__name {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    &__title {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin: 0;
+    }
+
+    &__word {
+        font-family: $kb-font-display;
+        font-size: 2.875rem;
+        font-weight: 400;
+        line-height: .95;
+        text-transform: uppercase;
+
+        @include media-breakpoint-up(lg) {
+            font-size: 5.5rem;
+        }
+    }
+
+    &__ref {
+        font-family: $kb-font-mono;
+        font-size: .9375rem;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+
+        @include media-breakpoint-up(lg) {
+            font-size: 1.5rem;
+        }
+    }
+
+    &__meta {
+        font-family: $kb-font-mono;
+        font-size: .8125rem;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+    }
+
+    &__summary {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px 28px;
+    }
+
+    &__total {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+
+        .kb-price {
+            font-size: 2.25rem;
+            line-height: 1;
+
+            @include media-breakpoint-up(lg) {
+                font-size: 3.5rem;
+            }
+        }
+    }
+
+    &__total-label {
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        text-transform: uppercase;
+    }
+
+    &__body {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 28px;
+        align-items: start;
+
+        @include media-breakpoint-up(xl) {
+            grid-template-columns: minmax(0, 1fr) 340px;
+            gap: 48px;
+        }
+    }
+
+    &__main {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        min-width: 0;
+
+        @include media-breakpoint-up(lg) {
+            gap: 36px;
+        }
+    }
+}
+
+// The status on the order's page: bigger.
+.kb-badge--lg {
+    gap: 10px;
+    padding: 8px 16px;
+    border-width: 3px;
+    font-size: .9375rem;
+
+    .bi {
+        font-size: 1.125rem;
+    }
+}
+
+// Timeline: passed steps filled, the current one bigger with a shadow and « Maintenant », the
+// ones to come dashed. A cancelled or refunded order leaves it by a stamp.
+.kb-order-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    @include media-breakpoint-up(lg) {
+        flex-direction: row;
+        align-items: stretch;
+        gap: 28px;
+    }
+}
+
+.kb-order-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+
+    @include media-breakpoint-up(lg) {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0;
+    }
+}
+
+.kb-order-step {
+    --kb-step-size: 40px;
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+
+    @include media-breakpoint-up(lg) {
+        --kb-step-size: 48px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        min-width: 0;
+        padding-top: calc((72px - var(--kb-step-size)) / 2);
+
+        // The rule to the next step: solid once it is reached, dashed otherwise.
+        &:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            top: 36px;
+            left: calc(var(--kb-step-size) + 10px);
+            right: 10px;
+            border-top: 3px dashed $kb-gris-filet;
+        }
+
+        &--linked:not(:last-child)::after {
+            border-top-style: solid;
+            border-top-color: $kb-noir;
+        }
+    }
+
+    &__mark {
+        display: grid;
+        place-items: center;
+        justify-self: center;
+        width: var(--kb-step-size);
+        height: var(--kb-step-size);
+        border: 2px dashed $kb-gris-filet;
+        background: $kb-papier;
+        color: $kb-gris;
+        font-size: 1.0625rem;
+
+        @include media-breakpoint-up(lg) {
+            font-size: 1.375rem;
+        }
+    }
+
+    &__text {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 10px;
+
+        @include media-breakpoint-up(lg) {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+            padding-right: 12px;
+        }
+    }
+
+    &__label {
+        color: $kb-gris;
+        font-size: .9375rem;
+        font-weight: 600;
+        line-height: 1.25;
+
+        @include media-breakpoint-up(lg) {
+            font-size: 1rem;
+        }
+    }
+
+    &__now {
+        padding: 2px 8px;
+        background: $kb-noir;
+        color: $kb-papier;
+        font-family: $kb-font-mono;
+        font-size: .6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    &__date {
+        color: $kb-gris;
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+    }
+
+    &--done &__mark {
+        border: 2px solid $kb-noir;
+        background: $kb-noir;
+        color: $kb-papier;
+    }
+
+    &--done &__label,
+    &--current &__label {
+        color: $kb-noir;
+    }
+
+    &--current {
+        --kb-step-size: 46px;
+
+        @include media-breakpoint-up(lg) {
+            --kb-step-size: 64px;
+        }
+    }
+
+    &--current &__mark {
+        border: 4px solid $kb-noir;
+        color: $kb-noir;
+        box-shadow: 4px 4px 0 $kb-noir;
+        font-size: 1.25rem;
+
+        @include media-breakpoint-up(lg) {
+            box-shadow: $kb-shadow;
+            font-size: 1.75rem;
+        }
+    }
+
+    &--current &__label {
+        font-weight: 800;
+    }
+
+    &--off &__label {
+        text-decoration: line-through;
+    }
+}
+
+.kb-order-out {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 3px dashed $kb-noir;
+
+    @include media-breakpoint-up(lg) {
+        flex: none;
+        justify-content: center;
+        width: 250px;
+        padding: 0 0 0 28px;
+        border-top: 0;
+        border-left: 3px dashed $kb-noir;
+    }
+
+    &__stamp {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        outline: 0;
+        font-size: 1.5rem;
+        transform: rotate(-5deg);
+
+        .bi {
+            font-size: .75em;
+        }
+    }
+
+    &__text {
+        margin: 0;
+        font-size: .875rem;
+        line-height: 1.45;
+    }
+}
+
+// The one block saying what comes next for the status.
+.kb-order-action {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 18px;
+    border: 3px solid $kb-noir;
+    box-shadow: $kb-shadow;
+    scroll-margin-top: 24px;
+
+    @include media-breakpoint-up(lg) {
+        padding: 28px;
+    }
+
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0;
+        font-size: 1.625rem;
+        font-weight: 400;
+        line-height: 1;
+
+        @include media-breakpoint-up(lg) {
+            font-size: 2.25rem;
+        }
+
+        .bi {
+            font-size: .8em;
+        }
+    }
+
+    &__text {
+        max-width: 640px;
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.55;
+    }
+
+    &__carrier {
+        display: grid;
+        grid-template-columns: 44px 1fr;
+        align-items: center;
+        gap: 14px;
+        margin: 0;
+        padding: 14px 0;
+        border-top: 2px solid $kb-noir;
+        border-bottom: 1px solid $kb-gris-filet;
+        color: $kb-gris;
+        font-size: .875rem;
+
+        strong {
+            color: $kb-noir;
+            font-size: 1.0625rem;
+        }
+
+        .bi {
+            color: $kb-noir;
+            font-size: 1.75rem;
+        }
+    }
+
+    &__row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px 20px;
+
+        form {
+            flex: 1 1 100%;
+
+            @include media-breakpoint-up(md) {
+                flex: 0 0 auto;
+            }
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            min-height: 48px;
+            font-size: .875rem;
+            font-weight: 800;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+    }
+}
+
+// How a pending order gets paid.
+.kb-pay-steps {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    border-top: 2px solid $kb-noir;
+
+    &--columns {
+        @include media-breakpoint-up(md) {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0 28px;
+        }
+    }
+}
+
+.kb-pay-step {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid $kb-gris-filet;
+
+    &__number {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border: 2px dashed $kb-gris-filet;
+        color: $kb-gris;
+        font-family: $kb-font-display;
+        font-size: 1.25rem;
+    }
+
+    &--current &__number {
+        border: 3px solid $kb-noir;
+        color: $kb-noir;
+        box-shadow: 4px 4px 0 $kb-noir;
+    }
+
+    &__text {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 2px 10px;
+    }
+
+    &__title {
+        font-size: 1rem;
+    }
+
+    &__detail {
+        flex: 0 0 100%;
+        color: $kb-gris;
+        font-size: .875rem;
+    }
+
+    // In the thank-you banner: big numbers above the text.
+    .kb-pay-steps--columns & {
+        @include media-breakpoint-up(md) {
+            grid-template-columns: 1fr;
+            align-items: start;
+            gap: 6px;
+            padding: 16px 0 0;
+            border-bottom: 0;
+        }
+    }
+
+    .kb-pay-steps--columns &__number {
+        @include media-breakpoint-up(md) {
+            width: auto;
+            height: auto;
+            place-items: start;
+            border: 0;
+            box-shadow: none;
+            color: $kb-noir;
+            font-size: 3rem;
+            line-height: 1;
+        }
+    }
+}
+
+// The reference to write in the payment's note, and its copy button glued to it.
+.kb-order-ref {
+    display: grid;
+    grid-template-columns: minmax(0, auto) auto;
+    justify-content: start;
+    align-items: stretch;
+    row-gap: 8px;
+
+    &__box {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 48px;
+        padding: 4px 14px;
+        border: 2px solid $kb-noir;
+        background: $kb-papier-2;
+    }
+
+    &__label {
+        font-family: $kb-font-mono;
+        font-size: .6875rem;
+        text-transform: uppercase;
+    }
+
+    &__value {
+        font-family: $kb-font-mono;
+        font-size: .875rem;
+        font-weight: 600;
+        user-select: all;
+        overflow-wrap: anywhere;
+
+        @include media-breakpoint-up(lg) {
+            font-size: 1.0625rem;
+        }
+    }
+
+    &__copy {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 48px;
+        margin-left: -2px;
+        padding: 0 16px;
+        border: 2px solid $kb-noir;
+        background: $kb-noir;
+        color: $kb-papier;
+        font-size: .8125rem;
+        font-weight: 800;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+        cursor: pointer;
+
+        &:hover {
+            background: $kb-papier;
+            color: $kb-noir;
+        }
+
+        &[hidden] {
+            display: none;
+        }
+    }
+
+    &__status {
+        grid-column: 1 / -1;
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        text-transform: uppercase;
+
+        &:empty {
+            display: none;
+        }
+    }
+}
+
+// The lines: a table from md up, rows of a list below.
+.kb-order-lines {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .9375rem;
+
+    &__caption {
+        caption-side: top;
+        padding: 0 0 12px;
+        color: $kb-noir;
+    }
+
+    &__title {
+        font-family: $kb-font-display;
+        font-size: 1.875rem;
+        text-transform: uppercase;
+
+        @include media-breakpoint-up(md) {
+            font-size: 2.25rem;
+        }
+    }
+
+    &__count {
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        text-transform: uppercase;
+    }
+
+    th {
+        padding: 12px 16px;
+        background: $kb-noir;
+        color: $kb-papier;
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        font-weight: 500;
+        letter-spacing: .06em;
+        text-align: left;
+        text-transform: uppercase;
+
+        &.text-end {
+            text-align: right;
+        }
+    }
+
+    td {
+        padding: 14px 16px;
+        border-bottom: 1px solid $kb-gris-filet;
+        vertical-align: middle;
+    }
+
+    &__sku,
+    &__quantity,
+    &__total {
+        font-family: $kb-font-mono;
+        font-size: .8125rem;
+        white-space: nowrap;
+    }
+
+    &__quantity,
+    &__total {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    &__total {
+        font-weight: 600;
+    }
+
+    @include media-breakpoint-down(md) {
+        thead {
+            @include visually-hidden;
+        }
+
+        tbody {
+            display: block;
+            border-top: 2px solid $kb-noir;
+        }
+
+        tr {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid $kb-gris-filet;
+        }
+
+        td {
+            padding: 0;
+            border: 0;
+        }
+
+        &__sku,
+        &__quantity {
+            display: none;
+        }
+    }
+}
+
+.kb-order-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    @include media-breakpoint-up(md) {
+        gap: 16px;
+    }
+
+    &__cover.kb-record {
+        flex: none;
+        width: 56px;
+        height: 56px;
+
+        @include media-breakpoint-up(md) {
+            width: 64px;
+            height: 64px;
+        }
+
+        .kb-record__ref {
+            display: none;
+        }
+    }
+
+    &__what {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+        font-size: .875rem;
+    }
+
+    &__name {
+        font-size: .875rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        overflow-wrap: anywhere;
+
+        @include media-breakpoint-up(md) {
+            font-size: 1rem;
+        }
+    }
+
+    &__format,
+    &__mobile {
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+
+        @include media-breakpoint-up(md) {
+            font-size: .8125rem;
+        }
+    }
+
+    &__mobile {
+        @include media-breakpoint-up(md) {
+            display: none;
+        }
+    }
+
+    &__gone {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: $kb-gris;
+        font-family: $kb-font-mono;
+        font-size: .6875rem;
+        text-transform: uppercase;
+
+        @include media-breakpoint-up(md) {
+            font-size: .75rem;
+        }
+    }
+}
+
+// Recap, delivery, payment and contact, on the side from xl up.
+.kb-order-side {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+
+    &__title {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 400;
+        line-height: 1;
+
+        &--sm {
+            font-size: 1.5rem;
+        }
+    }
+
+    &__part {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 14px;
+        border-top: 2px solid $kb-noir;
+    }
+
+    &__address {
+        margin: 0;
+        font-size: .9375rem;
+        line-height: 1.5;
+    }
+
+    &__fact {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin: 0;
+        font-size: .9375rem;
+        line-height: 1.45;
+
+        .bi {
+            font-size: 1.125rem;
+        }
+    }
+
+    &__muted {
+        color: $kb-gris;
+        font-size: .875rem;
+    }
+}
+
+.kb-order-recap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    border: 2px solid $kb-noir;
+    background: $kb-papier-2;
+
+    &__lines {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px 12px;
+        margin: 0;
+        font-size: .9375rem;
+
+        dt {
+            font-weight: 400;
+        }
+
+        dd {
+            margin: 0;
+            font-family: $kb-font-mono;
+            text-align: right;
+        }
+    }
+
+    &__free {
+        font-weight: 700;
+    }
+
+    &__total {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        padding-top: 12px;
+        border-top: 3px solid $kb-noir;
+
+        strong {
+            text-transform: uppercase;
+        }
+
+        .kb-price {
+            font-size: 2.25rem;
+            line-height: 1;
+        }
+    }
+}
+
+.kb-order-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    border: 2px dashed $kb-noir;
+
+    &__title {
+        margin: 0;
+        font-family: $kb-font-body;
+        font-size: 1rem;
+        font-weight: 800;
+        text-transform: none;
+    }
+
+    &__meta {
+        color: $kb-gris;
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        overflow-wrap: anywhere;
+    }
+
+    &__text {
+        margin: 0;
+        font-size: .875rem;
+        line-height: 1.45;
+    }
+}
+
+// « Remettre ces disques dans le panier »: buying again, hence the red button.
+.kb-order-again {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px 24px;
+    padding-top: 20px;
+    border-top: 3px solid $kb-noir;
+
+    &__text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        max-width: 560px;
+    }
+
+    &__title {
+        margin: 0;
+        font-family: $kb-font-body;
+        font-size: 1.0625rem;
+        font-weight: 800;
+        text-transform: none;
+    }
+
+    &__hint {
+        margin: 0;
+        color: $kb-gris;
+        font-size: .875rem;
+        line-height: 1.45;
+    }
+
+    &__form {
+        display: flex;
+        flex: 1 1 100%;
+
+        @include media-breakpoint-up(md) {
+            flex: 0 0 auto;
+        }
+
+        .btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+    }
+}
+
+// Right after the checkout (maquette 18).
+.kb-order-thanks {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 18px;
+    border: 3px solid $kb-noir;
+    background: $kb-papier;
+    box-shadow: 8px 8px 0 $kb-noir;
+
+    @include media-breakpoint-up(lg) {
+        padding: 28px;
+    }
+
+    &__top {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px 20px;
+    }
+
+    &__stamp {
+        outline: 0;
+        font-size: 1.375rem;
+        transform: rotate(-5deg);
+    }
+
+    &__title {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 400;
+        line-height: .95;
+        text-wrap: balance;
+
+        @include media-breakpoint-up(lg) {
+            font-size: 4.5rem;
+        }
+    }
+
+    &__text {
+        max-width: 720px;
+        margin: 0;
+        font-size: 1.0625rem;
+        line-height: 1.55;
+        overflow-wrap: anywhere;
+    }
+
+    &__foot {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px 20px;
+        padding-top: 16px;
+        border-top: 1px solid $kb-gris-filet;
+    }
+}

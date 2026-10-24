@@ -133,7 +133,7 @@ class AccountDashboardTest extends WebTestCase
         self::assertStringContainsString((string) $orders[4]->getReference(), $first->text());
         self::assertStringContainsString('1 article', $first->text());
         self::assertStringContainsString('En attente de paiement', $first->filter('.kb-badge')->text());
-        self::assertSame('/order/'.$orders[4]->getReference().'/overview', $first->filter('a')->attr('href'));
+        self::assertSame('/mon-compte/mes-commandes/'.$orders[4]->getReference(), $first->filter('a')->attr('href'));
         self::assertStringContainsString('3 articles', $rows->eq(1)->text());
         self::assertSame('5', $this->menuCount($crawler, 'Commandes'));
     }

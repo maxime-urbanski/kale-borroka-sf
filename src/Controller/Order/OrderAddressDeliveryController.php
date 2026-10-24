@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Order;
 
+use App\Controller\User\Account\AccountOrderDetailsController;
 use App\Data\OrderDeliveryDto;
 use App\Entity\User;
 use App\Form\OrderAddressDeliveryPaymentFormType;
@@ -55,8 +56,10 @@ class OrderAddressDeliveryController extends AbstractController
             }
 
             $cartService->removeAll();
+            // The order's page opens with the thank-you banner, once.
+            $request->getSession()->set(AccountOrderDetailsController::JUST_PLACED, $reference);
 
-            return $this->redirectToRoute('app_order_overview', ['orderReference' => $reference]);
+            return $this->redirectToRoute('app_user_order', ['orderReference' => $reference]);
         }
 
         return $this->render('order/delivery.html.twig', [

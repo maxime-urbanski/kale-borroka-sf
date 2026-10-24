@@ -87,7 +87,7 @@ final readonly class ConnectPage
 
     /**
      * Whether the visitor was sent here by « Valider le panier »: the entry of the order tunnel,
-     * not any order page (a past order's overview has nothing to do with the cart).
+     * not any order page (a past order's page has nothing to do with the cart).
      */
     private function fromCart(): bool
     {
