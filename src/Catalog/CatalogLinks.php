@@ -12,8 +12,8 @@ use App\Enum\SupportType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * URLs of the catalogue page for a set of filters: the section in the path, the filters in
- * the query string by slug, the page last (none for the first one).
+ * URLs of the catalogue page (or of « Nos productions ») for a set of filters: the section in
+ * the path, the filters in the query string by slug, the page last (none for the first one).
  */
 final readonly class CatalogLinks
 {
@@ -28,6 +28,10 @@ final readonly class CatalogLinks
             $parameters['page'] = 'page-'.$page;
         }
 
+        if ($filters->productions) {
+            return $this->urlGenerator->generate('app_production', $parameters);
+        }
+
         if (null !== $filters->section) {
             return $this->urlGenerator->generate('app_catalog_list', ['support' => $filters->section->value, ...$parameters]);
         }
@@ -36,11 +40,15 @@ final readonly class CatalogLinks
     }
 
     /**
-     * The live count of « Voir N résultats », for the section of the page.
+     * The live count of « Voir N résultats », for the section (or the productions) of the page.
      */
-    public function countUrl(?SupportType $section): string
+    public function countUrl(CatalogFilters $filters): string
     {
-        return $this->urlGenerator->generate('app_catalog_count', null !== $section ? ['support' => $section->value] : []);
+        if ($filters->productions) {
+            return $this->urlGenerator->generate('app_production_count');
+        }
+
+        return $this->urlGenerator->generate('app_catalog_count', null !== $filters->section ? ['support' => $filters->section->value] : []);
     }
 
     /**
@@ -56,7 +64,7 @@ final readonly class CatalogLinks
             CatalogFacet::LABELS->value => array_map(static fn (Label $label): string => (string) $label->getSlug(), $filters->labels),
             CatalogFacet::ARTISTS->value => array_map(static fn (Artist $artist): string => (string) $artist->getSlug(), $filters->artists),
             CatalogFacet::CONDITIONS->value => array_map(static fn (ItemCondition $condition): string => $condition->value, $filters->conditions),
-            CatalogFacet::KBR_PRODUCTION->value => $filters->kbrProduction ? 1 : 0,
+            CatalogFacet::KBR_PRODUCTION->value => $filters->kbrProduction && !$filters->productions ? 1 : 0,
             CatalogFacet::HIDE_SOLD_OUT->value => $filters->hideSoldOut ? 1 : 0,
             'sort' => CatalogSort::NEW === $filters->sort ? '' : $filters->sort->value,
         ], static fn (array|string|int $value): bool => [] !== $value && '' !== $value && 0 !== $value);
@@ -93,7 +101,7 @@ final readonly class CatalogLinks
         foreach ($filters->conditions as $condition) {
             $add(CatalogFacet::CONDITIONS, $condition->label(), static fn (CatalogFilters $f) => $f->conditions = self::without($f->conditions, $condition));
         }
-        if ($filters->kbrProduction) {
+        if ($filters->kbrProduction && !$filters->productions) {
             $add(CatalogFacet::KBR_PRODUCTION, CatalogFacet::KBR_PRODUCTION->label(), static fn (CatalogFilters $f) => $f->kbrProduction = false);
         }
         if ($filters->hideSoldOut) {
@@ -104,11 +112,11 @@ final readonly class CatalogLinks
     }
 
     /**
-     * « Tout effacer »: the section kept, every filter dropped.
+     * « Tout effacer »: the section (or the productions) kept, every filter dropped.
      */
     public function cleared(CatalogFilters $filters): string
     {
-        return $this->url(CatalogFilters::of($filters->section));
+        return $this->url(CatalogFilters::of($filters->section, $filters->productions));
     }
 
     /**

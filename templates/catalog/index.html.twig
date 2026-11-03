@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
-{% set title = section ? section.label : 'Catalogue' %}
+{# productions: « Nos productions » (/production), the label's own records only, no tabs. #}
+{% set title = productions ? 'Nos productions' : (section ? section.label : 'Catalogue') %}
 {% set total = articles.totalItemCount %}
 {% block title %}{{ title }}{% endblock %}
 
@@ -13,7 +14,7 @@
                     <li class="breadcrumb-item"><a href="{{ path('app_catalog') }}">Catalogue</a></li>
                     <li class="breadcrumb-item active" aria-current="page">{{ section.label }}</li>
                 {% else %}
-                    <li class="breadcrumb-item active" aria-current="page">Catalogue</li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
                 {% endif %}
             </ol>
         </nav>
@@ -23,11 +24,13 @@
             <span class="kb-catalog__count">{{ total }} référence{{ total > 1 ? 's' }}</span>
         </header>
 
-        <nav class="kb-tabs" aria-label="Rayons">
-            {% for tab in tabs %}
-                <a href="{{ tab.url }}" class="kb-tabs__tab"{% if tab.section is same as(section) %} aria-current="page"{% endif %}>{{ tab.label }}</a>
-            {% endfor %}
-        </nav>
+        {% if not productions %}
+            <nav class="kb-tabs" aria-label="Rayons">
+                {% for tab in tabs %}
+                    <a href="{{ tab.url }}" class="kb-tabs__tab"{% if tab.section is same as(section) %} aria-current="page"{% endif %}>{{ tab.label }}</a>
+                {% endfor %}
+            </nav>
+        {% endif %}
 
         {# Mobile: the filters open as a panel (filters-panel); without JS, a link down to them. #}
         <div class="kb-catalog__bar d-lg-none">

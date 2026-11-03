@@ -22,7 +22,7 @@ use Doctrine\ORM\QueryBuilder;
  * or its book (b), all to-one joins, and filters through subqueries: no row is repeated,
  * so counts and pagination need no DISTINCT.
  *
- * The sections follow SupportType::forRelease(), like ReleaseRepository::applySupports():
+ * The sections follow SupportType::forRelease() (inSection()):
  * a record can sit under two of them (a CD EP under CD and EP).
  */
 final readonly class CatalogQuery
@@ -148,7 +148,7 @@ final readonly class CatalogQuery
                 ->setParameter('conditions', array_map(static fn (ItemCondition $condition): string => $condition->value, $filters->conditions));
         }
 
-        if ($filters->kbrProduction && CatalogFacet::KBR_PRODUCTION !== $except) {
+        if ($filters->productions || ($filters->kbrProduction && CatalogFacet::KBR_PRODUCTION !== $except)) {
             $query->andWhere('al.kbrProduction = true');
         }
 
@@ -160,19 +160,11 @@ final readonly class CatalogQuery
     }
 
     /**
-     * DQL condition of an article listed under $section, its parameters set on $query.
+     * DQL condition of an article listed under $section, its parameters set on $query. Must
+     * stay consistent with SupportType::forRelease(): a record is always listed under the
+     * section of its own URL (ReleaseRepositoryTest).
      */
     public function inSection(QueryBuilder $query, SupportType $section): string
-    {
-        return self::sectionCondition($query, $section, 'r', 'al', 'b');
-    }
-
-    /**
-     * The section rules, shared with ReleaseRepository::applySupports(): they must stay
-     * consistent with SupportType::forRelease(). $book null: a query over releases only,
-     * where no fanzine can be.
-     */
-    public static function sectionCondition(QueryBuilder $query, SupportType $section, string $release, string $album, ?string $book): string
     {
         $key = 'section_'.$section->value;
 
@@ -181,22 +173,22 @@ final readonly class CatalogQuery
                 $query->setParameter($key, [ReleaseFormat::VINYL_12->value, ReleaseFormat::VINYL_10->value])
                     ->setParameter($key.'_type', AlbumReleaseType::EP->value);
 
-                return \sprintf('(%1$s.format IN (:%3$s) AND %2$s.releaseType != :%3$s_type)', $release, $album, $key);
+                return \sprintf('(r.format IN (:%1$s) AND al.releaseType != :%1$s_type)', $key);
             case SupportType::EP:
                 $query->setParameter($key, [ReleaseFormat::VINYL_7->value])
                     ->setParameter($key.'_type', AlbumReleaseType::EP->value);
 
-                return \sprintf('(%1$s.format IN (:%3$s) OR %2$s.releaseType = :%3$s_type)', $release, $album, $key);
+                return \sprintf('(r.format IN (:%1$s) OR al.releaseType = :%1$s_type)', $key);
             case SupportType::CD:
                 $query->setParameter($key, [ReleaseFormat::CD->value]);
 
-                return \sprintf('%s.format IN (:%s)', $release, $key);
+                return \sprintf('r.format IN (:%s)', $key);
             case SupportType::TAPE:
                 $query->setParameter($key, [ReleaseFormat::CASSETTE->value]);
 
-                return \sprintf('%s.format IN (:%s)', $release, $key);
+                return \sprintf('r.format IN (:%s)', $key);
             case SupportType::FANZINE:
-                return null !== $book ? \sprintf('%s.id IS NOT NULL', $book) : '1 = 0';
+                return 'b.id IS NOT NULL';
         }
     }
 }

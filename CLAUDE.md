@@ -101,13 +101,22 @@ Every service in `src/Service` has a matching `…Interface` and is injected by 
 - `CartService` — cart lives entirely in the session as `['articleId' => quantity]`; `getFullCart()` loads the lines in batches (`ArticleRepository::findForCart()`), drops unpublished, deleted and sold-out lines, caps the others to the stock and writes the corrected cart back to the session. The navbar's `countItems()` applies the same rule (`CartService::available()`) read-only, with one scalar query (`stockOfPublished()`); none for an empty cart, and none on pages that already called `getFullCart()` (it leaves the count on the main request).
 - `BreadcrumbService` — builds breadcrumbs by walking the current URI segment by segment and matching each prefix to its route, skipping `page-*` segments; a prefix that is no route is left out, so give intermediate paths a real route if they should appear. Matching goes through `App\Routing\PageMatcher`, which matches as a GET whatever the current request's method (the router would otherwise use the POST of a form being handled and fail on every GET-only page); `RefererService` uses it too.
 - `CustomPaginationService` — wraps KnpPaginator. Pagination is path-based, not query-string: the `{page}` route parameter is the literal string `page-N` (default `page-1`), and the service parses the digit out of it. Default 9 items/page.
-- `DispatchFilterValueService` — merges the "global" filter form values into the per-page `ArticleFilterData` DTO.
 - `UserDefaultAddressService` — exactly one default (`Address::$isMainAddress`, mirrored in `User::$defaultAddress`): the first address is it, a new one only when its box is ticked, `handOver()` gives it to the oldest one left when it is deleted. The address book (`App\Account\AddressBookPage`, 5 addresses at most: the add action locks the account's row, `SELECT … FOR UPDATE`, so parallel adds from several devices count one after the other) opens its form under the cards from links (`?modifier=<id>`, `?ajouter`) and shows it again with its errors (422) when the add or edit action fails.
 - `RefererService`.
 
-### Filtering flow
+### Catalogue page and filters
 
-`src/Data/*` holds plain mutable DTOs (`ArticleFilterData`, `AddToCartWithQuantity`, `OrderDeliveryDto`, …). A catalog page instantiates the DTO, seeds it with route context (e.g. the current `Support`), binds it to a `src/Form/*FilterFormType`, passes it through `DispatchFilterValueService`, then hands it to `ArticleRepository::filterArticleQuery()` which conditionally appends `andWhere` clauses and returns a `Query` for the paginator. New filters mean touching all four layers: DTO field → form type → dispatch service → repository query.
+`/catalog` (« Tout »), `/catalog/{support}` and `/production` (« Nos productions », KBR productions only, no tabs nor « Nos productions » switch) are one page, `App\Catalog\CatalogPage`, started from `CatalogFilters::of($section, productions:)`:
+
+- `CatalogFilterReader` reads the query string into a copy of it (`CatalogFilterType`, unnamed, GET, no CSRF, entities by slug: `?styles[]=punk&labels[]=…&artists[]=…&supports[]=lp&conditions[]=used&kbrProduction=1&hideSoldOut=1&sort=price-asc`). An unknown value is dropped, the rest applies.
+- `CatalogQuery::filtered()` is the base of everything: published `Release` with a format or `Book`, never merch; one row per article (to-one joins, groups through subqueries), so no DISTINCT. Values of a group add up (OR), groups narrow each other (AND). Sections: `inSection()`, consistent with `SupportType::forRelease()` (`ReleaseRepositoryTest`). A fanzine matches the Label filter through its publisher (the collective) and none of Style, Artiste, Nos productions.
+- `FacetCounter`: one `COUNT … GROUP BY` per group, the other groups applied; values without results are hidden unless ticked; État only when something is not new.
+- `CatalogLinks` builds every URL (pills: the page without one filter, « Tout effacer », pages). `CatalogPage` redirects to the short URL (empty fields, `sort=new`, `/page-1`), 404s past the last page (checked before paginating), 12 per page, and passes `PaginatorInterface::SORT_FIELD_PARAMETER_NAME => null` (`?sort=` is ours).
+- `/catalog/count[/{support}]` and `/production/count`: the live « Voir N résultats » of the mobile panel.
+- Cards: `_article-grid.html.twig` with `live: true` renders `_card-live.html.twig` (cart button, « Épuisé » + « M'alerter », « Nouveau » for `Article::NEW_ARRIVAL_DAYS`), never inside a `{% cache %}` block; `_card.html.twig` stays cache-safe.
+- A new filter: `CatalogFilters` field → `CatalogFilterType` → `CatalogQuery::filtered()` (and a `CatalogFacet` case, `FacetCounter`, `CatalogLinks::query()`/`pills()`).
+
+`src/Data/*` holds the other plain mutable DTOs (`AddToCartWithQuantity`, `OrderDeliveryDto`, …).
 
 ### Doctrine / entities
 
@@ -152,7 +161,7 @@ Validation constraints must be built with **named arguments** — Symfony 8 reje
 
 ### Frontend
 
-Single Encore entry `assets/app.js`; SCSS in `assets/styles` (`global.scss` + partials, Bootstrap 5). Stimulus controllers in `assets/controllers/` registered through `assets/controllers.json` — used for cart quantity, password fields, filter accordion, obfuscated links, scrollbar, the homepage shelves.
+Single Encore entry `assets/app.js`; SCSS in `assets/styles` (`global.scss` + partials, Bootstrap 5). Stimulus controllers in `assets/controllers/` registered through `assets/controllers.json` — used for cart quantity, password fields, obfuscated links, the homepage shelves, the catalogue (`filters-panel`: mobile dialog, `result-count`, `artist-search`, `filter-groups`: remembers open groups; the page works without JS).
 
 Design system (« Mini design system Kale Borroka », Claude Design handoff): three inks — `$kb-noir` #111010, `$kb-papier` #f3eee4, `$kb-rouge` #c4161c (buying and stamps only, never running text nor the only signal) — Anton (titles, prices, always uppercase), Archivo (text), IBM Plex Mono (metadata), radius 0, solid offset shadows (`6px 6px 0`).
 

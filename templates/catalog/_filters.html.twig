@@ -29,9 +29,11 @@
                 {% include 'catalog/_facet.html.twig' with {facet} only %}
             {% endfor %}
 
-            {% include 'catalog/_switch.html.twig' with {
-                name: 'kbrProduction', title: 'Nos productions', hint: 'Réf. KBR# du label uniquement', checked: filters.kbrProduction
-            } only %}
+            {% if not filters.productions %}
+                {% include 'catalog/_switch.html.twig' with {
+                    name: 'kbrProduction', title: 'Nos productions', hint: 'Réf. KBR# du label uniquement', checked: filters.kbrProduction
+                } only %}
+            {% endif %}
             {% include 'catalog/_switch.html.twig' with {
                 name: 'hideSoldOut', title: 'Masquer les épuisés', hint: 'Seulement ce qui est en stock', checked: filters.hideSoldOut
             } only %}

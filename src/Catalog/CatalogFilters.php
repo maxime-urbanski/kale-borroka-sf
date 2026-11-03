@@ -20,6 +20,9 @@ final class CatalogFilters
     /** The section of the path, null on « Tout ». */
     public ?SupportType $section = null;
 
+    /** « Nos productions » (/production): the label's own productions only, always. */
+    public bool $productions = false;
+
     /** @var list<SupportType> sections ticked on « Tout »; ignored on a section's page */
     public array $supports = [];
 
@@ -45,10 +48,11 @@ final class CatalogFilters
     /** Narrows the list of artists offered in the filter, not the results. */
     public ?string $artistSearch = null;
 
-    public static function of(?SupportType $section): self
+    public static function of(?SupportType $section, bool $productions = false): self
     {
         $filters = new self();
         $filters->section = $section;
+        $filters->productions = $productions;
 
         return $filters;
     }
