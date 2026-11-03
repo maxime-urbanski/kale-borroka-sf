@@ -8,6 +8,7 @@ use App\Repository\LabelRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LabelRepository::class)]
@@ -20,6 +21,11 @@ class Label
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
+
+    /** URL value of the catalogue filters (?labels[]=<slug>). */
+    #[ORM\Column(length: 255, unique: true)]
+    #[Gedmo\Slug(fields: ['name'])]
+    private ?string $slug = null;
 
     /** Third-party label whose records we distribute. */
     #[ORM\Column(options: ['default' => false])]
@@ -54,6 +60,19 @@ class Label
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    /** Set by Gedmo from the name; by hand only to fix one. */
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
     }
 
     public function setName(string $name): static

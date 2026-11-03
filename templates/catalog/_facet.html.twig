@@ -1,0 +1,19 @@
+<div class="kb-filter {{ order is defined ? order : '' }}"
+     data-controller="filter-accordion">
+    <button type="button" class="kb-filter__toggle"
+            data-action="filter-accordion#open"
+            aria-expanded="{{ opened is defined ? 'true' : 'false' }}"
+            aria-controls="filter-{{ form.vars.id }}">
+        <span>{{ form.vars.label|default(form.vars.name|humanize) }}</span>
+        <i class="bi {{ opened is defined ? 'bi-dash-lg' : 'bi-plus-lg' }}" aria-hidden="true"
+           data-filter-accordion-target="icon"></i>
+    </button>
+    <div class="kb-filter__body {{ opened is defined ? 'opened' : '' }} no-scroll-bar"
+         id="filter-{{ form.vars.id }}"
+         data-filter-accordion-target="body">
+        <fieldset>
+            <legend class="visually-hidden">{{ form.vars.label|default(form.vars.name|humanize) }}</legend>
+            {{ form_widget(form) }}
+        </fieldset>
+    </div>
+</div>
