@@ -14,7 +14,9 @@ $kb-gris: #5b5750;          // secondary text (6.4:1 on paper)
 $kb-gris-clair: #b9b2a6;    // disabled, rules
 $kb-gris-filet: #8a857c;    // 1px list separators
 $kb-encre-2: #3a3734;       // secondary text, separators on black
-$kb-vert: #00843d;          // ikurriña rule only
+$kb-vert: #00843d;          // decoration only (ikurriña flag), never behind text
+$kb-vert-achat: #00703a;    // buying button: 5.4:1 with paper text (AA)
+$kb-vert-achat-fonce: #00592e; // buying button on hover
 
 // Type
 $kb-font-display: "Anton", Impact, sans-serif;               // titles, prices, numbers — always uppercase
@@ -33,7 +35,7 @@ $black: $kb-noir;
 $dark: $kb-noir;
 $light: $kb-papier;
 $primary: $kb-rouge;
-$danger: $kb-rouge;
+$danger: $kb-rouge-fonce;   // destructive actions and errors; the buying red stays $primary
 $secondary: $kb-gris;
 $success: $kb-noir;       // no green: confirmations are black
 $info: $kb-papier-2;

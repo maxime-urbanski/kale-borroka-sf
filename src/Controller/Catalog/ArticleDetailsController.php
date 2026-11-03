@@ -84,6 +84,8 @@ class ArticleDetailsController
         // Left unexecuted: the template caches the related sections and only runs them on a miss.
         $artistArticle = $article instanceof Release ? $releaseRepository->getReleasesWithSameArtist($article) : null;
         $articleWithSameStyle = $article instanceof Release ? $releaseRepository->getReleasesWithSameStyle($article) : null;
+        $articleWithSameLabel = $article instanceof Release ? $releaseRepository->getReleasesWithSameLabel($article) : null;
+        $otherPressings = $article instanceof Release ? $releaseRepository->getOtherPressings($article) : null;
         $album = $article instanceof Release ? $article->getAlbum() : null;
         $tracklist = null === $album ? null : $songRepository->tracklistQuery($album);
 
@@ -121,6 +123,8 @@ class ArticleDetailsController
             'breadcrumb' => $breadcrumb->breadcrumb(lastItemName: $article->getName()),
             'articleByArtist' => $artistArticle,
             'articleSameStyle' => $articleWithSameStyle,
+            'articleSameLabel' => $articleWithSameLabel,
+            'otherPressings' => $otherPressings,
             'tracklist' => $tracklist,
             'form' => $addToCartForm->createView(),
             'userWishlist' => $userWishlist,

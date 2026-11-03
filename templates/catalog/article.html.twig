@@ -1,80 +1,91 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    {% set album = article is release ? article.album : null %}
+    {% set artist = album ? album.artist : null %}
+    {% set labels = album ? album.labels|map(label => label.name)|join(', ') : '' %}
     <div class="container py-5">
         {% include 'layout/_breadcrumb.html.twig' with {breadcrumb} %}
-        <div class="row mb-5">
-            <div class="col-sm-12 col-md-5">
+        <div class="kb-product">
+            <div class="kb-product__cover">
                 {% if article.coverImageName %}
                     <img src="{{ asset('upload/albums/' ~ article.coverImageName) }}"
-                         alt="{{ article.name }}"
-                         class="w-100 ratio-1x1">
+                         alt="Pochette : {{ artist ? artist.name ~ ', ' }}{{ article.name }}">
                 {% else %}
-                    <img src="{{ asset('/images/product_placeholder.png') }}" alt="{{ article.name }}"
-                         class="w-100 ratio-1x1">
+                    <div class="kb-cover-missing" role="img" aria-label="Pochette à venir : {{ article.name }}">
+                        <i class="bi bi-vinyl" aria-hidden="true"></i>
+                        <span aria-hidden="true">Pochette<br>à venir</span>
+                    </div>
                 {% endif %}
             </div>
-            <div class="col-sm-12 col-md-7 ps-lg-5">
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <h1 class="text-center text-md-start mt-4 mt-md-0 mb-2">{{ article.name }}</h1>
-                        <p class="text-secondary mb-3">
-                            {% if article is release %}
-                                {% for style in article.album.styles %}
-                                    {{ style }} {% if not loop.last %} | {% endif %}
-                                {% endfor %}
-                            {% elseif article is book %}
-                                {{ article.author }}
-                            {% endif %}
+            <div class="kb-product__info">
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="kb-badge">{{ article.formatLabel }}</span>
+                    {% if album and album.kbrProduction and album.kbrProductionId %}
+                        <span class="kb-badge kb-badge--outline">{{ album.kbrProductionId }}</span>
+                    {% endif %}
+                    {% if article is release and article.limitedTo %}
+                        <span class="kb-badge kb-badge--outline"><i class="bi bi-hash" aria-hidden="true"></i>Limité à {{ article.limitedTo }} ex.</span>
+                    {% endif %}
+                    {% if article.itemCondition is same as(constant('App\\Enum\\ItemCondition::USED')) %}
+                        <span class="kb-badge kb-badge--papier"><i class="bi bi-arrow-repeat" aria-hidden="true"></i>{{ article.itemCondition.label }}</span>
+                    {% endif %}
+                </div>
+                <div>
+                    <h1 class="kb-product__title">{{ article.name }}</h1>
+                    {% if artist %}
+                        <p class="kb-product__artist">{{ artist.name }}</p>
+                    {% elseif article is book and article.author %}
+                        <p class="kb-product__artist">{{ article.author }}</p>
+                    {% endif %}
+                </div>
+                {% if album and album.styles is not empty %}
+                    <p class="kb-product__styles">{{ album.styles|join(' · ') }}</p>
+                {% endif %}
+                <div class="kb-product__price">
+                    <span class="kb-price kb-price--lg{{ article.soldOut ? ' kb-price--sold' }}">
+                        <bdi>{{ (article.price/100) | format_currency('EUR', [], 'fr') }}</bdi>
+                    </span>
+                    <span class="kb-meta">TTC</span>
+                </div>
+                {% if article.soldOut %}
+                    {# Adding it would fail anyway (« Cet article est épuisé. »): no button to press. #}
+                    <p class="mb-0 py-2">
+                        <span class="kb-stamp">Épuisé</span>
+                    </p>
+                {% else %}
+                    {% if article.stock <= 10 %}
+                        <p class="kb-product__notice" role="status">
+                            <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                            Plus que {{ article.stock }} exemplaire{{ article.stock > 1 ? 's' }}{% if article is release and article.limitedTo and article.stock < article.limitedTo %} sur {{ article.limitedTo }}{% endif %}
                         </p>
-                        <div class="d-flex flex-wrap align-items-center gap-3">
-                            <span class="kb-price kb-price--lg{{ article.soldOut ? ' kb-price--sold' }}">
-                                <bdi>{{ (article.price/100) | format_currency('EUR', [], 'fr') }}</bdi>
-                            </span>
-                            <span class="kb-badge">{{ article.formatLabel }}</span>
+                    {% endif %}
+                    {{ form_start(form, {attr: {id: 'add-to-cart-form'}}) }}
+                    <div class="d-flex flex-wrap align-items-center gap-3">
+                        <div class="kb-quantity" data-controller="add-to-cart">
+                            {{ form_widget(form.less) }}
+                            {{ form_widget(form.quantity) }}
+                            {{ form_widget(form.more) }}
                         </div>
-                        {% if article is release %}
-                            <p class="mt-3 mb-md-0">
-                                Sortie : {{ article.album.dateRelease ? article.album.dateRelease|date('Y') : '—' }}
-                                {% if article.color %} · {{ article.color }}{% endif %}
-                                {% if article.editionLabel %} · {{ article.editionLabel }}{% endif %}
-                                {% if article.limitedTo %} · Limité à {{ article.limitedTo }} ex.{% endif %}
-                            </p>
-                        {% endif %}
+                        <button class="btn btn-buy btn-lg flex-grow-1">
+                            <i class="bi bi-bag-plus" aria-hidden="true"></i>
+                            Ajouter au panier
+                        </button>
                     </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col">
-                        {% if article.soldOut %}
-                            {# Adding it would fail anyway (« Cet article est épuisé. »): no button to press. #}
-                            <p class="mb-0 py-2">
-                                <span class="kb-stamp">Épuisé</span>
-                            </p>
-                        {% else %}
-                            {{ form_start(form) }}
-                            <div class="d-flex flex-wrap align-items-center gap-3">
-                                <div class="kb-quantity" data-controller="add-to-cart">
-                                    {{ form_widget(form.less) }}
-                                    {{ form_widget(form.quantity) }}
-                                    {{ form_widget(form.more) }}
-                                </div>
-                                <button class="btn btn-primary btn-lg">
-                                    <i class="bi bi-bag-plus" aria-hidden="true"></i>
-                                    Ajouter au panier
-                                </button>
-                            </div>
-                            {{ form_end(form) }}
-                        {% endif %}
-                    </div>
-                </div>
+                    {{ form_end(form) }}
+                {% endif %}
                 {% if app.user %}
-                    <div class="btn-group mb-3 w-100" role="group">
-                        {% if app.user and userWishlist and userWishlist.hasInWishlist(article) %}
+                    <div class="kb-product__lists">
+{% if app.user and userWishlist and userWishlist.hasInWishlist(article) %}
                             {% include 'partials/_post_button.html.twig' with {
                                 token_id: 'wishlist',
                                 url: path('app_wishlist_remove', {productId: article.id}),
-                                class: 'btn btn-danger',
-                                text_btn: 'Retirer de la wishlist',
+                                class: 'btn btn-dark',
+                                text_btn: 'Retirer de la wantlist',
+                                text_short: 'Wantlist',
+                                icon_desktop_only: true,
+                                label: 'Retirer de la Wantlist',
+                                text_short_icon: 'bi-check-lg',
                                 icon: "bi-eye-slash-fill ms-2",
                                 icon_position: 'right'
                             } %}
@@ -84,6 +95,9 @@
                                 url: path('app_wishlist_add', {productId: article.id}),
                                 class: 'btn btn-outline-dark',
                                 text_btn: 'Ajouter à la wantlist',
+                                text_short: 'Wantlist',
+                                icon_desktop_only: true,
+                                label: 'Ajouter à la Wantlist',
                                 icon: "bi-eye-fill me-2",
                                 icon_position: 'left'
                             } %}
@@ -92,8 +106,12 @@
                             {% include 'partials/_post_button.html.twig' with {
                                 token_id: 'collection',
                                 url: path('app_collection_remove', {productId: article.id}),
-                                class: 'btn btn-danger',
+                                class: 'btn btn-dark',
                                 text_btn: 'Supprimer de la collection',
+                                text_short: 'Collection',
+                                icon_desktop_only: true,
+                                label: 'Supprimer de la Collection',
+                                text_short_icon: 'bi-check-lg',
                                 icon: "bi-database-fill-dash ms-2",
                                 icon_position: 'right'
                             } %}
@@ -103,50 +121,116 @@
                                 url: path('app_collection_add', {productId: article.id}),
                                 class: 'btn btn-outline-dark',
                                 text_btn: 'Ajouter à la collection',
+                                text_short: 'Collection',
+                                icon_desktop_only: true,
+                                label: 'Ajouter à la Collection',
                                 icon: "bi-database-fill-add me-2",
                                 icon_position: 'left'
                             } %}
                         {% endif %}
                     </div>
                 {% endif %}
-                <hr>
-                <div class="row">
-                    <div class="col">
-                        <p class="m-0 text-center">{{ article is release ? article.album.note }}</p>
-                    </div>
-                </div>
+                {% if article is release %}
+                    <dl class="kb-product__details">
+                        {% set reference = article.catalogNumber ?: (album and album.kbrProductionId ? album.kbrProductionId) %}
+                        {% set release_label = article.label ? article.label.name : labels %}
+                        {# A vinyl with no colour recorded is black. #}
+                        {% set rows = {
+                            'Réf.': reference,
+                            'Label': release_label,
+                            'Sortie': album and album.dateRelease ? album.dateRelease|date('Y') : null,
+                            'Format': article.formatLabel,
+                            'Couleur': article.color ?: (article.format and article.format.size ? 'noir'),
+                            'Édition': article.editionLabel,
+                            'Pressage': article.pressingYear,
+                            'Tirage': article.limitedTo ? 'Limité à ' ~ article.limitedTo ~ ' ex.' : null,
+                            'État': article.itemCondition is same as(constant('App\\Enum\\ItemCondition::USED')) ? article.itemCondition.label : null,
+                        } %}
+                        {% for term, value in rows %}
+                            {% if value %}
+                                <dt>{{ term }}</dt>
+                                <dd>{{ value }}</dd>
+                            {% endif %}
+                        {% endfor %}
+                    </dl>
+                {% endif %}
             </div>
         </div>
-        {% if tracklist %}
-            {# Shared by the pressings of the album with the same layout (ReleaseFormat::tracklistLayout()):
-               an LP reads by side, a CD straight through. A song or an artist written clears `album` too. #}
-            {% set layout = article.format ? article.format.tracklistLayout.value : 'none' %}
-            {% cache 'album_tracklist_' ~ article.album.id ~ '_' ~ layout tags(['album']) %}
-                {% set tracks = tracklist.result %}
-                {% if tracks is not empty %}
-                    {% include 'layout/article/_section.html.twig' with {
-                        tracklist: tracklist_sides(tracks, article.format),
-                        album_artist: article.album.artist,
-                        title: 'Tracklist',
-                        title_mb: 'mb-4'
-                    } %}
+        {% set note = article is release ? album.note : null %}
+        {% set layout = article is release and article.format ? article.format.tracklistLayout.value : 'none' %}
+    </div>
+    {% if note or tracklist %}
+        <div class="kb-product__band">
+            <div class="container kb-product__band-inner{{ note and tracklist ? ' kb-product__band-inner--two' }}">
+                {% if note %}
+                    <section>
+                        <h2 class="kb-product__heading">Le disque</h2>
+                        {% for paragraph in note|split("\n\n") %}
+                            <p class="kb-product__note">{{ paragraph|trim|nl2br }}</p>
+                        {% endfor %}
+                    </section>
                 {% endif %}
-            {% endcache %}
-        {% endif %}
-        {# The same for every visitor, unlike the rest of the page (stock, wishlist, cart form). #}
-        {% cache 'article_related_' ~ article.id tags(['article', 'album', 'style']) %}
-            {% set byArtist = articleByArtist ? articleByArtist.result : [] %}
-            {% set sameStyle = articleSameStyle ? articleSameStyle.result : [] %}
-            {% if byArtist|length > 1 %}
+                {% if tracklist %}
+                    {# Shared by the pressings of the album with the same layout (ReleaseFormat::tracklistLayout()):
+                       an LP reads by side, a CD straight through. A song or an artist written clears `album` too. #}
+                    {% cache 'album_tracklist_' ~ article.album.id ~ '_' ~ layout tags(['album']) %}
+                        {% set tracks = tracklist.result %}
+                        {% if tracks is not empty %}
+                            {% include 'layout/article/_section.html.twig' with {
+                                tracklist: tracklist_sides(tracks, article.format),
+                                album_artist: article.album.artist,
+                                title: 'Tracklist',
+                                plain_title: true
+                            } %}
+                        {% endif %}
+                    {% endcache %}
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+    <div class="container pb-5">
+        {# The same for every visitor, unlike the rest of the page (stock, wishlist, cart form).
+           Other pressings of the album; then the artist's other records, else the same style, else the same label. #}
+        {% cache 'article_related_' ~ article.id tags(['article', 'album', 'artist', 'style', 'label']) %}
+            {% set pressings = otherPressings ? otherPressings.result : [] %}
+            {% if pressings is not empty %}
                 {% include 'layout/article/_section.html.twig' with {
-                    articles: byArtist,
-                    title: 'Du même artiste',
-                    title_mb: 'mb-5'
+                    articles: pressings,
+                    title: 'Autres pressages',
+                    title_mb: 'mb-4'
                 } %}
             {% endif %}
-            {% if sameStyle|length > 1 %}
-                {% include 'layout/article/_section.html.twig' with {articles: sameStyle, title: 'Dans le même style'} %}
+            {% set more = [] %}
+            {% set more_title = '' %}
+            {% for candidate in [
+                {query: articleByArtist, title: 'Du même artiste'},
+                {query: articleSameStyle, title: 'Dans le même style'},
+                {query: articleSameLabel, title: 'Du même label'},
+            ] %}
+                {% if more is empty and candidate.query %}
+                    {% set found = candidate.query.result %}
+                    {% if found is not empty %}
+                        {% set more = found %}
+                        {% set more_title = candidate.title %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            {% if more is not empty %}
+                {% include 'layout/article/_section.html.twig' with {articles: more, title: more_title, title_mb: 'mb-4'} %}
             {% endif %}
         {% endcache %}
     </div>
+    {% if not article.soldOut %}
+        {# Pinned to the bottom of the screen below lg: submits the form above (attribute `form`). #}
+        <div class="kb-product-bar">
+            <div class="container d-flex align-items-center gap-3">
+                <span class="kb-price"><bdi>{{ (article.price/100) | format_currency('EUR', [], 'fr') }}</bdi></span>
+                <button type="submit" form="add-to-cart-form" class="btn btn-buy flex-grow-1"
+                        aria-label="Ajouter {{ article.name }} au panier">
+                    <i class="bi bi-bag-plus" aria-hidden="true"></i>
+                    Ajouter
+                </button>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

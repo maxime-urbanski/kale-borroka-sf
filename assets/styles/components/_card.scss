@@ -154,6 +154,10 @@
         align-items: baseline;
         padding: 12px 0;
         border-bottom: 1px solid $kb-gris-filet;
+
+        &:last-child {
+            border-bottom: 0;
+        }
     }
 
     &__number {
@@ -169,5 +173,15 @@
     &__duration {
         font-family: $kb-font-mono;
         font-size: .875rem;
+    }
+}
+
+// Card cart button: the buying green, like .btn-primary (a plain .kb-icon-btn is black, red on hover).
+.kb-card__cart {
+    background: $kb-vert-achat;
+
+    &:hover,
+    &:focus-visible {
+        background: $kb-vert-achat-fonce;
     }
 }

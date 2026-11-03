@@ -69,27 +69,83 @@ class ReleaseRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
-    public function getReleasesWithSameArtist(Release $release): Query
+    /**
+     * The other pressings of the same album (colour, edition, format).
+     */
+    public function getOtherPressings(Release $release): Query
     {
         return $this->publishedQuery()
-            ->andWhere('album.artist = :artist')
+            ->andWhere('release.album = :album')
             ->andWhere('release != :release')
-            ->setMaxResults(10)
-            ->setParameter('artist', $release->getAlbum()?->getArtist())
+            ->setParameter('album', $release->getAlbum())
             ->setParameter('release', $release)
+            ->getQuery();
+    }
+
+    /**
+     * Other records of the artist: one pressing per album, never the album being shown.
+     */
+    public function getReleasesWithSameArtist(Release $release): Query
+    {
+        return $this->otherAlbums($release, static function (QueryBuilder $qb): void {
+            $qb->andWhere('pressed.artist = :artist');
+        })
+            ->setParameter('artist', $release->getAlbum()?->getArtist())
             ->getQuery();
     }
 
     public function getReleasesWithSameStyle(Release $release): Query
     {
-        return $this->publishedQuery()
-            ->leftJoin('album.styles', 'styles')
-            ->andWhere('styles IN (:styles)')
-            ->andWhere('release != :release')
-            ->setMaxResults(10)
+        return $this->otherAlbums($release, static function (QueryBuilder $qb): void {
+            $qb->innerJoin('pressed.styles', 'pressed_style')->andWhere('pressed_style IN (:styles)');
+        })
             ->setParameter('styles', $release->getAlbum()?->getStyles())
-            ->setParameter('release', $release)
             ->getQuery();
+    }
+
+    /**
+     * The label the page shows (Release::$label for a distro pressing, otherwise the album's
+     * labels), matched the same way on the other albums: one of their pressings or the album itself.
+     */
+    public function getReleasesWithSameLabel(Release $release): Query
+    {
+        $labels = null !== $release->getLabel() ? [$release->getLabel()] : $release->getAlbum()?->getLabels()->toArray() ?? [];
+
+        return $this->otherAlbums($release, static function (QueryBuilder $qb): void {
+            $qb->leftJoin('pressed.labels', 'pressed_label')
+                ->andWhere('pressing.label IN (:labels) OR pressed_label IN (:labels)');
+        })
+            ->setParameter('labels', $labels)
+            ->getQuery();
+    }
+
+    /**
+     * Published releases of other albums than the release's: an album pressed several times
+     * counts once (its first pressing), the pressings of the album shown have their own section.
+     */
+    private function otherAlbums(Release $release, callable $narrow): QueryBuilder
+    {
+        return $this->publishedQuery()
+            ->andWhere('release.album != :album')
+            ->andWhere(\sprintf('release.id IN (%s)', $this->firstPressingOfAlbumsDql($narrow)))
+            ->setParameter('album', $release->getAlbum())
+            ->setMaxResults(5);
+    }
+
+    /**
+     * @param callable(QueryBuilder): void $narrow
+     */
+    private function firstPressingOfAlbumsDql(callable $narrow): string
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('MIN(pressing.id)')
+            ->from(Release::class, 'pressing')
+            ->innerJoin('pressing.album', 'pressed')
+            ->where('pressing.published = true')
+            ->groupBy('pressing.album');
+        $narrow($qb);
+
+        return $qb->getDQL();
     }
 
     private function publishedQuery(): QueryBuilder

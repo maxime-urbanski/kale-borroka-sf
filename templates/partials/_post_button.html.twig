@@ -4,7 +4,8 @@
     the firewall (security.yaml). Same options as _obfuscation_link.html.twig, plus token_id
     and form_class (the form is the layout item: 'd-grid' makes the button fill it) and label (the button's
     accessible name, for an icon button or a text that needs its object: it must contain the
-    visible text), method (PATCH or DELETE, sent as _method: framework.http_method_override).
+    visible text), text_short (shorter text shown below sm, so the button holds one line; label must
+    contain it as well), text_short_icon (icon before text_short, e.g. 'bi-check-lg' for a state), icon_desktop_only (icon hidden below sm), method (PATCH or DELETE, sent as _method: framework.http_method_override).
 #}
 {% set icon_position = icon_position | default('left') %}
 
@@ -13,13 +14,15 @@
     {% if method is defined %}<input type="hidden" name="_method" value="{{ method }}">{% endif %}
     <button type="submit" class="{{ class }}"{% if label is defined %} aria-label="{{ label }}"{% endif %}>
         {% if icon is defined and icon_position is same as "left" %}
-            <i class="bi {{ icon }}" aria-hidden="true"></i>
+            <i class="bi {{ icon }}{{ icon_desktop_only|default(false) ? ' d-none d-sm-inline' }}" aria-hidden="true"></i>
         {% endif %}
-        {% if text_btn is defined %}
+        {% if text_btn is defined and text_short is defined %}
+            <span class="d-none d-sm-inline">{{ text_btn }}</span><span class="d-sm-none">{% if text_short_icon is defined %}<i class="bi {{ text_short_icon }}" aria-hidden="true"></i> {% endif %}{{ text_short }}</span>
+        {% elseif text_btn is defined %}
             {{ text_btn }}
         {% endif %}
         {% if icon is defined and icon_position is same as "right" %}
-            <i class="bi {{ icon }}" aria-hidden="true"></i>
+            <i class="bi {{ icon }}{{ icon_desktop_only|default(false) ? ' d-none d-sm-inline' }}" aria-hidden="true"></i>
         {% endif %}
     </button>
 </form>

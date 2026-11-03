@@ -31,9 +31,8 @@
     gap: 6px;
 }
 
-// Buying: red, darker on hover.
-.btn-primary,
-.btn-danger {
+// Main action: red, darker on hover.
+.btn-primary {
     --bs-btn-color: #{$kb-papier};
     --bs-btn-bg: #{$kb-rouge};
     --bs-btn-border-color: #{$kb-rouge};
@@ -43,6 +42,35 @@
     --bs-btn-active-color: #{$kb-papier};
     --bs-btn-active-bg: #{$kb-rouge-fonce};
     --bs-btn-active-border-color: #{$kb-rouge-fonce};
+}
+
+// Adding to the cart, and only that: green, darker on hover.
+.btn-buy {
+    --bs-btn-color: #{$kb-papier};
+    --bs-btn-bg: #{$kb-vert-achat};
+    --bs-btn-border-color: #{$kb-vert-achat};
+    --bs-btn-hover-color: #{$kb-papier};
+    --bs-btn-hover-bg: #{$kb-vert-achat-fonce};
+    --bs-btn-hover-border-color: #{$kb-vert-achat-fonce};
+    --bs-btn-active-color: #{$kb-papier};
+    --bs-btn-active-bg: #{$kb-vert-achat-fonce};
+    --bs-btn-active-border-color: #{$kb-vert-achat-fonce};
+    --bs-btn-disabled-color: #{$kb-papier};
+    --bs-btn-disabled-bg: #{$kb-vert-achat};
+    --bs-btn-disabled-border-color: #{$kb-vert-achat};
+}
+
+// Destructive: dark red, black on hover, so it never reads as the buying red.
+.btn-danger {
+    --bs-btn-color: #{$kb-papier};
+    --bs-btn-bg: #{$kb-rouge-fonce};
+    --bs-btn-border-color: #{$kb-rouge-fonce};
+    --bs-btn-hover-color: #{$kb-papier};
+    --bs-btn-hover-bg: #{$kb-noir};
+    --bs-btn-hover-border-color: #{$kb-noir};
+    --bs-btn-active-color: #{$kb-papier};
+    --bs-btn-active-bg: #{$kb-noir};
+    --bs-btn-active-border-color: #{$kb-noir};
 }
 
 // Secondary: black. .btn-success (confirmations) and .btn-dark look the same.
@@ -73,12 +101,12 @@
     --bs-btn-active-border-color: #{$kb-noir};
 }
 
-// Destructive outline keeps a red cue on top of its label.
+// Destructive outline keeps a dark red cue on top of its label.
 .btn-outline-danger {
     --bs-btn-color: #{$kb-rouge-fonce};
-    --bs-btn-border-color: #{$kb-rouge};
-    --bs-btn-hover-bg: #{$kb-rouge};
-    --bs-btn-hover-border-color: #{$kb-rouge};
+    --bs-btn-border-color: #{$kb-rouge-fonce};
+    --bs-btn-hover-bg: #{$kb-rouge-fonce};
+    --bs-btn-hover-border-color: #{$kb-rouge-fonce};
     --bs-btn-active-bg: #{$kb-rouge-fonce};
     --bs-btn-active-border-color: #{$kb-rouge-fonce};
 }
