@@ -1,6 +1,6 @@
 {% set route = app.request.attributes.get('_route') %}
 
-<nav class="my-4" aria-label="Fil d'Ariane">
+<nav class="d-none d-md-block my-4" aria-label="Fil d'Ariane">
     <ol class="breadcrumb">
         {% for link in breadcrumb %}
             {% if link.path == route %}

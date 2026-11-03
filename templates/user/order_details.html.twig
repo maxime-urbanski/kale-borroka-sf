@@ -262,7 +262,7 @@
                     token_id: 'cart',
                     url: path('app_user_order_reorder', {orderReference: order.reference}),
                     form_class: 'kb-order-again__form',
-                    class: 'btn btn-primary btn-lg',
+                    class: 'btn btn-buy btn-lg',
                     icon: 'bi-bag-plus',
                     text_btn: inStock|length == lines ? 'Tout remettre au panier' : (inStock|length > 1 ? 'Ajouter les ' ~ inStock|length ~ ' dispo' : 'Ajouter le seul dispo')
                 } %}

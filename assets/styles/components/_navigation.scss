@@ -2,8 +2,13 @@
 .breadcrumb {
     font-family: $kb-font-mono;
     text-transform: uppercase;
+    // One line whatever the title: the ancestors keep their size, the current page is cut with « … ».
+    flex-wrap: nowrap;
 
     .breadcrumb-item {
+        flex: none;
+        white-space: nowrap;
+
         a {
             text-decoration: none;
 
@@ -13,6 +18,10 @@
         }
 
         &.active {
+            flex: 0 1 auto;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
             font-weight: 600;
         }
     }

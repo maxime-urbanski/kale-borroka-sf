@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller\Catalog;
 
+use App\Entity\Album;
 use App\Entity\Artist;
+use App\Entity\Label;
 use App\Entity\Release;
 use App\Entity\Song;
 use App\Enum\ReleaseFormat;
@@ -42,7 +44,7 @@ class ArticlePageContentTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->uriOf($this->quartierMaudit()));
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('form button.btn-primary', 'Ajouter au panier');
+        self::assertSelectorTextContains('form button.btn-buy', 'Ajouter au panier');
         self::assertSelectorTextNotContains('body', 'Épuisé');
         self::assertCount(1, $crawler->filter('input[name$="[quantity]"]'));
     }
@@ -163,6 +165,80 @@ class ArticlePageContentTest extends WebTestCase
         $this->client->followRedirect();
         self::assertSelectorTextContains('body', 'Tout le stock disponible est déjà dans votre panier.');
         self::assertSelectorTextNotContains('body', 'Article ajouté au panier.');
+    }
+
+    public function testOtherPressingsOfTheAlbumAreListedApart(): void
+    {
+        $album = $this->quartierMaudit()->getAlbum();
+        self::assertNotNull($album);
+        $cd = (new Release())->setName('Brixton Cats - Quartier Maudit (CD)')->setSku('TEST-QM-CD')->setFormat(ReleaseFormat::CD)
+            ->setPrice(1000)->setStock(3)->setPublished(true);
+        $album->addRelease($cd);
+        $this->entityManager()->persist($cd);
+        $this->entityManager()->flush();
+
+        $crawler = $this->client->request('GET', $this->uriOf($this->quartierMaudit()));
+
+        self::assertSame('Autres pressages', trim($crawler->filter('h2.kb-banner')->first()->text()));
+        self::assertStringContainsString('Quartier Maudit (CD)', $crawler->filter('.kb-card')->first()->text());
+        // The pressing is not offered again as « another record of the artist ».
+        self::assertCount(1, $crawler->filter('.kb-card')->reduce(static fn ($card): bool => str_contains($card->text(), 'Quartier Maudit (CD)')));
+    }
+
+    public function testTheRelatedSectionFallsBackFromArtistToStyleToLabel(): void
+    {
+        $release = $this->quartierMaudit();
+        $crawler = $this->client->request('GET', $this->uriOf($release));
+        $titles = $crawler->filter('h2.kb-banner')->each(static fn ($title): string => trim($title->text()));
+
+        // One « more » section only, never several of them.
+        self::assertCount(1, array_intersect($titles, ['Du même artiste', 'Dans le même style', 'Du même label']));
+        // Whatever it holds, it is never another pressing of this album nor the page's own release.
+        self::assertSelectorTextNotContains('main', 'Quartier Maudit (LP)');
+    }
+
+    /**
+     * A distro pressing shows its own label: « Du même label » follows that one, not the album's.
+     */
+    public function testTheSameLabelSectionFollowsTheLabelThePageShows(): void
+    {
+        $em = $this->entityManager();
+        $distro = (new Label())->setName('Test Distro Label')->setIsDistro(true);
+        $other = (new Label())->setName('Test Album Label');
+        $shown = $this->lonePressing('Test Lone Band', 'TEST-LONE', $distro, $other);
+        $sibling = $this->lonePressing('Test Sibling Band', 'TEST-SIBLING', $distro, null);
+        $stranger = $this->lonePressing('Test Stranger Band', 'TEST-STRANGER', null, $other);
+        $em->persist($distro);
+        $em->persist($other);
+        $em->flush();
+
+        $crawler = $this->client->request('GET', $this->uriOf($shown));
+
+        $section = $crawler->filter('section')->reduce(static fn ($s): bool => str_contains($s->filter('h2')->text(''), 'Du même label'));
+        self::assertCount(1, $section);
+        self::assertStringContainsString((string) $sibling->getName(), $section->text());
+        self::assertStringNotContainsString((string) $stranger->getName(), $section->text());
+    }
+
+    /**
+     * A published CD by a band with no other record and no style, so the page falls back to the label.
+     */
+    private function lonePressing(string $band, string $sku, ?Label $pressingLabel, ?Label $albumLabel): Release
+    {
+        $em = $this->entityManager();
+        $artist = (new Artist())->setName($band);
+        $album = (new Album())->setName($band.' LP')->setArtist($artist)->setKbrProduction(false);
+        if (null !== $albumLabel) {
+            $album->addLabel($albumLabel);
+        }
+        $release = (new Release())->setName($band.' - CD')->setSku($sku)->setFormat(ReleaseFormat::CD)
+            ->setPrice(1000)->setStock(3)->setPublished(true)->setLabel($pressingLabel);
+        $album->addRelease($release);
+        $em->persist($artist);
+        $em->persist($album);
+        $em->persist($release);
+
+        return $release;
     }
 
     private function quartierMaudit(): Release

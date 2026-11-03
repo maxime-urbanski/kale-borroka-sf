@@ -1,7 +1,11 @@
 <section class="mb-5 pb-4 d-flex flex-column">
-    <h2 class="kb-banner {{ title_mb | default('mb-5') }}">
-        {{ title }}
-    </h2>
+    {% if plain_title|default(false) %}
+        <h2 class="kb-product__heading">{{ title }}</h2>
+    {% else %}
+        <h2 class="kb-banner {{ title_mb | default('mb-5') }}">
+            {{ title }}
+        </h2>
+    {% endif %}
     {% if articles is defined %}
         {% include 'layout/article/_article-grid.html.twig' with {
             articles,

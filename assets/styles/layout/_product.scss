@@ -1,0 +1,218 @@
+// Product page (mockup « Fiche disque »): cover left, info right, kraft band for the note and the tracklist.
+.kb-product {
+    display: grid;
+    gap: 32px;
+    margin-bottom: 64px;
+
+    @include media-breakpoint-down(md) {
+        margin-bottom: 0;
+    }
+
+    @include media-breakpoint-up(lg) {
+        grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+        gap: 72px;
+    }
+
+    &__cover {
+        align-self: start;
+        aspect-ratio: 1 / 1;
+        border: 3px solid $kb-noir;
+        background: $kb-papier-2;
+
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .kb-cover-missing {
+            height: 100%;
+            border: 0;
+            padding: 9%;
+            font-size: 1rem;
+        }
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        min-width: 0;
+    }
+
+    &__title {
+        margin: 0;
+        font-family: $kb-font-display;
+        font-weight: 400;
+        font-size: clamp(2.5rem, 4vw + 1rem, 5rem);
+        line-height: .95;
+        text-transform: uppercase;
+        overflow-wrap: anywhere;
+    }
+
+    &__artist {
+        margin: 8px 0 0;
+        font-weight: 800;
+        font-size: clamp(1.25rem, 1.5vw + .75rem, 2rem);
+        line-height: 1.15;
+    }
+
+    &__styles {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    &__price {
+        display: flex;
+        align-items: baseline;
+        gap: 16px;
+        padding-top: 20px;
+        border-top: 3px solid $kb-noir;
+    }
+
+    &__notice {
+        align-self: flex-start;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+        padding: 10px 14px;
+        border: 2px dashed $kb-noir;
+        font-weight: 600;
+    }
+
+    &__lists {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+
+        form,
+        .btn {
+            width: 100%;
+            min-height: 48px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            white-space: nowrap;
+            font-size: .875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+    }
+
+    &__details {
+        display: grid;
+        grid-template-columns: minmax(90px, 150px) 1fr;
+        margin: 0;
+        font-family: $kb-font-mono;
+        font-size: .875rem;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+
+        dt,
+        dd {
+            margin: 0;
+            padding: 9px 0;
+            border-bottom: 1px solid $kb-gris-clair;
+        }
+
+        dt {
+            color: $kb-gris;
+        }
+
+        dd {
+            font-weight: 500;
+        }
+
+        @include media-breakpoint-down(md) {
+            dt,
+            dd {
+                border-bottom: 0;
+            }
+        }
+    }
+
+    // Full width of the page: it sits outside the .container, which wraps its content.
+    &__band {
+        margin-bottom: 64px;
+        padding: 48px 0;
+        border-top: 3px solid $kb-noir;
+        border-bottom: 3px solid $kb-noir;
+        background: $kb-papier-2;
+
+        @include media-breakpoint-up(lg) {
+            padding: 64px 0;
+        }
+    }
+
+    &__band-inner {
+        display: grid;
+        gap: 48px;
+
+        &--two {
+            @include media-breakpoint-up(lg) {
+                grid-template-columns: 1fr 1fr;
+                gap: 72px;
+            }
+        }
+
+        > section {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+    }
+
+    &__heading {
+        margin: 0 0 18px;
+        font-family: $kb-font-display;
+        font-weight: 400;
+        font-size: 2.75rem;
+        line-height: 1;
+        text-transform: uppercase;
+    }
+
+    &__note {
+        max-width: 60ch;
+        font-size: 1.125rem;
+        line-height: 1.65;
+    }
+}
+
+// Price and cart button pinned to the bottom of the screen (mockup « Fiche disque mobile »), over the footer too;
+// the form shows them from lg. The page keeps room for it so the end of the footer stays readable.
+$kb-product-bar-height: 76px;
+
+body:has(.kb-product-bar) {
+    @include media-breakpoint-down(lg) {
+        padding-bottom: $kb-product-bar-height;
+    }
+}
+
+.kb-product-bar {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    min-height: $kb-product-bar-height;
+    z-index: 1020;
+    padding: 12px 0;
+    background: $kb-noir;
+    color: $kb-papier;
+
+    .kb-price {
+        font-size: 1.875rem;
+    }
+
+    .btn {
+        min-height: 52px;
+    }
+
+    @include media-breakpoint-up(lg) {
+        display: none;
+    }
+}
