@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Catalog\CatalogQuery;
-use App\Data\ArticleFilterData;
 use App\Entity\Release;
-use App\Entity\Support;
-use App\Enum\SupportType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -73,44 +69,6 @@ class ReleaseRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
-    public function filterReleaseQuery(ArticleFilterData $filterData): Query
-    {
-        $query = $this->publishedQuery();
-
-        if (!empty($filterData->artists)) {
-            $query
-                ->andWhere('album.artist IN (:artists)')
-                ->setParameter('artists', $filterData->artists);
-        }
-
-        if (!empty($filterData->labels)) {
-            $query
-                ->leftJoin('album.labels', 'labels')
-                ->andWhere('labels IN (:labels)')
-                ->setParameter('labels', $filterData->labels);
-        }
-
-        if (!empty($filterData->styles)) {
-            $query
-                ->leftJoin('album.styles', 'styles')
-                ->andWhere('styles IN (:styles)')
-                ->setParameter('styles', $filterData->styles);
-        }
-
-        if ($filterData->kbrProduction) {
-            $query->andWhere('album.kbrProduction = true');
-        }
-
-        if (!empty($filterData->supports)) {
-            $this->applySupports(
-                $query,
-                array_map(static fn (Support $support): ?SupportType => $support->getCode(), $filterData->supports),
-            );
-        }
-
-        return $query->getQuery();
-    }
-
     public function getReleasesWithSameArtist(Release $release): Query
     {
         return $this->publishedQuery()
@@ -132,28 +90,6 @@ class ReleaseRepository extends ServiceEntityRepository
             ->setParameter('styles', $release->getAlbum()?->getStyles())
             ->setParameter('release', $release)
             ->getQuery();
-    }
-
-    /**
-     * Restricts the query to releases listed under at least one of the given sections.
-     * Must stay consistent with SupportType::forRelease(): a release is always listed
-     * under its canonical section.
-     *
-     * @param array<SupportType|null> $supportTypes
-     */
-    public function applySupports(QueryBuilder $query, array $supportTypes): QueryBuilder
-    {
-        $conditions = $query->expr()->orX();
-
-        foreach (array_unique(array_filter($supportTypes), \SORT_REGULAR) as $supportType) {
-            $conditions->add(CatalogQuery::sectionCondition($query, $supportType, 'release', 'album', null));
-        }
-
-        if ($conditions->count() > 0) {
-            $query->andWhere($conditions);
-        }
-
-        return $query;
     }
 
     private function publishedQuery(): QueryBuilder

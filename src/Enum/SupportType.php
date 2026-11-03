@@ -13,7 +13,7 @@ namespace App\Enum;
  * app:catalog:import (CatalogImporter creates the missing rows).
  *
  * A section is not a physical format — see ReleaseFormat. Which releases a section lists is
- * decided by ReleaseRepository::applySupports(); forRelease() below must stay consistent with it.
+ * decided by CatalogQuery::inSection(); forRelease() below must stay consistent with it.
  */
 enum SupportType: string
 {

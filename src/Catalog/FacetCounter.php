@@ -64,10 +64,13 @@ final readonly class FacetCounter
         /** @var array<string, int|string|null> $counts */
         $counts = $query->getQuery()->getSingleResult();
 
+        // Fanzines are no productions of the label (no album): not offered on /production.
+        $sections = array_filter(SupportType::cases(), static fn (SupportType $section): bool => !$filters->productions || SupportType::FANZINE !== $section);
+
         return new Facet(CatalogFacet::SUPPORTS, array_map(
             static fn (SupportType $section): FacetOption => new FacetOption($section->value, $section->label(), (int) ($counts[$section->value] ?? 0), \in_array($section, $filters->supports, true)),
-            SupportType::cases(),
-        ), \count(SupportType::cases()));
+            $sections,
+        ), \count($sections));
     }
 
     private function styles(CatalogFilters $filters): Facet

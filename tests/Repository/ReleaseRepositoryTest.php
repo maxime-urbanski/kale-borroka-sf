@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Repository;
 
+use App\Catalog\CatalogFilters;
+use App\Catalog\CatalogQuery;
 use App\Entity\Release;
 use App\Enum\SupportType;
 use App\Repository\ReleaseRepository;
@@ -15,8 +17,8 @@ class ReleaseRepositoryTest extends KernelTestCase
     use ServiceTrait;
 
     /**
-     * SupportType::forRelease() builds URLs, ReleaseRepository::applySupports() builds the
-     * section listings: a release must always be listed under the section of its own URL.
+     * SupportType::forRelease() builds URLs, CatalogQuery's section rules build the section
+     * listings: a release must always be listed under the section of its own URL.
      */
     public function testEveryReleaseIsListedUnderItsCanonicalSection(): void
     {
@@ -27,10 +29,7 @@ class ReleaseRepositoryTest extends KernelTestCase
         self::assertNotEmpty($releases);
 
         foreach (SupportType::cases() as $supportType) {
-            $listed = $repository->applySupports(
-                $repository->createQueryBuilder('release')->innerJoin('release.album', 'album'),
-                [$supportType],
-            )->getQuery()->getResult();
+            $listed = self::service(CatalogQuery::class)->filtered(CatalogFilters::of($supportType))->select('a')->getQuery()->getResult();
 
             foreach ($releases as $release) {
                 if ($release->getSupportType() === $supportType) {
@@ -42,14 +41,6 @@ class ReleaseRepositoryTest extends KernelTestCase
                 }
             }
         }
-    }
-
-    public function testUnpublishedReleasesAreNotListed(): void
-    {
-        $repository = self::service(ReleaseRepository::class);
-
-        $names = array_map(static fn (Release $release): ?string => $release->getName(), $repository->filterReleaseQuery(new \App\Data\ArticleFilterData())->getResult());
-        self::assertNotContains('Brouillon jamais publié', $names);
     }
 
     /**

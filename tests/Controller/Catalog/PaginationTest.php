@@ -11,8 +11,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
  * The {page} segment is "page-N" for any N of digits: page-0 (or a hand-typed page-00)
- * shows the first page instead of KnpPaginator's exception. The catalogue redirects it to
- * its URL without page instead (CatalogPageTest).
+ * shows the first page instead of KnpPaginator's exception. The catalogue and the productions
+ * redirect it to their URL without page instead (CatalogPageTest, ProductionControllerTest).
  */
 class PaginationTest extends WebTestCase
 {
@@ -38,9 +38,8 @@ class PaginationTest extends WebTestCase
      */
     public static function pages(): iterable
     {
-        yield 'productions' => ['/production/page-0'];
         yield 'collection' => ['/mon-compte/collection/page-0'];
-        yield 'leading zeros' => ['/production/page-00'];
+        yield 'leading zeros' => ['/mon-compte/collection/page-00'];
     }
 
     #[DataProvider('pages')]
