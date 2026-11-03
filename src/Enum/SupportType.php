@@ -20,8 +20,23 @@ enum SupportType: string
     case LP = 'lp';
     case EP = 'ep';
     case CD = 'cd';
-    case FANZINE = 'fanzine';
+    // In the order of the catalogue tabs.
     case TAPE = 'tape';
+    case FANZINE = 'fanzine';
+
+    /**
+     * Name of the section on the catalogue tabs and filters.
+     */
+    public function label(): string
+    {
+        return match ($this) {
+            self::LP => 'LP',
+            self::EP => 'EP / 7"',
+            self::CD => 'CD',
+            self::TAPE => 'K7',
+            self::FANZINE => 'Fanzines',
+        };
+    }
 
     /**
      * Canonical section of a release, used to build its URL. A release can be listed under

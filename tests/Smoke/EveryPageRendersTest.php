@@ -223,9 +223,11 @@ class EveryPageRendersTest extends WebTestCase
         return self::service(RouterInterface::class)->generate($name, $parameters);
     }
 
-    private function valueOf(string $routeName, string $variable, Route $route): string|int
+    private function valueOf(string $routeName, string $variable, Route $route): string|int|null
     {
         return match (true) {
+            // The catalogue redirects page-1 to its URL without page: render the page itself.
+            'page' === $variable && \in_array($routeName, ['app_catalog', 'app_catalog_list'], true) => null,
             'page' === $variable => 'page-1',
             'support' === $variable && 'app_catalog_show' === $routeName => (string) $this->release()->getSupportType()?->value,
             'support' === $variable => SupportType::LP->value,

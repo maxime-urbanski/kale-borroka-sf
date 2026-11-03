@@ -25,25 +25,6 @@ class CatalogControllerTest extends WebTestCase
         $this->client = self::createClient();
     }
 
-    public function testCatalogPage(): void
-    {
-        $crawler = $this->client->request('GET', self::DEFAULT_URI);
-        self::assertResponseIsSuccessful();
-
-        $supportRepository = self::service(SupportRepository::class);
-        $supports = $supportRepository->findAll();
-
-        $liSupport = $crawler->filter('.list-support');
-        self::assertCount(count($supports), $liSupport, 'le nombre de lien ne correspond pas');
-
-        foreach ($supports as $support) {
-            self::assertSelectorTextSame(
-                '.catalog-'.$support,
-                strtoupper((string) $support->getName())
-            );
-        }
-    }
-
     public function testAccessCatalogLpPage(): void
     {
         $this->client->request(

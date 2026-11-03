@@ -66,11 +66,11 @@ class OfficialStylesTest extends WebTestCase
         // The fixtures tag albums at random: make sure two styles have none.
         $this->entityManager()->getConnection()->executeStatement("DELETE FROM album_style WHERE style_id IN (SELECT id FROM style WHERE name IN ('Crust', 'Dub'))");
 
-        $crawler = $this->client->request('GET', '/catalog/lp/page-1');
+        $crawler = $this->client->request('GET', '/catalog');
 
         self::assertResponseIsSuccessful();
-        $offered = $crawler->filter('input[type="checkbox"][name="globalFilters[styles][]"]')->each(
-            static fn ($input): string => trim($crawler->filter(\sprintf('label[for="%s"]', $input->attr('id')))->text()),
+        $offered = $crawler->filter('input[type="checkbox"][name="styles[]"]')->each(
+            static fn ($input): string => trim($input->closest('label')?->filter('.kb-filters__name')->text() ?? ''),
         );
         $used = $this->entityManager()->createQuery(
             'SELECT DISTINCT style.name FROM App\Entity\Release release JOIN release.album album JOIN album.styles style WHERE release.published = true ORDER BY style.name',
@@ -78,7 +78,10 @@ class OfficialStylesTest extends WebTestCase
 
         self::assertNotEmpty($offered);
         self::assertNotContains('CRUST', array_map(mb_strtoupper(...), $offered));
-        self::assertSame(array_map(mb_strtoupper(...), $used), array_map(mb_strtoupper(...), $offered));
+        // In the order of Style::OFFICIAL on the page: compared as sets.
+        $offered = array_map(mb_strtoupper(...), $offered);
+        sort($offered);
+        self::assertSame(array_map(mb_strtoupper(...), $used), $offered);
     }
 
     public function testTheStylePageIsReadOnly(): void

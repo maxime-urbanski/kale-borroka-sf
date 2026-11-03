@@ -1,8 +1,9 @@
+{# live: the cards of a page that is not cached (_card-live.html.twig: cart, sold out, new). #}
 <div
-    class="row row-cols-{{ col_sm|default(2) }} row-cols-md-{{ col_md|default(3) }} row-cols-lg-{{ col_lg|default(4) }}{% if col_xl is defined %} row-cols-xl-{{ col_xl }}{% endif %} g-4 gy-5">
+    class="row row-cols-{{ col_sm|default(2) }} row-cols-md-{{ col_md|default(3) }} row-cols-lg-{{ col_lg|default(4) }}{% if col_xl is defined %} row-cols-xl-{{ col_xl }}{% endif %} g-4 gy-5{{ grid_class is defined ? ' ' ~ grid_class }}">
     {% for article in articles %}
         <div class="col">
-            {% include 'layout/article/_card.html.twig' with {article} %}
+            {% include live|default(false) ? 'layout/article/_card-live.html.twig' : 'layout/article/_card.html.twig' with {article} %}
         </div>
     {% endfor %}
 </div>

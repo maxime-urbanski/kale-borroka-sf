@@ -1,19 +1,58 @@
-<div class="kb-filter {{ order is defined ? order : '' }}"
-     data-controller="filter-accordion">
-    <button type="button" class="kb-filter__toggle"
-            data-action="filter-accordion#open"
-            aria-expanded="{{ opened is defined ? 'true' : 'false' }}"
-            aria-controls="filter-{{ form.vars.id }}">
-        <span>{{ form.vars.label|default(form.vars.name|humanize) }}</span>
-        <i class="bi {{ opened is defined ? 'bi-dash-lg' : 'bi-plus-lg' }}" aria-hidden="true"
-           data-filter-accordion-target="icon"></i>
-    </button>
-    <div class="kb-filter__body {{ opened is defined ? 'opened' : '' }} no-scroll-bar"
-         id="filter-{{ form.vars.id }}"
-         data-filter-accordion-target="body">
-        <fieldset>
-            <legend class="visually-hidden">{{ form.vars.label|default(form.vars.name|humanize) }}</legend>
-            {{ form_widget(form) }}
-        </fieldset>
-    </div>
-</div>
+{#
+    A filter group of the catalogue (App\Catalog\Facet): a native <details> (filter-groups
+    remembers which ones are open), real checkboxes with their count, the values past the
+    first few behind « Voir les N autres ». Artists: a search field that narrows the list
+    (artist-search; without JS it is sent with the form and the server narrows it).
+#}
+{% set key = facet.group.value %}
+{% set chosen = facet.selectedCount %}
+{% set nouns = {supports: 'rayons', styles: 'styles', labels: 'labels', artists: 'artistes', conditions: 'états'} %}
+{% set open = chosen > 0 or key in ['supports', 'styles'] or (key == 'artists' and app.request.query.get('artistSearch')) %}
+
+{% macro option(key, option) %}
+    <label class="kb-filters__option"{% if key == 'artists' %} data-artist-search-target="option"{% endif %}>
+        <input type="checkbox" class="kb-filters__check" name="{{ key }}[]" value="{{ option.value }}"{% if option.selected %} checked{% endif %}>
+        <span class="kb-filters__name">{{ option.label }}</span>
+        <span class="kb-filters__count">{{ option.count }}</span><span class="visually-hidden"> résultat{{ option.count > 1 ? 's' }}</span>
+    </label>
+{% endmacro %}
+
+<details class="kb-filters__group"{% if open %} open{% endif %} data-filter-groups-target="group" data-key="{{ key }}">
+    <summary class="kb-filters__summary">
+        <span>{{ facet.group.label }}</span>
+        <span class="kb-filters__meta">
+            {% if chosen %}<span class="kb-filters__chosen">{{ chosen }} choisi{{ chosen > 1 ? 's' }}</span>{% endif %}
+            <i class="bi bi-chevron-down" aria-hidden="true"></i>
+        </span>
+    </summary>
+    <fieldset class="kb-filters__body" data-group="{{ key }}"{% if key == 'artists' %} data-controller="artist-search"{% endif %}>
+        <legend class="visually-hidden">{{ facet.group.label }}</legend>
+        {% if key == 'artists' %}
+            <div class="kb-filters__search">
+                <label for="artist-search" class="kb-filters__search-label">Chercher un artiste</label>
+                <div class="kb-filters__search-field">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <input type="search" id="artist-search" name="artistSearch" class="form-control"
+                           placeholder="Ex. Hautsa" autocomplete="off"
+                           value="{{ app.request.query.get('artistSearch') }}"
+                           data-artist-search-target="input" data-action="input->artist-search#filter">
+                </div>
+            </div>
+            {% if facet.options is empty %}
+                <p class="kb-filters__none">Aucun artiste{{ app.request.query.get('artistSearch') ? ' pour cette recherche' }}.</p>
+            {% endif %}
+        {% endif %}
+        {% for option in facet.shown %}
+            {{ _self.option(key, option) }}
+        {% endfor %}
+        {% set more = facet.more %}
+        {% if more %}
+            <details class="kb-filters__more"{% if more|filter(o => o.selected) is not empty %} open{% endif %}>
+                <summary class="kb-filters__more-toggle">Voir les {{ more|length }} autres {{ nouns[key] }}</summary>
+                {% for option in more %}
+                    {{ _self.option(key, option) }}
+                {% endfor %}
+            </details>
+        {% endif %}
+    </fieldset>
+</details>

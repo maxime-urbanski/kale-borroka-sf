@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Catalog\CatalogQuery;
 use App\Data\ArticleFilterData;
 use App\Entity\Release;
 use App\Entity\Support;
-use App\Enum\AlbumReleaseType;
-use App\Enum\ReleaseFormat;
 use App\Enum\SupportType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
@@ -147,31 +146,7 @@ class ReleaseRepository extends ServiceEntityRepository
         $conditions = $query->expr()->orX();
 
         foreach (array_unique(array_filter($supportTypes), \SORT_REGULAR) as $supportType) {
-            $key = $supportType->value;
-
-            match ($supportType) {
-                SupportType::LP => $conditions->add(\sprintf(
-                    '(release.format IN (:formats_%1$s) AND album.releaseType != :release_type_%1$s)', $key,
-                )),
-                SupportType::EP => $conditions->add(\sprintf(
-                    '(release.format IN (:formats_%1$s) OR album.releaseType = :release_type_%1$s)', $key,
-                )),
-                SupportType::CD, SupportType::TAPE => $conditions->add(\sprintf('release.format IN (:formats_%s)', $key)),
-                // Fanzines are Books, not Releases.
-                SupportType::FANZINE => $conditions->add('1 = 0'),
-            };
-
-            match ($supportType) {
-                SupportType::LP => $query
-                    ->setParameter('formats_lp', [ReleaseFormat::VINYL_12->value, ReleaseFormat::VINYL_10->value])
-                    ->setParameter('release_type_lp', AlbumReleaseType::EP->value),
-                SupportType::EP => $query
-                    ->setParameter('formats_ep', [ReleaseFormat::VINYL_7->value])
-                    ->setParameter('release_type_ep', AlbumReleaseType::EP->value),
-                SupportType::CD => $query->setParameter('formats_cd', [ReleaseFormat::CD->value]),
-                SupportType::TAPE => $query->setParameter('formats_tape', [ReleaseFormat::CASSETTE->value]),
-                SupportType::FANZINE => null,
-            };
+            $conditions->add(CatalogQuery::sectionCondition($query, $supportType, 'release', 'album', null));
         }
 
         if ($conditions->count() > 0) {

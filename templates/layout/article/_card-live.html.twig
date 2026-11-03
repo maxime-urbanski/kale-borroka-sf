@@ -1,0 +1,55 @@
+{#
+    The card of pages that are not cached (the catalogue): what changes with the stock, the
+    time or the visitor. Sold out: stamp, struck price, « M'alerter » (adds to the wantlist,
+    whose alerts mail the return in stock; a visitor goes through the login). Otherwise the
+    cart button. New for NEW_ARRIVAL_DAYS after it went online.
+#}
+{% embed 'layout/article/_card.html.twig' %}
+    {% set sold_out = article.stock < 1 %}
+    {% set who = (article is release and article.album and article.album.artist ? article.album.artist.name ~ ', ' : '') ~ article.name %}
+
+    {% block card_class %}{{ sold_out ? ' kb-card--sold' }}{% endblock %}
+
+    {% block badges %}
+        {% if not sold_out and article.newArrival(date()) %}
+            <span class="kb-badge kb-badge--sm kb-badge--rouge kb-badge--new"><i class="bi bi-stars" aria-hidden="true"></i>Nouveau</span>
+        {% endif %}
+    {% endblock %}
+
+    {% block cover %}
+        {% if sold_out %}
+            <div class="kb-card__stamp"><span class="kb-stamp">Épuisé</span></div>
+        {% endif %}
+    {% endblock %}
+
+    {% block price %}
+        {% if sold_out %}
+            <span class="kb-price kb-price--sold"><del>{{ (article.price/100) | format_currency('EUR', [], 'fr') }}</del><span class="visually-hidden"> (épuisé)</span></span>
+        {% else %}
+            {{ parent() }}
+        {% endif %}
+    {% endblock %}
+
+    {% block actions %}
+        {% if sold_out %}
+            {% include 'partials/_post_button.html.twig' with {
+                token_id: 'wishlist',
+                url: path('app_wishlist_add', {productId: article.id}),
+                form_class: 'kb-card__action',
+                class: 'btn btn-outline-dark btn-sm kb-card__alert',
+                icon: 'bi-bell',
+                text_btn: 'M\'alerter',
+                label: 'M\'alerter du retour en stock : ' ~ who
+            } %}
+        {% else %}
+            {% include 'partials/_post_button.html.twig' with {
+                token_id: 'cart',
+                url: path('app_cart_add', {id: article.id}),
+                form_class: 'kb-card__action',
+                class: 'kb-icon-btn kb-card__cart',
+                icon: 'bi-bag-plus',
+                label: 'Ajouter ' ~ who ~ ' (' ~ article.formatLabel ~ ') au panier'
+            } %}
+        {% endif %}
+    {% endblock %}
+{% endembed %}
