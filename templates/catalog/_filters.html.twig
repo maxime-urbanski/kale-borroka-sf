@@ -1,0 +1,49 @@
+{#
+    The filter column, one GET form with the sort (the select of the toolbar joins it through
+    form="catalog-filters"). Nothing submits on its own (WCAG 3.2.2): « Appliquer les filtres ».
+    Desktop: a column. Mobile: a panel opened by « Filtres » (filters-panel); without JS it
+    stays in the page, under the results, reached by the #filtres link.
+#}
+{% set chosen = pills|length %}
+<aside id="filtres" class="kb-filters-panel" aria-labelledby="filters-title"
+       data-filters-panel-target="panel">
+    <div class="kb-filters-panel__backdrop" data-action="click->filters-panel#close" hidden></div>
+    <div class="kb-filters-panel__dialog" data-filters-panel-target="dialog">
+        <div class="kb-filters-panel__head">
+            <h2 id="filters-title" class="kb-filters__title">
+                <span class="d-lg-none">Filtres</span><span class="d-none d-lg-inline">Filtrer</span>
+                {% if chosen %}<span class="kb-filters__chosen d-lg-none">{{ chosen }} choisi{{ chosen > 1 ? 's' }}</span>{% endif %}
+            </h2>
+            <button type="button" class="kb-icon-btn kb-icon-btn--ghost kb-filters-panel__close d-lg-none"
+                    aria-label="Fermer les filtres" data-action="filters-panel#close" hidden
+                    data-filters-panel-target="close">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+        </div>
+
+        <form id="catalog-filters" method="get" action="{{ action }}" class="kb-filters"
+              data-controller="result-count filter-groups"
+              data-result-count-url-value="{{ count_url }}"
+              data-action="change->result-count#update input->result-count#update">
+            {% for facet in facets %}
+                {% include 'catalog/_facet.html.twig' with {facet} only %}
+            {% endfor %}
+
+            {% include 'catalog/_switch.html.twig' with {
+                name: 'kbrProduction', title: 'Nos productions', hint: 'Réf. KBR# du label uniquement', checked: filters.kbrProduction
+            } only %}
+            {% include 'catalog/_switch.html.twig' with {
+                name: 'hideSoldOut', title: 'Masquer les épuisés', hint: 'Seulement ce qui est en stock', checked: filters.hideSoldOut
+            } only %}
+
+            <div class="kb-filters-panel__foot">
+                <a href="{{ clear_url }}" class="btn btn-outline-dark d-lg-none">Effacer</a>
+                <button type="submit" class="btn btn-dark kb-filters__apply">
+                    <i class="bi bi-funnel" aria-hidden="true"></i>
+                    <span class="d-none d-lg-inline">Appliquer les filtres</span>
+                    <span class="d-lg-none" data-result-count-target="label" aria-live="polite">Voir les résultats</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</aside>

@@ -36,7 +36,7 @@ class ProductionController extends AbstractController
             ->filterReleaseQuery($dispatchFilterValueService->dispatchFilterValue($filters));
         $pagination = $paginationService->pagination($productions, $page);
 
-        return $this->render('catalog/articles.html.twig', [
+        return $this->render('production/filtered.html.twig', [
             'articles' => $pagination,
             'breadcrumb' => $breadcrumb->breadcrumb(),
             'form' => $productionForm,

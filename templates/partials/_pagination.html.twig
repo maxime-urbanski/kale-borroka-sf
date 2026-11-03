@@ -1,79 +1,88 @@
-{% if pageCount > 1 %}
-    <nav class="py-5" id="nav-pagination" aria-label="Pagination">
-        {% set classAlign = (align is not defined) ? '' : align=='center' ? ' justify-content-center' : (align=='right' ? ' justify-content-end' : '') %}
-        {% set classSize = (size is not defined) ? '' : size=='large' ? ' pagination-lg' : (size=='small' ? ' pagination-sm' : '') %}
-        <ul class="pagination justify-content-center">
-            {% if previous is defined %}
-                <li class="page-item">
-                    <a class="page-link" rel="prev"
-                       href="{{ path(route, query|merge({(pageParameterName): 'page-'~previous})) }}">{{ _self.arrow('left', 'label_previous') }}</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled">
-                    <span class="page-link">{{ _self.arrow('left', 'label_previous') }}</span>
-                </li>
-            {% endif %}
-
-            {% if startPage > 1 %}
-                <li class="page-item">
-                    <a class="page-link" href="{{ path(route, query|merge({(pageParameterName): 'page-'~1})) }}">1</a>
-                </li>
-                {% if startPage == 3 %}
+{#
+    KnpPaginator pagination, the page in the path ({page} = "page-N"; page 1 has no segment
+    where the route makes it optional). range (view parameter): « 1–12 sur 64 résultats »
+    and, on mobile, « Page 1 / 6 » between the arrows instead of the numbers.
+#}
+{% set range = range|default(false) %}
+{% macro href(route, query, pageParameterName, page) %}{{ path(route, query|merge({(pageParameterName): page > 1 ? 'page-' ~ page : null})) }}{% endmacro %}
+{% if pageCount > 1 or (range and totalCount > 0) %}
+    <nav class="kb-pagination{{ range ? ' kb-pagination--range' }}" id="nav-pagination" aria-label="Pagination">
+        {% if range %}
+            <p class="kb-pagination__range">{{ firstItemNumber }}–{{ lastItemNumber }} sur {{ totalCount }} résultat{{ totalCount > 1 ? 's' }}</p>
+        {% endif %}
+        {% if pageCount > 1 %}
+            <ul class="pagination justify-content-center">
+                {% if previous is defined %}
                     <li class="page-item">
-                        <a class="page-link"
-                           href="{{ path(route, query|merge({(pageParameterName): 'page-'~2})) }}">2</a>
-                    </li>
-                {% elseif startPage != 2 %}
-                    <li class="page-item disabled">
-                        <span class="page-link kb-page-ellipsis">&hellip;</span>
-                    </li>
-                {% endif %}
-            {% endif %}
-
-            {% for page in pagesInRange %}
-                {% if page != current %}
-                    <li class="page-item">
-                        <a class="page-link"
-                           href="{{ path(route, query|merge({(pageParameterName): 'page-'~page})) }}">{{ page }}</a>
+                        <a class="page-link" rel="prev" href="{{ _self.href(route, query, pageParameterName, previous) }}">{{ _self.arrow('left', 'label_previous') }}</a>
                     </li>
                 {% else %}
-                    <li class="page-item active">
-                        <span class="page-link" aria-current="page">{{ page }}</span>
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-disabled="true">{{ _self.arrow('left', 'label_previous') }}</span>
                     </li>
                 {% endif %}
 
-            {% endfor %}
+                {% if range %}
+                    <li class="page-item kb-pagination__position d-md-none">
+                        <span class="page-link" aria-current="page">Page {{ current }} / {{ pageCount }}</span>
+                    </li>
+                {% endif %}
 
-            {% if pageCount > endPage %}
-                {% if pageCount > (endPage + 1) %}
-                    {% if pageCount > (endPage + 2) %}
-                        <li class="page-item disabled">
-                            <span class="page-link kb-page-ellipsis">&hellip;</span>
+                {% if startPage > 1 %}
+                    <li class="page-item{{ range ? ' d-none d-md-block' }}">
+                        <a class="page-link" href="{{ _self.href(route, query, pageParameterName, 1) }}">1</a>
+                    </li>
+                    {% if startPage == 3 %}
+                        <li class="page-item{{ range ? ' d-none d-md-block' }}">
+                            <a class="page-link" href="{{ _self.href(route, query, pageParameterName, 2) }}">2</a>
                         </li>
-                    {% else %}
-                        <li class="page-item">
-                            <a class="page-link"
-                               href="{{ path(route, query|merge({(pageParameterName): 'page-'~(pageCount - 1)})) }}">{{ pageCount -1 }}</a>
+                    {% elseif startPage != 2 %}
+                        <li class="page-item disabled{{ range ? ' d-none d-md-block' }}">
+                            <span class="page-link kb-page-ellipsis">&hellip;</span>
                         </li>
                     {% endif %}
                 {% endif %}
-                <li class="page-item">
-                    <a class="page-link"
-                       href="{{ path(route, query|merge({(pageParameterName): 'page-'~pageCount})) }}">{{ pageCount }}</a>
-                </li>
-            {% endif %}
 
-            {% if next is defined %}
-                <li class="page-item">
-                    <a class="page-link" rel="next"
-                       href="{{ path(route, query|merge({(pageParameterName): 'page-'~next})) }}">{{ _self.arrow('right', 'label_next') }}</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled">
-                    <span class="page-link">{{ _self.arrow('right', 'label_next') }}</span>
-                </li>
-            {% endif %}
-        </ul>
+                {% for page in pagesInRange %}
+                    {% if page != current %}
+                        <li class="page-item{{ range ? ' d-none d-md-block' }}">
+                            <a class="page-link" href="{{ _self.href(route, query, pageParameterName, page) }}">{{ page }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item active{{ range ? ' d-none d-md-block' }}">
+                            <span class="page-link" aria-current="page">{{ page }}</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if pageCount > endPage %}
+                    {% if pageCount > (endPage + 1) %}
+                        {% if pageCount > (endPage + 2) %}
+                            <li class="page-item disabled{{ range ? ' d-none d-md-block' }}">
+                                <span class="page-link kb-page-ellipsis">&hellip;</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item{{ range ? ' d-none d-md-block' }}">
+                                <a class="page-link" href="{{ _self.href(route, query, pageParameterName, pageCount - 1) }}">{{ pageCount - 1 }}</a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                    <li class="page-item{{ range ? ' d-none d-md-block' }}">
+                        <a class="page-link" href="{{ _self.href(route, query, pageParameterName, pageCount) }}">{{ pageCount }}</a>
+                    </li>
+                {% endif %}
+
+                {% if next is defined %}
+                    <li class="page-item">
+                        <a class="page-link" rel="next" href="{{ _self.href(route, query, pageParameterName, next) }}">{{ _self.arrow('right', 'label_next') }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-disabled="true">{{ _self.arrow('right', 'label_next') }}</span>
+                    </li>
+                {% endif %}
+            </ul>
+        {% endif %}
     </nav>
 {% endif %}
 

@@ -1,0 +1,12 @@
+{# On/off filter: a real checkbox in role="switch", « Oui » / « Non » next to it (CSS, from :checked). #}
+<div class="kb-filters__switch">
+    <label class="kb-filter-switch">
+        <input type="checkbox" role="switch" name="{{ name }}" value="1" class="kb-filter-switch__input"{% if checked %} checked{% endif %}>
+        <span class="kb-filter-switch__text">
+            <span class="kb-filter-switch__title">{{ title }}</span>
+            <span class="kb-filter-switch__hint">{{ hint }}</span>
+        </span>
+        <span class="kb-filter-switch__state" aria-hidden="true"><span class="kb-filter-switch__off">Non</span><span class="kb-filter-switch__on">Oui</span></span>
+        <span class="kb-filter-switch__track" aria-hidden="true"></span>
+    </label>
+</div>

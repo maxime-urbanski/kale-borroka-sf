@@ -1,0 +1,801 @@
+// Catalogue page (maquette « KBR Catalogue »): title, section tabs, filter column, pills,
+// sort, grid, pagination, empty state; on mobile the filters open as a panel.
+
+$kb-catalog-column: 250px;
+
+.kb-catalog {
+    padding-bottom: map-get($kb-spaces, 8);
+
+    &__breadcrumb {
+        margin: map-get($kb-spaces, 5) 0 map-get($kb-spaces, 4);
+
+        .breadcrumb {
+            margin: 0;
+            font-size: .8125rem;
+            letter-spacing: .06em;
+        }
+
+        a {
+            text-decoration: underline;
+        }
+    }
+
+    &__header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: map-get($kb-spaces, 3) map-get($kb-spaces, 4);
+        margin-bottom: map-get($kb-spaces, 5);
+    }
+
+    &__title {
+        margin: 0;
+        font-size: clamp(3.25rem, 5vw + 1.5rem, 5.5rem);
+        line-height: .95;
+        text-transform: uppercase;
+    }
+
+    &__count,
+    &__summary {
+        font-family: $kb-font-mono;
+        font-size: .8125rem;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    &__summary {
+        margin: 0;
+        color: $kb-gris;
+    }
+
+    // Mobile: « Filtres (n) » stays at hand while scrolling.
+    &__bar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        gap: map-get($kb-spaces, 3);
+        margin: 0 calc(var(--bs-gutter-x) * -.5);
+        padding: map-get($kb-spaces, 3) calc(var(--bs-gutter-x) * .5);
+        background: $kb-papier;
+    }
+
+    &__open {
+        flex: 1;
+        justify-content: center;
+        min-height: 52px;
+    }
+
+    &__layout {
+        display: flex;
+        flex-direction: column;
+        gap: map-get($kb-spaces, 6);
+        margin-top: map-get($kb-spaces, 5);
+
+        @include media-breakpoint-up(lg) {
+            display: grid;
+            grid-template-columns: $kb-catalog-column minmax(0, 1fr);
+            gap: map-get($kb-spaces, 6) map-get($kb-spaces, 7);
+            align-items: start;
+        }
+    }
+
+    // Without JS on mobile, the filters follow the results (« Filtres » links down to them).
+    &__results {
+        order: 1;
+        min-width: 0;
+
+        @include media-breakpoint-up(lg) {
+            order: 0;
+        }
+    }
+
+    &__toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: map-get($kb-spaces, 3) map-get($kb-spaces, 4);
+        margin-bottom: map-get($kb-spaces, 5);
+    }
+
+    &__clear {
+        flex: none;
+        align-self: center;
+        padding: map-get($kb-spaces, 3) map-get($kb-spaces, 1);
+        font-weight: 700;
+        font-size: .875rem;
+    }
+
+    &__grid {
+        margin-bottom: map-get($kb-spaces, 6);
+    }
+}
+
+// Section tabs: real links, the current one a full black tab joined to the 3px rule.
+.kb-tabs {
+    display: flex;
+    overflow-x: auto;
+    border-bottom: 3px solid $kb-noir;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    &__tab {
+        display: inline-flex;
+        flex: none;
+        align-items: center;
+        min-height: 52px;
+        padding: 0 map-get($kb-spaces, 5);
+        color: $kb-noir;
+        font-weight: 800;
+        font-size: .9375rem;
+        letter-spacing: .06em;
+        text-decoration: none;
+        text-transform: uppercase;
+        white-space: nowrap;
+
+        &:hover {
+            background: $kb-papier-2;
+            color: $kb-noir;
+        }
+
+        &[aria-current="page"] {
+            background: $kb-noir;
+            color: $kb-papier;
+        }
+    }
+}
+
+// Active filters: links that remove them, in a sideways scroll on mobile.
+.kb-pills {
+    min-width: 0;
+    flex: 1 1 auto;
+
+    &__list {
+        display: flex;
+        align-items: center;
+        gap: map-get($kb-spaces, 2);
+        overflow-x: auto;
+
+        @include media-breakpoint-up(lg) {
+            flex-wrap: wrap;
+            overflow: visible;
+        }
+    }
+}
+
+.kb-pill {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: map-get($kb-spaces, 2);
+    min-height: 44px;
+    padding: 0 map-get($kb-spaces, 3) 0 map-get($kb-spaces, 4);
+    background: $kb-noir;
+    color: $kb-papier;
+    font-weight: 700;
+    font-size: .875rem;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &__group {
+        font-family: $kb-font-mono;
+        font-weight: 500;
+        font-size: .6875rem;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: $kb-papier-3;
+    }
+
+    .bi {
+        font-size: .75rem;
+    }
+
+    &:hover {
+        background: $kb-encre-2;
+        color: $kb-papier;
+    }
+}
+
+.kb-sort {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: map-get($kb-spaces, 3);
+    min-width: 0;
+    max-width: 100%;
+    margin-left: auto;
+
+    // Phone: the whole line, the select taking what the label and the button leave.
+    @include media-breakpoint-down(md) {
+        flex: 1 1 100%;
+    }
+
+    &__label {
+        font-family: $kb-font-mono;
+        font-size: .8125rem;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    &__select {
+        width: auto;
+        min-width: 0;
+        flex: 1 1 190px;
+        min-height: 44px;
+        font-weight: 600;
+    }
+
+    .btn {
+        min-height: 44px;
+    }
+}
+
+// Filter column: <details> groups, real checkboxes with their count.
+.kb-filters {
+    &__title {
+        display: flex;
+        flex: 1;
+        align-items: baseline;
+        gap: map-get($kb-spaces, 3);
+        margin: 0;
+        padding-bottom: map-get($kb-spaces, 3);
+        border-bottom: 3px solid $kb-noir;
+        font-family: $kb-font-mono;
+        font-size: .8125rem;
+        font-weight: 600;
+        letter-spacing: .12em;
+        line-height: 1.4;
+        text-transform: uppercase;
+    }
+
+    &__group {
+        border-bottom: 2px solid $kb-noir;
+
+        &[open] .kb-filters__summary .bi-chevron-down {
+            transform: rotate(180deg);
+        }
+    }
+
+    &__summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: map-get($kb-spaces, 3);
+        min-height: 56px;
+        font-weight: 800;
+        font-size: .875rem;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        list-style: none;
+        cursor: pointer;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        .bi {
+            transition: transform .2s ease;
+        }
+    }
+
+    &__meta {
+        display: inline-flex;
+        align-items: center;
+        gap: map-get($kb-spaces, 3);
+    }
+
+    &__chosen {
+        font-family: $kb-font-mono;
+        font-size: .6875rem;
+        font-weight: 500;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    &__body {
+        min-width: 0;
+        margin: 0;
+        padding: 0 0 map-get($kb-spaces, 4);
+        border: 0;
+    }
+
+    &__option {
+        display: flex;
+        align-items: center;
+        gap: map-get($kb-spaces, 3);
+        min-height: 44px;
+        cursor: pointer;
+
+        &[hidden] {
+            display: none;
+        }
+    }
+
+    // 24px square box; ticked: black with a paper check.
+    &__check {
+        flex: none;
+        width: 24px;
+        height: 24px;
+        margin: 0;
+        border: 2px solid $kb-noir;
+        background: $kb-papier;
+        appearance: none;
+        cursor: pointer;
+
+        &:checked {
+            background: $kb-noir url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%23f3eee4' d='M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z'/%3e%3c/svg%3e") center / 18px no-repeat;
+        }
+
+        &:checked ~ .kb-filters__name {
+            font-weight: 700;
+        }
+    }
+
+    &__name {
+        flex: 1;
+        min-width: 0;
+        font-size: .9375rem;
+    }
+
+    &__count {
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        color: $kb-gris;
+    }
+
+    &__more {
+        > summary {
+            display: inline-flex;
+            align-items: center;
+            gap: map-get($kb-spaces, 2);
+            min-height: 44px;
+            font-weight: 700;
+            font-size: .875rem;
+            text-decoration: underline;
+            text-underline-offset: .2em;
+            list-style: none;
+            cursor: pointer;
+
+            &::-webkit-details-marker {
+                display: none;
+            }
+
+            &::after {
+                content: "\F282"; // bi-chevron-down
+                font-family: bootstrap-icons;
+                font-size: .75rem;
+                text-decoration: none;
+            }
+        }
+
+        &[open] > summary {
+            order: 1;
+        }
+    }
+
+    &__search {
+        margin-bottom: map-get($kb-spaces, 2);
+    }
+
+    &__search-label {
+        display: block;
+        margin-bottom: map-get($kb-spaces, 2);
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    &__search-field {
+        position: relative;
+
+        .bi {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .form-control {
+            min-height: 48px;
+            padding-left: 38px;
+        }
+    }
+
+    &__none {
+        margin: map-get($kb-spaces, 2) 0;
+        color: $kb-gris;
+        font-size: .875rem;
+    }
+
+    &__switch {
+        padding: map-get($kb-spaces, 4) 0;
+        border-bottom: 2px solid $kb-noir;
+    }
+
+    &__apply {
+        width: 100%;
+        min-height: 52px;
+        box-shadow: 6px 6px 0 $kb-gris-clair;
+    }
+}
+
+// On/off filter: real checkbox (role="switch") over a square track.
+.kb-filter-switch {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: map-get($kb-spaces, 3);
+    cursor: pointer;
+
+    &__input {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    &__text {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    &__title {
+        font-weight: 800;
+        font-size: .875rem;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    &__hint {
+        color: $kb-encre-2;
+        font-size: .8125rem;
+    }
+
+    &__state {
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    &__on {
+        display: none;
+    }
+
+    &__track {
+        position: relative;
+        flex: none;
+        width: 52px;
+        height: 30px;
+        border: 2px solid $kb-noir;
+        background: $kb-papier;
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: $kb-noir;
+            transition: transform .15s ease;
+        }
+    }
+
+    &__input:checked ~ &__state &__off { display: none; }
+    &__input:checked ~ &__state &__on { display: inline; }
+
+    &__input:checked ~ &__track {
+        background: $kb-noir;
+
+        &::after {
+            background: $kb-papier;
+            transform: translateX(22px);
+        }
+    }
+
+    &__input:focus-visible ~ &__track {
+        outline: 3px solid $kb-noir;
+        outline-offset: 3px;
+        box-shadow: 0 0 0 3px $kb-papier;
+    }
+}
+
+// Filter panel: a column on desktop; on mobile, once filters-panel is connected, a dialog.
+.kb-filters-panel {
+    order: 2;
+
+    @include media-breakpoint-up(lg) {
+        order: 0;
+        position: sticky;
+        top: map-get($kb-spaces, 4);
+    }
+
+    &__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: map-get($kb-spaces, 3);
+    }
+
+    &__foot {
+        display: flex;
+        gap: map-get($kb-spaces, 3);
+        padding-top: map-get($kb-spaces, 5);
+
+        .btn {
+            min-height: 52px;
+        }
+
+        .kb-filters__apply {
+            flex: 1;
+        }
+    }
+
+    &__backdrop {
+        display: none;
+    }
+
+    @include media-breakpoint-down(lg) {
+        &.is-enhanced {
+            position: fixed;
+            inset: 0;
+            z-index: 1050;
+            display: none;
+
+            &.is-open {
+                display: block;
+            }
+
+            .kb-filters-panel__backdrop {
+                position: absolute;
+                inset: 0;
+                display: block;
+                background: rgba($kb-noir, .7);
+
+                &[hidden] {
+                    display: none;
+                }
+            }
+
+            .kb-filters-panel__dialog {
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                display: flex;
+                flex-direction: column;
+                width: min(100%, 420px);
+                background: $kb-papier;
+                border-left: 3px solid $kb-noir;
+            }
+
+            .kb-filters-panel__head {
+                padding: map-get($kb-spaces, 4) map-get($kb-spaces, 4) map-get($kb-spaces, 3);
+                border-bottom: 3px solid $kb-noir;
+            }
+
+            .kb-filters__title {
+                padding: 0;
+                border: 0;
+                font-family: $kb-font-display;
+                font-size: 2rem;
+                font-weight: 400;
+                letter-spacing: 0;
+
+                .kb-filters__chosen {
+                    font-family: $kb-font-mono;
+                    font-size: .75rem;
+                }
+            }
+
+            .kb-filters {
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                min-height: 0;
+                padding: 0 map-get($kb-spaces, 4);
+                overflow-y: auto;
+            }
+
+            // Kept at the bottom of the panel while the groups scroll.
+            .kb-filters-panel__foot {
+                position: sticky;
+                bottom: 0;
+                margin: auto calc(map-get($kb-spaces, 4) * -1) 0;
+                padding: map-get($kb-spaces, 4);
+                border-top: 3px solid $kb-noir;
+                background: $kb-papier;
+            }
+
+            .kb-filters__apply {
+                box-shadow: none;
+            }
+        }
+    }
+}
+
+.kb-no-scroll {
+    overflow: hidden;
+}
+
+// « 1–12 sur 64 résultats » then the pages.
+.kb-pagination {
+    padding: map-get($kb-spaces, 6) 0;
+
+    &--range {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: map-get($kb-spaces, 4);
+        padding-top: map-get($kb-spaces, 5);
+        border-top: 3px solid $kb-noir;
+
+        .pagination {
+            margin: 0;
+            gap: map-get($kb-spaces, 2);
+
+            @include media-breakpoint-down(md) {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        .page-item.disabled .page-link {
+            border-style: dashed;
+        }
+    }
+
+    &__range {
+        margin: 0;
+        font-family: $kb-font-mono;
+        font-size: .8125rem;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    &__position .page-link {
+        border-color: transparent;
+        background: none;
+        color: $kb-noir;
+        text-transform: uppercase;
+    }
+}
+
+// Nothing matches: halftone panel with its stamp, then the ways out.
+.kb-empty {
+    display: grid;
+    border: 3px solid $kb-noir;
+    box-shadow: $kb-shadow;
+
+    @include media-breakpoint-up(md) {
+        grid-template-columns: minmax(180px, 280px) 1fr;
+    }
+
+    &__visual {
+        display: grid;
+        place-items: center;
+        min-height: 200px;
+        border-bottom: 3px solid $kb-noir;
+        background-color: $kb-papier-2;
+
+        @include media-breakpoint-up(md) {
+            border-right: 3px solid $kb-noir;
+            border-bottom: 0;
+        }
+    }
+
+    &__stamp {
+        background: $kb-papier;
+        font-size: clamp(1.75rem, 3vw, 2.5rem);
+        line-height: 1;
+        text-align: center;
+        max-width: 8ch;
+        padding: map-get($kb-spaces, 3);
+    }
+
+    &__body {
+        padding: map-get($kb-spaces, 6);
+    }
+
+    &__title {
+        margin: 0 0 map-get($kb-spaces, 4);
+        font-size: clamp(2.125rem, 3vw + 1rem, 3.5rem);
+        text-transform: uppercase;
+    }
+
+    &__text {
+        max-width: 60ch;
+        font-size: 1.0625rem;
+    }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: map-get($kb-spaces, 3);
+        padding-bottom: map-get($kb-spaces, 5);
+        border-bottom: 2px solid $kb-noir;
+    }
+
+    &__drop-count {
+        margin-left: map-get($kb-spaces, 2);
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        font-weight: 500;
+    }
+
+    &__sections {
+        padding-top: map-get($kb-spaces, 4);
+
+        ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: map-get($kb-spaces, 2) map-get($kb-spaces, 5);
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        a {
+            display: inline-flex;
+            align-items: center;
+            gap: map-get($kb-spaces, 2);
+            min-height: 44px;
+            font-weight: 700;
+        }
+    }
+
+    &__sections-title {
+        margin: 0 0 map-get($kb-spaces, 2);
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        font-weight: 500;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+}
+
+// Card actions (catalogue only, _card-live.html.twig): above the link that covers the card.
+.kb-card__action {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    max-width: 100%;
+}
+
+// Narrow cards (2 columns on a phone): the price and « M'alerter » share the line when they
+// fit, otherwise the button goes under the price.
+.kb-card:has(.kb-card__action) .kb-card__footer {
+    flex-wrap: wrap;
+    row-gap: map-get($kb-spaces, 2);
+}
+
+.kb-card__alert {
+    min-height: 44px;
+    max-width: 100%;
+    gap: map-get($kb-spaces, 2);
+    padding-inline: map-get($kb-spaces, 3);
+    letter-spacing: .04em;
+    white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kb-filters__summary .bi,
+    .kb-filter-switch__track::after {
+        transition: none;
+    }
+}

@@ -280,7 +280,7 @@ class ImportCatalogCommandTest extends KernelTestCase
     public function testAnInvalidCatalogImportsNothing(\Closure $break, string $error): void
     {
         // A style row left over outside the list (a database not migrated yet, say).
-        $this->entityManager()->getConnection()->executeStatement("INSERT INTO style (id, name) VALUES (nextval('style_id_seq'), 'Rap')");
+        $this->entityManager()->getConnection()->executeStatement("INSERT INTO style (id, name, slug) VALUES (nextval('style_id_seq'), 'Rap', 'rap')");
 
         $tester = $this->tester();
 

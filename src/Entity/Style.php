@@ -8,6 +8,7 @@ use App\Repository\StyleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * A music style, picked from a closed list (OFFICIAL, after Discogs' styles, cut down to the
@@ -49,6 +50,11 @@ class Style
     #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
+    /** URL value of the catalogue filters (?styles[]=<slug>). */
+    #[ORM\Column(length: 255, unique: true)]
+    #[Gedmo\Slug(fields: ['name'])]
+    private ?string $slug = null;
+
     /** @var Collection<int, Album> */
     #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'styles', cascade: ['persist'])]
     private Collection $albums;
@@ -66,6 +72,19 @@ class Style
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    /** Set by Gedmo from the name; by hand only to fix one. */
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
     }
 
     public function setName(string $name): static

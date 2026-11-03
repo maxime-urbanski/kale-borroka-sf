@@ -107,6 +107,15 @@ abstract class Article
      */
     abstract public function getSupportType(): ?SupportType;
 
+    /** Days an article shows as « Nouveau » on the catalogue after it went online. */
+    public const int NEW_ARRIVAL_DAYS = 30;
+
+    public function isNewArrival(\DateTimeInterface $now): bool
+    {
+        return null !== $this->createdAt
+            && $this->createdAt > \DateTimeImmutable::createFromInterface($now)->modify(\sprintf('-%d days', self::NEW_ARRIVAL_DAYS));
+    }
+
     /**
      * Short format tag shown next to the price: "Vinyle 12"", "Fanzine", "T-shirt M".
      */

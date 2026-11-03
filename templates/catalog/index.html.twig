@@ -1,17 +1,79 @@
 {% extends 'base.html.twig' %}
 
+{% set title = section ? section.label : 'Catalogue' %}
+{% set total = articles.totalItemCount %}
+{% block title %}{{ title }}{% endblock %}
+
 {% block body %}
-<div class="container py-5">
-    {% include 'layout/_breadcrumb.html.twig' with {breadcrumb} %}
-    <ul class="row justify-content-center gap-4">
-        {% for support in supports %}
-            <li class="col-md-6 col-lg-2 list-group-item text-center list-support">
-                <a href="{{ path('app_catalog_list', {support: support.name}) }}"
-                   class="text-decoration-none catalog-{{ support }}">
-                    <h1>{{ support.name | upper }}</h1>
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-</div>
+    <div class="container kb-catalog" data-controller="filters-panel">
+        <nav class="kb-catalog__breadcrumb" aria-label="Fil d'Ariane">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_homepage') }}">Accueil</a></li>
+                {% if section %}
+                    <li class="breadcrumb-item"><a href="{{ path('app_catalog') }}">Catalogue</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ section.label }}</li>
+                {% else %}
+                    <li class="breadcrumb-item active" aria-current="page">Catalogue</li>
+                {% endif %}
+            </ol>
+        </nav>
+
+        <header class="kb-catalog__header">
+            <h1 class="kb-catalog__title">{{ title }}</h1>
+            <span class="kb-catalog__count">{{ total }} référence{{ total > 1 ? 's' }}</span>
+        </header>
+
+        <nav class="kb-tabs" aria-label="Rayons">
+            {% for tab in tabs %}
+                <a href="{{ tab.url }}" class="kb-tabs__tab"{% if tab.section is same as(section) %} aria-current="page"{% endif %}>{{ tab.label }}</a>
+            {% endfor %}
+        </nav>
+
+        {# Mobile: the filters open as a panel (filters-panel); without JS, a link down to them. #}
+        <div class="kb-catalog__bar d-lg-none">
+            <a href="#filtres" class="btn btn-outline-dark kb-catalog__open"
+               data-filters-panel-target="opener" data-action="filters-panel#open">
+                <i class="bi bi-sliders" aria-hidden="true"></i>Filtres{% if pills %} ({{ pills|length }}){% endif %}
+            </a>
+        </div>
+
+        <div class="kb-catalog__layout">
+            {% include 'catalog/_filters.html.twig' %}
+
+            <section class="kb-catalog__results" aria-labelledby="catalog-results-title">
+                <h2 id="catalog-results-title" class="visually-hidden">Résultats</h2>
+                <div class="kb-catalog__toolbar">
+                    {% include 'catalog/_pills.html.twig' %}
+                    {% if not pills and total > 0 %}
+                        <p class="kb-catalog__summary">Aucun filtre actif · {{ articles.paginationData.firstItemNumber }}–{{ articles.paginationData.lastItemNumber }} sur {{ total }} résultat{{ total > 1 ? 's' }}</p>
+                    {% endif %}
+                    <div class="kb-sort">
+                        <label for="tri" class="kb-sort__label">Trier :</label>
+                        <select id="tri" name="sort" form="catalog-filters" class="form-select kb-sort__select">
+                            {% for sort in sorts %}
+                                <option value="{{ sort.value }}"{% if sort is same as(filters.sort) %} selected{% endif %}>{{ sort.label }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" form="catalog-filters" class="btn btn-outline-dark btn-sm">Trier</button>
+                    </div>
+                </div>
+
+                {% if total > 0 %}
+                    {% if pills %}<p class="kb-catalog__summary d-lg-none">{{ articles.paginationData.firstItemNumber }}–{{ articles.paginationData.lastItemNumber }} sur {{ total }} résultat{{ total > 1 ? 's' }}</p>{% endif %}
+                    {% include 'layout/article/_article-grid.html.twig' with {
+                        articles: articles.items,
+                        live: true,
+                        grid_class: 'kb-catalog__grid',
+                        col_sm: 2,
+                        col_md: 3,
+                        col_lg: 3,
+                        col_xl: 4
+                    } %}
+                    {{ knp_pagination_render(articles, 'partials/_pagination.html.twig', {}, {range: true}) }}
+                {% else %}
+                    {% include 'catalog/_empty.html.twig' %}
+                {% endif %}
+            </section>
+        </div>
+    </div>
 {% endblock %}

@@ -1,0 +1,18 @@
+{#
+    Active filters of the catalogue (App\Catalog\CatalogPill): links to the same page without
+    each one, then « Tout effacer ». On mobile they scroll sideways.
+#}
+{% if pills %}
+    <div class="kb-pills">
+        <div class="kb-pills__list no-scroll-bar">
+            {% for pill in pills %}
+                <a href="{{ pill.url }}" class="kb-pill" aria-label="Retirer le filtre {{ pill.name }}">
+                    {% if not pill.group.switch %}<span class="kb-pill__group" aria-hidden="true">{{ pill.group.label }}</span>{% endif %}
+                    <span class="kb-pill__value" aria-hidden="true">{{ pill.group.switch ? pill.group.label : pill.label }}</span>
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                </a>
+            {% endfor %}
+            <a href="{{ clear_url }}" class="kb-catalog__clear">Tout effacer</a>
+        </div>
+    </div>
+{% endif %}

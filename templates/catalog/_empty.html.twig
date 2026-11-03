@@ -1,0 +1,37 @@
+{# Nothing matches: clear everything, drop the filter that brings back the most, or another section. #}
+<div class="kb-empty">
+    <div class="kb-empty__visual" aria-hidden="true">
+        <span class="kb-stamp kb-empty__stamp">0 résultat</span>
+    </div>
+    <div class="kb-empty__body">
+        <h2 class="kb-empty__title">Aucun disque ne correspond</h2>
+        <p class="kb-empty__text">
+            {% if pills|length > 1 %}
+                Aucun article ne coche ces {{ pills|length }} filtres à la fois. Retire un filtre, ou repars de tout le catalogue.
+            {% elseif pills %}
+                Aucun article ne coche ce filtre. Retire-le, ou repars de tout le catalogue.
+            {% else %}
+                Rien en rayon pour l’instant. Repasse bientôt, ou fouille un autre rayon.
+            {% endif %}
+        </p>
+        <div class="kb-empty__actions">
+            {% if pills %}
+                <a href="{{ clear_url }}" class="btn btn-dark"><i class="bi bi-x-lg" aria-hidden="true"></i>Tout effacer</a>
+            {% endif %}
+            {% if best_drop %}
+                <a href="{{ best_drop.pill.url }}" class="btn btn-outline-dark kb-empty__drop">
+                    Retirer « {{ best_drop.pill.group.switch ? best_drop.pill.group.label : best_drop.pill.label }} »
+                    <span class="kb-empty__drop-count">{{ best_drop.count }} résultat{{ best_drop.count > 1 ? 's' }}</span>
+                </a>
+            {% endif %}
+        </div>
+        <nav class="kb-empty__sections" aria-labelledby="empty-sections-title">
+            <h3 id="empty-sections-title" class="kb-empty__sections-title">Ou fouiller un rayon</h3>
+            <ul>
+                {% for tab in tabs|filter(t => t.section is not null and t.section is not same as(section)) %}
+                    <li><a href="{{ tab.url }}">{{ tab.label }}<i class="bi bi-arrow-right" aria-hidden="true"></i></a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </div>
+</div>
