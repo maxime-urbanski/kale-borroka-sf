@@ -19,7 +19,8 @@ use Doctrine\ORM\QueryBuilder;
 /**
  * The catalogue's articles: published records with a format, and fanzines (Book); never
  * merch. Every query starts from one row per article (a), its release (r) and album (al)
- * or its book (b), all to-one joins, and filters through subqueries: no row is repeated,
+ * or its book (b), all to-one joins (plus the artist, ar, for the A–Z sort), and filters
+ * through subqueries: no row is repeated,
  * so counts and pagination need no DISTINCT.
  *
  * The sections follow SupportType::forRelease() (inSection()):
@@ -42,8 +43,11 @@ final readonly class CatalogQuery
             CatalogSort::NEW => $query->orderBy('a.createdAt', 'DESC'),
             CatalogSort::PRICE_ASC => $query->orderBy('a.price', 'ASC'),
             CatalogSort::PRICE_DESC => $query->orderBy('a.price', 'DESC'),
-            // An album's name, a fanzine's own.
-            CatalogSort::AZ => $query->addSelect('LOWER(COALESCE(al.name, a.name)) AS HIDDEN sortName')->orderBy('sortName', 'ASC'),
+            // As the card reads: its title (the artist, a fanzine's own name), then its subtitle.
+            CatalogSort::AZ => $query->leftJoin('al.artist', 'ar')
+                ->addSelect('LOWER(COALESCE(ar.name, a.name)) AS HIDDEN sortName', 'LOWER(a.name) AS HIDDEN sortTitle')
+                ->orderBy('sortName', 'ASC')
+                ->addOrderBy('sortTitle', 'ASC'),
         };
 
         return $query->addOrderBy('a.id', 'DESC')->getQuery();
