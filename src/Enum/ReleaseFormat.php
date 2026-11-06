@@ -8,7 +8,7 @@ namespace App\Enum;
  * Physical format of a pressing (schema.org: MusicReleaseFormatType).
  *
  * Distinct from SupportType, which is the catalogue section a release is listed under:
- * a 7" is always filed under EP, a 12" under LP unless its album is an EP.
+ * a 7" is filed under EP, a 10" or 12" under LP, whatever its album's type.
  */
 enum ReleaseFormat: string
 {
