@@ -303,6 +303,28 @@ class CatalogPageTest extends WebTestCase
         self::assertCount(0, $cards->eq(1)->filter('form[action^="/cart/add/"]'));
     }
 
+    /**
+     * EP / 7" is the 45s: 7" records only, whatever the album's type. An EP on CD or tape
+     * stays under CD or K7, a 10" or 12" EP under LP.
+     */
+    public function testTheEpSectionListsSevenInchesOnly(): void
+    {
+        $label = $this->label('Label Format');
+        $this->release('Single', $label, format: ReleaseFormat::VINYL_7);
+        $this->release('Ep Cd', $label, format: ReleaseFormat::CD, type: AlbumReleaseType::EP);
+        $this->release('Ep K7', $label, format: ReleaseFormat::CASSETTE, type: AlbumReleaseType::EP);
+        $this->release('Ep Douze', $label, format: ReleaseFormat::VINYL_12, type: AlbumReleaseType::EP);
+        $this->em()->flush();
+
+        $names = fn (string $url): array => $this->client->request('GET', $url)
+            ->filter('.kb-catalog__grid .kb-card__link')->each(static fn (Crawler $a): string => $a->text());
+
+        self::assertSame(['Single'], $names('/catalog/ep?labels[]=label-format&sort=az'));
+        self::assertSame(['Ep Douze'], $names('/catalog/lp?labels[]=label-format&sort=az'));
+        self::assertSame(['Ep Cd'], $names('/catalog/cd?labels[]=label-format&sort=az'));
+        self::assertSame(['Ep K7'], $names('/catalog/tape?labels[]=label-format&sort=az'));
+    }
+
     public function testAToZSortsByArtistThenAlbum(): void
     {
         $label = $this->label('Label Tri');
@@ -390,11 +412,12 @@ class CatalogPageTest extends WebTestCase
         int $price = 1000,
         bool $kbr = false,
         ReleaseFormat $format = ReleaseFormat::CD,
+        AlbumReleaseType $type = AlbumReleaseType::ALBUM,
         ?string $artist = null,
     ): Release {
         $em = $this->em();
         $artist = (new Artist())->setName($artist ?? $name);
-        $album = (new Album())->setName($name)->setArtist($artist)->setKbrProduction($kbr)->setReleaseType(AlbumReleaseType::ALBUM)->addLabel($label);
+        $album = (new Album())->setName($name)->setArtist($artist)->setKbrProduction($kbr)->setReleaseType($type)->addLabel($label);
         foreach ($styles as $style) {
             $album->addStyle($em->getRepository(Style::class)->findOneBy(['name' => $style]) ?? throw new \LogicException($style));
         }

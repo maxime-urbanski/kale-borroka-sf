@@ -8,7 +8,6 @@ use App\Entity\Album;
 use App\Entity\Article;
 use App\Entity\Book;
 use App\Entity\Release;
-use App\Enum\AlbumReleaseType;
 use App\Enum\ItemCondition;
 use App\Enum\ReleaseFormat;
 use App\Enum\SupportType;
@@ -23,8 +22,8 @@ use Doctrine\ORM\QueryBuilder;
  * through subqueries: no row is repeated,
  * so counts and pagination need no DISTINCT.
  *
- * The sections follow SupportType::forRelease() (inSection()):
- * a record can sit under two of them (a CD EP under CD and EP).
+ * The sections follow SupportType::forRelease() (inSection()): one section per record,
+ * decided by its format alone (EP / 7" is the 45s).
  */
 final readonly class CatalogQuery
 {
@@ -174,15 +173,13 @@ final readonly class CatalogQuery
 
         switch ($section) {
             case SupportType::LP:
-                $query->setParameter($key, [ReleaseFormat::VINYL_12->value, ReleaseFormat::VINYL_10->value])
-                    ->setParameter($key.'_type', AlbumReleaseType::EP->value);
+                $query->setParameter($key, [ReleaseFormat::VINYL_12->value, ReleaseFormat::VINYL_10->value]);
 
-                return \sprintf('(r.format IN (:%1$s) AND al.releaseType != :%1$s_type)', $key);
+                return \sprintf('r.format IN (:%s)', $key);
             case SupportType::EP:
-                $query->setParameter($key, [ReleaseFormat::VINYL_7->value])
-                    ->setParameter($key.'_type', AlbumReleaseType::EP->value);
+                $query->setParameter($key, [ReleaseFormat::VINYL_7->value]);
 
-                return \sprintf('(r.format IN (:%1$s) OR al.releaseType = :%1$s_type)', $key);
+                return \sprintf('r.format IN (:%s)', $key);
             case SupportType::CD:
                 $query->setParameter($key, [ReleaseFormat::CD->value]);
 

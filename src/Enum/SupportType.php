@@ -39,16 +39,16 @@ enum SupportType: string
     }
 
     /**
-     * Canonical section of a release, used to build its URL. A release can be listed under
-     * more than one section (a CD EP shows up under CD and EP), but it has only one URL.
+     * Section of a release, used to build its URL: its format alone. EP / 7" is the 45s, so
+     * an EP on CD or tape sits under CD or K7, a 10" or 12" one under LP.
      */
-    public static function forRelease(ReleaseFormat $format, AlbumReleaseType $releaseType): self
+    public static function forRelease(ReleaseFormat $format): self
     {
         return match ($format) {
             ReleaseFormat::CD => self::CD,
             ReleaseFormat::CASSETTE => self::TAPE,
             ReleaseFormat::VINYL_7 => self::EP,
-            ReleaseFormat::VINYL_12, ReleaseFormat::VINYL_10 => AlbumReleaseType::EP === $releaseType ? self::EP : self::LP,
+            ReleaseFormat::VINYL_12, ReleaseFormat::VINYL_10 => self::LP,
         };
     }
 }

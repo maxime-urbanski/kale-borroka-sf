@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Enum\AlbumReleaseType;
 use App\Enum\ReleaseFormat;
 use App\Enum\SupportType;
 use App\Repository\ReleaseRepository;
@@ -59,7 +58,7 @@ class Release extends Article
             return null;
         }
 
-        return SupportType::forRelease($this->format, $this->album?->getReleaseType() ?? AlbumReleaseType::ALBUM);
+        return SupportType::forRelease($this->format);
     }
 
     public function getFormatLabel(): string
