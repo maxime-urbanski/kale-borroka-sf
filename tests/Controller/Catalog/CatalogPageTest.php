@@ -325,6 +325,23 @@ class CatalogPageTest extends WebTestCase
         self::assertSame(['Ep K7'], $names('/catalog/tape?labels[]=label-format&sort=az'));
     }
 
+    public function testAToZSortsByArtistThenAlbum(): void
+    {
+        $label = $this->label('Label Tri');
+        // Created in reverse order: the id tie-break alone would list them backwards.
+        $this->release('Bbb', $label, artist: 'Abba');
+        $this->release('Zzz', $label, artist: 'abba');
+        $this->release('Aaa', $label, artist: 'Zorro');
+        $this->em()->flush();
+
+        $crawler = $this->client->request('GET', '/catalog?labels[]=label-tri&sort=az');
+        $cards = $crawler->filter('.kb-catalog__grid article')->each(
+            static fn (Crawler $card): string => $card->filter('.kb-card__link')->text().' / '.$card->filter('.kb-card__subtitle')->first()->text(),
+        );
+
+        self::assertSame(['Abba / Bbb', 'abba / Zzz', 'Zorro / Aaa'], $cards);
+    }
+
     public function testTheResultCountEndpoint(): void
     {
         $label = $this->label('Label Compte');
@@ -382,7 +399,8 @@ class CatalogPageTest extends WebTestCase
     }
 
     /**
-     * A release whose album has no artist name to show: the card title is the album name.
+     * A release of an album of the same name, by an artist of the same name unless $artist
+     * is given (the card title is the artist's name, its subtitle the release's).
      *
      * @param list<string> $styles style names, from Style::OFFICIAL
      */
@@ -395,9 +413,10 @@ class CatalogPageTest extends WebTestCase
         bool $kbr = false,
         ReleaseFormat $format = ReleaseFormat::CD,
         AlbumReleaseType $type = AlbumReleaseType::ALBUM,
+        ?string $artist = null,
     ): Release {
         $em = $this->em();
-        $artist = (new Artist())->setName($name);
+        $artist = (new Artist())->setName($artist ?? $name);
         $album = (new Album())->setName($name)->setArtist($artist)->setKbrProduction($kbr)->setReleaseType($type)->addLabel($label);
         foreach ($styles as $style) {
             $album->addStyle($em->getRepository(Style::class)->findOneBy(['name' => $style]) ?? throw new \LogicException($style));
