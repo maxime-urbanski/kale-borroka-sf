@@ -70,8 +70,8 @@
         letter-spacing: .02em;
         text-transform: uppercase;
 
-        > span:first-child { padding: 0 8px; }
-        > span:last-child { padding: 2px 8px 0; background: $kb-rouge; }
+        > span { padding: 2px 8px; }
+        > span:last-child { align-self: stretch; background: $kb-rouge; } // red band as wide as the name
 
         @include media-breakpoint-up(md) {
             align-items: flex-start;

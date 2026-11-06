@@ -84,8 +84,14 @@
 
     &__form {
         display: flex;
+        flex: 1;
         flex-direction: column;
         gap: 20px;
+
+        // Both columns share a row: the submit buttons sit on the same line.
+        > .btn[type="submit"] {
+            margin-top: auto;
+        }
 
         .form-label {
             font-size: .9375rem;
