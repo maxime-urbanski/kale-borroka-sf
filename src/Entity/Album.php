@@ -32,7 +32,7 @@ class Album
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $note = null;
 
-    /** Album, EP, split… Decides whether a 12" is filed under LP or EP (SupportType::forRelease()). */
+    /** Album, EP, split… (the catalogue section follows the format alone, SupportType::forRelease()). */
     #[ORM\Column(length: 20, enumType: AlbumReleaseType::class, options: ['default' => 'album'])]
     private AlbumReleaseType $releaseType = AlbumReleaseType::ALBUM;
 
