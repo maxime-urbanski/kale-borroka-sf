@@ -79,12 +79,16 @@
         text-transform: uppercase;
         color: $kb-gris;
 
+        // One line whatever the label: the format keeps its width, the label gives way with « … ».
         > :first-child {
+            flex-shrink: 0;
             font-weight: 600;
             color: $kb-noir;
+            white-space: nowrap;
         }
 
         > :last-child:not(:first-child) {
+            min-width: 0;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
