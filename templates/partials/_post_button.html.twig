@@ -5,14 +5,14 @@
     and form_class (the form is the layout item: 'd-grid' makes the button fill it) and label (the button's
     accessible name, for an icon button or a text that needs its object: it must contain the
     visible text), text_short (shorter text shown below sm, so the button holds one line; label must
-    contain it as well), text_short_icon (icon before text_short, e.g. 'bi-check-lg' for a state), icon_desktop_only (icon hidden below sm), method (PATCH or DELETE, sent as _method: framework.http_method_override).
+    contain it as well), text_short_icon (icon before text_short, e.g. 'bi-check-lg' for a state), icon_desktop_only (icon hidden below sm), disabled (button greyed out, the action still refuses server-side), method (PATCH or DELETE, sent as _method: framework.http_method_override).
 #}
 {% set icon_position = icon_position | default('left') %}
 
 <form method="post" action="{{ url }}" class="{{ form_class|default('d-inline-flex') }}">
     <input type="hidden" name="_token" value="{{ csrf_token(token_id) }}">
     {% if method is defined %}<input type="hidden" name="_method" value="{{ method }}">{% endif %}
-    <button type="submit" class="{{ class }}"{% if label is defined %} aria-label="{{ label }}"{% endif %}>
+    <button type="submit" class="{{ class }}"{% if label is defined %} aria-label="{{ label }}"{% endif %}{% if disabled|default(false) %} disabled{% endif %}>
         {% if icon is defined and icon_position is same as "left" %}
             <i class="bi {{ icon }}{{ icon_desktop_only|default(false) ? ' d-none d-sm-inline' }}" aria-hidden="true"></i>
         {% endif %}

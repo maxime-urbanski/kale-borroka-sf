@@ -1,0 +1,31 @@
+{#
+    Checkout stepper (mockup « Tunnel d'achat »): 1 Panier, 2 Commande, 3 C'est envoyé !, then
+    payment and shipping by mail. `current`: 1 to 3. State is carried by the number/check,
+    the label and the underline, never by colour alone. Below md: three bars and the step name.
+#}
+{% set steps = [
+    {label: 'Panier'},
+    {label: 'Commande'},
+    {label: "C'est envoyé !"},
+] %}
+<nav class="kb-steps" aria-label="Étapes de la commande">
+    <ol class="kb-steps__list">
+        {% for step in steps %}
+            {% set n = loop.index %}
+            {% set state = n < current ? 'done' : (n == current ? 'current' : 'todo') %}
+            <li class="kb-steps__step kb-steps__step--{{ state }}"{% if state == 'current' %} aria-current="step"{% endif %}>
+                <span class="kb-steps__num" aria-hidden="true">{% if state == 'done' %}<i class="bi bi-check-lg"></i>{% else %}{{ n }}{% endif %}</span>
+                <span class="kb-steps__text">
+                    <span class="kb-steps__label">{{ step.label }}</span>
+                    <span class="kb-steps__state">{{ state == 'done' ? 'Fait' : (state == 'current' ? 'Tu es ici' : 'À venir') }}</span>
+                </span>
+            </li>
+        {% endfor %}
+        <li class="kb-steps__after"><i class="bi bi-envelope" aria-hidden="true"></i> Ensuite, par mail <strong>Paiement</strong> · <strong>Expédition</strong></li>
+    </ol>
+    <div class="kb-steps__mobile">
+        <span class="kb-steps__mobile-count">Étape {{ current }} sur 3</span>
+        <span class="kb-steps__mobile-name">{{ steps[current - 1].label }}</span>
+        <span class="kb-steps__bars" aria-hidden="true">{% for step in steps %}<span class="kb-steps__bar{{ loop.index <= current ? ' is-on' }}{{ loop.index < current ? ' is-done' }}"></span>{% endfor %}<span class="kb-steps__bar kb-steps__bar--later"></span></span>
+    </div>
+</nav>

@@ -75,7 +75,7 @@ class CartActionsTest extends WebTestCase
         $this->client->submit($crawler->filter(\sprintf('form[action="/cart/add_quantity/%d"]', $release->getId()))->form());
         self::assertSame(3, $this->quantityInCart($release));
 
-        $crawler = $this->client->request('GET', '/cart');
+        $crawler = $this->client->request('GET', '/cart?vider');
         $this->client->submit($crawler->filter('form[action="/cart/empty_cart"]')->form());
         self::assertSame(0, $this->quantityInCart($release));
     }
@@ -95,7 +95,7 @@ class CartActionsTest extends WebTestCase
 
         // Even straight to the cart action, which skips the form's validation.
         $crawler = $this->client->request('GET', '/cart');
-        $token = (string) $crawler->filter(\sprintf('form[action="/cart/add_quantity/%d"] input[name="_token"]', $release->getId()))->attr('value');
+        $token = (string) $crawler->filter(\sprintf('form[action="/cart/remove_quantity/%d"] input[name="_token"]', $release->getId()))->attr('value');
         $this->client->request('POST', \sprintf('/cart/remove/%d', $release->getId()), ['_token' => $token]);
         $this->client->request('POST', \sprintf('/cart/add/%d', $release->getId()), ['_token' => $token, 'quantity' => '-5']);
         self::assertSame(1, $this->quantityInCart($release));
@@ -189,7 +189,7 @@ class CartActionsTest extends WebTestCase
         $crawler = $this->client->request('GET', '/cart');
         $row = $crawler->filter(\sprintf('form[action="/cart/remove/%d"]', $article->getId()));
 
-        return 0 === $row->count() ? 0 : (int) $row->closest('tr')?->filter('input.form-control')->attr('value');
+        return 0 === $row->count() ? 0 : (int) trim($row->closest('.kb-cart-line')?->filter('.kb-qty__value')->text() ?? '');
     }
 
     private function articleUri(Article $article): string

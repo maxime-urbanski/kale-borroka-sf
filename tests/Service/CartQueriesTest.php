@@ -154,8 +154,8 @@ class CartQueriesTest extends WebTestCase
         $crawler = $this->client->request('GET', '/cart');
 
         self::assertCount(0, $crawler->filter(\sprintf('form[action="/cart/remove/%d"]', $unpublished->getId())));
-        self::assertSame('3', $crawler->filter(\sprintf('form[action="/cart/remove/%d"]', $kept->getId()))->closest('tr')?->filter('input.form-control')->attr('value'));
-        self::assertSame('1', $crawler->filter(\sprintf('form[action="/cart/remove/%d"]', $capped->getId()))->closest('tr')?->filter('input.form-control')->attr('value'));
+        self::assertSame('3', $crawler->filter(\sprintf('form[action="/cart/remove/%d"]', $kept->getId()))->closest('.kb-cart-line')?->filter('.kb-qty__value')->text());
+        self::assertSame('1', $crawler->filter(\sprintf('form[action="/cart/remove/%d"]', $capped->getId()))->closest('.kb-cart-line')?->filter('.kb-qty__value')->text());
     }
 
     private function addToCart(Article $article, int $quantity = 1): void

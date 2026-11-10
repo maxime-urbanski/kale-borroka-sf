@@ -1,0 +1,511 @@
+// Checkout, step 1 (mockup « Tunnel d'achat »): stepper, cart lines, recap, empty state,
+// « Vider ton panier ? ». The stepper is shared by the next steps (order/_steps.html.twig).
+
+// Stepper: numbered squares joined by rules, the current one red and underlined.
+.kb-steps {
+    margin: 28px 0 32px;
+
+    &__list {
+        display: none;
+        align-items: center;
+        gap: 0;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        @include media-breakpoint-up(md) {
+            display: flex;
+        }
+    }
+
+    &__step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 8px;
+        border-bottom: 3px solid transparent;
+
+        &:not(:nth-child(3))::after {
+            content: "";
+            width: 44px;
+            height: 3px;
+            margin: 0 0 0 14px;
+            background: $kb-noir;
+        }
+
+        &--current {
+            border-bottom-color: transparent;
+
+            .kb-steps__text {
+                border-bottom: 3px solid $kb-noir;
+                padding-bottom: 6px;
+                margin-bottom: -9px;
+            }
+        }
+
+        &--todo .kb-steps__label {
+            font-weight: 400;
+        }
+    }
+
+    &__num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border: 2px solid $kb-noir;
+        font-family: $kb-font-display;
+        font-size: 1.25rem;
+        line-height: 1;
+
+        .kb-steps__step--current & {
+            background: $kb-rouge;
+            border-color: $kb-rouge;
+            color: $kb-papier;
+        }
+
+        .kb-steps__step--done & {
+            background: $kb-noir;
+            color: $kb-papier;
+        }
+    }
+
+    &__text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+    }
+
+    &__label {
+        font-weight: 700;
+    }
+
+    &__state {
+        font-family: $kb-font-mono;
+        font-size: .6875rem;
+        text-transform: uppercase;
+        color: $kb-gris;
+    }
+
+    // The dashed rule leading to the mail steps.
+    &__after {
+        margin-left: 18px;
+        padding: 10px 18px;
+        border: 2px dashed $kb-gris;
+        color: $kb-gris;
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        text-transform: uppercase;
+
+        strong {
+            font-family: $kb-font-body;
+            font-size: .9375rem;
+            text-transform: none;
+        }
+    }
+
+    // Below md: « Étape 1 sur 3 », the step's name and four bars (the last, dashed, is the mail).
+    &__mobile {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        row-gap: 8px;
+
+        @include media-breakpoint-up(md) {
+            display: none;
+        }
+    }
+
+    &__mobile-count {
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        text-transform: uppercase;
+    }
+
+    &__mobile-name {
+        font-family: $kb-font-display;
+        font-size: 1.25rem;
+        text-transform: uppercase;
+        text-align: right;
+    }
+
+    &__bars {
+        display: flex;
+        grid-column: 1 / -1;
+        gap: 6px;
+    }
+
+    &__bar {
+        flex: 1;
+        height: 10px;
+        border: 2px solid $kb-noir;
+
+        &.is-on { background: $kb-rouge; border-color: $kb-noir; }
+        &.is-done { background: $kb-noir; }
+
+        &--later {
+            border-style: dashed;
+            border-color: $kb-gris;
+            flex: .5;
+        }
+    }
+}
+
+.kb-cart {
+    padding-bottom: 72px;
+
+    &__grid {
+        display: grid;
+        gap: 32px;
+
+        @include media-breakpoint-up(lg) {
+            grid-template-columns: minmax(0, 1fr) 440px;
+            align-items: start;
+        }
+    }
+
+    // On mobile the recap comes before the « how it works » block, after the lines.
+    &__head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+        padding-bottom: 12px;
+        border-bottom: 3px solid $kb-noir;
+    }
+
+    &__title {
+        margin: 0;
+        font-size: clamp(2.75rem, 6vw, 5.5rem);
+        font-weight: 400;
+        line-height: .9;
+    }
+
+    &__count {
+        font-family: $kb-font-mono;
+        font-size: .8125rem;
+        text-transform: uppercase;
+    }
+
+    &__lines {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 20px 0 32px;
+    }
+
+    &__more,
+    &__empty {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px;
+        font-weight: 700;
+        color: $kb-noir;
+    }
+
+    &__more { text-transform: uppercase; }
+    &__empty { color: $kb-rouge-fonce; }
+}
+
+.kb-cart-line {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr) auto;
+    grid-template-areas:
+        "cover info price"
+        "cover qty remove";
+    gap: 10px 16px;
+    padding: 22px 0;
+    border-bottom: 1px solid $kb-gris-filet;
+
+    @include media-breakpoint-up(md) {
+        grid-template-columns: 116px minmax(0, 1fr) 190px 120px 48px;
+        grid-template-areas: "cover info qty price remove";
+        align-items: center;
+        gap: 24px;
+    }
+
+    &__cover {
+        grid-area: cover;
+        display: block;
+        aspect-ratio: 1 / 1;
+        border: 2px solid $kb-noir;
+        overflow: hidden;
+        color: $kb-noir;
+        text-decoration: none;
+
+        img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    }
+
+    &__info {
+        grid-area: info;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    &__meta,
+    &__max,
+    &__unit {
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        color: $kb-gris;
+        text-transform: uppercase;
+    }
+
+    &__unit { text-transform: none; }
+
+    &__name {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 400;
+        line-height: 1;
+
+        a { color: $kb-noir; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    }
+
+    &__qty {
+        grid-area: qty;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    &__price {
+        grid-area: price;
+        font-family: $kb-font-display;
+        font-size: 1.75rem;
+        line-height: 1;
+        text-align: right;
+    }
+
+    &__remove-form { grid-area: remove; justify-self: end; }
+
+    &__remove {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border: 2px solid $kb-noir;
+        background: transparent;
+        color: $kb-noir;
+
+        &:hover { background: $kb-noir; color: $kb-papier; }
+    }
+}
+
+// Quantity: minus, value, plus. Each button is a POST form (CSRF), so the page works without JS.
+.kb-qty {
+    display: inline-flex;
+    width: fit-content;
+    border: 2px solid $kb-noir;
+
+    &__btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        border: 0;
+        background: transparent;
+        color: $kb-noir;
+
+        &:hover:not(:disabled) { background: $kb-noir; color: $kb-papier; }
+
+        &:disabled { color: $kb-gris-clair; }
+    }
+
+    &__value {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 52px;
+        border-inline: 2px solid $kb-noir;
+        font-family: $kb-font-mono;
+        font-weight: 700;
+    }
+}
+
+// Recap: the black box with the offset shadow; sticky on desktop.
+.kb-recap {
+    padding: 28px;
+    border: 3px solid $kb-noir;
+    background: $kb-papier;
+
+    @include media-breakpoint-up(lg) {
+        position: sticky;
+        top: 24px;
+    }
+
+    &__title {
+        margin: 0 0 18px;
+        font-size: 2.25rem;
+        font-weight: 400;
+    }
+
+    &__rows { margin: 0 0 18px; }
+
+    &__row {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 10px;
+
+        dt { font-weight: 400; }
+        dd { margin: 0; }
+    }
+
+    &__mono { font-family: $kb-font-mono; }
+    &__note { max-width: 60%; text-align: right; font-size: .875rem; color: $kb-gris; }
+
+    &__total {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding-top: 18px;
+        border-top: 2px solid $kb-noir;
+    }
+
+    &__total-label {
+        display: flex;
+        flex-direction: column;
+        font-weight: 700;
+        text-transform: uppercase;
+
+        small {
+            font-family: $kb-font-mono;
+            font-size: .6875rem;
+            font-weight: 400;
+        }
+    }
+
+    &__total-price {
+        font-family: $kb-font-display;
+        font-size: 3.25rem;
+        line-height: 1;
+    }
+
+    &__alt {
+        display: block;
+        margin: 18px 0 14px;
+        text-align: center;
+        font-weight: 700;
+        color: $kb-noir;
+    }
+
+    &__help {
+        display: flex;
+        gap: 10px;
+        margin: 16px 0 0;
+        font-size: .9375rem;
+    }
+}
+
+// « Comment ça marche ? »
+.kb-cart-how {
+    padding: 28px;
+    border: 3px solid $kb-noir;
+    background: $kb-papier-2;
+
+    &__title {
+        margin: 0 0 20px;
+        font-size: 2.5rem;
+        font-weight: 400;
+    }
+
+    &__list {
+        display: grid;
+        gap: 16px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        @include media-breakpoint-up(md) {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        li {
+            display: flex;
+            gap: 14px;
+            padding: 16px;
+            background: $kb-papier;
+
+            @include media-breakpoint-up(md) {
+                flex-direction: column;
+                border: 2px solid $kb-noir;
+            }
+        }
+
+        p { margin: 0; }
+    }
+
+    &__num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        width: 40px;
+        height: 40px;
+        background: $kb-noir;
+        color: $kb-papier;
+        font-family: $kb-font-display;
+        font-size: 1.5rem;
+    }
+}
+
+// « Vider ton panier ? »: a panel above the lines.
+.kb-cart-confirm {
+    margin: 20px 0;
+    padding: 24px;
+    border: 2px solid $kb-gris-clair;
+    background: $kb-papier;
+
+    &__title { margin: 0 0 10px; font-size: 2.25rem; font-weight: 400; }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+}
+
+// Empty cart: stamp and two ways out on a halftone field.
+.kb-cart-empty {
+    display: flex;
+    justify-content: center;
+    padding: 56px 16px;
+
+    &__panel {
+        max-width: 580px;
+        padding: 36px;
+        border: 3px solid $kb-noir;
+        background: $kb-papier;
+    }
+
+    &__title {
+        margin: 18px 0 14px;
+        font-size: clamp(2.75rem, 7vw, 4.5rem);
+        font-weight: 400;
+        line-height: .95;
+    }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 22px;
+    }
+}

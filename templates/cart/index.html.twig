@@ -1,32 +1,143 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Mon panier{% endblock %}
+
 {% block body %}
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center my-5">
-            <h2>Mon panier <span class="fw-lighter">({{ cart |length }} éléments)</span></h2>
-            {% include 'partials/_post_button.html.twig' with {
-                token_id: 'cart',
-                url: path('app_cart_empty'),
-                class: 'btn btn-outline-danger btn-sm',
-                icon: 'bi-trash',
-                text_btn: 'Vider le panier'
-            } %}
+    <div class="container kb-cart">
+        {% include 'order/_steps.html.twig' with {current: 1} %}
 
-        </div>
-        <div class="row">
-            <div class="col">
-                {% include 'cart/_table.html.twig' with {cart} %}
+        {% if cart is empty %}
+            <section class="kb-cart-empty kb-tex-halftone" aria-labelledby="cart-empty-title">
+                <div class="kb-cart-empty__panel kb-shadow">
+                    <span class="kb-stamp">Vide</span>
+                    <h1 id="cart-empty-title" class="kb-cart-empty__title">Rien dans le panier.</h1>
+                    <p>Les bacs, eux, sont pleins. Fouille le catalogue ou commence par ce que le label presse.</p>
+                    <div class="kb-cart-empty__actions">
+                        <a class="btn btn-dark btn-lg" href="{{ path('app_catalog') }}">Fouiller le catalogue</a>
+                        <a class="btn btn-outline-dark btn-lg" href="{{ path('app_production') }}">Nos productions</a>
+                    </div>
+                </div>
+            </section>
+        {% else %}
+            {% set count = 0 %}
+            {% for line in cart %}{% set count = count + line.quantity %}{% endfor %}
+            <div class="kb-cart__grid">
+                <section class="kb-cart__main" aria-labelledby="cart-title">
+                    <div class="kb-cart__head">
+                        <h1 id="cart-title" class="kb-cart__title">Mon panier</h1>
+                        <span class="kb-cart__count">{{ count }} {{ count > 1 ? 'articles' : 'article' }}</span>
+                    </div>
+
+                    {% if confirm_empty %}
+                        <section class="kb-cart-confirm" aria-labelledby="cart-confirm-title">
+                            <h2 id="cart-confirm-title" class="kb-cart-confirm__title">Vider ton panier ?</h2>
+                            <p>{{ count }} {{ count > 1 ? 'articles retournent' : 'article retourne' }} dans les bacs. Tu pourras toujours {{ count > 1 ? 'les' : 'le' }} rajouter, s'il en reste.</p>
+                            <div class="kb-cart-confirm__actions">
+                                {% include 'partials/_post_button.html.twig' with {
+                                    token_id: 'cart',
+                                    url: path('app_cart_empty'),
+                                    class: 'btn btn-danger',
+                                    icon: 'bi-trash',
+                                    text_btn: 'Oui, vider le panier'
+                                } %}
+                                <a class="btn btn-outline-dark" href="{{ path('app_cart_index') }}">Non, garder mon panier</a>
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    <ul class="kb-cart__lines">
+                        {% for line in cart %}
+                            {% set article = line.product %}
+                            {% set album = article is release ? article.album : null %}
+                            {% set artist = album ? album.artist : (article.merch is defined ? article.merch.artist : null) %}
+                            <li class="kb-cart-line">
+                                {% if article.coverImageName %}
+                                    <a class="kb-cart-line__cover" href="{{ article_path(article) }}" tabindex="-1" aria-hidden="true">
+                                        <img src="{{ asset('upload/albums/' ~ article.coverImageName) }}" alt="" width="116" height="116" loading="lazy">
+                                    </a>
+                                {% else %}
+                                    <span class="kb-cart-line__cover kb-cover-missing" aria-hidden="true"><span>Pochette<br>à venir</span></span>
+                                {% endif %}
+                                <div class="kb-cart-line__info">
+                                    <span class="kb-cart-line__meta">{{ article.formatLabel }}{% if article.sku %} · {{ article.sku }}{% endif %}</span>
+                                    <h2 class="kb-cart-line__name"><a href="{{ article_path(article) }}">{{ article.name }}</a></h2>
+                                    {% if artist %}<span class="kb-cart-line__artist">{{ artist.name }}</span>{% endif %}
+                                    <span class="kb-cart-line__unit">{{ (article.price / 100)|format_currency('EUR') }} / unité</span>
+                                    {% if line.quantityMaxAvailable == 1 %}
+                                        <span class="kb-badge kb-badge--sm kb-badge--outline"><i class="bi bi-hourglass-split" aria-hidden="true"></i>Dernier exemplaire</span>
+                                    {% endif %}
+                                </div>
+                                <div class="kb-cart-line__qty">
+                                    <span class="kb-cart-line__max">Quantité · max {{ line.quantityMaxAvailable }}</span>
+                                    <div class="kb-qty" role="group" aria-label="Quantité de {{ article.name }}">
+                                        {% include 'partials/_post_button.html.twig' with {
+                                            token_id: 'cart',
+                                            url: path('app_cart_remove_quantity', {id: article.id}),
+                                            class: 'kb-qty__btn',
+                                            icon: 'bi-dash-lg',
+                                            label: 'Retirer un exemplaire de ' ~ article.name,
+                                            form_class: 'd-flex'
+                                        } %}
+                                        <span class="kb-qty__value">{{ line.quantity }}</span>
+                                        {% include 'partials/_post_button.html.twig' with {
+                                            token_id: 'cart',
+                                            url: path('app_cart_add_quantity', {id: article.id}),
+                                            class: 'kb-qty__btn',
+                                            icon: 'bi-plus-lg',
+                                            label: 'Ajouter un exemplaire de ' ~ article.name,
+                                            form_class: 'd-flex',
+                                            disabled: line.quantity >= line.quantityMaxAvailable
+                                        } %}
+                                    </div>
+                                </div>
+                                <span class="kb-cart-line__price">{{ (article.price * line.quantity / 100)|format_currency('EUR') }}</span>
+                                {% include 'partials/_post_button.html.twig' with {
+                                    token_id: 'cart',
+                                    url: path('app_cart_remove', {id: article.id}),
+                                    class: 'kb-cart-line__remove',
+                                    icon: 'bi-trash',
+                                    label: 'Retirer ' ~ article.name ~ ' du panier',
+                                    form_class: 'kb-cart-line__remove-form'
+                                } %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <div class="kb-cart__actions">
+                        <a class="kb-cart__more" href="{{ path('app_catalog') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Continuer mes achats</a>
+                        <a class="kb-cart__empty" href="{{ path('app_cart_index') }}?vider"><i class="bi bi-trash" aria-hidden="true"></i> Vider le panier</a>
+                    </div>
+
+                    <section class="kb-cart-how" aria-labelledby="cart-how-title">
+                        <h2 id="cart-how-title" class="kb-cart-how__title">Comment ça marche ?</h2>
+                        <ol class="kb-cart-how__list">
+                            <li><span class="kb-cart-how__num" aria-hidden="true">1</span><p><strong>Tu valides ta commande,</strong> sans rien payer.</p></li>
+                            <li><span class="kb-cart-how__num" aria-hidden="true">2</span><p><strong>On vérifie le stock</strong> et on t'écrit sous 48 h avec le montant, port compris.</p></li>
+                            <li><span class="kb-cart-how__num" aria-hidden="true">3</span><p><strong>Tu paies par PayPal</strong> ou via une annonce Vinted réservée, on expédie.</p></li>
+                        </ol>
+                    </section>
+                </section>
+
+                <aside class="kb-recap kb-shadow" aria-labelledby="recap-title">
+                    <h2 id="recap-title" class="kb-recap__title">Récap</h2>
+                    <dl class="kb-recap__rows">
+                        <div class="kb-recap__row"><dt>Sous-total articles</dt><dd class="kb-recap__mono">{{ (total / 100)|format_currency('EUR') }}</dd></div>
+                        <div class="kb-recap__row"><dt><i class="bi bi-truck" aria-hidden="true"></i> Frais de port</dt><dd class="kb-recap__note">calculés à la main après ta commande</dd></div>
+                    </dl>
+                    <div class="kb-recap__total">
+                        <span class="kb-recap__total-label">Total articles<small>hors frais de port</small></span>
+                        <span class="kb-recap__total-price">{{ (total / 100)|format_currency('EUR') }}</span>
+                    </div>
+                    {% if app.user %}
+                        <a class="btn btn-buy btn-lg w-100" href="{{ path('app_order_delivery') }}">Passer commande <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                        <p class="kb-recap__help"><i class="bi bi-info-circle" aria-hidden="true"></i> <span><strong>Rien n'est payé à cette étape.</strong> Tu choisis ensuite ton adresse et PayPal ou Vinted.</span></p>
+                    {% else %}
+                        <a class="btn btn-dark btn-lg w-100" href="{{ path('app_login') }}"><i class="bi bi-person" aria-hidden="true"></i> Se connecter pour commander</a>
+                        <a class="kb-recap__alt" href="{{ path('app_register') }}">Créer un compte</a>
+                        <p class="kb-recap__help"><i class="bi bi-info-circle" aria-hidden="true"></i> <span>Ton panier est gardé : tu le retrouves après la connexion.</span></p>
+                    {% endif %}
+                </aside>
             </div>
-        </div>
-        <div class="d-grid col-4 ms-auto my-5">
-            {% include 'partials/_obfuscation_link.html.twig' with {
-                url: path('app_order_delivery'),
-                class: 'btn btn-success',
-                icon: 'bi-hand-thumbs-up',
-                text_btn: 'Valider le panier'
-            } %}
-        </div>
-
+        {% endif %}
     </div>
 {% endblock %}
-
