@@ -509,3 +509,149 @@
         margin-top: 22px;
     }
 }
+
+// Checkout, step 2 (/order/delivery): address, transport and payment as choice cards.
+.kb-order {
+    &__title {
+        margin: 0 0 28px;
+        padding-bottom: 12px;
+        border-bottom: 3px solid $kb-noir;
+    }
+
+    &__form { display: flex; flex-direction: column; gap: 32px; }
+
+    &__note { display: flex; gap: 10px; margin: 0; }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+}
+
+.kb-fieldset {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    &__legend {
+        float: none;
+        width: auto;
+        margin: 0 0 16px;
+        padding: 0;
+        font-family: $kb-font-display;
+        font-size: 2.25rem;
+        line-height: 1;
+        text-transform: uppercase;
+    }
+
+    &__choices {
+        display: grid;
+        gap: 14px;
+
+        @include media-breakpoint-up(md) {
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        }
+    }
+}
+
+// A radio card: the input is visually hidden but stays focusable, the card shows focus and state
+// (filled radio icon + thick border, never colour alone).
+.kb-choice {
+    position: relative;
+
+    &__input {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    &__card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        height: 100%;
+        padding: 16px 48px 16px 16px;
+        border: 2px solid $kb-noir;
+        background: $kb-papier;
+    }
+
+    &__input:checked + &__card {
+        border-width: 4px;
+        padding: 14px 46px 14px 14px;
+        background: $kb-papier-2;
+    }
+
+    &__input:focus-visible + &__card {
+        outline: 3px solid $kb-noir;
+        outline-offset: 3px;
+    }
+
+    &__title { font-weight: 800; }
+    &__text { font-size: .9375rem; }
+    &__price { font-family: $kb-font-mono; font-weight: 700; }
+
+    &__mark {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        font-size: 1.25rem;
+    }
+
+    &__add {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 88px;
+        border: 2px dashed $kb-noir;
+        color: $kb-noir;
+        font-weight: 800;
+        text-transform: uppercase;
+        text-decoration: none;
+    }
+}
+
+.kb-recap {
+    &__lines {
+        margin: 0 0 18px;
+        padding: 0;
+        list-style: none;
+    }
+
+    &__line {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid $kb-gris-filet;
+
+        img, .kb-recap__cover {
+            flex: none;
+            width: 56px;
+            height: 56px;
+            border: 2px solid $kb-noir;
+            object-fit: cover;
+        }
+    }
+
+    &__what {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        min-width: 0;
+        line-height: 1.25;
+
+        span { font-family: $kb-font-mono; font-size: .75rem; color: $kb-gris; }
+    }
+
+    &__amount { font-family: $kb-font-mono; font-weight: 700; }
+}

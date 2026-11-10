@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container">
+    <div class="container kb-cart kb-order">
         {% block order_title %}{% endblock %}
-        <div class="row">
-            <div class="col">
+        <div class="kb-cart__grid">
+            <div>
                 {% block left %}{% endblock %}
             </div>
-            <div class="col">
+            <div>
                 {% block rigth %}{% endblock %}
             </div>
         </div>

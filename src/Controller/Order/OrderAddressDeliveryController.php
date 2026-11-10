@@ -30,6 +30,8 @@ class OrderAddressDeliveryController extends AbstractController
         CommandBusInterface $commandBus,
     ): Response {
         $orderDeliveryDto = new OrderDeliveryDto();
+        // The default address is ticked, the buyer can still pick another one.
+        $orderDeliveryDto->deliveryAddress = $user->getDefaultAddress();
         $form = $this->createForm(OrderAddressDeliveryPaymentFormType::class, $orderDeliveryDto, []);
         $form->handleRequest($request);
         $cart = $cartService->getFullCart();
@@ -64,7 +66,9 @@ class OrderAddressDeliveryController extends AbstractController
 
         return $this->render('order/delivery.html.twig', [
             'cart' => $cart,
-            'form' => $form->createView(),
+            'total' => $cartService->getTotal($cart),
+            // The form itself: render() answers 422 when it was submitted invalid.
+            'form' => $form,
         ]);
     }
 }
