@@ -178,6 +178,6 @@ class WantlistAddAllToCartTest extends WebTestCase
         $crawler = $this->client->request('GET', '/cart');
         $row = $crawler->filter(\sprintf('form[action="/cart/remove/%d"]', $article?->getId()));
 
-        return 0 === $row->count() ? 0 : (int) $row->closest('tr')?->filter('input.form-control')->attr('value');
+        return 0 === $row->count() ? 0 : (int) trim($row->closest('.kb-cart-line')?->filter('.kb-qty__value')->text() ?? '');
     }
 }

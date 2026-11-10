@@ -30,11 +30,14 @@ class CartController
     public function __invoke(
         Environment $twig,
         CartInterface $cartInterface,
+        Request $request,
     ): Response {
         $cart = $cartInterface->getFullCart();
         $content = $twig->render('cart/index.html.twig', [
             'cart' => $cart,
             'total' => $cartInterface->getTotal($cart),
+            // « Vider le panier » links to ?vider: the confirmation shows above the lines (no JS needed).
+            'confirm_empty' => $request->query->has('vider'),
         ]);
 
         return new Response($content);

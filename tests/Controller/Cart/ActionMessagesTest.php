@@ -37,7 +37,7 @@ class ActionMessagesTest extends WebTestCase
     public function testAddingAnArticleUnpublishedMeanwhile(): void
     {
         [$release] = $this->releasesWithStock(5);
-        $token = (string) $this->client->request('GET', '/cart')->filter('form[action="/cart/empty_cart"] input[name="_token"]')->attr('value');
+        $token = (string) $this->client->request('GET', '/catalog')->filter('form[action^="/cart/add/"] input[name="_token"]')->attr('value');
         $this->unpublish($release);
 
         $this->client->request('POST', \sprintf('/cart/add/%d', $release->getId()), ['_token' => $token], [], ['HTTP_REFERER' => '/cart']);
@@ -143,7 +143,7 @@ class ActionMessagesTest extends WebTestCase
     public function testAddingASoldOutArticle(): void
     {
         [$release] = $this->releasesWithStock(0);
-        $token = (string) $this->client->request('GET', '/cart')->filter('form[action="/cart/empty_cart"] input[name="_token"]')->attr('value');
+        $token = (string) $this->client->request('GET', '/catalog')->filter('form[action^="/cart/add/"] input[name="_token"]')->attr('value');
 
         $this->client->request('POST', \sprintf('/cart/add/%d', $release->getId()), ['_token' => $token], [], ['HTTP_REFERER' => '/cart']);
 

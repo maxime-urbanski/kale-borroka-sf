@@ -72,8 +72,8 @@ class ArticleRepository extends ServiceEntityRepository
 
         // Loaded into the same entity manager: the lines then read them without a query.
         foreach ([
-            Release::class => 'SELECT article, parent, parentImage FROM %s article JOIN article.album parent LEFT JOIN parent.images parentImage WHERE article IN (:articles)',
-            MerchVariant::class => 'SELECT article, parent, parentImage FROM %s article JOIN article.merch parent LEFT JOIN parent.images parentImage WHERE article IN (:articles)',
+            Release::class => 'SELECT article, parent, parentImage, artist FROM %s article JOIN article.album parent LEFT JOIN parent.images parentImage LEFT JOIN parent.artist artist WHERE article IN (:articles)',
+            MerchVariant::class => 'SELECT article, parent, parentImage, artist FROM %s article JOIN article.merch parent LEFT JOIN parent.images parentImage LEFT JOIN parent.artist artist WHERE article IN (:articles)',
         ] as $class => $dql) {
             $ofClass = array_values(array_filter($articles, static fn (Article $article): bool => $article instanceof $class));
 
@@ -108,7 +108,7 @@ class ArticleRepository extends ServiceEntityRepository
 
         foreach ([
             Release::class => 'SELECT article, parent, parentImage, artist FROM %s article JOIN article.album parent LEFT JOIN parent.images parentImage LEFT JOIN parent.artist artist WHERE article IN (:articles)',
-            MerchVariant::class => 'SELECT article, parent, parentImage FROM %s article JOIN article.merch parent LEFT JOIN parent.images parentImage WHERE article IN (:articles)',
+            MerchVariant::class => 'SELECT article, parent, parentImage, artist FROM %s article JOIN article.merch parent LEFT JOIN parent.images parentImage LEFT JOIN parent.artist artist WHERE article IN (:articles)',
         ] as $class => $dql) {
             $ofClass = array_values(array_filter($articles, static fn (Article $article): bool => $article instanceof $class));
 
