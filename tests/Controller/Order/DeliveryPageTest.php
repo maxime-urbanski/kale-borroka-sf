@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Controller\Order;
 
 use App\Entity\Article;
+use App\Service\ShopSettingsProviderInterface;
 use App\Tests\Order\OrderTestTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -64,6 +65,42 @@ class DeliveryPageTest extends WebTestCase
         $checked = $crawler->filter('input[type="radio"][name$="[deliveryAddress]"]:checked');
         self::assertCount(1, $checked);
         self::assertSame((string) $default->getId(), $checked->attr('value'));
+    }
+
+    public function testTheDefaultAddressCarriesItsTag(): void
+    {
+        $crawler = $this->open();
+
+        $default = (string) $this->user('test@test.fr')->getDefaultAddress()?->getId();
+        $card = $crawler->filter(\sprintf('input[name$="[deliveryAddress]"][value="%s"]', $default))->closest('.kb-choice');
+        self::assertStringContainsString('Par défaut', (string) $card?->text());
+        self::assertCount(1, $crawler->filter('.kb-choice:contains("Par défaut")'));
+    }
+
+    /**
+     * The radio's state is drawn by CSS from :checked, so picking another card moves it:
+     * both marks are in every card, none is chosen by the server.
+     */
+    public function testEveryCardCarriesBothRadioMarks(): void
+    {
+        $crawler = $this->open();
+
+        $cards = $crawler->filter('.kb-choice');
+        self::assertCount($cards->count(), $crawler->filter('.kb-choice .kb-choice__mark .bi-circle'));
+        self::assertCount($cards->count(), $crawler->filter('.kb-choice .kb-choice__mark .bi-record-circle-fill'));
+    }
+
+    public function testShippingIsOfferedFromTheThreshold(): void
+    {
+        self::service(ShopSettingsProviderInterface::class)->get()->setFreeShippingThreshold(1);
+        $this->entityManager()->flush();
+
+        $crawler = $this->open();
+
+        foreach ($crawler->filter('.kb-choice__price')->each(static fn (Crawler $price): string => $price->text()) as $price) {
+            self::assertSame('Offert', trim($price));
+        }
+        self::assertGreaterThan(0, $crawler->filter('.kb-choice__price')->count());
     }
 
     public function testTheRecapListsTheLinesAndPointsToTheAddressBook(): void

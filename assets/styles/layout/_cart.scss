@@ -590,10 +590,19 @@
         background: $kb-papier-2;
     }
 
+    // Same double ring as the global :focus-visible (_base.scss).
     &__input:focus-visible + &__card {
         outline: 3px solid $kb-noir;
         outline-offset: 3px;
+        box-shadow: 0 0 0 3px $kb-papier;
     }
+
+    // The mark follows :checked, not the state the page was rendered with.
+    &__mark .bi-record-circle-fill,
+    &__input:checked + &__card &__mark .bi-circle { display: none; }
+    &__input:checked + &__card &__mark .bi-record-circle-fill { display: inline; }
+
+    &__tag { align-self: flex-start; margin-bottom: 4px; }
 
     &__title { font-weight: 800; }
     &__text { font-size: .9375rem; }

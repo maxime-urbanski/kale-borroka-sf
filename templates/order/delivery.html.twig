@@ -2,26 +2,28 @@
 
 {% block title %}Ma commande{% endblock %}
 
-{% macro choice_cards(field, kind) %}
+{% macro choice_cards(field, kind, free_shipping) %}
     {% for choice in field.vars.choices %}
         {% set child = field[choice.value] %}
-        <div class="kb-choice{{ child.vars.checked ? ' is-checked' }}">
+        <div class="kb-choice">
             {# Bare radio: the Bootstrap widget wraps it in a .form-check block that pushes the card down. #}
             <input type="radio" class="kb-choice__input" id="{{ child.vars.id }}" name="{{ child.vars.full_name }}" value="{{ child.vars.value }}"{{ child.vars.checked ? ' checked' }} required>
             <label class="kb-choice__card" for="{{ child.vars.id }}">
                 {% if kind == 'address' %}
                     {% set address = choice.data %}
+                    {% if address is same as(app.user.defaultAddress) %}<span class="kb-badge kb-badge--sm kb-choice__tag">Par défaut</span>{% endif %}
                     <span class="kb-choice__title">{{ address.firstname }} {{ address.lastname }}</span>
                     <span class="kb-choice__text">{{ address.address }}{% if address.complementAddress %}, {{ address.complementAddress }}{% endif %}<br>{{ address.zipcode }} {{ address.city }}<br>{{ address.country }}</span>
                 {% elseif kind == 'transporter' %}
                     {% set transporter = choice.data %}
                     <span class="kb-choice__title">{{ transporter.name }}</span>
                     {% if transporter.description %}<span class="kb-choice__text">{{ transporter.description }}</span>{% endif %}
-                    <span class="kb-choice__price">{{ (transporter.price / 100)|format_currency('EUR') }}</span>
+                    <span class="kb-choice__price">{{ free_shipping ? 'Offert' : (transporter.price / 100)|format_currency('EUR') }}</span>
                 {% else %}
                     <span class="kb-choice__title">{{ choice.data.name }}</span>
                 {% endif %}
-                <span class="kb-choice__mark" aria-hidden="true"><i class="bi {{ child.vars.checked ? 'bi-record-circle-fill' : 'bi-circle' }}"></i></span>
+                {# Both marks: CSS shows the one matching :checked, so it follows the buyer's clicks. #}
+                <span class="kb-choice__mark" aria-hidden="true"><i class="bi bi-circle"></i><i class="bi bi-record-circle-fill"></i></span>
             </label>
         </div>
     {% endfor %}
@@ -40,7 +42,7 @@
                 <legend class="kb-fieldset__legend">{{ loop.index }}. {{ form[field].vars.label }}</legend>
                 {{ form_errors(form[field]) }}
                 <div class="kb-fieldset__choices">
-                    {{ _self.choice_cards(form[field], kind) }}
+                    {{ _self.choice_cards(form[field], kind, free_shipping) }}
                     {% if kind == 'address' %}
                         <a class="kb-choice__add" href="{{ path('app_user_addresses_index') }}?ajouter"><i class="bi bi-plus-lg" aria-hidden="true"></i> Nouvelle adresse</a>
                     {% endif %}
@@ -49,7 +51,7 @@
                 {% do form[field].setRendered %}
             </fieldset>
         {% endfor %}
-        <p class="kb-order__note"><i class="bi bi-info-circle" aria-hidden="true"></i> Rien n'est payé maintenant : on vérifie le stock et on t'écrit sous 48 h avec le montant et le lien de paiement.</p>
+        <p class="kb-order__note"><i class="bi bi-info-circle" aria-hidden="true"></i> Rien n'est payé maintenant : on vérifie le stock et on t'écrit sous 48 h avec le montant, port compris. Tu paies ensuite par PayPal ou via une annonce Vinted réservée.</p>
         <div class="kb-order__actions">
             <a class="kb-cart__more" href="{{ path('app_cart_index') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Retour au panier</a>
             {{ form_widget(form.submit, {attr: {class: 'btn btn-buy btn-lg'}}) }}
@@ -76,7 +78,7 @@
         </ul>
         <dl class="kb-recap__rows">
             <div class="kb-recap__row"><dt>Sous-total articles</dt><dd class="kb-recap__mono">{{ (total / 100)|format_currency('EUR') }}</dd></div>
-            <div class="kb-recap__row"><dt><i class="bi bi-truck" aria-hidden="true"></i> Frais de port</dt><dd class="kb-recap__note">selon le mode de livraison choisi</dd></div>
+            <div class="kb-recap__row"><dt><i class="bi bi-truck" aria-hidden="true"></i> Frais de port</dt><dd class="kb-recap__note">{{ free_shipping ? 'offerts' : 'selon le mode de livraison choisi' }}</dd></div>
         </dl>
         <div class="kb-recap__total">
             <span class="kb-recap__total-label">Total articles<small>hors frais de port</small></span>
