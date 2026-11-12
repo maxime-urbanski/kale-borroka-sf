@@ -1,43 +1,88 @@
 {% extends 'order/index.html.twig' %}
 
+{% block title %}Ma commande{% endblock %}
+
+{% macro choice_cards(field, kind, free_shipping) %}
+    {% for choice in field.vars.choices %}
+        {% set child = field[choice.value] %}
+        <div class="kb-choice">
+            {# Bare radio: the Bootstrap widget wraps it in a .form-check block that pushes the card down. #}
+            <input type="radio" class="kb-choice__input" id="{{ child.vars.id }}" name="{{ child.vars.full_name }}" value="{{ child.vars.value }}"{{ child.vars.checked ? ' checked' }} required>
+            <label class="kb-choice__card" for="{{ child.vars.id }}">
+                {% if kind == 'address' %}
+                    {% set address = choice.data %}
+                    {% if address is same as(app.user.defaultAddress) %}<span class="kb-badge kb-badge--sm kb-choice__tag">Par défaut</span>{% endif %}
+                    <span class="kb-choice__title">{{ address.firstname }} {{ address.lastname }}</span>
+                    <span class="kb-choice__text">{{ address.address }}{% if address.complementAddress %}, {{ address.complementAddress }}{% endif %}<br>{{ address.zipcode }} {{ address.city }}<br>{{ address.country }}</span>
+                {% elseif kind == 'transporter' %}
+                    {% set transporter = choice.data %}
+                    <span class="kb-choice__title">{{ transporter.name }}</span>
+                    {% if transporter.description %}<span class="kb-choice__text">{{ transporter.description }}</span>{% endif %}
+                    <span class="kb-choice__price">{{ free_shipping ? 'Offert' : (transporter.price / 100)|format_currency('EUR') }}</span>
+                {% else %}
+                    <span class="kb-choice__title">{{ choice.data.name }}</span>
+                {% endif %}
+                {# Both marks: CSS shows the one matching :checked, so it follows the buyer's clicks. #}
+                <span class="kb-choice__mark" aria-hidden="true"><i class="bi bi-circle"></i><i class="bi bi-record-circle-fill"></i></span>
+            </label>
+        </div>
+    {% endfor %}
+{% endmacro %}
+
 {% block order_title %}
-    <h3 class="my-5 text-center">Mon adresse et ma livraison</h3>
+    {% include 'order/_steps.html.twig' with {current: 2} %}
+    <h1 class="kb-cart__title kb-order__title">Ma commande</h1>
 {% endblock %}
+
 {% block left %}
-    {{ form_start(form) }}
-    {{ form_row(form.deliveryAddress) }}
-
-    {{ form_row(form.transporter) }}
-    {{ form_row(form.paymentMethod) }}
-
+    {{ form_start(form, {attr: {class: 'kb-order__form', novalidate: 'novalidate'}}) }}
+        {{ form_errors(form) }}
+        {% for field, kind in {deliveryAddress: 'address', transporter: 'transporter', paymentMethod: 'payment'} %}
+            <fieldset class="kb-fieldset">
+                <legend class="kb-fieldset__legend">{{ loop.index }}. {{ form[field].vars.label }}</legend>
+                {{ form_errors(form[field]) }}
+                <div class="kb-fieldset__choices">
+                    {{ _self.choice_cards(form[field], kind, free_shipping) }}
+                    {% if kind == 'address' %}
+                        <a class="kb-choice__add" href="{{ path('app_user_addresses_index') }}?ajouter"><i class="bi bi-plus-lg" aria-hidden="true"></i> Nouvelle adresse</a>
+                    {% endif %}
+                </div>
+                {# The cards above are the widget: form_end() must not print it a second time. #}
+                {% do form[field].setRendered %}
+            </fieldset>
+        {% endfor %}
+        <p class="kb-order__note"><i class="bi bi-info-circle" aria-hidden="true"></i> Rien n'est payé maintenant : on vérifie le stock et on t'écrit sous 48 h avec le montant, port compris. Tu paies ensuite par PayPal ou via une annonce Vinted réservée.</p>
+        <div class="kb-order__actions">
+            <a class="kb-cart__more" href="{{ path('app_cart_index') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Retour au panier</a>
+            {{ form_widget(form.submit, {attr: {class: 'btn btn-buy btn-lg'}}) }}
+        </div>
     {{ form_end(form) }}
 {% endblock %}
+
 {% block rigth %}
-    <h4>Récapitulatif de ma commande</h4>
-    <div class="d-flex flex-column justify-content-between border border-dark rounded">
-        {% for article in cart %}
-            <a href="{{ article_path(article.product) }}">
-                {% if article.product.coverImageName %}
-                    <img
-                        src="{{ asset('upload/albums/' ~ article.product.coverImageName) }}"
-                        alt="{{ article.product.name }}"
-                        class="img-thumbnail"
-                        width="80" height="80">
-                {% else %}
-                    <img src="{{ asset('/images/product_placeholder.png') }}"
-                         alt="{{ article.product.name }}"
-                         class="img-thumbnail"
-                         width="80"
-                         height="80">
-                {% endif %}
-            </a>
-            <div class="d-flex flex-column">
-                <p class="fw-bolder">{{ article.product.getName }}</p>
-                <div class="d-flex justify-content-between">
-                    <p>Quantité: {{ article.quantity }}</p>
-                    <p>Prix: {{ article.product.price }}</p>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
+    <aside class="kb-recap kb-shadow" aria-labelledby="order-recap-title">
+        <h2 id="order-recap-title" class="kb-recap__title">Ta commande</h2>
+        <ul class="kb-recap__lines">
+            {% for line in cart %}
+                {% set article = line.product %}
+                <li class="kb-recap__line">
+                    {% if article.coverImageName %}
+                        <img src="{{ asset('upload/albums/' ~ article.coverImageName) }}" alt="" width="56" height="56" loading="lazy">
+                    {% else %}
+                        <span class="kb-cover-missing kb-recap__cover" aria-hidden="true"></span>
+                    {% endif %}
+                    <span class="kb-recap__what"><strong>{{ article.name }}</strong><span>{{ article.formatLabel }} · ×{{ line.quantity }}</span></span>
+                    <span class="kb-recap__amount">{{ (article.price * line.quantity / 100)|format_currency('EUR') }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+        <dl class="kb-recap__rows">
+            <div class="kb-recap__row"><dt>Sous-total articles</dt><dd class="kb-recap__mono">{{ (total / 100)|format_currency('EUR') }}</dd></div>
+            <div class="kb-recap__row"><dt><i class="bi bi-truck" aria-hidden="true"></i> Frais de port</dt><dd class="kb-recap__note">{{ free_shipping ? 'offerts' : 'selon le mode de livraison choisi' }}</dd></div>
+        </dl>
+        <div class="kb-recap__total">
+            <span class="kb-recap__total-label">Total articles<small>hors frais de port</small></span>
+            <span class="kb-recap__total-price">{{ (total / 100)|format_currency('EUR') }}</span>
+        </div>
+    </aside>
 {% endblock %}

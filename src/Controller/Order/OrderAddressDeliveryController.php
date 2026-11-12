@@ -12,6 +12,7 @@ use App\Messenger\CommandBusInterface;
 use App\Order\Command\PlaceOrder;
 use App\Order\Exception\InvalidOrderException;
 use App\Service\CartService;
+use App\Service\ShopSettingsProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,8 +29,11 @@ class OrderAddressDeliveryController extends AbstractController
         Request $request,
         CartService $cartService,
         CommandBusInterface $commandBus,
+        ShopSettingsProviderInterface $shopSettings,
     ): Response {
         $orderDeliveryDto = new OrderDeliveryDto();
+        // The default address is ticked, the buyer can still pick another one.
+        $orderDeliveryDto->deliveryAddress = $user->getDefaultAddress();
         $form = $this->createForm(OrderAddressDeliveryPaymentFormType::class, $orderDeliveryDto, []);
         $form->handleRequest($request);
         $cart = $cartService->getFullCart();
@@ -62,9 +66,16 @@ class OrderAddressDeliveryController extends AbstractController
             return $this->redirectToRoute('app_user_order', ['orderReference' => $reference]);
         }
 
+        $total = $cartService->getTotal($cart);
+        // Same rule as PlaceOrderHandler: no shipping cost from the shop's threshold.
+        $threshold = $shopSettings->get()->getFreeShippingThreshold();
+
         return $this->render('order/delivery.html.twig', [
             'cart' => $cart,
-            'form' => $form->createView(),
+            'total' => $total,
+            'free_shipping' => null !== $threshold && $total >= $threshold,
+            // The form itself: render() answers 422 when it was submitted invalid.
+            'form' => $form,
         ]);
     }
 }

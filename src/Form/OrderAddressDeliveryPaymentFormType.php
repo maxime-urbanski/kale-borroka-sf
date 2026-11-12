@@ -32,10 +32,12 @@ class OrderAddressDeliveryPaymentFormType extends AbstractType
 
         $builder
             ->add('deliveryAddress', SelectUserAddressFormType::class, [
-                'label' => false,
+                'label' => 'Adresse de livraison',
+                'expanded' => true,
+                'multiple' => false,
             ])
             ->add('transporter', EntityType::class, [
-                'label' => 'Choix du transporteur',
+                'label' => 'Mode de livraison',
                 'class' => Transporter::class,
                 // The price is added to the order total (free from the shop's threshold).
                 'choice_label' => static fn (Transporter $transporter): string => \sprintf('%s — %s €', $transporter->getName(), number_format((int) $transporter->getPrice() / 100, 2, ',', ' ')),
@@ -44,16 +46,14 @@ class OrderAddressDeliveryPaymentFormType extends AbstractType
                 'required' => true,
             ])
             ->add('paymentMethod', EntityType::class, [
-                'label' => 'Methode de paiement',
+                'label' => 'Paiement',
                 'class' => Payment::class,
                 'multiple' => false,
                 'expanded' => true,
                 'required' => true,
             ])
             ->add('submit', SubmitType::class, [
-                'attr' => [
-                    'class' => 'btn-outline-primary',
-                ],
+                'label' => 'Valider ma commande',
             ]);
     }
 
