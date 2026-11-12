@@ -67,6 +67,22 @@ class CheckoutTest extends WebTestCase
     }
 
     /**
+     * The label is paid through PayPal or a reserved Vinted listing, nothing else.
+     */
+    public function testThePaymentChoicesArePayPalAndVinted(): void
+    {
+        $this->client->loginUser($this->user('test@test.fr'));
+        $crawler = $this->client->request('GET', '/order/delivery');
+        self::assertResponseIsSuccessful();
+
+        $offered = $crawler->filter('input[type="radio"][name$="[paymentMethod]"]')->each(
+            static fn ($input): string => trim($crawler->filter(\sprintf('label[for="%s"]', $input->attr('id')))->text()),
+        );
+
+        self::assertSame(['PayPal', 'Vinted'], $offered);
+    }
+
+    /**
      * FrankenPHP worker mode serves many requests with one kernel (disableReboot() here).
      * The address list used to be computed once per worker, from the first customer.
      */

@@ -46,7 +46,7 @@ App\Entity\Order:
         address: '@address_customer_<(($current - 1) % 8 + 1)>'
         shippingAddress: '<((string) $address)>'
         delivery: '50%? @colissimo : @mondial_relay'
-        payment: '70%? @stripe : @paypal'
+        payment: '70%? @paypal : @vinted'
         # Orders 1..7 date from the last week, the others are spread over ~13 months.
         created_at: '<(new \DateTimeImmutable(sprintf("-%d days %d hours", $current <= 7 ? $current : ($current - 7) * 12 + 7, $current % 10)))>'
         reference: '<(sprintf("KBR-%s-%08X", $created_at->format("Ymd"), $current))>'

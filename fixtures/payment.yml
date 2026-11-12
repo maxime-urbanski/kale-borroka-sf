@@ -1,6 +1,7 @@
+# The label is paid through PayPal or a reserved Vinted listing, nothing else.
 App\Entity\Payment:
     paypal:
-        name: Paypal
-        
-    stripe:
-        name: Stripe
+        name: PayPal
+
+    vinted:
+        name: Vinted
