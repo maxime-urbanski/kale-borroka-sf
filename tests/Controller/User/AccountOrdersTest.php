@@ -121,6 +121,22 @@ class AccountOrdersTest extends WebTestCase
         self::assertSelectorTextContains('.kb-order-side', (string) $order->getDelivery()?->getName());
     }
 
+    /**
+     * The checkout offers no delivery mode: until the label works the shipping out, the order
+     * must not claim it is free.
+     */
+    public function testShippingNotYetWorkedOutIsNotCalledFree(): void
+    {
+        [$release] = $this->releasesWithStock(5);
+        $order = $this->placeOrder($this->customer(), [self::idOf($release) => 1]);
+
+        $crawler = $this->detail($order);
+
+        $recap = $crawler->filter('.kb-order-recap')->text();
+        self::assertStringContainsString('À calculer', $recap);
+        self::assertStringNotContainsString('Offert', $recap);
+    }
+
     public function testTheTimelineMarksWhereTheOrderStands(): void
     {
         [$release] = $this->releasesWithStock(5);
@@ -409,7 +425,7 @@ class AccountOrdersTest extends WebTestCase
         $crawler = $this->client->request('GET', '/order/delivery');
 
         $form = $crawler->filter('form')->form();
-        foreach (['deliveryAddress', 'transporter', 'paymentMethod'] as $field) {
+        foreach (['deliveryAddress', 'paymentMethod'] as $field) {
             $choice = $form[$form->getName().'['.$field.']'];
             self::assertInstanceOf(\Symfony\Component\DomCrawler\Field\ChoiceFormField::class, $choice);
             $choice->select($choice->availableOptionValues()[0]);

@@ -13,7 +13,6 @@ use App\Order\Command\PlaceOrder;
 use App\Repository\AddressRepository;
 use App\Repository\PaymentRepository;
 use App\Repository\ReleaseRepository;
-use App\Repository\TransporterRepository;
 use App\Repository\UserRepository;
 use App\Tests\DatabaseIsolationTrait;
 use App\Tests\ServiceTrait;
@@ -81,7 +80,6 @@ trait OrderTestTrait
         $reference = $this->bus()->dispatch(new PlaceOrder(
             buyerId: (int) $buyer->getId(),
             addressId: $addressId ?? (int) $address?->getId(),
-            transporterId: (int) self::service(TransporterRepository::class)->findOneBy([])?->getId(),
             paymentId: (int) self::service(PaymentRepository::class)->findOneBy([])?->getId(),
             lines: $lines,
         ));

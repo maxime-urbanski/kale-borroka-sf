@@ -16,9 +16,9 @@ final readonly class PlaceOrder
     public function __construct(
         public int $buyerId,
         public int $addressId,
-        public int $transporterId,
         public int $paymentId,
         public array $lines,
+        public ?string $message = null,
     ) {
     }
 }

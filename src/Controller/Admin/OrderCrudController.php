@@ -181,6 +181,9 @@ class OrderCrudController extends AbstractCrudController
         yield FormField::addTab('Livraison', 'fa fa-truck');
         yield AssociationField::new('delivery', 'Transporteur')
             ->hideOnIndex();
+        yield TextareaField::new('customerMessage', 'Message du client')
+            ->setFormTypeOption('disabled', true)
+            ->hideOnIndex();
         yield TextareaField::new('shippingAddress', 'Adresse de livraison')
             ->setTemplatePath('admin/field/shipping_address.html.twig')
             ->hideOnIndex();

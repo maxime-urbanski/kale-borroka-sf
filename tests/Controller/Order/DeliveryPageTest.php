@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace App\Tests\Controller\Order;
 
 use App\Entity\Article;
-use App\Service\ShopSettingsProviderInterface;
 use App\Tests\Order\OrderTestTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
- * Step 2 of the checkout (mockup « Tunnel d'achat »): stepper, address / transport / payment
- * as choice cards, recap of the order.
+ * Step 2 of the checkout (mockup « Tunnel d'achat »): stepper, address and payment as choice
+ * cards, a free message, recap of the order. No transport choice: the shipping cost is worked out
+ * by hand and mailed with the amount to pay.
  */
 class DeliveryPageTest extends WebTestCase
 {
@@ -46,10 +46,63 @@ class DeliveryPageTest extends WebTestCase
     {
         $crawler = $this->open();
 
-        foreach (['deliveryAddress', 'transporter', 'paymentMethod'] as $field) {
+        foreach (['deliveryAddress', 'paymentMethod'] as $field) {
             self::assertGreaterThan(0, $crawler->filter(\sprintf('.kb-choice input[type="radio"][name$="[%s]"]', $field))->count(), $field);
         }
+        self::assertCount(0, $crawler->filter('input[name$="[transporter]"]'));
         self::assertCount(3, $crawler->filter('fieldset.kb-fieldset'));
+        self::assertStringContainsString('Où on t\'envoie ça ?', $crawler->filter('fieldset.kb-fieldset')->eq(0)->text());
+        self::assertStringContainsString('Comment tu veux payer ?', $crawler->filter('fieldset.kb-fieldset')->eq(1)->text());
+    }
+
+    public function testThePaymentCardsExplainEachWay(): void
+    {
+        $crawler = $this->open();
+
+        $cards = $crawler->filter('input[name$="[paymentMethod]"] + .kb-choice__card');
+        self::assertCount(2, $cards);
+        self::assertStringContainsString('PayPal.me', $cards->eq(0)->text());
+        self::assertStringContainsString('annonce réservée', $cards->eq(1)->text());
+    }
+
+    public function testPayPalIsTickedByDefault(): void
+    {
+        $crawler = $this->open();
+
+        $checked = $crawler->filter('input[name$="[paymentMethod]"]:checked');
+        self::assertCount(1, $checked);
+        self::assertSame('PayPal', trim($crawler->filter(\sprintf('label[for="%s"] .kb-choice__title', $checked->attr('id')))->text()));
+    }
+
+    public function testTheMessageIsOptionalAndCapped(): void
+    {
+        $crawler = $this->open();
+
+        $message = $crawler->filter('textarea[name$="[message]"], input[name$="[message]"]');
+        self::assertCount(1, $message);
+        self::assertSame('280', $message->attr('maxlength'));
+        self::assertNull($message->attr('required'));
+    }
+
+    public function testTheMessageCannotPassTheLimit(): void
+    {
+        $crawler = $this->open();
+        $form = $crawler->filter('form.kb-order__form')->form();
+        $values = $form->getPhpValues();
+        $name = (string) array_key_first($values);
+        $values[$name]['message'] = str_repeat('a', 281);
+
+        $this->client->request('POST', '/order/delivery', $values);
+
+        self::assertResponseIsUnprocessable();
+    }
+
+    public function testNoPaymentIsTakenNow(): void
+    {
+        $crawler = $this->open();
+
+        self::assertStringContainsString('Aucun paiement maintenant', $crawler->filter('.kb-order__notice')->text());
+        self::assertStringContainsString('port', $crawler->filter('.kb-recap')->text());
     }
 
     public function testTheDefaultAddressIsPreselected(): void
@@ -86,21 +139,8 @@ class DeliveryPageTest extends WebTestCase
         $crawler = $this->open();
 
         $cards = $crawler->filter('.kb-choice');
-        self::assertCount($cards->count(), $crawler->filter('.kb-choice .kb-choice__mark .bi-circle'));
-        self::assertCount($cards->count(), $crawler->filter('.kb-choice .kb-choice__mark .bi-record-circle-fill'));
-    }
-
-    public function testShippingIsOfferedFromTheThreshold(): void
-    {
-        self::service(ShopSettingsProviderInterface::class)->get()->setFreeShippingThreshold(1);
-        $this->entityManager()->flush();
-
-        $crawler = $this->open();
-
-        foreach ($crawler->filter('.kb-choice__price')->each(static fn (Crawler $price): string => $price->text()) as $price) {
-            self::assertSame('Offert', trim($price));
-        }
-        self::assertGreaterThan(0, $crawler->filter('.kb-choice__price')->count());
+        self::assertCount($cards->count(), $crawler->filter('.kb-choice .kb-choice__mark .bi-square'));
+        self::assertCount($cards->count(), $crawler->filter('.kb-choice .kb-choice__mark .bi-check-square-fill'));
     }
 
     public function testTheRecapListsTheLinesAndPointsToTheAddressBook(): void
@@ -108,8 +148,8 @@ class DeliveryPageTest extends WebTestCase
         $crawler = $this->open();
 
         self::assertCount(1, $crawler->filter('.kb-recap .kb-recap__line'));
-        self::assertStringContainsString('×2', $crawler->filter('.kb-recap__line')->text());
-        self::assertSame('/mon-compte/mes-adresses?ajouter', $crawler->filter('a:contains("Nouvelle adresse")')->attr('href'));
+        self::assertStringContainsString('2 × ', $crawler->filter('.kb-recap__line')->text());
+        self::assertSame('/mon-compte/mes-adresses?ajouter', $crawler->filter('a:contains("Ajouter une adresse")')->attr('href'));
         self::assertSame('/cart', $crawler->filter('a:contains("Retour au panier")')->attr('href'));
     }
 
@@ -119,12 +159,12 @@ class DeliveryPageTest extends WebTestCase
         $form = $crawler->filter('form.kb-order__form')->form();
         $values = $form->getPhpValues();
         $name = (string) array_key_first($values);
-        unset($values[$name]['transporter'], $values[$name]['paymentMethod']);
+        unset($values[$name]['paymentMethod']);
 
         $crawler = $this->client->request('POST', '/order/delivery', $values);
 
         self::assertResponseIsUnprocessable();
-        self::assertCount(2, $crawler->filter('fieldset.kb-fieldset .invalid-feedback, fieldset.kb-fieldset .form-error-message'));
+        self::assertCount(1, $crawler->filter('fieldset.kb-fieldset .invalid-feedback, fieldset.kb-fieldset .form-error-message'));
     }
 
     private function open(): Crawler

@@ -6,12 +6,12 @@ namespace App\Form;
 
 use App\Data\OrderDeliveryDto;
 use App\Entity\Payment;
-use App\Entity\Transporter;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -32,25 +32,23 @@ class OrderAddressDeliveryPaymentFormType extends AbstractType
 
         $builder
             ->add('deliveryAddress', SelectUserAddressFormType::class, [
-                'label' => 'Adresse de livraison',
+                'label' => 'Où on t\'envoie ça ?',
                 'expanded' => true,
                 'multiple' => false,
-            ])
-            ->add('transporter', EntityType::class, [
-                'label' => 'Mode de livraison',
-                'class' => Transporter::class,
-                // The price is added to the order total (free from the shop's threshold).
-                'choice_label' => static fn (Transporter $transporter): string => \sprintf('%s — %s €', $transporter->getName(), number_format((int) $transporter->getPrice() / 100, 2, ',', ' ')),
-                'multiple' => false,
-                'expanded' => true,
-                'required' => true,
             ])
             ->add('paymentMethod', EntityType::class, [
-                'label' => 'Paiement',
+                'label' => 'Comment tu veux payer ?',
                 'class' => Payment::class,
                 'multiple' => false,
                 'expanded' => true,
                 'required' => true,
+            ])
+            ->add('message', TextType::class, [
+                'label' => 'Ton message',
+                'required' => false,
+                'empty_data' => null,
+                'attr' => ['maxlength' => 280, 'placeholder' => 'Ex. : je passe au concert du 22 à Bayonne'],
+                'help' => 'Regrouper avec une autre commande, une dédicace, un retrait au concert… 280 caractères max.',
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Valider ma commande',
