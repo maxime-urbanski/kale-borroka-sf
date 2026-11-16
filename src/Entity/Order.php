@@ -55,13 +55,13 @@ class Order
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $paidAt = null;
 
-    /** Lines plus shipping, in cents: what the buyer pays. */
+    /** Lines plus shipping, in cents: the lines only at checkout, shipping is added once worked out by hand. */
     #[ORM\Column]
     private ?int $totalPrice = null;
 
     /**
-     * Shipping cost in cents, copied from the transporter at checkout (0 above
-     * ShopSettings::$freeShippingThreshold). Orders placed before it was charged hold 0.
+     * Shipping cost in cents. 0 at checkout: the label works it out by hand and mails it with
+     * the amount to pay (the checkout offers no delivery mode).
      */
     #[ORM\Column(options: ['default' => 0])]
     private int $shippingPrice = 0;

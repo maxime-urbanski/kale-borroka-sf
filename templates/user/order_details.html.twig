@@ -192,9 +192,14 @@
                     <dt>Sous-total</dt>
                     <dd>{{ ((order.totalPrice - order.shippingPrice) / 100)|format_currency('EUR', [], 'fr') }}</dd>
                     <dt>Livraison{{ order.delivery ? ' · ' ~ order.delivery.name }}</dt>
-                    <dd{% if order.shippingPrice == 0 %} class="kb-order-recap__free"{% endif %}>
-                        {{- order.shippingPrice > 0 ? (order.shippingPrice / 100)|format_currency('EUR', [], 'fr') : 'Offerte' -}}
-                    </dd>
+                    {# No delivery mode yet: the label has not worked the shipping out, it is not free. #}
+                    {% if order.shippingPrice > 0 %}
+                        <dd>{{ (order.shippingPrice / 100)|format_currency('EUR', [], 'fr') }}</dd>
+                    {% elseif order.delivery %}
+                        <dd class="kb-order-recap__free">Offerte</dd>
+                    {% else %}
+                        <dd>À calculer</dd>
+                    {% endif %}
                 </dl>
                 <div class="kb-order-recap__total">
                     <strong>Total</strong>
