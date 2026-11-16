@@ -44,12 +44,13 @@ class CheckoutTest extends WebTestCase
 
         // Every choice list has a single pre-selectable value in the fixtures: take the first one.
         $form = $crawler->filter('form')->form();
-        foreach (['deliveryAddress', 'transporter', 'paymentMethod'] as $field) {
+        foreach (['deliveryAddress', 'paymentMethod'] as $field) {
             $name = $form->getName() ? $form->getName().'['.$field.']' : $field;
             $choice = $form[$name];
             self::assertInstanceOf(ChoiceFormField::class, $choice);
             $choice->select($choice->availableOptionValues()[0]);
         }
+        $form[$form->getName().'[message]'] = 'Je passe au concert du 22 à Bayonne';
         $this->client->submit($form);
 
         self::assertResponseRedirects();
@@ -63,6 +64,9 @@ class CheckoutTest extends WebTestCase
         $line = $order->getOrderDetails()->first();
         self::assertNotFalse($line);
         self::assertSame(2, $line->getQuantity());
+        self::assertSame('Je passe au concert du 22 à Bayonne', $order->getCustomerMessage());
+        self::assertSame(0, $order->getShippingPrice(), 'the shipping cost is worked out by hand and mailed');
+        self::assertNull($order->getDelivery());
         self::assertSame(4, $this->stockOf($release), 'stock is only taken on payment');
     }
 
@@ -76,7 +80,7 @@ class CheckoutTest extends WebTestCase
         self::assertResponseIsSuccessful();
 
         $offered = $crawler->filter('input[type="radio"][name$="[paymentMethod]"]')->each(
-            static fn ($input): string => trim($crawler->filter(\sprintf('label[for="%s"]', $input->attr('id')))->text()),
+            static fn ($input): string => trim($crawler->filter(\sprintf('label[for="%s"] .kb-choice__title', $input->attr('id')))->text()),
         );
 
         self::assertSame(['PayPal', 'Vinted'], $offered);

@@ -70,8 +70,13 @@ class Order
     #[ORM\OneToMany(mappedBy: 'orders', targetEntity: OrderDetails::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $orderDetails;
 
+    /** Delivery mode, set by the label once it has worked the shipping out: the checkout does not offer one. */
     #[ORM\ManyToOne]
     private ?Transporter $delivery = null;
+
+    /** The buyer's word at checkout (grouping with another order, a dedication, a pick-up...). */
+    #[ORM\Column(length: 280, nullable: true)]
+    private ?string $customerMessage = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     private ?Payment $payment = null;
@@ -261,6 +266,18 @@ class Order
                 $orderDetail->setOrders(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCustomerMessage(): ?string
+    {
+        return $this->customerMessage;
+    }
+
+    public function setCustomerMessage(?string $customerMessage): static
+    {
+        $this->customerMessage = $customerMessage;
 
         return $this;
     }

@@ -11,8 +11,8 @@ use App\Form\OrderAddressDeliveryPaymentFormType;
 use App\Messenger\CommandBusInterface;
 use App\Order\Command\PlaceOrder;
 use App\Order\Exception\InvalidOrderException;
+use App\Repository\PaymentRepository;
 use App\Service\CartService;
-use App\Service\ShopSettingsProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,11 +29,13 @@ class OrderAddressDeliveryController extends AbstractController
         Request $request,
         CartService $cartService,
         CommandBusInterface $commandBus,
-        ShopSettingsProviderInterface $shopSettings,
+        PaymentRepository $paymentRepository,
     ): Response {
         $orderDeliveryDto = new OrderDeliveryDto();
         // The default address is ticked, the buyer can still pick another one.
         $orderDeliveryDto->deliveryAddress = $user->getDefaultAddress();
+        // PayPal is ticked by default; the buyer can still pick Vinted.
+        $orderDeliveryDto->paymentMethod = $paymentRepository->findOneBy(['name' => 'PayPal']);
         $form = $this->createForm(OrderAddressDeliveryPaymentFormType::class, $orderDeliveryDto, []);
         $form->handleRequest($request);
         $cart = $cartService->getFullCart();
@@ -49,9 +51,9 @@ class OrderAddressDeliveryController extends AbstractController
                 $reference = $commandBus->dispatch(new PlaceOrder(
                     buyerId: (int) $user->getId(),
                     addressId: (int) $orderDeliveryDto->deliveryAddress?->getId(),
-                    transporterId: (int) $orderDeliveryDto->transporter?->getId(),
                     paymentId: (int) $orderDeliveryDto->paymentMethod?->getId(),
                     lines: $lines,
+                    message: $orderDeliveryDto->message,
                 ));
             } catch (InvalidOrderException $exception) {
                 $this->addFlash('danger', $exception->getMessage());
@@ -67,13 +69,10 @@ class OrderAddressDeliveryController extends AbstractController
         }
 
         $total = $cartService->getTotal($cart);
-        // Same rule as PlaceOrderHandler: no shipping cost from the shop's threshold.
-        $threshold = $shopSettings->get()->getFreeShippingThreshold();
 
         return $this->render('order/delivery.html.twig', [
             'cart' => $cart,
             'total' => $total,
-            'free_shipping' => null !== $threshold && $total >= $threshold,
             // The form itself: render() answers 422 when it was submitted invalid.
             'form' => $form,
         ]);

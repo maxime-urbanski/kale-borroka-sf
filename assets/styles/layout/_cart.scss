@@ -510,25 +510,51 @@
     }
 }
 
-// Checkout, step 2 (/order/delivery): address, transport and payment as choice cards.
+// Checkout, step 2 (/order/delivery): address and payment as choice cards, a message, the recap.
 .kb-order {
-    &__title {
-        margin: 0 0 28px;
+    &__heading {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 8px 16px;
+        margin-bottom: 28px;
         padding-bottom: 12px;
         border-bottom: 3px solid $kb-noir;
     }
+
+    &__title { margin: 0; }
+
+    &__notice {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 20px;
+        border: 3px solid $kb-noir;
+        background: $kb-papier-2;
+
+        p { margin: 0; }
+        strong { display: block; font-family: $kb-font-display; font-size: 1.75rem; line-height: 1.1; text-transform: uppercase; }
+    }
+
+    &__notice-icon {
+        display: grid;
+        flex: none;
+        place-items: center;
+        width: 64px;
+        height: 64px;
+        background: $kb-noir;
+        color: $kb-papier;
+        font-size: 1.75rem;
+    }
+
+    &__after { margin: 10px 0 0; text-align: center; font-size: .875rem; }
 
     &__form { display: flex; flex-direction: column; gap: 32px; }
 
     &__note { display: flex; gap: 10px; margin: 0; }
 
-    &__actions {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-    }
+    &__actions { display: block; }
 }
 
 .kb-fieldset {
@@ -553,15 +579,21 @@
         gap: 14px;
 
         @include media-breakpoint-up(md) {
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         }
+
+        &--payment { @include media-breakpoint-up(md) { grid-template-columns: 1fr 1fr; } }
     }
+
+    &__help { margin: 12px 0 0; font-size: .8125rem; }
 }
 
 // A radio card: the input is visually hidden but stays focusable, the card shows focus and state
 // (filled radio icon + thick border, never colour alone).
 .kb-choice {
     position: relative;
+    // The card fills its grid cell: every card is as tall as the tallest of its row.
+    display: flex;
 
     &__input {
         position: absolute;
@@ -577,18 +609,15 @@
         position: relative;
         display: flex;
         flex-direction: column;
+        flex: 1;
         gap: 4px;
-        height: 100%;
         padding: 16px 48px 16px 16px;
         border: 2px solid $kb-noir;
         background: $kb-papier;
     }
 
-    &__input:checked + &__card {
-        border-width: 4px;
-        padding: 14px 46px 14px 14px;
-        background: $kb-papier-2;
-    }
+    // No border or padding change on :checked: the card must not jump when ticked.
+    &__input:checked + &__card { background: $kb-papier-2; }
 
     // Same double ring as the global :focus-visible (_base.scss).
     &__input:focus-visible + &__card {
@@ -598,34 +627,51 @@
     }
 
     // The mark follows :checked, not the state the page was rendered with.
-    &__mark .bi-record-circle-fill,
-    &__input:checked + &__card &__mark .bi-circle { display: none; }
-    &__input:checked + &__card &__mark .bi-record-circle-fill { display: inline; }
+    &__mark .bi-check-square-fill,
+    &__input:checked + &__card &__mark .bi-square { display: none; }
+    &__input:checked + &__card &__mark .bi-check-square-fill { display: inline; }
 
-    &__tag { align-self: flex-start; margin-bottom: 4px; }
+    &__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    &__tag { flex: none; }
+    &__title--big { font-family: $kb-font-display; font-size: 1.75rem; line-height: 1; text-transform: uppercase; }
+    &__list { margin: 8px 0 0; padding-left: 18px; font-size: .875rem; }
+
+    // « Choisie » only shows on the ticked card (the mark alone would be colour/shape only). Hidden,
+    // not removed: its line stays reserved so ticking a card never changes any card's height.
+    &__chosen {
+        visibility: hidden;
+        margin-top: auto;
+        padding-top: 8px;
+        font-family: $kb-font-mono;
+        font-size: .75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    &__input:checked + &__card &__chosen { visibility: visible; }
 
     &__title { font-weight: 800; }
     &__text { font-size: .9375rem; }
     &__price { font-family: $kb-font-mono; font-weight: 700; }
 
+    // Top left, before the title, as on the mockup: the head leaves room for it.
     &__mark {
         position: absolute;
-        top: 14px;
-        right: 14px;
+        top: 16px;
+        left: 14px;
         font-size: 1.25rem;
+        line-height: 1;
     }
+    &__card { padding: 16px 16px 16px 48px; }
 
     &__add {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        justify-content: center;
         gap: 8px;
-        min-height: 88px;
-        border: 2px dashed $kb-noir;
+        margin-top: 16px;
         color: $kb-noir;
         font-weight: 800;
         text-transform: uppercase;
-        text-decoration: none;
+        text-decoration: underline;
     }
 }
 
@@ -663,4 +709,8 @@
     }
 
     &__amount { font-family: $kb-font-mono; font-weight: 700; }
+
+    &__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    &__shipping { display: flex; gap: 8px; margin: 14px 0 0; padding: 10px; border: 2px dashed $kb-noir; font-size: .875rem; }
+    &__fine { margin: 10px 0 0; font-size: .8125rem; }
 }

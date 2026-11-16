@@ -10,15 +10,13 @@ use App\Order\Exception\InvalidOrderException;
 use App\Repository\AddressRepository;
 use App\Repository\ArticleRepository;
 use App\Repository\PaymentRepository;
-use App\Repository\TransporterRepository;
 use App\Repository\UserRepository;
-use App\Service\ShopSettingsProviderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * The total includes shipping: the transporter's price, or nothing from the free shipping
- * threshold of the shop settings.
+ * The total is the lines only: shipping is worked out by hand afterwards and mailed with the
+ * amount to pay (the checkout offers no delivery mode).
  *
  * Stock is not taken here but when the order is paid (OrderWorkflowSubscriber): a pending
  * order only records what the customer asked for, clamped to what was available.
@@ -30,10 +28,8 @@ readonly class PlaceOrderHandler
         private EntityManagerInterface $entityManager,
         private UserRepository $userRepository,
         private AddressRepository $addressRepository,
-        private TransporterRepository $transporterRepository,
         private PaymentRepository $paymentRepository,
         private ArticleRepository $articleRepository,
-        private ShopSettingsProviderInterface $shopSettings,
     ) {
     }
 
@@ -54,8 +50,7 @@ readonly class PlaceOrderHandler
             ->setCreatedAt(new \DateTimeImmutable())
             ->setAddress($address)
             ->setShippingAddress((string) $address)
-            ->setDelivery($this->transporterRepository->find($command->transporterId)
-                ?? throw new InvalidOrderException('Mode de livraison invalide.'))
+            ->setCustomerMessage($command->message)
             ->setPayment($this->paymentRepository->find($command->paymentId)
                 ?? throw new InvalidOrderException('Mode de paiement invalide.'));
 
@@ -85,13 +80,8 @@ readonly class PlaceOrderHandler
             throw new InvalidOrderException('Aucun article de votre panier n\'est disponible.');
         }
 
-        // Free shipping from the threshold of the shop settings, on the lines' total.
-        $freeShippingThreshold = $this->shopSettings->get()->getFreeShippingThreshold();
-        $shipping = null !== $freeShippingThreshold && $total >= $freeShippingThreshold
-            ? 0
-            : (int) $order->getDelivery()?->getPrice();
-
-        $order->setShippingPrice($shipping)->setTotalPrice($total + $shipping);
+        // No shipping at checkout: the label works it out by hand and mails it with the amount to pay.
+        $order->setShippingPrice(0)->setTotalPrice($total);
         $this->entityManager->persist($order);
 
         return (string) $order->getReference();

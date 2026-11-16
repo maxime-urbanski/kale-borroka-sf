@@ -409,7 +409,7 @@ class AccountOrdersTest extends WebTestCase
         $crawler = $this->client->request('GET', '/order/delivery');
 
         $form = $crawler->filter('form')->form();
-        foreach (['deliveryAddress', 'transporter', 'paymentMethod'] as $field) {
+        foreach (['deliveryAddress', 'paymentMethod'] as $field) {
             $choice = $form[$form->getName().'['.$field.']'];
             self::assertInstanceOf(\Symfony\Component\DomCrawler\Field\ChoiceFormField::class, $choice);
             $choice->select($choice->availableOptionValues()[0]);
