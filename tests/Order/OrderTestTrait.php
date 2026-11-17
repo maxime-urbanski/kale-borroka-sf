@@ -10,9 +10,11 @@ use App\Entity\User;
 use App\Messenger\CommandBus;
 use App\Messenger\CommandBusInterface;
 use App\Order\Command\PlaceOrder;
+use App\Order\Command\SetOrderShipping;
 use App\Repository\AddressRepository;
 use App\Repository\PaymentRepository;
 use App\Repository\ReleaseRepository;
+use App\Repository\TransporterRepository;
 use App\Repository\UserRepository;
 use App\Tests\DatabaseIsolationTrait;
 use App\Tests\ServiceTrait;
@@ -71,9 +73,12 @@ trait OrderTestTrait
     }
 
     /**
+     * The label sets the shipping before an order can be paid (workflow guard on `pay`): by
+     * default the order gets a free one, `shippingSet: false` leaves it to be worked out.
+     *
      * @param array<int, int> $lines article id => quantity
      */
-    protected function placeOrder(User $buyer, array $lines, ?int $addressId = null): Order
+    protected function placeOrder(User $buyer, array $lines, ?int $addressId = null, bool $shippingSet = true): Order
     {
         $address = self::service(AddressRepository::class)->findOneBy(['users' => $buyer]);
 
@@ -86,6 +91,14 @@ trait OrderTestTrait
 
         $order = $this->entityManager()->getRepository(Order::class)->findOneBy(['reference' => $reference]);
         self::assertInstanceOf(Order::class, $order);
+
+        if ($shippingSet) {
+            $this->bus()->dispatch(new SetOrderShipping(
+                orderId: (int) $order->getId(),
+                transporterId: (int) self::service(TransporterRepository::class)->findOneBy([])?->getId(),
+                shippingPrice: 0,
+            ));
+        }
 
         return $order;
     }

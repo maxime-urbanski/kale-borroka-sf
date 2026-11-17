@@ -1,0 +1,22 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}Fixer le port · {{ order.reference }}{% endblock %}
+
+{% block main %}
+    <p>
+        {{ order.orderDetails|length }} ligne(s), {{ (lines / 100)|format_currency('EUR', locale: 'fr') }} d'articles.
+        Le total devient articles + port ; il part ensuite dans le lien de paiement.
+    </p>
+    <address class="mb-3">{{ order.shippingAddress|nl2br }}</address>
+    {% if order.customerMessage %}
+        <p><strong>Message du client :</strong> {{ order.customerMessage }}</p>
+    {% endif %}
+    {{ form_start(form) }}
+        {{ form_row(form.transporter) }}
+        {{ form_row(form.shippingPrice) }}
+        <div class="d-flex gap-2">
+            {{ form_widget(form.submit, {attr: {class: 'btn btn-primary'}}) }}
+            <a class="btn btn-secondary" href="{{ back }}">Annuler</a>
+        </div>
+    {{ form_end(form) }}
+{% endblock %}
