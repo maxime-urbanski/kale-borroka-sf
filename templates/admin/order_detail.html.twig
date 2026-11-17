@@ -1,0 +1,13 @@
+{% extends '@EasyAdmin/crud/detail.html.twig' %}
+
+{# An order's admin page: the buyer's message before anything else, it may change how to pack or ship. #}
+{% block main %}
+    {% set message = entity.instance.customerMessage %}
+    {% if message %}
+        <div class="alert alert-info kb-admin-message mb-4" role="note">
+            <strong><i class="fa fa-comment me-1" aria-hidden="true"></i>Message du client</strong>
+            <p class="mb-0 mt-1">{{ message|nl2br }}</p>
+        </div>
+    {% endif %}
+    {{ parent() }}
+{% endblock %}

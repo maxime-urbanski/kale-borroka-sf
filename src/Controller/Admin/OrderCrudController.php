@@ -15,6 +15,7 @@ use App\Order\Command\ApplyOrderTransition;
 use App\Order\Command\SetOrderShipping;
 use App\Order\Exception\InsufficientStockException;
 use App\Order\Exception\InvalidOrderException;
+use App\Service\ShopSettingsProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -51,6 +52,7 @@ class OrderCrudController extends AbstractCrudController
     public function __construct(
         #[Target('order')]
         private readonly WorkflowInterface $orderWorkflow,
+        private readonly ShopSettingsProviderInterface $shopSettingsProvider,
     ) {
     }
 
@@ -65,7 +67,9 @@ class OrderCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Commande')
             ->setEntityLabelInPlural('Commandes')
             ->setDefaultSort(['created_at' => 'DESC'])
-            ->setSearchFields(['reference', 'buyer.email', 'buyer.lastname'])
+            ->setSearchFields(['reference', 'buyer.email', 'buyer.lastname', 'buyer.firstname'])
+            // The buyer's message above the tabs.
+            ->overrideTemplate('crud/detail', 'admin/order_detail.html.twig')
             ->showEntityActionsInlined();
     }
 
@@ -219,7 +223,9 @@ class OrderCrudController extends AbstractCrudController
         yield FormField::addColumn(6);
         yield TextField::new('reference', 'Référence');
         yield DateTimeField::new('created_at', 'Passée le');
-        yield AssociationField::new('buyer', 'Client');
+        yield AssociationField::new('buyer', 'Client')
+            ->setTemplatePath('admin/field/order_buyer.html.twig')
+            ->setCustomOption('withPhone', Crud::PAGE_DETAIL === $pageName);
         yield MoneyField::new('totalPrice', 'Total')
             ->setCurrency('EUR');
         yield MoneyField::new('shippingPrice', 'Dont livraison')
@@ -229,7 +235,8 @@ class OrderCrudController extends AbstractCrudController
         yield ChoiceField::new('status', 'Statut')
             ->setChoices(OrderStatus::cases())
             ->setFormTypeOption('choice_label', static fn (OrderStatus $status): string => $status->label())
-            ->renderAsBadges([
+            ->setTemplatePath('admin/field/enum_badge.html.twig')
+            ->setCustomOption('badges', [
                 OrderStatus::PENDING->value => 'warning',
                 OrderStatus::PAID->value => 'info',
                 OrderStatus::PREPARING->value => 'info',
@@ -241,7 +248,8 @@ class OrderCrudController extends AbstractCrudController
         yield ChoiceField::new('paymentStatus', 'Paiement')
             ->setChoices(PaymentStatus::cases())
             ->setFormTypeOption('choice_label', static fn (PaymentStatus $status): string => $status->label())
-            ->renderAsBadges([
+            ->setTemplatePath('admin/field/enum_badge.html.twig')
+            ->setCustomOption('badges', [
                 PaymentStatus::AWAITING->value => 'warning',
                 PaymentStatus::PAID->value => 'success',
                 PaymentStatus::FAILED->value => 'danger',
@@ -256,13 +264,11 @@ class OrderCrudController extends AbstractCrudController
             ->setBadge(static fn (?Order $order): ?int => $order?->getOrderDetails()->count() ?: null);
         yield CollectionField::new('orderDetails', false)
             ->setTemplatePath('admin/field/order_lines.html.twig')
+            ->setCustomOption('lowStockThreshold', Crud::PAGE_DETAIL === $pageName ? $this->shopSettingsProvider->get()->getLowStockThreshold() : null)
             ->onlyOnDetail();
 
         yield FormField::addTab('Livraison', 'fa fa-truck');
         yield AssociationField::new('delivery', 'Transporteur')
-            ->hideOnIndex();
-        yield TextareaField::new('customerMessage', 'Message du client')
-            ->setFormTypeOption('disabled', true)
             ->hideOnIndex();
         yield TextareaField::new('shippingAddress', 'Adresse de livraison')
             ->setTemplatePath('admin/field/shipping_address.html.twig')
