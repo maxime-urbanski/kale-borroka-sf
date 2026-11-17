@@ -85,7 +85,8 @@ final readonly class EmailChange implements EmailChangeInterface
         }
 
         $oldEmail = (string) $user->getEmail();
-        $user->setEmail($email)->setPendingEmail(null);
+        // The link was mailed to this address and opened: it is proven.
+        $user->setEmail($email)->setPendingEmail(null)->markEmailVerified();
 
         try {
             $this->entityManager->flush();

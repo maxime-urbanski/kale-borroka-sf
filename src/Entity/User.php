@@ -51,6 +51,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, nullable: true)]
     private ?string $pendingEmail = null;
 
+    /**
+     * When the customer proved they read this address (link mailed at registration, new address
+     * confirmed). Null: not yet, no order until then.
+     */
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $emailVerifiedAt = null;
+
     #[ORM\Column(length: 100)]
     private ?string $lastname = null;
 
@@ -82,9 +89,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
+    /**
+     * A different address is an unproven one: callers that have proved it (confirmed change)
+     * call markEmailVerified() afterwards.
+     */
     public function setEmail(string $email): static
     {
-        $this->email = self::normalizeEmail($email);
+        $email = self::normalizeEmail($email);
+
+        if (null !== $this->email && $email !== $this->email) {
+            $this->emailVerifiedAt = null;
+        }
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getEmailVerifiedAt(): ?\DateTimeImmutable
+    {
+        return $this->emailVerifiedAt;
+    }
+
+    public function setEmailVerifiedAt(?\DateTimeImmutable $emailVerifiedAt): static
+    {
+        $this->emailVerifiedAt = $emailVerifiedAt;
+
+        return $this;
+    }
+
+    public function isEmailVerified(): bool
+    {
+        return null !== $this->emailVerifiedAt;
+    }
+
+    public function markEmailVerified(): static
+    {
+        $this->emailVerifiedAt ??= new \DateTimeImmutable();
 
         return $this;
     }

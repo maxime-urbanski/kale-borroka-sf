@@ -22,6 +22,8 @@ class EmailCaseTest extends WebTestCase
         $this->client = self::createClient();
         $this->client->disableReboot();
         $this->beginIsolation();
+        // The registration limiter state is in a cache pool that outlives the test.
+        self::service(\Symfony\Component\Cache\Adapter\AdapterInterface::class, 'cache.rate_limiter')->clear();
     }
 
     protected function tearDown(): void

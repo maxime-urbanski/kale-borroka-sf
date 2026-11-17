@@ -5,6 +5,7 @@
 {% block body %}
     <div class="container kb-cart">
         {% include 'order/_steps.html.twig' with {current: 1} %}
+        {% include 'partials/_email_unverified.html.twig' %}
 
         {% if cart is empty %}
             <section class="kb-cart-empty kb-tex-halftone" aria-labelledby="cart-empty-title">

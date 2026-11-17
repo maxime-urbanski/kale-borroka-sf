@@ -8,6 +8,7 @@ App\Entity\User:
         lastname: '<lastName()>'
         firstname: '<firstName()>'
         defaultAddress: '@address_customer_<current()>'
+        emailVerifiedAt: '<(new \DateTimeImmutable())>'
 
 App\Entity\Address:
     address_customer_{1..8}:

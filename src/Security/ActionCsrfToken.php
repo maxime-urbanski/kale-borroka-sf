@@ -20,6 +20,7 @@ final readonly class ActionCsrfToken
     public const string CART = 'cart';
     public const string WISHLIST = 'wishlist';
     public const string COLLECTION = 'collection';
+    public const string EMAIL_VERIFICATION = 'email-verification';
 
     public function __construct(
         private CsrfTokenManagerInterface $csrfTokenManager,
