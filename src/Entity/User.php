@@ -53,7 +53,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * When the customer proved they read this address (link mailed at registration, new address
-     * confirmed, or password reset through it). Null: not yet, no order until then.
+     * confirmed). Null: not yet, no order until then.
      */
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $emailVerifiedAt = null;

@@ -33,7 +33,7 @@ final readonly class EmailVerification implements EmailVerificationInterface
     {
         $link = $this->uriSigner->sign($this->urlGenerator->generate('app_email_verify', [
             'id' => $user->getId(),
-            'k' => self::fingerprint((string) $user->getEmail()),
+            'fingerprint' => self::fingerprint((string) $user->getEmail()),
         ], UrlGeneratorInterface::ABSOLUTE_URL), new \DateInterval(self::LIFETIME));
 
         // No from(): every mail leaves from MAILER_DEFAULT_SENDER (mailer.yaml).
@@ -54,21 +54,17 @@ final readonly class EmailVerification implements EmailVerificationInterface
         $user = $this->userRepository->find($request->query->getInt('id'));
 
         return $user instanceof User
-            && hash_equals(self::fingerprint((string) $user->getEmail()), $request->query->getString('k'))
+            && hash_equals(self::fingerprint((string) $user->getEmail()), $request->query->getString('fingerprint'))
             ? $user
             : null;
     }
 
-    public function confirm(Request $request): ?User
+    public function confirm(User $user): void
     {
-        $user = $this->check($request);
-
-        if (null !== $user && !$user->isEmailVerified()) {
+        if (!$user->isEmailVerified()) {
             $user->markEmailVerified();
             $this->entityManager->flush();
         }
-
-        return $user;
     }
 
     private static function fingerprint(string $email): string

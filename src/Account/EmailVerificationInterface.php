@@ -25,9 +25,6 @@ interface EmailVerificationInterface
      */
     public function check(Request $request): ?User;
 
-    /**
-     * Applies the link (flushed): the account check() returns, now verified, or null. Twice is
-     * harmless.
-     */
-    public function confirm(Request $request): ?User;
+    /** Marks the account check() returned as verified (flushed). Twice is harmless. */
+    public function confirm(User $user): void;
 }

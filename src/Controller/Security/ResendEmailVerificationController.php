@@ -7,7 +7,7 @@ namespace App\Controller\Security;
 use App\Account\EmailVerificationInterface;
 use App\Entity\User;
 use App\Security\ActionCsrfToken;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use App\Service\RefererInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -35,17 +34,12 @@ final readonly class ResendEmailVerificationController
         User $user,
         EmailVerificationInterface $emailVerification,
         ActionCsrfToken $csrf,
-        RouterInterface $router,
-        #[Autowire(service: 'limiter.email_verification')]
-        RateLimiterFactoryInterface $limiter,
+        RefererInterface $referer,
+        RateLimiterFactoryInterface $emailVerificationLimiter,
     ): Response {
         /** @var Session $session */
         $session = $request->getSession();
-        $referer = (string) $request->headers->get('referer');
-        // Back where the button was, on this site only.
-        $back = new RedirectResponse(str_starts_with($referer, $request->getSchemeAndHttpHost().'/')
-            ? $referer
-            : $router->generate('app_cart_index'));
+        $back = new RedirectResponse($referer->getReferer());
 
         if (!$csrf->isValid($request, ActionCsrfToken::EMAIL_VERIFICATION)) {
             return $back;
@@ -57,7 +51,7 @@ final readonly class ResendEmailVerificationController
             return $back;
         }
 
-        if (!$limiter->create((string) $user->getId())->consume()->isAccepted()) {
+        if (!$emailVerificationLimiter->create((string) $user->getId())->consume()->isAccepted()) {
             $session->getFlashBag()->add('danger', 'Trop de mails envoyés : réessaie dans une heure.');
 
             return $back;

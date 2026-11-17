@@ -53,7 +53,7 @@ final readonly class VerifyEmailController
             return new RedirectResponse($request->getUri());
         }
 
-        $emailVerification->confirm($request);
+        $emailVerification->confirm($user);
         $session->getFlashBag()->add('success', $current instanceof User && $current->getId() !== $user->getId()
             // Someone else's link, opened in this session: say whose address it was.
             ? 'Adresse '.$user->getEmail().' confirmée. Ce n’est pas celle du compte connecté.'

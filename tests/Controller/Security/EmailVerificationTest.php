@@ -10,6 +10,7 @@ use App\Repository\UserRepository;
 use App\Tests\Order\OrderTestTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\Mime\Email;
 
@@ -29,7 +30,7 @@ class EmailVerificationTest extends WebTestCase
         $this->client->disableReboot();
         $this->beginIsolation();
         // The registration limiter state is in a cache pool that outlives the test.
-        self::service(\Symfony\Component\Cache\Adapter\AdapterInterface::class, 'cache.rate_limiter')->clear();
+        self::service(AdapterInterface::class, 'cache.rate_limiter')->clear();
     }
 
     protected function tearDown(): void
