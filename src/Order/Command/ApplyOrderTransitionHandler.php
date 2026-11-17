@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Order\Command;
 
 use App\Repository\OrderRepository;
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\Exception\NotEnabledTransitionException;
@@ -21,6 +23,7 @@ readonly class ApplyOrderTransitionHandler
         private OrderRepository $orderRepository,
         #[Target('order')]
         private WorkflowInterface $orderWorkflow,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -31,6 +34,8 @@ readonly class ApplyOrderTransitionHandler
     {
         $order = $this->orderRepository->find($command->orderId)
             ?? throw new \InvalidArgumentException(\sprintf('Order #%d does not exist.', $command->orderId));
+        // Same row lock as SetOrderShippingHandler: the shipping cannot change under a payment.
+        $this->entityManager->refresh($order, LockMode::PESSIMISTIC_WRITE);
 
         $this->orderWorkflow->apply($order, $command->transition->value);
     }

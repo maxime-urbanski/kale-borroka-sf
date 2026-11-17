@@ -21,6 +21,8 @@ framework:
                 - refunded
             transitions:
                 pay:
+                    # The payment link carries the total: the label sets the shipping first.
+                    guard: 'subject.getDelivery() !== null'
                     from: pending
                     to: paid
                 prepare:

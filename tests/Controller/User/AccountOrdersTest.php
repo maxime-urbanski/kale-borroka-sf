@@ -128,7 +128,7 @@ class AccountOrdersTest extends WebTestCase
     public function testShippingNotYetWorkedOutIsNotCalledFree(): void
     {
         [$release] = $this->releasesWithStock(5);
-        $order = $this->placeOrder($this->customer(), [self::idOf($release) => 1]);
+        $order = $this->placeOrder($this->customer(), [self::idOf($release) => 1], shippingSet: false);
 
         $crawler = $this->detail($order);
 
