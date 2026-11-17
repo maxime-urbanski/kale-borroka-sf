@@ -14,3 +14,14 @@ framework:
             policy: sliding_window
             limit: 3
             interval: '1 hour'
+        # « Renvoyer le lien » of the e-mail verification: 3 per account within an hour.
+        email_verification:
+            policy: sliding_window
+            limit: 3
+            interval: '1 hour'
+        # Registration: 5 accounts per client address within an hour. Each one mails the
+        # verification link to an address the visitor types.
+        registration:
+            policy: sliding_window
+            limit: 5
+            interval: '1 hour'

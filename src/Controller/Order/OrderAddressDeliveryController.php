@@ -31,6 +31,13 @@ class OrderAddressDeliveryController extends AbstractController
         CommandBusInterface $commandBus,
         PaymentRepository $paymentRepository,
     ): Response {
+        // The label mails the payment link: no order to an address nobody proved.
+        if (!$user->isEmailVerified()) {
+            $this->addFlash('warning', 'Confirme ton adresse e-mail avant de commander : on t’y enverra le lien de paiement.');
+
+            return $this->redirectToRoute('app_cart_index');
+        }
+
         $orderDeliveryDto = new OrderDeliveryDto();
         // The default address is ticked, the buyer can still pick another one.
         $orderDeliveryDto->deliveryAddress = $user->getDefaultAddress();

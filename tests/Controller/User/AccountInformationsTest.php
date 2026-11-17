@@ -81,6 +81,8 @@ class AccountInformationsTest extends WebTestCase
         self::assertResponseRedirects('/mon-compte/editer');
         self::assertSame('nouveau@test.fr', $this->reloadUser()->getEmail());
         self::assertNull($this->reloadUser()->getPendingEmail());
+        // The link reached the new address: it is proven, the customer can still order.
+        self::assertTrue($this->reloadUser()->isEmailVerified());
         // Every other device signs in again (their token holds the old identifier); this one
         // gets a remember-me cookie for the new one.
         self::assertResponseHasCookie('REMEMBERME');

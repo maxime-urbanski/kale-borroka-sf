@@ -12,6 +12,7 @@ App\Entity\User:
         lastname: Loud
         firstname: Maxi
         defaultAddress: '@home'
+        emailVerifiedAt: '<(new \DateTimeImmutable())>'
     
     user_user:
         email: test@test.fr
@@ -20,3 +21,4 @@ App\Entity\User:
         lastname: Test
         firstname: Test
         defaultAddress: '@home_user'
+        emailVerifiedAt: '<(new \DateTimeImmutable())>'

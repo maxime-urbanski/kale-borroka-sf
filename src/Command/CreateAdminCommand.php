@@ -84,7 +84,9 @@ class CreateAdminCommand extends Command
             ->setEmail($email)
             ->setFirstname((string) $io->ask('Prénom', 'Admin'))
             ->setLastname((string) $io->ask('Nom', 'Kale Borroka'))
-            ->setRoles(['ROLE_ADMIN']);
+            ->setRoles(['ROLE_ADMIN'])
+            // Typed by whoever runs the console on the server: taken as proven.
+            ->markEmailVerified();
         $user->setPassword($this->passwordHasher->hashPassword($user, $password));
 
         // Same as RegistrationController: every account has a wishlist and a collection.

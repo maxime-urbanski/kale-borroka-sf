@@ -61,6 +61,11 @@ class UserCrudController extends AbstractCrudController
         yield TextField::new('firstname', 'Prénom')->setColumns(6);
         yield TextField::new('lastname', 'Nom')->setColumns(6);
         yield EmailField::new('email', 'E-mail')->setColumns(6);
+        // After the e-mail: the form sets it last, so a date kept here survives an address
+        // changed in the same save (User::setEmail() clears it).
+        yield DateTimeField::new('emailVerifiedAt', 'E-mail confirmé le')
+            ->setHelp('Vide : le client ne peut pas commander tant qu’il n’a pas ouvert le lien reçu. Mets une date pour le débloquer (mail jamais arrivé, adresse vérifiée autrement).')
+            ->setColumns(6);
         yield DateTimeField::new('created_at', 'Inscrit le')
             ->hideOnForm();
 

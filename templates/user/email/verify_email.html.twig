@@ -1,0 +1,21 @@
+{% extends 'email/_layout.html.twig' %}
+
+{# Sent at registration, and again on request, by App\Account\EmailVerification: `link` (signed, valid 48 hours). No name: it is whatever the visitor typed, and this mail goes to an address nobody proved yet. #}
+{% block preheader %}Un clic pour confirmer ton adresse et pouvoir commander.{% endblock %}
+
+{% block content %}
+    <h1 style="margin:0 0 20px;font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:36px;font-weight:400;line-height:1;text-transform:uppercase;">Confirme ton adresse</h1>
+    <p style="margin:0 0 16px;">Salut,</p>
+    <p style="margin:0 0 24px;">Bienvenue chez Kale Borroka Records. Avant ta première commande, on a besoin de savoir que cette adresse est bien la tienne&nbsp;: c’est là qu’on t’enverra le lien de paiement et le suivi du colis.</p>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
+        <tr>
+            <td style="background-color:#c4161c;">
+                <a href="{{ link }}" style="display:inline-block;padding:16px 26px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;color:#f3eee4;">Confirmer mon adresse</a>
+            </td>
+        </tr>
+    </table>
+    <p style="margin:0 0 16px;">Le lien marche 48&nbsp;heures. Passé ce délai, demande-en un nouveau depuis ton panier.</p>
+    <p style="margin:0 0 16px;font-size:14px;">Le bouton ne marche pas&nbsp;? Copie ce lien dans ton navigateur&nbsp;:<br>
+        <a href="{{ link }}" style="color:#111010;word-break:break-all;">{{ link }}</a></p>
+    <p style="margin:0;padding:12px 14px;border:2px dashed #111010;font-size:14px;"><strong>Ce n'est pas toi&nbsp;?</strong> Ignore ce message&nbsp;: sans clic, rien ne se passe.</p>
+{% endblock %}

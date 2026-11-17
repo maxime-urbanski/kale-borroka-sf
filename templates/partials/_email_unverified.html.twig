@@ -1,0 +1,16 @@
+{#
+    Shown to a logged-in customer whose address is not proven yet (App\Account\EmailVerification):
+    they cannot order until the link mailed to it is opened. Nothing for anyone else.
+#}
+{% if app.user is not null and not app.user.emailVerified %}
+    <div class="alert alert-warning d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4" role="status" id="email-non-confirme">
+        <p class="mb-0"><strong>Confirme ton adresse e-mail pour commander.</strong>
+            On t’a écrit à {{ app.user.email }} : ouvre le lien du message (regarde aussi dans les indésirables).</p>
+        {% include 'partials/_post_button.html.twig' with {
+            url: path('app_email_verify_resend'),
+            token_id: constant('App\\Security\\ActionCsrfToken::EMAIL_VERIFICATION'),
+            class: 'btn btn-outline-dark',
+            text_btn: 'Renvoyer le lien',
+        } only %}
+    </div>
+{% endif %}

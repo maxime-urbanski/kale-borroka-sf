@@ -27,6 +27,7 @@
 {% endblock %}
 
 {% block content %}
+    {% include 'partials/_email_unverified.html.twig' %}
     {% set in_stock = counts.wantlistInStock %}
     {% if in_stock > 0 %}
         {# Macro output is already escaped: printed in a loop, never joined into a plain string. #}

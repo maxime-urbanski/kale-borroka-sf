@@ -37,6 +37,10 @@ readonly class PlaceOrderHandler
     {
         $buyer = $this->userRepository->find($command->buyerId)
             ?? throw new InvalidOrderException('Client inconnu.');
+
+        if (!$buyer->isEmailVerified()) {
+            throw new InvalidOrderException('Confirme ton adresse e-mail avant de commander.');
+        }
         $address = $this->addressRepository->find($command->addressId);
 
         // The address comes from a form: never trust that it belongs to the buyer.
