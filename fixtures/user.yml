@@ -4,6 +4,7 @@ parameters:
     # password123
     pw_user: $2y$13$k6UcZL8KpDywbESdvLaEFumrBEcPnpZezBWFyyb2yjyif4/8oIu2G
 
+# user_admin and user_user have proven their address (they can order), user_unverified not.
 App\Entity\User:
     user_admin:
         email: maxiloud@gmail.com
@@ -22,3 +23,13 @@ App\Entity\User:
         firstname: Test
         defaultAddress: '@home_user'
         emailVerifiedAt: '<(new \DateTimeImmutable())>'
+
+    # Registered, never opened the link mailed to them: can browse, not order
+    # (App\Account\EmailVerification). Password: password123.
+    user_unverified:
+        email: nonverifie@test.fr
+        password: <{pw_user}>
+        roles: [ 'ROLE_USER' ]
+        lastname: Verifie
+        firstname: Non
+        defaultAddress: '@home_unverified'

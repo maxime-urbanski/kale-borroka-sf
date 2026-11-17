@@ -5,6 +5,9 @@ App\Entity\Wishlist:
     user_wishlist:
         user: '@user_user'
 
+    unverified_wishlist:
+        user: '@user_unverified'
+
 # Composite primary key (wishlist, article): an article appears at most once per wishlist.
 App\Entity\WishlistItem:
     admin_wishlist_item_{1..3}:

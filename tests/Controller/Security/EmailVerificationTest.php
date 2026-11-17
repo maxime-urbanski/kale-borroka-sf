@@ -118,6 +118,17 @@ class EmailVerificationTest extends WebTestCase
         self::assertSelectorExists('#email-non-confirme');
     }
 
+    public function testTheUnverifiedFixtureAccountIsBlockedAtTheCheckout(): void
+    {
+        $user = $this->user('nonverifie@test.fr');
+        self::assertFalse($user->isEmailVerified());
+        $this->client->loginUser($user);
+
+        $this->client->request('GET', '/order/delivery');
+
+        self::assertResponseRedirects('/cart');
+    }
+
     public function testAVerifiedCustomerReachesTheCheckout(): void
     {
         $this->client->loginUser($this->user('test@test.fr'));

@@ -46,3 +46,14 @@ App\Entity\Address:
         country: Euskal Herria
         is_main_address: false
         users: '@user_user'
+
+    home_unverified:
+        name: Chez moi
+        firstname: Non
+        lastname: Verifie
+        address: 3 rue Pannecau
+        city: Baiona
+        zipcode: 64100
+        country: Euskal Herria
+        is_main_address: true
+        users: '@user_unverified'

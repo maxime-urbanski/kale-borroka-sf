@@ -5,6 +5,9 @@ App\Entity\UserCollection:
     user_collection:
         user: '@user_user'
 
+    unverified_collection:
+        user: '@user_unverified'
+
 # Composite primary key (collection, article): an article appears at most once per collection.
 App\Entity\UserCollectionItems:
     admin_collection_item_qm:
