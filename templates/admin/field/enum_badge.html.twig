@@ -1,0 +1,6 @@
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# An OrderStatus / PaymentStatus in French (label()), coloured by the `badges` custom option. #}
+{% set value = field.value %}
+{% if value %}
+    <span class="badge badge-{{ field.customOptions.get('badges')[value.value] ?? 'secondary' }}">{{ value.label }}</span>
+{% endif %}

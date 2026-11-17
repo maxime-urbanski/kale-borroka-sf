@@ -1,8 +1,11 @@
 {# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
-{# Lines show the snapshot taken when the order was placed, not the article as it is now. #}
-<table class="table table-sm mb-0">
+{#
+    Lines show the snapshot taken when the order was placed, not the article as it is now,
+    plus the stock left today (the article may be gone: « — »).
+#}
+<table class="table table-sm mb-0 kb-order-lines">
     <thead>
-        <tr><th>Article</th><th>SKU</th><th class="text-end">Qté</th><th class="text-end">Prix unitaire</th><th class="text-end">Total</th></tr>
+        <tr><th>Article</th><th>SKU</th><th class="text-end">Qté</th><th class="text-end">Prix unitaire</th><th class="text-end">Total</th><th class="text-end">Stock actuel</th></tr>
     </thead>
     <tbody>
         {% for line in field.value %}
@@ -12,6 +15,16 @@
                 <td class="text-end">{{ line.quantity }}</td>
                 <td class="text-end">{{ (line.unitPrice / 100)|format_currency('EUR', locale: 'fr') }}</td>
                 <td class="text-end">{{ (line.price / 100)|format_currency('EUR', locale: 'fr') }}</td>
+                <td class="text-end">
+                    {% if line.product %}
+                        {% include 'admin/field/_stock_badge.html.twig' with {
+                            stock: line.product.stock ?? 0,
+                            threshold: field.customOptions.get('lowStockThreshold'),
+                        } only %}
+                    {% else %}
+                        <span class="text-muted" title="Article supprimé">—</span>
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
     </tbody>

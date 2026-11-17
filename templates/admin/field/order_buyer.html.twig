@@ -1,0 +1,14 @@
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# The buyer by name, with how to reach them; the phone (detail only) is the delivery address's, else the default one's. #}
+{% set buyer = field.value %}
+{% if buyer %}
+    <span class="fw-semibold">{{ buyer.firstname }} {{ buyer.lastname }}</span><br>
+    <a href="mailto:{{ buyer.email }}" class="small">{{ buyer.email }}</a>
+    {% if field.customOptions.get('withPhone') %}
+        {% set order = entity.instance %}
+        {% set phone = order.address.telephone ?? buyer.defaultAddress.telephone ?? null %}
+        {% if phone %}<br><a href="tel:{{ phone|replace({' ': ''}) }}" class="small">{{ phone }}</a>{% endif %}
+    {% endif %}
+{% else %}
+    <span class="text-muted">—</span>
+{% endif %}
